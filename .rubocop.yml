@@ -1,0 +1,17 @@
+#AllCops:
+#  TargetRubyVersion: 2.3
+
+Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/ModuleLength:
+  Max: 200
+
+Metrics/ClassLength:
+  Max: 200
+
+Security/MarshalLoad:
+  Enabled: false
