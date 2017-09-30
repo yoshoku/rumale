@@ -36,7 +36,7 @@ transformer = SVMKit::KernelApproximation::RBF.new(gamma: 2.0, n_components: 102
 transformed = transformer.fit_transform(normalized)
 
 base_classifier =
-  SVMKit::LinearModel::PegasosSVC.new(penalty: 1.0, max_iter: 50, batch_size: 20, random_seed: 1)
+  SVMKit::LinearModel::PegasosSVC.new(reg_param: 1.0, max_iter: 50, batch_size: 20, random_seed: 1)
 classifier = SVMKit::Multiclass::OneVsRestClassifier.new(estimator: base_classifier)
 classifier.fit(transformed, labels)
 
