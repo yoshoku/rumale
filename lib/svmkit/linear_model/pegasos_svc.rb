@@ -118,7 +118,7 @@ module SVMKit
       # Claculate the mean accuracy of the given testing data.
       #
       # :call-seq:
-      #   predict(x, y) -> Float
+      #   score(x, y) -> Float
       #
       # * *Arguments* :
       #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- Testing data.

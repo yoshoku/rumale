@@ -5,7 +5,7 @@ module SVMKit
   # This module consists of the classes that implement generalized linear models.
   module LinearModel
     # LogisticRegression is a class that implements Logistic Regression with stochastic gradient descent (SGD) optimization.
-    # The Logistic Regression in SVMKit behaves as a binary classifier.
+    # Note that the Logistic Regression of SVMKit performs as a binary classifier.
     #
     #   estimator =
     #     SVMKit::LinearModel::LogisticRegression.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
@@ -132,7 +132,7 @@ module SVMKit
       # Claculate the mean accuracy of the given testing data.
       #
       # :call-seq:
-      #   predict(x, y) -> Float
+      #   score(x, y) -> Float
       #
       # * *Arguments* :
       #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- Testing data.
