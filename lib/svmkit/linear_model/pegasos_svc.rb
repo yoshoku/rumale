@@ -6,41 +6,42 @@ module SVMKit
   module LinearModel
     # PegasosSVC is a class that implements Support Vector Classifier with the Pegasos algorithm.
     #
+    # @example
     #   estimator =
     #     SVMKit::LinearModel::PegasosSVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
-    # * *Reference*:
-    #   - S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
-    #
+    # *Reference*
+    # 1. S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
     class PegasosSVC
       include Base::BaseEstimator
       include Base::Classifier
 
-      DEFAULT_PARAMS = { # :nodoc:
+      # @!visibility private
+      DEFAULT_PARAMS = {
         reg_param: 1.0,
         max_iter: 100,
         batch_size: 50,
         random_seed: nil
       }.freeze
 
-      # The weight vector for SVC.
+      # Return the weight vector for SVC.
+      # @return [NMatrix] (shape: [1, n_features])
       attr_reader :weight_vec
 
-      # The random generator for performing random sampling in the Pegasos algorithm.
+      # Return the random generator for performing random sampling in the Pegasos algorithm.
+      # @return [Random]
       attr_reader :rng
 
       # Create a new classifier with Support Vector Machine by the Pegasos algorithm.
       #
-      # :call-seq:
-      #   new(reg_param: 1.0, max_iter: 100, batch_size: 50, random_seed: 1) -> PegasosSVC
+      # @overload new(reg_param: 1.0, max_iter: 100, batch_size: 50, random_seed: 1) -> PegasosSVC
       #
-      # * *Arguments* :
-      #   - +:reg_param+ (Float) (defaults to: 1.0) -- The regularization parameter.
-      #   - +:max_iter+ (Integer) (defaults to: 100) -- The maximum number of iterations.
-      #   - +:batch_size+ (Integer) (defaults to: 50) -- The size of the mini batches.
-      #   - +:random_seed+ (Integer) (defaults to: nil) -- The seed value using to initialize the random generator.
+      # @param reg_param   [Float] (defaults to: 1.0) The regularization parameter.
+      # @param max_iter    [Integer] (defaults to: 100) The maximum number of iterations.
+      # @param batch_size  [Integer] (defaults to: 50) The size of the mini batches.
+      # @param random_seed [Integer] (defaults to: nil) The seed value using to initialize the random generator.
       def initialize(params = {})
         self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
         self.params[:random_seed] ||= srand
@@ -50,14 +51,9 @@ module SVMKit
 
       # Fit the model with given training data.
       #
-      # :call-seq:
-      #   fit(x, y) -> PegasosSVC
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The training data to be used for fitting the model.
-      #   - +y+ (NMatrix, shape: [1, n_samples]) -- The labels to be used for fitting the model.
-      # * *Returns* :
-      #   - The learned classifier itself.
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [NMatrix] (shape: [1, n_samples]) The labels to be used for fitting the model.
+      # @return [PegasosSVC] The learned classifier itself.
       def fit(x, y)
         # Generate binary labels
         negative_label = y.uniq.sort.shift
@@ -91,53 +87,40 @@ module SVMKit
 
       # Calculate confidence scores for samples.
       #
-      # :call-seq:
-      #   decision_function(x) -> NMatrix, shape: [1, n_samples]
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The samples to compute the scores.
-      # * *Returns* :
-      #   - Confidence score per sample.
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [NMatrix] (shape: [1, n_samples]) Confidence score per sample.
       def decision_function(x)
         @weight_vec.dot(x.transpose)
       end
 
       # Predict class labels for samples.
       #
-      # :call-seq:
-      #   predict(x) -> NMatrix, shape: [1, n_samples]
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The samples to predict the labels.
-      # * *Returns* :
-      #   - Predicted class label per sample.
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [NMatrix] (shape: [1, n_samples]) Predicted class label per sample.
       def predict(x)
         decision_function(x).map { |v| v >= 0 ? 1 : -1 }
       end
 
       # Claculate the mean accuracy of the given testing data.
       #
-      # :call-seq:
-      #   score(x, y) -> Float
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- Testing data.
-      #   - +y+ (NMatrix, shape: [1, n_samples]) -- True labels for testing data.
-      # * *Returns* :
-      #   - Mean accuracy
+      # @param x [NMatrix] (shape: [n_samples, n_features]) Testing data.
+      # @param y [NMatrix] (shape: [1, n_samples]) True labels for testing data.
+      # @return [Float] Mean accuracy
       def score(x, y)
         p = predict(x)
         n_hits = (y.to_flat_a.map.with_index { |l, n| l == p[n] ? 1 : 0 }).inject(:+)
         n_hits / y.size.to_f
       end
 
-      # Serializes object through Marshal#dump.
-      def marshal_dump # :nodoc:
+      # Dump marshal data.
+      # @return [Hash] The marshal data about PegasosSVC.
+      def marshal_dump
         { params: params, weight_vec: Utils.dump_nmatrix(@weight_vec), rng: @rng }
       end
 
-      # Deserialize object through Marshal#load.
-      def marshal_load(obj) # :nodoc:
+      # Load marshal data.
+      # @return [nil]
+      def marshal_load(obj)
         self.params = obj[:params]
         @weight_vec = Utils.restore_nmatrix(obj[:weight_vec])
         @rng = obj[:rng]

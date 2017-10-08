@@ -4,7 +4,8 @@ module SVMKit
   module Base
     # Base module for all estimators in SVMKit.
     module BaseEstimator
-      # Parameters for this estimator.
+      # Return parameters about an estimator.
+      # @return [Hash]
       attr_accessor :params
     end
   end

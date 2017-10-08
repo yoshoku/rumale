@@ -6,32 +6,30 @@ module SVMKit
   module Preprocessing
     # Normalize samples to unit L2-norm.
     #
+    # @example
     #   normalizer = SVMKit::Preprocessing::StandardScaler.new
     #   new_samples = normalizer.fit_transform(samples)
     class L2Normalizer
       include Base::BaseEstimator
       include Base::Transformer
 
-      # The vector consists of norms of each sample.
+      # Return the vector consists of L2-norm for each sample.
+      # @return [NMatrix] (shape: [1, n_samples])
       attr_reader :norm_vec # :nodoc:
 
       # Create a new normalizer for normaliing to unit L2-norm.
       #
-      # :call-seq:
-      #   new() -> L2Normalizer
+      # @overload new() -> L2Normalizer
       def initialize(_params = {})
         @norm_vec = nil
       end
 
-      # Calculate L2 norms of each sample.
+      # Calculate L2-norms of each sample.
       #
-      # :call-seq:
-      #   fit(x) -> L2Normalizer
+      # @overload fit(x) -> L2Normalizer
       #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The samples to calculate L2-norms.
-      # * *Returns* :
-      #   - L2Normalizer
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @return [L2Normalizer]
       def fit(x, _y = nil)
         n_samples, = x.shape
         @norm_vec = NMatrix.new([1, n_samples],
@@ -39,15 +37,12 @@ module SVMKit
         self
       end
 
-      # Calculate L2 norms of each sample, and then normalize samples to unit L2-norm.
+      # Calculate L2-norms of each sample, and then normalize samples to unit L2-norm.
       #
-      # :call-seq:
-      #   fit_transform(x) -> NMatrix
+      # @overload fit_transform(x) -> NMatrix
       #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The samples to calculate L2-norms.
-      # * *Returns* :
-      #   - The normalized samples (NMatrix)
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @return [NMatrix] The normalized samples.
       def fit_transform(x, _y = nil)
         fit(x)
         x / @norm_vec.transpose.repeat(x.shape[1], 1)

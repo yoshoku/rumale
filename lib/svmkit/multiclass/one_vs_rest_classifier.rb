@@ -6,33 +6,34 @@ module SVMKit
   module Multiclass
     # OneVsRestClassifier is a class that implements One-vs-Rest (OvR) strategy for multi-label classification.
     #
+    # @example
     #   base_estimator =
     #    SVMKit::LinearModel::PegasosSVC.new(penalty: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
     #   estimator = SVMKit::Multiclass::OneVsRestClassifier.new(estimator: base_estimator)
     #   estimator.fit(training_samples, training_labels)
     #   results = estimator.predict(testing_samples)
-    #
     class OneVsRestClassifier
       include Base::BaseEstimator
       include Base::Classifier
 
-      DEFAULT_PARAMS = { # :nodoc:
+      # @!visibility private
+      DEFAULT_PARAMS = {
         estimator: nil
       }.freeze
 
-      # The set of estimators.
+      # Return the set of estimators.
+      # @return [Array<Classifier>]
       attr_reader :estimators
 
-      # The class labels.
+      # Return the class labels.
+      # @return [NMatrix] (shape: [1, n_classes])
       attr_reader :classes
 
       # Create a new multi-label classifier with the one-vs-rest startegy.
       #
-      # :call-seq:
-      #   new(estimator: base_estimator) -> OneVsRestClassifier
-      #
-      # * *Arguments* :
-      #   - +:estimator+ (Classifier) (defaults to: nil) -- The (binary) classifier for construction a multi-label classifier.
+      # @overload new(estimator: base_estimator) -> OneVsRestClassifier
+      # @param estimator [Classifier] (defaults to: nil)
+      #   The (binary) classifier for construction a multi-label classifier.
       def initialize(params = {})
         self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
         @estimators = nil
@@ -41,14 +42,9 @@ module SVMKit
 
       # Fit the model with given training data.
       #
-      # :call-seq:
-      #   fit(x, y) -> OneVsRestClassifier
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The training data to be used for fitting the model.
-      #   - +y+ (NMatrix, shape: [1, n_samples]) -- The labels to be used for fitting the model.
-      # * *Returns* :
-      #   - The learned classifier itself.
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [NMatrix] (shape: [1, n_samples]) The labels to be used for fitting the model.
+      # @return [OneVsRestClassifier] The learned classifier itself.
       def fit(x, y)
         @classes = y.uniq.sort
         @estimators = @classes.map do |label|
@@ -60,13 +56,8 @@ module SVMKit
 
       # Calculate confidence scores for samples.
       #
-      # :call-seq:
-      #   decision_function(x) -> NMatrix, shape: [n_samples, n_classes]
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The samples to compute the scores.
-      # * *Returns* :
-      #   - Confidence scores per sample for each class.
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [NMatrix] (shape: [n_classes, n_samples]) Confidence scores per sample for each class.
       def decision_function(x)
         n_samples, = x.shape
         n_classes = @classes.size
@@ -78,13 +69,8 @@ module SVMKit
 
       # Predict class labels for samples.
       #
-      # :call-seq:
-      #   predict(x) -> NMatrix, shape: [1, n_samples]
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- The samples to predict the labels.
-      # * *Returns* :
-      #   - Predicted class label per sample.
+      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [NMatrix] (shape: [1, n_samples]) Predicted class label per sample.
       def predict(x)
         n_samples, = x.shape
         decision_values = decision_function(x)
@@ -94,29 +80,26 @@ module SVMKit
 
       # Claculate the mean accuracy of the given testing data.
       #
-      # :call-seq:
-      #   predict(x, y) -> Float
-      #
-      # * *Arguments* :
-      #   - +x+ (NMatrix, shape: [n_samples, n_features]) -- Testing data.
-      #   - +y+ (NMatrix, shape: [1, n_samples]) -- True labels for testing data.
-      # * *Returns* :
-      #   - Mean accuracy
+      # @param x [NMatrix] (shape: [n_samples, n_features]) Testing data.
+      # @param y [NMatrix] (shape: [1, n_samples]) True labels for testing data.
+      # @return [Float] Mean accuracy
       def score(x, y)
         p = predict(x)
         n_hits = (y.to_flat_a.map.with_index { |l, n| l == p[n] ? 1 : 0 }).inject(:+)
         n_hits / y.size.to_f
       end
 
-      # Serializes object through Marshal#dump.
-      def marshal_dump # :nodoc:
+      # Dump marshal data.
+      # @return [Hash] The marshal data about OneVsRestClassifier.
+      def marshal_dump
         { params: params,
           classes: @classes,
           estimators: @estimators.map { |e| Marshal.dump(e) } }
       end
 
-      # Deserialize object through Marshal#load.
-      def marshal_load(obj) # :nodoc:
+      # Load marshal data.
+      # @return [nil]
+      def marshal_load(obj)
         self.params = obj[:params]
         @classes = obj[:classes]
         @estimators = obj[:estimators].map { |e| Marshal.load(e) }

@@ -23,6 +23,7 @@ Or install it yourself as:
 ## Usage
 
 Training phase:
+
 ```ruby
 require 'svmkit'
 require 'libsvmloader'
@@ -46,6 +47,7 @@ File.open('trained_classifier.dat', 'wb') { |f| f.write(Marshal.dump(classifier)
 ```
 
 Testing phase:
+
 ```ruby
 require 'svmkit'
 require 'libsvmloader'
