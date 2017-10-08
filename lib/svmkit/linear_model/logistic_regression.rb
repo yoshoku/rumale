@@ -23,6 +23,8 @@ module SVMKit
       # @!visibility private
       DEFAULT_PARAMS = {
         reg_param: 1.0,
+        fit_bias: false,
+        bias_scale: 1.0,
         max_iter: 100,
         batch_size: 50,
         random_seed: nil
@@ -31,6 +33,10 @@ module SVMKit
       # Return the weight vector for Logistic Regression.
       # @return [NMatrix] (shape: [1, n_features])
       attr_reader :weight_vec
+
+      # Return the bias term (a.k.a. intercept) for Logistic Regression.
+      # @return [Float]
+      attr_reader :bias_term
 
       # Return the random generator for transformation.
       # @return [Random]
@@ -41,6 +47,9 @@ module SVMKit
       # @overload new(reg_param: 1.0, max_iter: 100, batch_size: 50, random_seed: 1) -> LogisiticRegression
       #
       # @param reg_param   [Float] (defaults to: 1.0) The regularization parameter.
+      # @param fit_bias    [Boolean] (defaults to: false) The flag indicating whether to fit the bias term.
+      # @param bias_scale  [Float] (defaults to: 1.0) The scale of the bias term.
+      #   If fit_bias is true, the feature vector v becoms [v; bias_scale].
       # @param max_iter    [Integer] (defaults to: 100) The maximum number of iterations.
       # @param batch_size  [Integer] (defaults to: 50) The size of the mini batches.
       # @param random_seed [Integer] (defaults to: nil) The seed value using to initialize the random generator.
@@ -48,6 +57,7 @@ module SVMKit
         self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
         self.params[:random_seed] ||= srand
         @weight_vec = nil
+        @bias_term = 0
         @rng = Random.new(self.params[:random_seed])
       end
 
@@ -58,13 +68,16 @@ module SVMKit
       #   to be used for fitting the model.
       # @return [LogisticRegression] The learned classifier itself.
       def fit(x, y)
-        # Generate binary labels
+        # Generate binary labels.
         negative_label = y.uniq.sort.shift
         bin_y = y.to_flat_a.map { |l| l != negative_label ? 1 : 0 }
+        # Expand feature vectors for bias term.
+        samples = x
+        samples = samples.hconcat(NMatrix.ones([x.shape[0], 1]) * params[:bias_scale]) if params[:fit_bias]
         # Initialize some variables.
-        n_samples, n_features = x.shape
+        n_samples, n_features = samples.shape
         rand_ids = [*0..n_samples - 1].shuffle(random: @rng)
-        @weight_vec = NMatrix.zeros([1, n_features])
+        weight_vec = NMatrix.zeros([1, n_features])
         # Start optimization.
         params[:max_iter].times do |t|
           # random sampling
@@ -74,15 +87,23 @@ module SVMKit
           eta = 1.0 / (params[:reg_param] * (t + 1))
           mean_vec = NMatrix.zeros([1, n_features])
           subset_ids.each do |n|
-            z = @weight_vec.dot(x.row(n).transpose)[0]
+            z = weight_vec.dot(samples.row(n).transpose)[0]
             coef = bin_y[n] / (1.0 + Math.exp(bin_y[n] * z))
-            mean_vec += x.row(n) * coef
+            mean_vec += samples.row(n) * coef
           end
           mean_vec *= eta / params[:batch_size]
-          @weight_vec = @weight_vec * (1.0 - eta * params[:reg_param]) + mean_vec
+          weight_vec = weight_vec * (1.0 - eta * params[:reg_param]) + mean_vec
           # scale the weight vector.
-          scaler = (1.0 / params[:reg_param]**0.5) / @weight_vec.norm2
-          @weight_vec *= [1.0, scaler].min
+          scaler = (1.0 / params[:reg_param]**0.5) / weight_vec.norm2
+          weight_vec *= [1.0, scaler].min
+        end
+        # Store the learned model.
+        if params[:fit_bias]
+          @weight_vec = weight_vec[0...n_features - 1]
+          @bias_term = weight_vec[n_features - 1]
+        else
+          @weight_vec = weight_vec[0...n_features]
+          @bias_term = 0.0
         end
         self
       end
@@ -92,7 +113,7 @@ module SVMKit
       # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [NMatrix] (shape: [1, n_samples]) Confidence score per sample.
       def decision_function(x)
-        w = (@weight_vec.dot(x.transpose) * -1.0).exp + 1.0
+        w = ((@weight_vec.dot(x.transpose) + @bias_term) * -1.0).exp + 1.0
         w.map { |v| 1.0 / v }
       end
 
@@ -126,7 +147,7 @@ module SVMKit
       # Dump marshal data.
       # @return [Hash] The marshal data about LogisticRegression.
       def marshal_dump
-        { params: params, weight_vec: Utils.dump_nmatrix(@weight_vec), rng: @rng }
+        { params: params, weight_vec: Utils.dump_nmatrix(@weight_vec), bias_term: @bias_term, rng: @rng }
       end
 
       # Load marshal data.
@@ -134,6 +155,7 @@ module SVMKit
       def marshal_load(obj)
         self.params = obj[:params]
         @weight_vec = Utils.restore_nmatrix(obj[:weight_vec])
+        @bias_term = obj[:bias_term]
         @rng = obj[:rng]
         nil
       end
