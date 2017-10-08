@@ -1,3 +1,7 @@
+# 0.1.2
+- Added the function learning a model with bias term to the PegasosSVC and LogisticRegression classes.
+- Rewrited the document with yard notation.
+
 # 0.1.1
 - Added class for Logistic Regression with SGD optimization.
 - Fixed some mistakes on the document.
