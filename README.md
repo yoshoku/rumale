@@ -1,5 +1,9 @@
 # SVMKit
 
+[![Build Status](https://travis-ci.org/yoshoku/SVMKit.svg?branch=master)](https://travis-ci.org/yoshoku/SVMKit)
+[![Gem Version](https://badge.fury.io/rb/svmkit.svg)](https://badge.fury.io/rb/svmkit)
+[![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/SVMKit/blob/master/LICENSE.txt)
+
 SVMKit is a library for machine learninig in Ruby.
 SVMKit implements machine learning algorithms with an interface similar to Scikit-Learn in Python.
 However, since SVMKit is an experimental library, there are few machine learning algorithms implemented.
