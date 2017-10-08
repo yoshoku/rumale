@@ -57,7 +57,7 @@ module SVMKit
       # Calculate confidence scores for samples.
       #
       # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [NMatrix] (shape: [n_classes, n_samples]) Confidence scores per sample for each class.
+      # @return [NMatrix] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
         n_samples, = x.shape
         n_classes = @classes.size
