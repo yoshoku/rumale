@@ -26,7 +26,7 @@ RSpec.describe SVMKit::LinearModel::LogisticRegression do
   end
 
   it 'dumps and restores itself using Marshal module.' do
-    estimator_bias.fit(samples, labels)
+    estimator.fit(samples, labels)
     copied = Marshal.load(Marshal.dump(estimator))
     expect(estimator.class).to eq(copied.class)
     expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])

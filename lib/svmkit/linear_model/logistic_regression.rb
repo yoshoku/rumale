@@ -57,7 +57,7 @@ module SVMKit
         self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
         self.params[:random_seed] ||= srand
         @weight_vec = nil
-        @bias_term = 0
+        @bias_term = 0.0
         @rng = Random.new(self.params[:random_seed])
       end
 
