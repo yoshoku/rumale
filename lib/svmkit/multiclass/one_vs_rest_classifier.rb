@@ -32,8 +32,9 @@ module SVMKit
       # Create a new multi-label classifier with the one-vs-rest startegy.
       #
       # @overload new(estimator: base_estimator) -> OneVsRestClassifier
-      # @param estimator [Classifier] (defaults to: nil)
-      #   The (binary) classifier for construction a multi-label classifier.
+      #
+      # @param params [Hash] The parameters for OneVsRestClassifier.
+      # @option params [Classifier] :estimator (nil) The (binary) classifier for construction a multi-label classifier.
       def initialize(params = {})
         self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
         @estimators = nil

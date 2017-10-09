@@ -31,7 +31,8 @@ module SVMKit
       #
       # @overload new(feature_range: [0.0, 1.0]) -> MinMaxScaler
       #
-      # @param feature_range [Array] (defaults to: [0.0, 1.0]) The desired range of samples.
+      # @param params [Hash] The parameters for MinMaxScaler.
+      # @option params [Array<Float>] :feature_range ([0.0, 1.0]) The desired range of samples.
       def initialize(params = {})
         @params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
         @min_vec = nil

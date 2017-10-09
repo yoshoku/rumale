@@ -40,9 +40,10 @@ module SVMKit
       #
       # @overload new(gamma: 1.0, n_components: 128, random_seed: 1) -> RBF
       #
-      # @param gamma        [Float] (defaults to: 1.0) The parameter of RBF kernel: exp(-gamma * x^2).
-      # @param n_components [Integer] (defaults to: 128) The number of dimensions of the RBF kernel feature space.
-      # @param random_seed  [Integer] (defaults to: nil) The seed value using to initialize the random generator.
+      # @param params [Hash] The parameters for RBF kernel approximation.
+      # @option params [Float]   :gamma (1.0) The parameter of RBF kernel: exp(-gamma * x^2).
+      # @option params [Integer] :n_components (128) The number of dimensions of the RBF kernel feature space.
+      # @option params [Integer] :random_seed (nil) The seed value using to initialize the random generator.
       def initialize(params = {})
         self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
         self.params[:random_seed] ||= srand
