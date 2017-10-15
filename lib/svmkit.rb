@@ -5,6 +5,7 @@ end
 
 require 'svmkit/version'
 require 'svmkit/utils'
+require 'svmkit/pairwise_metric'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
 require 'svmkit/base/transformer'
