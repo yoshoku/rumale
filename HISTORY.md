@@ -1,3 +1,7 @@
+# 0.1.3
+- Added class for Kernel Support Vector Machine with Pegasos algorithm.
+- Added module for calculating pairwise kernel fuctions and euclidean distances.
+
 # 0.1.2
 - Added the function learning a model with bias term to the PegasosSVC and LogisticRegression classes.
 - Rewrited the document with yard notation.
