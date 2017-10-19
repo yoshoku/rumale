@@ -2,7 +2,7 @@ require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
 
 module SVMKit
-  # This module consists of the classes that implement generalized linear models.
+  # This module consists of the classes that implement kernel method-based estimator.
   module KernelMachine
     # KernelSVC is a class that implements (Nonlinear) Kernel Support Vector Classifier with the Pegasos algorithm.
     #
