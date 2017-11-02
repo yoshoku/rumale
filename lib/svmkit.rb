@@ -2,7 +2,6 @@
 require 'numo/narray'
 
 require 'svmkit/version'
-require 'svmkit/utils'
 require 'svmkit/pairwise_metric'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
