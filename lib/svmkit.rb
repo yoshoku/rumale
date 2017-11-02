@@ -1,7 +1,5 @@
-begin
-  require 'nmatrix/nmatrix'
-rescue LoadError
-end
+
+require 'numo/narray'
 
 require 'svmkit/version'
 require 'svmkit/utils'
