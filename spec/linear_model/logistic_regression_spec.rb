@@ -1,26 +1,43 @@
 require 'spec_helper'
 
 RSpec.describe SVMKit::LinearModel::LogisticRegression do
-  let(:samples) { SVMKit::Utils.restore_nmatrix(Marshal.load(File.read(__dir__ + '/test_samples.dat'))) }
-  let(:labels) { SVMKit::Utils.restore_nmatrix(Marshal.load(File.read(__dir__ + '/test_labels.dat'))) }
+  let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
   let(:estimator) { described_class.new(penalty: 1.0, max_iter: 100, batch_size: 20, random_seed: 1) }
-  let(:estimator_bias) {
-    described_class.new(penalty: 1.0, fit_bias: true, max_iter: 100, batch_size: 20, random_seed: 1) }
+  let(:estimator_bias) do
+    described_class.new(penalty: 1.0, fit_bias: true, max_iter: 100, batch_size: 20, random_seed: 1)
+  end
 
   it 'classifies two clusters.' do
     n_samples, n_features = samples.shape
     estimator.fit(samples, labels)
     expect(estimator.weight_vec.size).to eq(n_features)
-    expect(estimator.bias_term).to eq(0.0)
+    expect(estimator.weight_vec.shape[0]).to eq(n_features)
+    expect(estimator.weight_vec.shape[1]).to be_nil
+    expect(estimator.bias_term).to be_zero
+
+    func_vals = estimator.decision_function(samples)
+    expect(func_vals.class).to eq(Numo::DFloat)
+    expect(func_vals.shape[0]).to eq(n_samples)
+    expect(func_vals.shape[1]).to be_nil
+
+    predicted = estimator.predict(samples)
+    expect(predicted.class).to eq(Numo::Int32)
+    expect(predicted.shape[0]).to eq(n_samples)
+    expect(predicted.shape[1]).to be_nil
+    expect(predicted).to eq(labels)
+
     score = estimator.score(samples, labels)
     expect(score).to eq(1.0)
   end
 
   it 'learns the model of two clusters dataset with bias term.' do
-    n_samples, n_features = samples.shape
+    _n_samples, n_features = samples.shape
     estimator_bias.fit(samples, labels)
     expect(estimator_bias.weight_vec.size).to eq(n_features)
-    expect(estimator_bias.bias_term).to_not eq(0.0)
+    expect(estimator_bias.weight_vec.shape[0]).to eq(n_features)
+    expect(estimator_bias.weight_vec.shape[1]).to be_nil
+    expect(estimator_bias.bias_term).to_not be_zero
     score = estimator_bias.score(samples, labels)
     expect(score).to eq(1.0)
   end
