@@ -3,19 +3,21 @@ require 'spec_helper'
 RSpec.describe SVMKit::Preprocessing::StandardScaler do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
-  let(:samples) do
-    rng = Random.new(1)
-    rnd_vals = Array.new(n_samples * n_features) { rng.rand }
-    NMatrix.new([n_samples, n_features], rnd_vals, dtype: :float64, stype: :dense)
-  end
+  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
 
   it 'performs standardization of samples.' do
     normalizer = described_class.new
     normalized = normalizer.fit_transform(samples)
-    mean_err = (normalized.mean(0) - NMatrix.zeros([1, n_features])).abs.sum(1)[0]
-    std_err = (normalized.std(0) - NMatrix.ones([1, n_features])).abs.sum(1)[0]
+    mean_err = (normalized.mean(axis = 0) - Numo::DFloat.zeros(n_features)).abs.sum
+    std_err = (normalized.stddev(axis = 0) - Numo::DFloat.ones(n_features)).abs.sum
     expect(mean_err).to be < 1.0e-8
     expect(std_err).to be < 1.0e-8
+    expect(normalizer.mean_vec.class).to eq(Numo::DFloat)
+    expect(normalizer.mean_vec.shape[0]).to eq(n_features)
+    expect(normalizer.mean_vec.shape[1]).to be_nil
+    expect(normalizer.std_vec.class).to eq(Numo::DFloat)
+    expect(normalizer.std_vec.shape[0]).to eq(n_features)
+    expect(normalizer.std_vec.shape[1]).to be_nil
   end
 
   it 'dumps and restores itself using Marshal module.' do

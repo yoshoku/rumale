@@ -15,11 +15,11 @@ module SVMKit
       include Base::Transformer
 
       # Return the vector consists of the mean value for each feature.
-      # @return [NMatrix] (shape: [1, n_features])
+      # @return [Numo::DFloat] (shape: [n_features])
       attr_reader :mean_vec
 
       # Return the vector consists of the standard deviation for each feature.
-      # @return [NMatrix] (shape: [1, n_features])
+      # @return [Numo::DFloat] (shape: [n_features])
       attr_reader :std_vec
 
       # Create a new normalizer for centering and scaling to unit variance.
@@ -34,47 +34,47 @@ module SVMKit
       #
       # @overload fit(x) -> StandardScaler
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features])
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features])
       #   The samples to calculate the mean values and standard deviations.
       # @return [StandardScaler]
       def fit(x, _y = nil)
-        @mean_vec = x.mean(0)
-        @std_vec = x.std(0)
+        @mean_vec = x.mean(axis = 0)
+        @std_vec = x.stddev(axis = 0)
         self
       end
 
       # Calculate the mean values and standard deviations, and then normalize samples using them.
       #
-      # @overload fit_transform(x) -> NMatrix
+      # @overload fit_transform(x) -> Numo::DFloat
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features])
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features])
       #   The samples to calculate the mean values and standard deviations.
-      # @return [NMatrix] The scaled samples.
+      # @return [Numo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
         fit(x).transform(x)
       end
 
       # Perform standardization the given samples.
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to be scaled.
-      # @return [NMatrix] The scaled samples.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
+      # @return [Numo::DFloat] The scaled samples.
       def transform(x)
         n_samples, = x.shape
-        (x - @mean_vec.repeat(n_samples, 0)) / @std_vec.repeat(n_samples, 0)
+        (x - @mean_vec.tile(n_samples, axis = 1)) / @std_vec.tile(n_samples, axis = 1)
       end
 
       # Dump marshal data.
       # @return [Hash] The marshal data about StandardScaler.
       def marshal_dump
-        { mean_vec: Utils.dump_nmatrix(@mean_vec),
-          std_vec: Utils.dump_nmatrix(@std_vec) }
+        { mean_vec: @mean_vec,
+          std_vec: @std_vec }
       end
 
       # Load marshal data.
       # @return [nil]
       def marshal_load(obj)
-        @mean_vec = Utils.restore_nmatrix(obj[:mean_vec])
-        @std_vec = Utils.restore_nmatrix(obj[:std_vec])
+        @mean_vec = obj[:mean_vec]
+        @std_vec = obj[:std_vec]
         nil
       end
     end

@@ -14,7 +14,7 @@ module SVMKit
       include Base::Transformer
 
       # Return the vector consists of L2-norm for each sample.
-      # @return [NMatrix] (shape: [1, n_samples])
+      # @return [Numo::DFloat] (shape: [n_samples])
       attr_reader :norm_vec # :nodoc:
 
       # Create a new normalizer for normaliing to unit L2-norm.
@@ -28,24 +28,22 @@ module SVMKit
       #
       # @overload fit(x) -> L2Normalizer
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
       # @return [L2Normalizer]
       def fit(x, _y = nil)
-        n_samples, = x.shape
-        @norm_vec = NMatrix.new([1, n_samples],
-                                Array.new(n_samples) { |n| x.row(n).norm2 })
+        @norm_vec = Numo::NMath.sqrt((x**2).sum(axis = 1))
         self
       end
 
       # Calculate L2-norms of each sample, and then normalize samples to unit L2-norm.
       #
-      # @overload fit_transform(x) -> NMatrix
+      # @overload fit_transform(x) -> Numo::DFloat
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
-      # @return [NMatrix] The normalized samples.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @return [Numo::DFloat] The normalized samples.
       def fit_transform(x, _y = nil)
         fit(x)
-        x / @norm_vec.transpose.repeat(x.shape[1], 1)
+        x / @norm_vec.tile(x.shape[1], axis = 1).transpose
       end
     end
   end

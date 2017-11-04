@@ -3,24 +3,26 @@ require 'spec_helper'
 RSpec.describe SVMKit::Preprocessing::MinMaxScaler do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
-  let(:samples) do
-    rng = Random.new(1)
-    rnd_vals = Array.new(n_samples * n_features) { rng.rand }
-    NMatrix.new([n_samples, n_features], rnd_vals, dtype: :float64, stype: :dense)
-  end
+  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
 
   it 'normalizes range of features to [0,1].' do
     normalizer = described_class.new
     normalized = normalizer.fit_transform(samples)
-    expect(normalized.min.to_a.min).to eq(0)
-    expect(normalized.max.to_a.max).to eq(1)
+    expect(normalized.min).to eq(0)
+    expect(normalized.max).to eq(1)
+    expect(normalizer.min_vec.class).to eq(Numo::DFloat)
+    expect(normalizer.min_vec.shape[0]).to eq(n_features)
+    expect(normalizer.min_vec.shape[1]).to be_nil
+    expect(normalizer.max_vec.class).to eq(Numo::DFloat)
+    expect(normalizer.max_vec.shape[0]).to eq(n_features)
+    expect(normalizer.max_vec.shape[1]).to be_nil
   end
 
   it 'normalizes range of features to a given range.' do
     normalizer = described_class.new(feature_range: [-3, 2])
     normalized = normalizer.fit_transform(samples)
-    expect(normalized.min.to_a.min).to eq(-3)
-    expect(normalized.max.to_a.max).to eq(2)
+    expect(normalized.min).to eq(-3)
+    expect(normalized.max).to eq(2)
   end
 
   it 'dumps and restores itself using Marshal module.' do

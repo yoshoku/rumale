@@ -20,11 +20,11 @@ module SVMKit
       }.freeze
 
       # Return the vector consists of the minimum value for each feature.
-      # @return [NMatrix] (shape: [1, n_features])
+      # @return [Numo::DFloat] (shape: [n_features])
       attr_reader :min_vec
 
       # Return the vector consists of the maximum value for each feature.
-      # @return [NMatrix] (shape: [1, n_features])
+      # @return [Numo::DFloat] (shape: [n_features])
       attr_reader :max_vec
 
       # Creates a new normalizer for scaling each feature to a given range.
@@ -43,32 +43,32 @@ module SVMKit
       #
       # @overload fit(x) -> MinMaxScaler
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
       # @return [MinMaxScaler]
       def fit(x, _y = nil)
-        @min_vec = x.min(0)
-        @max_vec = x.max(0)
+        @min_vec = x.min(axis: 0)
+        @max_vec = x.max(axis: 0)
         self
       end
 
       # Calculate the minimum and maximum values, and then normalize samples to feature_range.
       #
-      # @overload fit_transform(x) -> NMatrix
+      # @overload fit_transform(x) -> Numo::DFloat
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
-      # @return [NMatrix] The scaled samples.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
+      # @return [Numo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
         fit(x).transform(x)
       end
 
       # Perform scaling the given samples according to feature_range.
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to be scaled.
-      # @return [NMatrix] The scaled samples.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
+      # @return [Numo::DFloat] The scaled samples.
       def transform(x)
         n_samples, = x.shape
         dif_vec = @max_vec - @min_vec
-        nx = (x - @min_vec.repeat(n_samples, 0)) / dif_vec.repeat(n_samples, 0)
+        nx = (x - @min_vec.tile(n_samples, axis = 1)) / dif_vec.tile(n_samples, axis = 1)
         nx * (@params[:feature_range][1] - @params[:feature_range][0]) + @params[:feature_range][0]
       end
 
@@ -76,16 +76,16 @@ module SVMKit
       # @return [Hash] The marshal data about MinMaxScaler.
       def marshal_dump
         { params: @params,
-          min_vec: Utils.dump_nmatrix(@min_vec),
-          max_vec: Utils.dump_nmatrix(@max_vec) }
+          min_vec: @min_vec,
+          max_vec: @max_vec }
       end
 
       # Load marshal data.
       # @return [nil]
       def marshal_load(obj)
         @params = obj[:params]
-        @min_vec = Utils.restore_nmatrix(obj[:min_vec])
-        @max_vec = Utils.restore_nmatrix(obj[:max_vec])
+        @min_vec = obj[:min_vec]
+        @max_vec = obj[:max_vec]
         nil
       end
     end
