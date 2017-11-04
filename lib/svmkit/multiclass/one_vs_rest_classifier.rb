@@ -26,7 +26,7 @@ module SVMKit
       attr_reader :estimators
 
       # Return the class labels.
-      # @return [NMatrix] (shape: [1, n_classes])
+      # @return [Numo::Int32] (shape: [n_classes])
       attr_reader :classes
 
       # Create a new multi-label classifier with the one-vs-rest startegy.
@@ -43,13 +43,14 @@ module SVMKit
 
       # Fit the model with given training data.
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [NMatrix] (shape: [1, n_samples]) The labels to be used for fitting the model.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [OneVsRestClassifier] The learned classifier itself.
       def fit(x, y)
-        @classes = y.uniq.sort
-        @estimators = @classes.map do |label|
-          bin_y = y.map { |l| l == label ? 1 : -1 }
+        y_arr = y.to_a
+        @classes = Numo::Int32.asarray(y_arr.uniq.sort)
+        @estimators = @classes.to_a.map do |label|
+          bin_y = Numo::Int32.asarray(y_arr.map { |l| l == label ? 1 : -1 })
           params[:estimator].dup.fit(x, bin_y)
         end
         self
@@ -57,36 +58,32 @@ module SVMKit
 
       # Calculate confidence scores for samples.
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [NMatrix] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
         n_samples, = x.shape
         n_classes = @classes.size
-        NMatrix.new(
-          [n_classes, n_samples],
-          Array.new(n_classes) { |m| @estimators[m].decision_function(x).to_a }.flatten
-        ).transpose
+        Numo::DFloat.asarray(Array.new(n_classes) { |m| @estimators[m].decision_function(x).to_a }).transpose
       end
 
       # Predict class labels for samples.
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [NMatrix] (shape: [1, n_samples]) Predicted class label per sample.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         n_samples, = x.shape
         decision_values = decision_function(x)
-        NMatrix.new([1, n_samples],
-                    decision_values.each_row.map { |vals| @classes[vals.to_a.index(vals.to_a.max)] })
+        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n,true].max_index] })
       end
 
       # Claculate the mean accuracy of the given testing data.
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) Testing data.
-      # @param y [NMatrix] (shape: [1, n_samples]) True labels for testing data.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
+      # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
       # @return [Float] Mean accuracy
       def score(x, y)
         p = predict(x)
-        n_hits = (y.to_flat_a.map.with_index { |l, n| l == p[n] ? 1 : 0 }).inject(:+)
+        n_hits = (y.to_a.map.with_index { |l, n| l == p[n] ? 1 : 0 }).inject(:+)
         n_hits / y.size.to_f
       end
 
