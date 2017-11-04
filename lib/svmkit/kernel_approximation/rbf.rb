@@ -25,11 +25,11 @@ module SVMKit
       }.freeze
 
       # Return the random matrix for transformation.
-      # @return [NMatrix] (shape: [n_features, n_components])
+      # @return [Numo::DFloat] (shape: [n_features, n_components])
       attr_reader :random_mat
 
       # Return the random vector for transformation.
-      # @return [NMatrix] (shape: [1, n_components])
+      # @return [Numo::DFloat] (shape: [n_components])
       attr_reader :random_vec
 
       # Return the random generator for transformation.
@@ -56,7 +56,7 @@ module SVMKit
       #
       # @overload fit(x) -> RBF
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Numo::NArray] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       #   This method uses only the number of features of the data.
       # @return [RBF] The learned transformer itself.
       def fit(x, _y = nil)
@@ -64,40 +64,40 @@ module SVMKit
         params[:n_components] = 2 * n_features if params[:n_components] <= 0
         @random_mat = rand_normal([n_features, params[:n_components]]) * (2.0 * params[:gamma])**0.5
         n_half_components = params[:n_components] / 2
-        @random_vec = NMatrix.zeros([1, params[:n_components] - n_half_components]).hconcat(
-          NMatrix.ones([1, n_half_components]) * (0.5 * Math::PI)
+        @random_vec = Numo::DFloat.zeros(params[:n_components] - n_half_components).concatenate(
+          Numo::DFloat.ones(n_half_components) * (0.5 * Math::PI)
         )
         self
       end
 
       # Fit the model with training data, and then transform them with the learned model.
       #
-      # @overload fit_transform(x) -> NMatrix
+      # @overload fit_transform(x) -> Numo::DFloat
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @return [NMatrix] (shape: [n_samples, n_components]) The transformed data
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
         fit(x).transform(x)
       end
 
       # Transform the given data with the learned model.
       #
-      # @overload transform(x) -> NMatrix
+      # @overload transform(x) -> Numo::DFloat
       #
-      # @param x [NMatrix] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
-      # @return [NMatrix] (shape: [n_samples, n_components]) The transformed data.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
+      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
         n_samples, = x.shape
-        projection = x.dot(@random_mat) + @random_vec.repeat(n_samples, 0)
-        projection.sin * ((2.0 / params[:n_components])**0.5)
+        projection = x.dot(@random_mat) + @random_vec.tile(n_samples, 1)
+        Numo::NMath.sin(projection) * ((2.0 / params[:n_components])**0.5)
       end
 
       # Dump marshal data.
       # @return [Hash] The marshal data about RBF.
       def marshal_dump
         { params: params,
-          random_mat: Utils.dump_nmatrix(@random_mat),
-          random_vec: Utils.dump_nmatrix(@random_vec),
+          random_mat: @random_mat,
+          random_vec: @random_vec,
           rng: @rng }
       end
 
@@ -105,8 +105,8 @@ module SVMKit
       # @return [nil]
       def marshal_load(obj)
         self.params = obj[:params]
-        @random_mat = Utils.restore_nmatrix(obj[:random_mat])
-        @random_vec = Utils.restore_nmatrix(obj[:random_vec])
+        @random_mat = obj[:random_mat]
+        @random_vec = obj[:random_vec]
         @rng = obj[:rng]
         nil
       end
@@ -115,15 +115,15 @@ module SVMKit
 
       # Generate the uniform random matrix with the given shape.
       def rand_uniform(shape)
-        rnd_vals = Array.new(NMatrix.size(shape)) { @rng.rand }
-        NMatrix.new(shape, rnd_vals, dtype: :float64, stype: :dense)
+        rnd_vals = Array.new(shape.inject(:*)) { @rng.rand }
+        Numo::DFloat.asarray(rnd_vals).reshape(shape[0], shape[1])
       end
 
       # Generate the normal random matrix with the given shape, mean, and standard deviation.
       def rand_normal(shape, mu = 0.0, sigma = 1.0)
         a = rand_uniform(shape)
         b = rand_uniform(shape)
-        ((a.log * -2.0).sqrt * (b * 2.0 * Math::PI).sin) * sigma + mu
+        (Numo::NMath.sqrt(Numo::NMath.log(a) * -2.0) * Numo::NMath.sin(b * 2.0 * Math::PI)) * sigma + mu
       end
     end
   end

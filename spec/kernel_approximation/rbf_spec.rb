@@ -3,23 +3,22 @@ require 'spec_helper'
 RSpec.describe SVMKit::KernelApproximation::RBF do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
-  let(:samples) do
-    rng = Random.new(1)
-    rnd_vals = Array.new(n_samples * n_features) { rng.rand }
-    NMatrix.new([n_samples, n_features], rnd_vals, dtype: :float64, stype: :dense)
-  end
-
-  it 'has a small approximation error for the RBF kernel function.' do
-    # calculate RBF kernel matrix.
-    kernel_matrix = NMatrix.zeros([n_samples, n_samples])
+  let(:n_components) { 4096 }
+  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
+  let(:kernel_matrix) do
+    kernel_matrix = Numo::DFloat.zeros(n_samples, n_samples)
     n_samples.times do |m|
       n_samples.times do |n|
-        distance = (samples.row(m) - samples.row(n)).norm2
+        distance = Math.sqrt(((samples[m, true] - samples[n, true])**2).sum)
         kernel_matrix[m, n] = Math.exp(-distance**2)
       end
     end
+    kernel_matrix
+  end
+
+  it 'has a small approximation error for the RBF kernel function.' do
     # calculate approximate RBF kernel matrix.
-    transformer = described_class.new(gamma: 1.0, n_components: 4096, random_seed: 1)
+    transformer = described_class.new(gamma: 1.0, n_components: n_components, random_seed: 1)
     new_samples = transformer.fit_transform(samples)
     inner_matrix = new_samples.dot(new_samples.transpose)
     # evalute mean error.
@@ -31,6 +30,12 @@ RSpec.describe SVMKit::KernelApproximation::RBF do
     end
     mean_error /= n_samples * n_samples
     expect(mean_error).to be < 0.01
+    expect(transformer.random_mat.class).to eq(Numo::DFloat)
+    expect(transformer.random_mat.shape[0]).to eq(n_features)
+    expect(transformer.random_mat.shape[1]).to eq(n_components)
+    expect(transformer.random_vec.class).to eq(Numo::DFloat)
+    expect(transformer.random_vec.shape[0]).to eq(n_components)
+    expect(transformer.random_vec.shape[1]).to be_nil
   end
 
   it 'dumps and restores itself using Marshal module.' do
