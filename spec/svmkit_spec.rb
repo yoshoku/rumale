@@ -1,12 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe SVMKit do
-  let(:samples) do
-    SVMKit::Utils.restore_nmatrix(Marshal.load(File.read(__dir__ + '/test_samples_xor.dat')))
-  end
-  let(:labels) do
-    SVMKit::Utils.restore_nmatrix(Marshal.load(File.read(__dir__ + '/test_labels_xor.dat')))
-  end
+  let(:samples) { Marshal.load(File.read(__dir__ + '/test_samples_xor.dat')) }
+  let(:labels) { Marshal.load(File.read(__dir__ + '/test_labels_xor.dat')) }
   let(:estimator) do
     SVMKit::LinearModel::PegasosSVC.new(penalty: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
   end
