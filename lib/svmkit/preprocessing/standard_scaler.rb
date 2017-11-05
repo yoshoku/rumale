@@ -23,9 +23,8 @@ module SVMKit
       attr_reader :std_vec
 
       # Create a new normalizer for centering and scaling to unit variance.
-      #
-      # @overload new() -> StandardScaler
-      def initialize(_params = {})
+      def initialize()
+        self.params = {}
         @mean_vec = nil
         @std_vec = nil
       end

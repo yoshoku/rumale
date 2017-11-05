@@ -42,17 +42,20 @@ module SVMKit
 
       # Create a new classifier with Support Vector Machine by the Pegasos algorithm.
       #
-      # @overload new(reg_param: 1.0, max_iter: 100, batch_size: 50, random_seed: 1) -> PegasosSVC
-      #
-      # @param params [Hash] The parameters for SVC.
-      # @option params [Float]   :reg_param (1.0) The regularization parameter.
-      # @option params [Boolean] :fit_bias (false) The flag indicating whether to fit the bias term.
-      # @option params [Float]   :bias_scale (1.0) The scale of the bias term.
-      # @option params [Integer] :max_iter (100) The maximum number of iterations.
-      # @option params [Integer] :batch_size (50) The size of the mini batches.
-      # @option params [Integer] :random_seed (nil) The seed value using to initialize the random generator.
-      def initialize(params = {})
-        self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
+      # @param reg_param [Float] The regularization parameter.
+      # @param fit_bias [Boolean] The flag indicating whether to fit the bias term.
+      # @param bias_scale [Float] The scale of the bias term.
+      # @param max_iter [Integer] The maximum number of iterations.
+      # @param batch_size [Integer] The size of the mini batches.
+      # @param random_seed [Integer] The seed value using to initialize the random generator.
+      def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0, max_iter: 100, batch_size: 50, random_seed: nil)
+        self.params = {}
+        self.params[:reg_param] = reg_param
+        self.params[:fit_bias] = fit_bias
+        self.params[:bias_scale] = bias_scale
+        self.params[:max_iter] = max_iter
+        self.params[:batch_size] = batch_size
+        self.params[:random_seed] = random_seed
         self.params[:random_seed] ||= srand
         @weight_vec = nil
         @bias_term = 0.0

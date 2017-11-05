@@ -3,9 +3,9 @@ require 'spec_helper'
 RSpec.describe SVMKit::LinearModel::LogisticRegression do
   let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
-  let(:estimator) { described_class.new(penalty: 1.0, max_iter: 100, batch_size: 20, random_seed: 1) }
+  let(:estimator) { described_class.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1) }
   let(:estimator_bias) do
-    described_class.new(penalty: 1.0, fit_bias: true, max_iter: 100, batch_size: 20, random_seed: 1)
+    described_class.new(reg_param: 1.0, fit_bias: true, max_iter: 100, batch_size: 20, random_seed: 1)
   end
 
   it 'classifies two clusters.' do

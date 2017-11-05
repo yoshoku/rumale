@@ -18,9 +18,8 @@ module SVMKit
       attr_reader :norm_vec # :nodoc:
 
       # Create a new normalizer for normaliing to unit L2-norm.
-      #
-      # @overload new() -> L2Normalizer
-      def initialize(_params = {})
+      def initialize()
+        self.params = {}
         @norm_vec = nil
       end
 

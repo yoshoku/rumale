@@ -20,13 +20,6 @@ module SVMKit
       include Base::BaseEstimator
       include Base::Classifier
 
-      # @!visibility private
-      DEFAULT_PARAMS = {
-        reg_param: 1.0,
-        max_iter: 1000,
-        random_seed: nil
-      }.freeze
-
       # Return the weight vector for Kernel SVC.
       # @return [Numo::DFloat] (shape: [n_trainig_sample])
       attr_reader :weight_vec
@@ -37,14 +30,14 @@ module SVMKit
 
       # Create a new classifier with Kernel Support Vector Machine by the Pegasos algorithm.
       #
-      # @overload new(reg_param: 1.0, max_iter: 1000, random_seed: 1) -> KernelSVC
-      #
-      # @param params [Hash] The parameters for Kernel SVC.
-      # @option params [Float]   :reg_param (1.0) The regularization parameter.
-      # @option params [Integer] :max_iter (1000) The maximum number of iterations.
-      # @option params [Integer] :random_seed (nil) The seed value using to initialize the random generator.
-      def initialize(params = {})
-        self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
+      # @param reg_param [Float] The regularization parameter.
+      # @param max_iter [Integer] The maximum number of iterations.
+      # @param random_seed [Integer] The seed value using to initialize the random generator.
+      def initialize(reg_param: 1.0, max_iter: 1000, random_seed: nil)
+        self.params = {}
+        self.params[:reg_param] = reg_param
+        self.params[:max_iter] = max_iter
+        self.params[:random_seed] = random_seed
         self.params[:random_seed] ||= srand
         @weight_vec = nil
         @rng = Random.new(self.params[:random_seed])

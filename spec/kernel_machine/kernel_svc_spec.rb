@@ -4,7 +4,7 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
   let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples_xor.dat')) }
   let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels_xor.dat')) }
   let(:kernel_matrix) { SVMKit::PairwiseMetric.rbf_kernel(samples, nil, 1.0) }
-  let(:estimator) { described_class.new(penalty: 1.0, max_iter: 1000, random_seed: 1) }
+  let(:estimator) { described_class.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
 
   it 'classifies xor data.' do
     n_samples, = samples.shape[0]

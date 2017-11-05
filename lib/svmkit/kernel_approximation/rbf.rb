@@ -17,13 +17,6 @@ module SVMKit
       include Base::BaseEstimator
       include Base::Transformer
 
-      # @!visibility private
-      DEFAULT_PARAMS = {
-        gamma: 1.0,
-        n_components: 128,
-        random_seed: nil
-      }.freeze
-
       # Return the random matrix for transformation.
       # @return [Numo::DFloat] (shape: [n_features, n_components])
       attr_reader :random_mat
@@ -38,14 +31,14 @@ module SVMKit
 
       # Create a new transformer for mapping to RBF kernel feature space.
       #
-      # @overload new(gamma: 1.0, n_components: 128, random_seed: 1) -> RBF
-      #
-      # @param params [Hash] The parameters for RBF kernel approximation.
-      # @option params [Float]   :gamma (1.0) The parameter of RBF kernel: exp(-gamma * x^2).
-      # @option params [Integer] :n_components (128) The number of dimensions of the RBF kernel feature space.
-      # @option params [Integer] :random_seed (nil) The seed value using to initialize the random generator.
-      def initialize(params = {})
-        self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
+      # @param gamma [Float] The parameter of RBF kernel: exp(-gamma * x^2).
+      # @param n_components [Integer] The number of dimensions of the RBF kernel feature space.
+      # @param random_seed [Integer] The seed value using to initialize the random generator.
+      def initialize(gamma: 1.0, n_components: 128, random_seed: nil)
+        self.params = {}
+        self.params[:gamma] = gamma
+        self.params[:n_components] = n_components
+        self.params[:random_seed] = random_seed
         self.params[:random_seed] ||= srand
         @rng = Random.new(self.params[:random_seed])
         @random_mat = nil

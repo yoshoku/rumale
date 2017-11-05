@@ -16,11 +16,6 @@ module SVMKit
       include Base::BaseEstimator
       include Base::Classifier
 
-      # @!visibility private
-      DEFAULT_PARAMS = {
-        estimator: nil
-      }.freeze
-
       # Return the set of estimators.
       # @return [Array<Classifier>]
       attr_reader :estimators
@@ -31,12 +26,10 @@ module SVMKit
 
       # Create a new multi-label classifier with the one-vs-rest startegy.
       #
-      # @overload new(estimator: base_estimator) -> OneVsRestClassifier
-      #
-      # @param params [Hash] The parameters for OneVsRestClassifier.
-      # @option params [Classifier] :estimator (nil) The (binary) classifier for construction a multi-label classifier.
-      def initialize(params = {})
-        self.params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
+      # @param estimator [Classifier] The (binary) classifier for construction a multi-label classifier.
+      def initialize(estimator: nil)
+        self.params = {}
+        self.params[:estimator] = estimator
         @estimators = nil
         @classes = nil
       end

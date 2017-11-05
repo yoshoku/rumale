@@ -14,11 +14,6 @@ module SVMKit
       include Base::BaseEstimator
       include Base::Transformer
 
-      # @!visibility private
-      DEFAULT_PARAMS = {
-        feature_range: [0.0, 1.0]
-      }.freeze
-
       # Return the vector consists of the minimum value for each feature.
       # @return [Numo::DFloat] (shape: [n_features])
       attr_reader :min_vec
@@ -29,12 +24,10 @@ module SVMKit
 
       # Creates a new normalizer for scaling each feature to a given range.
       #
-      # @overload new(feature_range: [0.0, 1.0]) -> MinMaxScaler
-      #
-      # @param params [Hash] The parameters for MinMaxScaler.
-      # @option params [Array<Float>] :feature_range ([0.0, 1.0]) The desired range of samples.
-      def initialize(params = {})
-        @params = DEFAULT_PARAMS.merge(Hash[params.map { |k, v| [k.to_sym, v] }])
+      # @param feature_range [Array<Float>] The desired range of samples.
+      def initialize(feature_range: [0.0, 1.0])
+        self.params = {}
+        self.params[:feature_range] = feature_range
         @min_vec = nil
         @max_vec = nil
       end
