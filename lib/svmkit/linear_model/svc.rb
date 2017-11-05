@@ -4,17 +4,17 @@ require 'svmkit/base/classifier'
 module SVMKit
   # This module consists of the classes that implement generalized linear models.
   module LinearModel
-    # PegasosSVC is a class that implements Support Vector Classifier with the Pegasos algorithm.
+    # SVC is a class that implements Support Vector Classifier with the Pegasos algorithm.
     #
     # @example
     #   estimator =
-    #     SVMKit::LinearModel::PegasosSVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
+    #     SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
     # 1. S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
-    class PegasosSVC
+    class SVC
       include Base::BaseEstimator
       include Base::Classifier
 
@@ -66,7 +66,7 @@ module SVMKit
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
-      # @return [PegasosSVC] The learned classifier itself.
+      # @return [SVC] The learned classifier itself.
       def fit(x, y)
         # Generate binary labels
         negative_label = y.to_a.uniq.sort.shift
@@ -140,7 +140,7 @@ module SVMKit
       end
 
       # Dump marshal data.
-      # @return [Hash] The marshal data about PegasosSVC.
+      # @return [Hash] The marshal data about SVC.
       def marshal_dump
         { params: params, weight_vec: @weight_vec, bias_term: @bias_term, rng: @rng }
       end

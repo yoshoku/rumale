@@ -4,7 +4,7 @@ RSpec.describe SVMKit::Multiclass::OneVsRestClassifier do
   let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:base_estimator) do
-    SVMKit::LinearModel::PegasosSVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
+    SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
   end
   let(:estimator) { described_class.new(estimator: base_estimator) }
 
