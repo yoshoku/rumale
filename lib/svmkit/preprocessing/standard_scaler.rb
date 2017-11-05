@@ -38,8 +38,8 @@ module SVMKit
       #   The samples to calculate the mean values and standard deviations.
       # @return [StandardScaler]
       def fit(x, _y = nil)
-        @mean_vec = x.mean(axis = 0)
-        @std_vec = x.stddev(axis = 0)
+        @mean_vec = x.mean(0)
+        @std_vec = x.stddev(0)
         self
       end
 
@@ -60,7 +60,7 @@ module SVMKit
       # @return [Numo::DFloat] The scaled samples.
       def transform(x)
         n_samples, = x.shape
-        (x - @mean_vec.tile(n_samples, axis = 1)) / @std_vec.tile(n_samples, axis = 1)
+        (x - @mean_vec.tile(n_samples, 1)) / @std_vec.tile(n_samples, 1)
       end
 
       # Dump marshal data.

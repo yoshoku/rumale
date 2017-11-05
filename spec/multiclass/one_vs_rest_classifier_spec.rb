@@ -10,7 +10,7 @@ RSpec.describe SVMKit::Multiclass::OneVsRestClassifier do
 
   it 'classifies three clusters.' do
     n_classes = labels.to_a.uniq.size
-    n_samples, n_features = samples.shape
+    n_samples, = samples.shape
     estimator.fit(samples, labels)
 
     expect(estimator.estimators.size).to eq(n_classes)

@@ -46,8 +46,8 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
       # @return [MinMaxScaler]
       def fit(x, _y = nil)
-        @min_vec = x.min(axis: 0)
-        @max_vec = x.max(axis: 0)
+        @min_vec = x.min(0)
+        @max_vec = x.max(0)
         self
       end
 
@@ -68,7 +68,7 @@ module SVMKit
       def transform(x)
         n_samples, = x.shape
         dif_vec = @max_vec - @min_vec
-        nx = (x - @min_vec.tile(n_samples, axis = 1)) / dif_vec.tile(n_samples, axis = 1)
+        nx = (x - @min_vec.tile(n_samples, 1)) / dif_vec.tile(n_samples, 1)
         nx * (@params[:feature_range][1] - @params[:feature_range][0]) + @params[:feature_range][0]
       end
 

@@ -61,7 +61,6 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
-        n_samples, = x.shape
         n_classes = @classes.size
         Numo::DFloat.asarray(Array.new(n_classes) { |m| @estimators[m].decision_function(x).to_a }).transpose
       end
@@ -73,7 +72,7 @@ module SVMKit
       def predict(x)
         n_samples, = x.shape
         decision_values = decision_function(x)
-        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n,true].max_index] })
+        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
 
       # Claculate the mean accuracy of the given testing data.

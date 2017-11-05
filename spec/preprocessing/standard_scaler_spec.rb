@@ -8,8 +8,8 @@ RSpec.describe SVMKit::Preprocessing::StandardScaler do
   it 'performs standardization of samples.' do
     normalizer = described_class.new
     normalized = normalizer.fit_transform(samples)
-    mean_err = (normalized.mean(axis = 0) - Numo::DFloat.zeros(n_features)).abs.sum
-    std_err = (normalized.stddev(axis = 0) - Numo::DFloat.ones(n_features)).abs.sum
+    mean_err = (normalized.mean(0) - Numo::DFloat.zeros(n_features)).abs.sum
+    std_err = (normalized.stddev(0) - Numo::DFloat.ones(n_features)).abs.sum
     expect(mean_err).to be < 1.0e-8
     expect(std_err).to be < 1.0e-8
     expect(normalizer.mean_vec.class).to eq(Numo::DFloat)

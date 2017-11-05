@@ -31,7 +31,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
       # @return [L2Normalizer]
       def fit(x, _y = nil)
-        @norm_vec = Numo::NMath.sqrt((x**2).sum(axis = 1))
+        @norm_vec = Numo::NMath.sqrt((x**2).sum(1))
         self
       end
 
@@ -43,7 +43,7 @@ module SVMKit
       # @return [Numo::DFloat] The normalized samples.
       def fit_transform(x, _y = nil)
         fit(x)
-        x / @norm_vec.tile(x.shape[1], axis = 1).transpose
+        x / @norm_vec.tile(x.shape[1], 1).transpose
       end
     end
   end
