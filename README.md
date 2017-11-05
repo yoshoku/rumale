@@ -30,9 +30,8 @@ Training phase:
 
 ```ruby
 require 'svmkit'
-require 'libsvmloader'
 
-samples, labels = LibSVMLoader.load_libsvm_file('pendigits', stype: :dense)
+samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
 
 normalizer = SVMKit::Preprocessing::MinMaxScaler.new
 normalized = normalizer.fit_transform(samples)
@@ -41,7 +40,7 @@ transformer = SVMKit::KernelApproximation::RBF.new(gamma: 2.0, n_components: 102
 transformed = transformer.fit_transform(normalized)
 
 base_classifier =
-  SVMKit::LinearModel::PegasosSVC.new(reg_param: 1.0, max_iter: 50, batch_size: 20, random_seed: 1)
+  SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 1000, batch_size: 20, random_seed: 1)
 classifier = SVMKit::Multiclass::OneVsRestClassifier.new(estimator: base_classifier)
 classifier.fit(transformed, labels)
 
@@ -54,9 +53,8 @@ Testing phase:
 
 ```ruby
 require 'svmkit'
-require 'libsvmloader'
 
-samples, labels = LibSVMLoader.load_libsvm_file('pendigits.t', stype: :dense)
+samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits.t')
 
 normalizer = Marshal.load(File.binread('trained_normalizer.dat'))
 transformer = Marshal.load(File.binread('trained_transformer.dat'))

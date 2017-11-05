@@ -1,3 +1,7 @@
+# 0.2.0
+- Migrated the linear algebra library to Numo::NArray.
+- Added module for loading and saving libsvm format file.
+
 # 0.1.3
 - Added class for Kernel Support Vector Machine with Pegasos algorithm.
 - Added module for calculating pairwise kernel fuctions and euclidean distances.
