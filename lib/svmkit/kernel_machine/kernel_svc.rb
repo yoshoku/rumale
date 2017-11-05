@@ -34,13 +34,13 @@ module SVMKit
       # @param max_iter [Integer] The maximum number of iterations.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, max_iter: 1000, random_seed: nil)
-        self.params = {}
-        self.params[:reg_param] = reg_param
-        self.params[:max_iter] = max_iter
-        self.params[:random_seed] = random_seed
-        self.params[:random_seed] ||= srand
+        @params = {}
+        @params[:reg_param] = reg_param
+        @params[:max_iter] = max_iter
+        @params[:random_seed] = random_seed
+        @params[:random_seed] ||= srand
         @weight_vec = nil
-        @rng = Random.new(self.params[:random_seed])
+        @rng = Random.new(@params[:random_seed])
       end
 
       # Fit the model with given training data.
@@ -58,13 +58,13 @@ module SVMKit
         rand_ids = []
         weight_vec = Numo::DFloat.zeros(n_training_samples)
         # Start optimization.
-        params[:max_iter].times do |t|
+        @params[:max_iter].times do |t|
           # random sampling
           rand_ids = [*0...n_training_samples].shuffle(random: @rng) if rand_ids.empty?
           target_id = rand_ids.shift
           # update the weight vector
           func = (weight_vec * bin_y[target_id]).dot(x[target_id, true].transpose).to_f
-          func *= bin_y[target_id] / (params[:reg_param] * (t + 1))
+          func *= bin_y[target_id] / (@params[:reg_param] * (t + 1))
           weight_vec[target_id] += 1.0 if func < 1.0
         end
         # Store the learned model.
@@ -105,13 +105,13 @@ module SVMKit
       # Dump marshal data.
       # @return [Hash] The marshal data about KernelSVC.
       def marshal_dump
-        { params: params, weight_vec: @weight_vec, rng: @rng }
+        { params: @params, weight_vec: @weight_vec, rng: @rng }
       end
 
       # Load marshal data.
       # @return [nil]
       def marshal_load(obj)
-        self.params = obj[:params]
+        @params = obj[:params]
         @weight_vec = obj[:weight_vec]
         @rng = obj[:rng]
         nil

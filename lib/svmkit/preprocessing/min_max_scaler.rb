@@ -26,8 +26,8 @@ module SVMKit
       #
       # @param feature_range [Array<Float>] The desired range of samples.
       def initialize(feature_range: [0.0, 1.0])
-        self.params = {}
-        self.params[:feature_range] = feature_range
+        @params = {}
+        @params[:feature_range] = feature_range
         @min_vec = nil
         @max_vec = nil
       end

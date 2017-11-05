@@ -4,6 +4,9 @@
 Documentation:
   Enabled: false
 
+Metrics/AbcSize:
+  Max: 30
+
 Metrics/LineLength:
   Max: 120
 
@@ -12,6 +15,16 @@ Metrics/ModuleLength:
 
 Metrics/ClassLength:
   Max: 200
+
+Metrics/MethodLength:
+  Max: 40
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+ParameterLists:
+  Max: 10
 
 Security/MarshalLoad:
   Enabled: false

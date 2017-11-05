@@ -28,8 +28,8 @@ module SVMKit
       #
       # @param estimator [Classifier] The (binary) classifier for construction a multi-label classifier.
       def initialize(estimator: nil)
-        self.params = {}
-        self.params[:estimator] = estimator
+        @params = {}
+        @params[:estimator] = estimator
         @estimators = nil
         @classes = nil
       end
@@ -44,7 +44,7 @@ module SVMKit
         @classes = Numo::Int32.asarray(y_arr.uniq.sort)
         @estimators = @classes.to_a.map do |label|
           bin_y = Numo::Int32.asarray(y_arr.map { |l| l == label ? 1 : -1 })
-          params[:estimator].dup.fit(x, bin_y)
+          @params[:estimator].dup.fit(x, bin_y)
         end
         self
       end
@@ -82,7 +82,7 @@ module SVMKit
       # Dump marshal data.
       # @return [Hash] The marshal data about OneVsRestClassifier.
       def marshal_dump
-        { params: params,
+        { params: @params,
           classes: @classes,
           estimators: @estimators.map { |e| Marshal.dump(e) } }
       end
@@ -90,7 +90,7 @@ module SVMKit
       # Load marshal data.
       # @return [nil]
       def marshal_load(obj)
-        self.params = obj[:params]
+        @params = obj[:params]
         @classes = obj[:classes]
         @estimators = obj[:estimators].map { |e| Marshal.load(e) }
         nil

@@ -35,12 +35,12 @@ module SVMKit
       # @param n_components [Integer] The number of dimensions of the RBF kernel feature space.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(gamma: 1.0, n_components: 128, random_seed: nil)
-        self.params = {}
-        self.params[:gamma] = gamma
-        self.params[:n_components] = n_components
-        self.params[:random_seed] = random_seed
-        self.params[:random_seed] ||= srand
-        @rng = Random.new(self.params[:random_seed])
+        @params = {}
+        @params[:gamma] = gamma
+        @params[:n_components] = n_components
+        @params[:random_seed] = random_seed
+        @params[:random_seed] ||= srand
+        @rng = Random.new(@params[:random_seed])
         @random_mat = nil
         @random_vec = nil
       end
@@ -54,10 +54,10 @@ module SVMKit
       # @return [RBF] The learned transformer itself.
       def fit(x, _y = nil)
         n_features = x.shape[1]
-        params[:n_components] = 2 * n_features if params[:n_components] <= 0
-        @random_mat = rand_normal([n_features, params[:n_components]]) * (2.0 * params[:gamma])**0.5
-        n_half_components = params[:n_components] / 2
-        @random_vec = Numo::DFloat.zeros(params[:n_components] - n_half_components).concatenate(
+        @params[:n_components] = 2 * n_features if @params[:n_components] <= 0
+        @random_mat = rand_normal([n_features, @params[:n_components]]) * (2.0 * @params[:gamma])**0.5
+        n_half_components = @params[:n_components] / 2
+        @random_vec = Numo::DFloat.zeros(@params[:n_components] - n_half_components).concatenate(
           Numo::DFloat.ones(n_half_components) * (0.5 * Math::PI)
         )
         self
@@ -82,13 +82,13 @@ module SVMKit
       def transform(x)
         n_samples, = x.shape
         projection = x.dot(@random_mat) + @random_vec.tile(n_samples, 1)
-        Numo::NMath.sin(projection) * ((2.0 / params[:n_components])**0.5)
+        Numo::NMath.sin(projection) * ((2.0 / @params[:n_components])**0.5)
       end
 
       # Dump marshal data.
       # @return [Hash] The marshal data about RBF.
       def marshal_dump
-        { params: params,
+        { params: @params,
           random_mat: @random_mat,
           random_vec: @random_vec,
           rng: @rng }
@@ -97,7 +97,7 @@ module SVMKit
       # Load marshal data.
       # @return [nil]
       def marshal_load(obj)
-        self.params = obj[:params]
+        @params = obj[:params]
         @random_mat = obj[:random_mat]
         @random_vec = obj[:random_vec]
         @rng = obj[:rng]
