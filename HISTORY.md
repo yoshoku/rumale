@@ -1,3 +1,6 @@
+# 0.2.1
+- Added class for K-nearest neighbors classifier.
+
 # 0.2.0
 - Migrated the linear algebra library to Numo::NArray.
 - Added module for loading and saving libsvm format file.
