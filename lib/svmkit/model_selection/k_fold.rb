@@ -43,13 +43,11 @@ module SVMKit
       #   The dataset to be used to generate data indices for K-fold cross validation.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
       def split(x)
-        # Initialize some variables.
+        # Initialize and check some variables.
         n_samples, = x.shape
         unless @n_splits.between?(2, n_samples)
-          warn "[Warning] #{self.class}::#{__method__}; " \
-               'The value of n_splits must be not less than 2 and not more than the number of samples.' \
-               'The method has set the value of n_splits to the number of samples.'
-          @n_splits = n_samples
+          raise ArgumentError,
+                'The value of n_splits must be not less than 2 and not more than the number of samples.'
         end
         # Splits dataset ids to each fold.
         dataset_ids = [*0...n_samples]
