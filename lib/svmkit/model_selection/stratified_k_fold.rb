@@ -16,7 +16,7 @@ module SVMKit
     class StratifiedKFold
       include Base::Splitter
 
-      # Return the proportion of the test set to the dataset.
+      # Return the flag indicating whether to shuffle the dataset.
       # @return [Boolean]
       attr_reader :shuffle
 
