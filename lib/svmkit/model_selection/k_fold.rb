@@ -7,7 +7,7 @@ module SVMKit
     #
     # @example
     #   kf = SVMKit::ModelSelection::KFold.new(n_splits: 3, shuffle: true, random_seed: 1)
-    #   kf.split(samples).each do |train_ids, test_ids|
+    #   kf.split(samples, labels).each do |train_ids, test_ids|
     #     train_samples = samples[train_ids, true]
     #     test_samples = samples[test_ids, true]
     #     ...
@@ -41,8 +41,11 @@ module SVMKit
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features])
       #   The dataset to be used to generate data indices for K-fold cross validation.
+      # @param y [Numo::Int32] (shape: [n_samples])
+      #   The labels to be used to generate data indices for stratified K-fold cross validation.
+      #   This argument exists to unify the interface between the K-fold methods, it is not used in the method.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
-      def split(x)
+      def split(x, y) # rubocop:disable Lint/UnusedMethodArgument
         # Initialize and check some variables.
         n_samples, = x.shape
         unless @n_splits.between?(2, n_samples)
