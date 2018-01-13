@@ -1,3 +1,6 @@
+# 0.2.2
+- Added classes for K-fold cross validation.
+
 # 0.2.1
 - Added class for K-nearest neighbors classifier.
 
