@@ -66,6 +66,27 @@ transformed = transformer.transform(normalized)
 puts(sprintf("Accuracy: %.1f%%", 100.0 * classifier.score(transformed, labels)))
 ```
 
+5-fold cross-validation:
+
+```ruby
+require 'svmkit'
+
+samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
+
+kernel_svc =
+  SVMKit::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1)
+ovr_kernel_svc = SVMKit::Multiclass::OneVsRestClassifier.new(estimator: kernel_svc)
+
+kf = SVMKit::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1)
+cv = SVMKit::ModelSelection::CrossValidation.new(estimator: ovr_kernel_svc, splitter: kf)
+
+kernel_mat = SVMKit::PairwiseMetric::rbf_kernel(samples, nil, 0.005)
+report = cv.perform(kernel_mat, labels)
+
+mean_accuracy = report[:test_score].inject(:+) / kf.n_splits
+puts(sprintf("Mean Accuracy: %.1f%%", 100.0 * mean_accuracy))
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
