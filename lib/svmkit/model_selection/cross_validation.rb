@@ -73,7 +73,9 @@ module SVMKit
       private
 
       def kernel_machine?
-        @estimator.class.to_s.include?('KernelMachine')
+        class_name = @estimator.class.to_s
+        class_name = @estimator.params[:estimator].class.to_s if class_name.include?('Multiclass')
+        class_name.include?('KernelMachine')
       end
     end
   end

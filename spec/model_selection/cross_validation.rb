@@ -45,4 +45,20 @@ RSpec.describe SVMKit::ModelSelection::CrossValidation do
     expect(mean_test_score).to be_within(0.1).of(0.9)
     expect(mean_train_score).to eq(1.0)
   end
+
+  describe 'private method' do
+    let(:ovr_kernel_svc) { SVMKit::Multiclass::OneVsRestClassifier.new(estimator: kernel_svc) }
+    let(:ovr_linear_svc) { SVMKit::Multiclass::OneVsRestClassifier.new(estimator: linear_svc) }
+    let(:kernel_svc_cv) { described_class.new(estimator: kernel_svc, splitter: kfold) }
+    let(:linear_svc_cv) { described_class.new(estimator: linear_svc, splitter: kfold) }
+    let(:ovr_kernel_svc_cv) { described_class.new(estimator: ovr_kernel_svc, splitter: kfold) }
+    let(:ovr_linear_svc_cv) { described_class.new(estimator: ovr_linear_svc, splitter: kfold) }
+
+    it 'detects type of classifier.' do
+      expect(kernel_svc_cv.send(:kernel_machine?)).to be_truthy
+      expect(linear_svc_cv.send(:kernel_machine?)).to be_falsey
+      expect(ovr_kernel_svc_cv.send(:kernel_machine?)).to be_truthy
+      expect(ovr_linear_svc_cv.send(:kernel_machine?)).to be_falsey
+    end
+  end
 end
