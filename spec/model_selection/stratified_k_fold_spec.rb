@@ -9,7 +9,7 @@ RSpec.describe SVMKit::ModelSelection::StratifiedKFold do
   let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
   let(:labels) { Numo::Int32[0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2] }
 
-  it 'splits the dataset' do
+  it 'splits the dataset.' do
     splitter = described_class.new(n_splits: n_splits)
     validation_ids = splitter.split(samples, labels)
     expect(splitter.n_splits).to eq(n_splits)
@@ -26,7 +26,7 @@ RSpec.describe SVMKit::ModelSelection::StratifiedKFold do
     expect(validation_ids[2][1]).to match_array([4, 5, 8, 11])
   end
 
-  it 'shuffles and splits the dataset' do
+  it 'shuffles and splits the dataset.' do
     splitter = described_class.new(n_splits: n_splits, shuffle: true, random_seed: 1)
     validation_ids = splitter.split(samples, labels)
     expect(splitter.n_splits).to eq(n_splits)
@@ -39,7 +39,7 @@ RSpec.describe SVMKit::ModelSelection::StratifiedKFold do
     expect(validation_ids[0][1]).not_to match_array([0, 1, 6, 9])
   end
 
-  it 'raises ArgumentError given a wrong split number' do
+  it 'raises ArgumentError given a wrong split number.' do
     # exceeding the number of samples for each class
     splitter = described_class.new(n_splits: 4)
     expect{ splitter.split(samples, labels) }.to raise_error(ArgumentError)
