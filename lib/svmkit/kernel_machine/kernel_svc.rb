@@ -68,7 +68,7 @@ module SVMKit
           weight_vec[target_id] += 1.0 if func < 1.0
         end
         # Store the learned model.
-        @weight_vec = weight_vec * Numo::DFloat.asarray(bin_y)
+        @weight_vec = weight_vec * Numo::DFloat[*bin_y]
         self
       end
 
@@ -78,7 +78,7 @@ module SVMKit
       #     The kernel matrix between testing samples and training samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_testing_samples]) Confidence score per sample.
       def decision_function(x)
-        @weight_vec.dot(x.transpose)
+        x.dot(@weight_vec)
       end
 
       # Predict class labels for samples.

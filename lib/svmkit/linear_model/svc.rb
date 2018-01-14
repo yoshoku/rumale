@@ -70,7 +70,7 @@ module SVMKit
         end
         # Initialize some variables.
         n_samples, n_features = samples.shape
-        rand_ids = [*0..n_samples - 1].shuffle(random: @rng)
+        rand_ids = [*0...n_samples].shuffle(random: @rng)
         weight_vec = Numo::DFloat.zeros(n_features)
         # Start optimization.
         @params[:max_iter].times do |t|
