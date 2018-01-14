@@ -1,5 +1,10 @@
+# 0.2.3
+- Added class for cross validation.
+- Added specs for base modules.
+- Fixed validation of the number of splits when a negative label is given.
+
 # 0.2.2
-- Added classes for K-fold cross validation.
+- Added data splitter classes for K-fold cross validation.
 
 # 0.2.1
 - Added class for K-nearest neighbors classifier.
