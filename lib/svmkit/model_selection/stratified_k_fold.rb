@@ -47,7 +47,7 @@ module SVMKit
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
       def split(x, y) # rubocop:disable Lint/UnusedMethodArgument
         # Check the number of samples in each class.
-        unless y.bincount.to_a.all? { |n_samples| @n_splits.between?(2, n_samples) }
+        unless valid_n_splits?(y)
           raise ArgumentError,
                 'The value of n_splits must be not less than 2 and not more than the number of samples in each class.'
         end
@@ -58,6 +58,10 @@ module SVMKit
       end
 
       private
+
+      def valid_n_splits?(y)
+        y.to_a.uniq.map { |label| y.eq(label).where.size }.all? { |n_samples| @n_splits.between?(2, n_samples) }
+      end
 
       def fold_sets(y, label)
         sample_ids = y.eq(label).where.to_a
