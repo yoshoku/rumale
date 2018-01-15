@@ -9,7 +9,7 @@ module SVMKit
 
       # An abstract method for splitting dataset.
       def split
-        raise NoImplementedError, "#{__method__} has to be implemented in #{self.class}."
+        raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
       end
     end
   end
