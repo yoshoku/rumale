@@ -127,9 +127,13 @@ module SVMKit
       # Predict probability for samples.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples]) Predicted probability per sample.
+      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        decision_function(x)
+        n_samples, = x.shape
+        proba = Numo::DFloat.zeros(n_samples, 2)
+        proba[true, 1] = decision_function(x)
+        proba[true, 0] = 1.0 - proba[true, 1]
+        proba
       end
 
       # Claculate the mean accuracy of the given testing data.

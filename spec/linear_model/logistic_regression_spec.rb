@@ -42,6 +42,18 @@ RSpec.describe SVMKit::LinearModel::LogisticRegression do
     expect(score).to eq(1.0)
   end
 
+  it 'estimates class probabilities with two clusters dataset.' do
+    n_samples, _n_features = samples.shape
+    estimator.fit(samples, labels)
+    probs = estimator.predict_proba(samples)
+    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.shape[0]).to eq(n_samples)
+    expect(probs.shape[1]).to eq(2)
+    expect(probs.sum(1).eq(1).count).to eq(n_samples)
+    predicted = Numo::Int32.cast(probs[true, 0] < probs[true, 1]) * 2 - 1
+    expect(predicted).to eq(labels)
+  end
+
   it 'dumps and restores itself using Marshal module.' do
     estimator.fit(samples, labels)
     copied = Marshal.load(Marshal.dump(estimator))
