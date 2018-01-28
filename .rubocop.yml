@@ -9,6 +9,7 @@ Metrics/AbcSize:
 
 Metrics/LineLength:
   Max: 120
+  IgnoredPatterns: ['(\A|\s)#']
 
 Metrics/ModuleLength:
   Max: 200
