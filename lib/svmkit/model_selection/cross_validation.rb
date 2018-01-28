@@ -49,7 +49,7 @@ module SVMKit
       #     the return_train_score is false.
       def perform(x, y)
         # Initialize the report of cross validation.
-        report = {test_score: [], train_score: nil, fit_time: []}
+        report = { test_score: [], train_score: nil, fit_time: [] }
         report[:train_score] = [] if @return_train_score
         # Evaluate the estimator on each split.
         @splitter.split(x, y).each do |train_ids, test_ids|
