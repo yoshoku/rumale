@@ -11,12 +11,15 @@ Gem::Specification.new do |spec|
   spec.email         = ['yoshoku@outlook.com']
 
   spec.summary       = <<MSG
-SVMKit is an experimental library of machine learning in Ruby.
+SVMKit is a machine learninig library in Ruby.
+SVMKit implements machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 MSG
   spec.description   = <<MSG
-SVMKit is a library for machine learninig in Ruby.
-SVMKit implements machine learning algorithms with an interface similar to Scikit-Learn in Python.
-However, since SVMKit is an experimental library, there are few machine learning algorithms implemented.
+SVMKit is a machine learninig library in Ruby.
+SVMKit implements machine learning algorithms with interfaces similar to Scikit-Learn in Python.
+Since the development of SVMKit has just getting started,
+the methods implemented in SVMKit are only Linear / Kernel SVC,
+Logistic Regression, Factorization Machine, K-nearest neighbor method, and cross-validation.
 MSG
   spec.homepage      = 'https://github.com/yoshoku/svmkit'
   spec.license       = 'BSD-2-Clause'
