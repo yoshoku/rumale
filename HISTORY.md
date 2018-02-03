@@ -1,3 +1,8 @@
+# 0.2.4
+- Added class for Factorization Machine classifier.
+- Added classes for evaluation measures.
+- Fixed the method for prediction of class probability in Logistic Regression.
+
 # 0.2.3
 - Added class for cross validation.
 - Added specs for base modules.
