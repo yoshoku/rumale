@@ -5,7 +5,6 @@ module SVMKit
   module EvaluationMeasure
     # @!visibility private
     module PrecisionRecall
-
       module_function
 
       # @!visibility private
@@ -40,25 +39,27 @@ module SVMKit
 
       # @!visibility private
       def micro_average_precision(y_true, y_pred)
-        res = y_true.sort.to_a.uniq.map do |label|                                                                                         #   target_positions = y_pred.eq(label)
+        evaluated_values = y_true.sort.to_a.uniq.map do |label|
           target_positions = y_pred.eq(label)
           next [0.0, 0.0] if y_pred[target_positions].empty?
-          n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f                         #   n_false_positives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
+          n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
           n_false_positives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           [n_true_positives, n_true_positives + n_false_positives]
-        end.transpose.map { |v| v.inject(:+) }
+        end
+        res = evaluated_values.transpose.map { |v| v.inject(:+) }
         res.first / res.last
       end
 
       # @!visibility private
       def micro_average_recall(y_true, y_pred)
-        res = y_true.sort.to_a.uniq.map do |label|
+        evaluated_values = y_true.sort.to_a.uniq.map do |label|
           target_positions = y_true.eq(label)
           next 0.0 if y_pred[target_positions].empty?
           n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
           n_false_negatives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           [n_true_positives, n_true_positives + n_false_negatives]
-        end.transpose.map { |v| v.inject(:+) }
+        end
+        res = evaluated_values.transpose.map { |v| v.inject(:+) }
         res.first / res.last
       end
 

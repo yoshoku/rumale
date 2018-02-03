@@ -8,7 +8,6 @@ RSpec.describe SVMKit::EvaluationMeasure::Precision do
   let(:mult_ground_truth) { Numo::Int32[0, 1, 2, 0, 1, 2, 3, 3, 0, 0] }
   let(:mult_predicted) { Numo::Int32[0, 2, 1, 2, 1, 0, 3, 3, 0, 0] }
 
-
   it 'calculates average precision for binary classification task.' do
     evaluator = described_class.new(average: 'binary')
     precision = evaluator.score(bin_ground_truth, bin_predicted)

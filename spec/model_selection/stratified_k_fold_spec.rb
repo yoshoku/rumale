@@ -5,7 +5,7 @@ RSpec.describe SVMKit::ModelSelection::StratifiedKFold do
   let(:n_samples) { 12 }
   let(:n_features) { 3 }
   let(:n_training_samples) { n_samples - n_samples / n_splits }
-  let(:n_testing_samples) { n_samples / n_splits}
+  let(:n_testing_samples) { n_samples / n_splits }
   let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
   let(:labels) { Numo::Int32[0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2] }
 
@@ -42,9 +42,9 @@ RSpec.describe SVMKit::ModelSelection::StratifiedKFold do
   it 'raises ArgumentError given a wrong split number.' do
     # exceeding the number of samples for each class
     splitter = described_class.new(n_splits: 4)
-    expect{ splitter.split(samples, labels) }.to raise_error(ArgumentError)
+    expect { splitter.split(samples, labels) }.to raise_error(ArgumentError)
     # less than 2
     splitter = described_class.new(n_splits: 1)
-    expect{ splitter.split(samples, labels) }.to raise_error(ArgumentError)
+    expect { splitter.split(samples, labels) }.to raise_error(ArgumentError)
   end
 end

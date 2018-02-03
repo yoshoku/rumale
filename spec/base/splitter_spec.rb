@@ -9,6 +9,6 @@ RSpec.describe SVMKit::Base::Splitter do
   end
 
   it 'raises NotImplementedError when the split method is not implemented.' do
-    expect{ dummy_class.split }.to raise_error(NotImplementedError)
+    expect { dummy_class.split }.to raise_error(NotImplementedError)
   end
 end

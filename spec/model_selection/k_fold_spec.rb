@@ -5,7 +5,7 @@ RSpec.describe SVMKit::ModelSelection::KFold do
   let(:n_samples) { 9 }
   let(:n_features) { 3 }
   let(:n_training_samples) { n_samples - n_samples / n_splits }
-  let(:n_testing_samples) { n_samples / n_splits}
+  let(:n_testing_samples) { n_samples / n_splits }
   let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
   let(:labels) { nil }
 
@@ -42,9 +42,9 @@ RSpec.describe SVMKit::ModelSelection::KFold do
   it 'raises ArgumentError given a wrong split number.' do
     # exceeding the number of samples
     splitter = described_class.new(n_splits: n_samples + 10)
-    expect{ splitter.split(samples, labels) }.to raise_error(ArgumentError)
+    expect { splitter.split(samples, labels) }.to raise_error(ArgumentError)
     # less than 2
     splitter = described_class.new(n_splits: 1)
-    expect{ splitter.split(samples, labels) }.to raise_error(ArgumentError)
+    expect { splitter.split(samples, labels) }.to raise_error(ArgumentError)
   end
 end
