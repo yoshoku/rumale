@@ -21,6 +21,10 @@ module SVMKit
       # @return [Splitter]
       attr_reader :splitter
 
+      # Return the evaluator that calculates score.
+      # @return [Evaluator]
+      attr_reader :evaluator
+
       # Return the flag indicating whether to caculate the score of training dataset.
       # @return [Boolean]
       attr_reader :return_train_score
@@ -29,10 +33,12 @@ module SVMKit
       #
       # @param estimator [Classifier] The classifier of which performance is evaluated.
       # @param splitter [Splitter] The splitter that divides dataset to training and testing dataset.
+      # @param evaluator [Evaluator] The evaluator that calculates score of estimator results.
       # @param return_train_score [Boolean] The flag indicating whether to calculate the score of training dataset.
-      def initialize(estimator: nil, splitter: nil, return_train_score: false)
+      def initialize(estimator: nil, splitter: nil, evaluator: nil, return_train_score: false)
         @estimator = estimator
         @splitter = splitter
+        @evaluator = evaluator
         @return_train_score = return_train_score
       end
 
@@ -64,8 +70,13 @@ module SVMKit
           @estimator.fit(train_x, train_y)
           # Calculate scores and prepare the report.
           report[:fit_time].push(Time.now.to_i - start_time)
-          report[:test_score].push(@estimator.score(test_x, test_y))
-          report[:train_score].push(@estimator.score(train_x, train_y)) if @return_train_score
+          if @evaluator.nil?
+            report[:test_score].push(@estimator.score(test_x, test_y))
+            report[:train_score].push(@estimator.score(train_x, train_y)) if @return_train_score
+          else
+            report[:test_score].push(@evaluator.score(test_y, @estimator.predict(test_x)))
+            report[:train_score].push(@estimator.score(train_x, @estimator.predict(train_x))) if @return_train_score
+          end
         end
         report
       end
