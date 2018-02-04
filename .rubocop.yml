@@ -1,11 +1,12 @@
-#AllCops:
-#  TargetRubyVersion: 2.3
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 2.2
+  DisplayCopNames: true
+  DisplayStyleGuide: true
 
 Documentation:
   Enabled: false
-
-Metrics/AbcSize:
-  Max: 30
 
 Metrics/LineLength:
   Max: 120
