@@ -104,7 +104,7 @@ module SVMKit
         nil
       end
 
-      protected
+      private
 
       # Generate the uniform random matrix with the given shape.
       def rand_uniform(shape)
