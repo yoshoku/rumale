@@ -7,12 +7,11 @@ module SVMKit
     # FactorizationMachineClassifier is a class that
     # implements Fatorization Machine for binary classification
     # with (mini-batch) stochastic gradient descent optimization.
-    # Note that this implementation uses hinge loss for the loss function.
     #
     # @example
     #   estimator =
     #     SVMKit::PolynomialModel::FactorizationMachineClassifier.new(
-    #      n_factors: 10, reg_param_bias: 0.001, reg_param_weight: 0.001, reg_param_factor: 0.001,
+    #      n_factors: 10, loss: 'hinge', reg_param_bias: 0.001, reg_param_weight: 0.001, reg_param_factor: 0.001,
     #      max_iter: 5000, batch_size: 50, random_seed: 1)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
@@ -43,6 +42,7 @@ module SVMKit
       # Create a new classifier with Support Vector Machine by the Pegasos algorithm.
       #
       # @param n_factors [Integer] The maximum number of iterations.
+      # @param loss [String] The loss function ('hinge' or 'logistic').
       # @param reg_param_bias [Float] The regularization parameter for bias term.
       # @param reg_param_weight [Float] The regularization parameter for weight vector.
       # @param reg_param_factor [Float] The regularization parameter for factor matrix.
@@ -50,10 +50,11 @@ module SVMKit
       # @param max_iter [Integer] The maximum number of iterations.
       # @param batch_size [Integer] The size of the mini batches.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(n_factors: 2, reg_param_bias: 1.0, reg_param_weight: 1.0, reg_param_factor: 1.0,
+      def initialize(n_factors: 2, loss: 'hinge', reg_param_bias: 1.0, reg_param_weight: 1.0, reg_param_factor: 1.0,
                      init_std: 0.1, max_iter: 1000, batch_size: 10, random_seed: nil)
         @params = {}
         @params[:n_factors] = n_factors
+        @params[:loss] = loss
         @params[:reg_param_bias] = reg_param_bias
         @params[:reg_param_weight] = reg_param_weight
         @params[:reg_param_factor] = reg_param_factor
@@ -122,6 +123,19 @@ module SVMKit
         Numo::Int32.cast(decision_function(x).map { |v| v >= 0.0 ? 1 : -1 })
       end
 
+      # Predict probability for samples.
+      # Note that this method works normally only if the 'loss' parameter is set to 'logistic'.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      def predict_proba(x)
+        n_samples, = x.shape
+        proba = Numo::DFloat.zeros(n_samples, 2)
+        proba[true, 1] = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
+        proba[true, 0] = 1.0 - proba[true, 1]
+        proba
+      end
+
       # Claculate the mean accuracy of the given testing data.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
@@ -152,11 +166,21 @@ module SVMKit
 
       private
 
-      def loss_gradient(x, y)
+      def hinge_loss_gradient(x, y)
         evaluated = y * decision_function(x)
         gradient = Numo::DFloat.zeros(evaluated.size)
         gradient[evaluated < 1.0] = -y[evaluated < 1.0]
         gradient
+      end
+
+      def logistic_loss_gradient(x, y)
+        evaluated = y * decision_function(x)
+        sigmoid_func = 1.0 / (Numo::NMath.exp(-evaluated) + 1.0)
+        (sigmoid_func - 1.0) * y
+      end
+
+      def loss_gradient(x, y)
+        @params[:loss] == 'hinge' ? hinge_loss_gradient(x, y) : logistic_loss_gradient(x, y)
       end
 
       def learning_rate(reg_param, iter)
