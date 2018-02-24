@@ -112,8 +112,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
-        w = Numo::NMath.exp(((@weight_vec.dot(x.transpose) + @bias_term) * -1.0)) + 1.0
-        w.map { |v| 1.0 / v }
+        @weight_vec.dot(x.transpose) + @bias_term
       end
 
       # Predict class labels for samples.
@@ -121,7 +120,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        Numo::Int32.cast(decision_function(x).map { |v| v >= 0.5 ? 1 : -1 })
+        Numo::Int32.cast(sigmoid(decision_function(x)).map { |v| v >= 0.5 ? 1 : -1 })
       end
 
       # Predict probability for samples.
@@ -131,7 +130,7 @@ module SVMKit
       def predict_proba(x)
         n_samples, = x.shape
         proba = Numo::DFloat.zeros(n_samples, 2)
-        proba[true, 1] = decision_function(x)
+        proba[true, 1] = sigmoid(decision_function(x))
         proba[true, 0] = 1.0 - proba[true, 1]
         proba
       end
@@ -161,6 +160,12 @@ module SVMKit
         @bias_term = obj[:bias_term]
         @rng = obj[:rng]
         nil
+      end
+
+      private
+
+      def sigmoid(x)
+        1.0 / (Numo::NMath.exp(-x) + 1.0)
       end
     end
   end
