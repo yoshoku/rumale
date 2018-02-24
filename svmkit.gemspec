@@ -12,14 +12,14 @@ Gem::Specification.new do |spec|
 
   spec.summary       = <<MSG
 SVMKit is a machine learninig library in Ruby.
-SVMKit implements machine learning algorithms with interfaces similar to Scikit-Learn in Python.
+SVMKit provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 MSG
   spec.description   = <<MSG
 SVMKit is a machine learninig library in Ruby.
-SVMKit implements machine learning algorithms with interfaces similar to Scikit-Learn in Python.
-Since the development of SVMKit has just getting started,
-the methods implemented in SVMKit are only Linear / Kernel SVC,
-Logistic Regression, Factorization Machine, K-nearest neighbor method, and cross-validation.
+SVMKit provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
+SVMKit currently supports Linear / Kernel Support Vector Machine,
+Logistic Regression, Factorization Machine, Naive Bayes,
+K-nearest neighbor classifier, and cross-validation.
 MSG
   spec.homepage      = 'https://github.com/yoshoku/svmkit'
   spec.license       = 'BSD-2-Clause'
