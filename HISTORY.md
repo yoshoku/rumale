@@ -1,3 +1,8 @@
+# 0.2.5
+- Added classes for Naive Bayes classifier.
+- Fixed decision function method on Logistic Regression class.
+- Fixed method visibility on RBF kernel approximation class.
+
 # 0.2.4
 - Added class for Factorization Machine classifier.
 - Added classes for evaluation measures.
