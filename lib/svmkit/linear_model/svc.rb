@@ -118,17 +118,6 @@ module SVMKit
         Numo::Int32.cast(decision_function(x).map { |v| v >= 0 ? 1 : -1 })
       end
 
-      # Claculate the mean accuracy of the given testing data.
-      #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
-      # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
-      # @return [Float] Mean accuracy
-      def score(x, y)
-        p = predict(x)
-        n_hits = (y.to_a.map.with_index { |l, n| l == p[n] ? 1 : 0 }).inject(:+)
-        n_hits / y.size.to_f
-      end
-
       # Dump marshal data.
       # @return [Hash] The marshal data about SVC.
       def marshal_dump

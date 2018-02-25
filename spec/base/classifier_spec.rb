@@ -15,8 +15,4 @@ RSpec.describe SVMKit::Base::Classifier do
   it 'raises NotImplementedError when the predict method is not implemented.' do
     expect { dummy_class.predict }.to raise_error(NotImplementedError)
   end
-
-  it 'raises NotImplementedError when the score method is not implemented.' do
-    expect { dummy_class.score }.to raise_error(NotImplementedError)
-  end
 end

@@ -36,16 +36,6 @@ module SVMKit
       def predict_proba(x)
         Numo::NMath.exp(predict_log_proba(x)).abs
       end
-
-      # Claculate the mean accuracy of the given testing data.
-      #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
-      # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
-      # @return [Float] Mean accuracy
-      def score(x, y)
-        evaluator = SVMKit::EvaluationMeasure::Accuracy.new
-        evaluator.score(y, predict(x))
-      end
     end
 
     # GaussianNB is a class that implements Gaussian Naive Bayes classifier.

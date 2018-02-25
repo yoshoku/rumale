@@ -97,9 +97,7 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_testing_samples]) True labels for testing data.
       # @return [Float] Mean accuracy
       def score(x, y)
-        p = predict(x)
-        n_hits = (y.to_a.map.with_index { |l, n| l == p[n] ? 1 : 0 }).inject(:+)
-        n_hits / y.size.to_f
+        super
       end
 
       # Dump marshal data.
