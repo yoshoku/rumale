@@ -1,6 +1,7 @@
 # SVMKit
 
 [![Build Status](https://travis-ci.org/yoshoku/SVMKit.svg?branch=master)](https://travis-ci.org/yoshoku/SVMKit)
+[![Coverage Status](https://coveralls.io/repos/github/yoshoku/SVMKit/badge.svg?branch=master)](https://coveralls.io/github/yoshoku/SVMKit?branch=master)
 [![Gem Version](https://badge.fury.io/rb/svmkit.svg)](https://badge.fury.io/rb/svmkit)
 [![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/SVMKit/blob/master/LICENSE.txt)
 
