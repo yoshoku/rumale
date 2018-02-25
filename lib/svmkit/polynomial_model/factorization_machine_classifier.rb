@@ -2,7 +2,7 @@ require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
 
 module SVMKit
-  # This module consists of the classes that implemnt polynomial models.
+  # This module consists of the classes that implement polynomial models.
   module PolynomialModel
     # FactorizationMachineClassifier is a class that
     # implements Fatorization Machine for binary classification
