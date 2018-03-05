@@ -26,5 +26,6 @@ RSpec.describe SVMKit::NearestNeighbors::KNeighborsClassifier do
     expect(estimator.prototypes).to eq(copied.prototypes)
     expect(estimator.labels).to eq(copied.labels)
     expect(estimator.classes).to eq(copied.classes)
+    expect(copied.score(samples, labels)).to eq(1.0)
   end
 end

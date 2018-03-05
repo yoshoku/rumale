@@ -82,7 +82,7 @@ module SVMKit
       # Dump marshal data.
       # @return [Hash] The marshal data about KNeighborsClassifier.
       def marshal_dump
-        { params: params,
+        { params: @params,
           prototypes: @prototypes,
           labels: @labels,
           classes: @classes }
