@@ -27,8 +27,7 @@ RSpec.describe SVMKit::LinearModel::SVC do
     expect(predicted.shape[1]).to be_nil
     expect(predicted).to eq(labels)
 
-    score = estimator.score(samples, labels)
-    expect(score).to eq(1.0)
+    expect(estimator.score(samples, labels)).to eq(1.0)
   end
 
   it 'learns the model of two clusters dataset with bias term.' do
@@ -38,8 +37,7 @@ RSpec.describe SVMKit::LinearModel::SVC do
     expect(estimator_bias.weight_vec.shape[0]).to eq(n_features)
     expect(estimator_bias.weight_vec.shape[1]).to be_nil
     expect(estimator_bias.bias_term).to_not be_zero
-    score = estimator_bias.score(samples, labels)
-    expect(score).to eq(1.0)
+    expect(estimator_bias.score(samples, labels)).to eq(1.0)
   end
 
   it 'dumps and restores itself using Marshal module.' do
@@ -55,5 +53,6 @@ RSpec.describe SVMKit::LinearModel::SVC do
     expect(estimator.weight_vec).to eq(copied.weight_vec)
     expect(estimator.bias_term).to eq(copied.bias_term)
     expect(estimator.rng).to eq(copied.rng)
+    expect(copied.score(samples, labels)).to eq(1.0)
   end
 end

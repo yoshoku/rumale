@@ -40,5 +40,6 @@ RSpec.describe SVMKit::NaiveBayes::BernoulliNB do
     expect(estimator.classes).to eq(copied.classes)
     expect(estimator.class_priors).to eq(copied.class_priors)
     expect(estimator.feature_probs).to eq(copied.feature_probs)
+    expect(copied.score(samples, labels)).to eq(1.0)
   end
 end

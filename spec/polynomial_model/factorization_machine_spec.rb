@@ -31,8 +31,7 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
     expect(predicted.shape[1]).to be_nil
     expect(predicted).to eq(labels)
 
-    score = estimator.score(samples, labels)
-    expect(score).to eq(1.0)
+    expect(estimator.score(samples, labels)).to eq(1.0)
   end
 
   it 'estimates class probabilities with two clusters dataset.' do
@@ -63,5 +62,6 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
+    expect(copied.score(samples, labels)).to eq(1.0)
   end
 end

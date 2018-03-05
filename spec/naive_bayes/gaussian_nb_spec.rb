@@ -42,5 +42,6 @@ RSpec.describe SVMKit::NaiveBayes::GaussianNB do
     expect(estimator.class_priors).to eq(copied.class_priors)
     expect(estimator.means).to eq(copied.means)
     expect(estimator.variances).to eq(copied.variances)
+    expect(copied.score(samples, labels)).to eq(1.0)
   end
 end

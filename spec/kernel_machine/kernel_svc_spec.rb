@@ -24,8 +24,7 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
     expect(predicted.shape[1]).to be_nil
     expect(predicted).to eq(labels)
 
-    score = estimator.score(kernel_matrix, labels)
-    expect(score).to eq(1.0)
+    expect(estimator.score(kernel_matrix, labels)).to eq(1.0)
   end
 
   it 'dumps and restores itself using Marshal module.' do
@@ -37,5 +36,6 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.weight_vec).to eq(copied.weight_vec)
     expect(estimator.rng).to eq(copied.rng)
+    expect(copied.score(kernel_matrix, labels)).to eq(1.0)
   end
 end
