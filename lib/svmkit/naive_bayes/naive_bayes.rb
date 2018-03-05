@@ -99,7 +99,7 @@ module SVMKit
       #
       # @return [Hash] The marshal data about GaussianNB.
       def marshal_dump
-        { params: params,
+        { params: @params,
           classes: @classes,
           class_priors: @class_priors,
           means: @means,
@@ -183,7 +183,7 @@ module SVMKit
       #
       # @return [Hash] The marshal data about MultinomialNB.
       def marshal_dump
-        { params: params,
+        { params: @params,
           classes: @classes,
           class_priors: @class_priors,
           feature_probs: @feature_probs }
@@ -273,7 +273,7 @@ module SVMKit
       #
       # @return [Hash] The marshal data about BernoulliNB.
       def marshal_dump
-        { params: params,
+        { params: @params,
           classes: @classes,
           class_priors: @class_priors,
           feature_probs: @feature_probs }
