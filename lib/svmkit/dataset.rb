@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SVMKit
   # Module for loading and saving a dataset file.
   module Dataset

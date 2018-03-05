@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module SVMKit
   # This module consists of basic mix-in classes.

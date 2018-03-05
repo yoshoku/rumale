@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/transformer'
 

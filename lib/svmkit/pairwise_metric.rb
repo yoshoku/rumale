@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SVMKit
   # Module for calculating pairwise distances, similarities, and kernels.
   module PairwiseMetric
