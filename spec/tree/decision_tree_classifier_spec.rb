@@ -9,9 +9,10 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
   let(:max_depth) { nil }
   let(:max_leaf_nodes) { nil }
   let(:min_samples_leaf) { nil }
+  let(:max_features) { nil }
   let(:estimator) do
     described_class.new(max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                        min_samples_leaf: min_samples_leaf, random_seed: 1)
+                        min_samples_leaf: min_samples_leaf, max_features: max_features, random_seed: 1)
   end
 
   it 'classifies three clusters data.' do
@@ -80,6 +81,32 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
       expect(estimator.tree.right.leaf).to be_truthy
       expect(estimator.tree.right.n_samples).to be >= min_samples_leaf
       expect(estimator.tree.left).to be_nil
+    end
+  end
+
+  context 'when max_features parameter is given' do
+    context 'negative value' do
+      let(:max_features) { -10 }
+      it 'value of max_features is set to 1' do
+        estimator.fit(samples, labels)
+        expect(estimator.params[:max_features]).to eq(1)
+      end
+    end
+
+    context 'value larger than number of features' do
+      let(:max_features) { 10 }
+      it 'value of max_features is equal to the number of features' do
+        estimator.fit(samples, labels)
+        expect(estimator.params[:max_features]).to eq(samples.shape[1])
+      end
+    end
+
+    context 'valid value' do
+      let(:max_features) { 2 }
+      it 'learns model with given parameters.' do
+        estimator.fit(samples, labels)
+        expect(estimator.params[:max_features]).to eq(2)
+      end
     end
   end
 end

@@ -49,14 +49,18 @@ module SVMKit
       #   If nil is given, number of leaves is not limited.
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
       #   If nil is given, number of samples on leaf is not limited.
+      # @param max_features [Integer] The number of features to consider when searching optimal split point.
+      #   If nil is given, split process considers all features.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
-      def initialize(criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: nil, random_seed: nil)
+      def initialize(criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: nil, max_features: nil,
+                     random_seed: nil)
         @params = {}
         @params[:criterion] = criterion
         @params[:max_depth] = max_depth
         @params[:max_leaf_nodes] = max_leaf_nodes
         @params[:min_samples_leaf] = min_samples_leaf
+        @params[:max_features] = max_features
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @rng = Random.new(@params[:random_seed])
@@ -73,9 +77,12 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [DecisionTreeClassifier] The learned classifier itself.
       def fit(x, y)
+        n_samples, n_features = x.shape
+        @params[:max_features] = n_features unless @params[:max_features].kind_of?(Integer)
+        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         build_tree(x, y)
-        eval_importance(*x.shape)
+        eval_importance(n_samples, n_features)
         self
       end
 
@@ -191,7 +198,7 @@ module SVMKit
       end
 
       def rand_ids(n)
-        [*0...n].shuffle(random: @rng)
+        [*0...n].shuffle(random: @rng).first(@params[:max_features])
       end
 
       def best_split(features, labels)
