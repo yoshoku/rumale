@@ -78,7 +78,7 @@ module SVMKit
       # @return [DecisionTreeClassifier] The learned classifier itself.
       def fit(x, y)
         n_samples, n_features = x.shape
-        @params[:max_features] = n_features unless @params[:max_features].kind_of?(Integer)
+        @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         build_tree(x, y)
@@ -160,17 +160,17 @@ module SVMKit
       end
 
       def grow_node(depth, x, y)
-        if @params[:max_leaf_nodes].kind_of?(Integer)
+        if @params[:max_leaf_nodes].is_a?(Integer)
           return nil if @n_leaves >= @params[:max_leaf_nodes]
         end
 
         n_samples, n_features = x.shape
-        if @params[:min_samples_leaf].kind_of?(Integer)
+        if @params[:min_samples_leaf].is_a?(Integer)
           return nil if n_samples < @params[:min_samples_leaf]
         end
 
         node = OpenStruct.new(depth: depth, impurity: impurity(y), n_samples: n_samples)
-        if @params[:max_depth].kind_of?(Integer)
+        if @params[:max_depth].is_a?(Integer)
           return put_leaf(node, y) if depth == @params[:max_depth]
         end
 
@@ -180,7 +180,7 @@ module SVMKit
 
         node.left = grow_node(depth + 1, x[left_ids, true], y[left_ids])
         node.right = grow_node(depth + 1, x[right_ids, true], y[right_ids])
-        return put_leaf(node, y) if node.left.nil? and node.right.nil?
+        return put_leaf(node, y) if node.left.nil? && node.right.nil?
 
         node.feature_id = feature_id
         node.threshold = threshold
@@ -198,7 +198,7 @@ module SVMKit
       end
 
       def rand_ids(n)
-        [*0...n].shuffle(random: @rng).first(@params[:max_features])
+        [*0...n].sample(@params[:max_features], random: @rng)
       end
 
       def best_split(features, labels)
@@ -243,7 +243,7 @@ module SVMKit
 
       def eval_importance_at_node(node)
         return nil if node.leaf
-        return nil if node.left.nil? or node.right.nil?
+        return nil if node.left.nil? || node.right.nil?
         gain = node.n_samples * node.impurity -
                node.left.n_samples * node.left.impurity - node.right.n_samples * node.right.impurity
         @feature_importances[node.feature_id] += gain
