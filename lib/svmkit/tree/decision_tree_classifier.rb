@@ -48,12 +48,11 @@ module SVMKit
       # @param max_leaf_nodes [Integer] The maximum number of leaves on decision tree.
       #   If nil is given, number of leaves is not limited.
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
-      #   If nil is given, number of samples on leaf is not limited.
       # @param max_features [Integer] The number of features to consider when searching optimal split point.
       #   If nil is given, split process considers all features.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
-      def initialize(criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: nil, max_features: nil,
+      def initialize(criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1, max_features: nil,
                      random_seed: nil)
         @params = {}
         @params[:criterion] = criterion
@@ -144,7 +143,9 @@ module SVMKit
       end
 
       def branch_at_node(action, node, sample)
-        if sample[node.feature_id] <= node.threshold
+        return send("#{action}_at_node", node.left, sample) if node.right.nil?
+        return send("#{action}_at_node", node.right, sample) if node.left.nil?
+        if sample[node.feature_id] <= node.threshold || node.right.nil?
           send("#{action}_at_node", node.left, sample)
         else
           send("#{action}_at_node", node.right, sample)
@@ -166,16 +167,20 @@ module SVMKit
 
         n_samples, n_features = x.shape
         if @params[:min_samples_leaf].is_a?(Integer)
-          return nil if n_samples < @params[:min_samples_leaf]
+          return nil if n_samples <= @params[:min_samples_leaf]
         end
 
         node = OpenStruct.new(depth: depth, impurity: impurity(y), n_samples: n_samples)
+
+        return put_leaf(node, y) if y.to_a.uniq.size == 1
+
         if @params[:max_depth].is_a?(Integer)
           return put_leaf(node, y) if depth == @params[:max_depth]
         end
 
         feature_id, threshold, left_ids, right_ids, max_gain =
           rand_ids(n_features).map { |f_id| [f_id, *best_split(x[true, f_id], y)] }.max_by(&:last)
+        return put_leaf(node, y) if max_gain.nil?
         return put_leaf(node, y) if max_gain.zero?
 
         node.left = grow_node(depth + 1, x[left_ids, true], y[left_ids])

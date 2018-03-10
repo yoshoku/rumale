@@ -8,7 +8,7 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
   let(:estimator_entropy) { described_class.new(criterion: 'entropy', random_seed: 1) }
   let(:max_depth) { nil }
   let(:max_leaf_nodes) { nil }
-  let(:min_samples_leaf) { nil }
+  let(:min_samples_leaf) { 1 }
   let(:max_features) { nil }
   let(:estimator) do
     described_class.new(max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
@@ -35,7 +35,7 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(3)
     classes = labels.to_a.uniq.sort
-    predicted = Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }]
+    predicted = Numo::Int32.asarray(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })
     expect(predicted).to eq(labels)
   end
 
@@ -78,9 +78,9 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
     it 'learns model with given parameters.' do
       estimator.fit(samples, labels)
       expect(estimator.params[:min_samples_leaf]).to eq(min_samples_leaf)
-      expect(estimator.tree.right.leaf).to be_truthy
-      expect(estimator.tree.right.n_samples).to be >= min_samples_leaf
-      expect(estimator.tree.left).to be_nil
+      expect(estimator.tree.left.leaf).to be_truthy
+      expect(estimator.tree.left.n_samples).to be >= min_samples_leaf
+      expect(estimator.tree.right).to be_nil
     end
   end
 
