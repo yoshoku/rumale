@@ -1,3 +1,10 @@
+# 0.2.6
+- Added class for Decision Tree classifier.
+- Added class for Random Forest classifier.
+- Fixed to use frozen string literal.
+- Refactored marshal dump method on some classes.
+- Introduced Coveralls to confirm test coverage.
+
 # 0.2.5
 - Added classes for Naive Bayes classifier.
 - Fixed decision function method on Logistic Regression class.
