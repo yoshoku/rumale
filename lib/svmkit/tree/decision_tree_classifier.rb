@@ -145,7 +145,7 @@ module SVMKit
       def branch_at_node(action, node, sample)
         return send("#{action}_at_node", node.left, sample) if node.right.nil?
         return send("#{action}_at_node", node.right, sample) if node.left.nil?
-        if sample[node.feature_id] <= node.threshold || node.right.nil?
+        if sample[node.feature_id] <= node.threshold
           send("#{action}_at_node", node.left, sample)
         else
           send("#{action}_at_node", node.right, sample)
