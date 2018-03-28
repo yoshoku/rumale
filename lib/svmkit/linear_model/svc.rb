@@ -21,14 +21,18 @@ module SVMKit
       include Base::Classifier
 
       # Return the weight vector for SVC.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Numo::DFloat] (shape: [n_classes, n_features])
       attr_reader :weight_vec
 
       # Return the bias term (a.k.a. intercept) for SVC.
-      # @return [Float]
+      # @return [Numo::DFloat] (shape: [n_classes])
       attr_reader :bias_term
 
-      # Return the random generator for performing random sampling in the Pegasos algorithm.
+      # Return the class labels.
+      # @return [Numo::Int32] (shape: [n_classes])
+      attr_reader :classes
+
+      # Return the random generator for performing random sampling.
       # @return [Random]
       attr_reader :rng
 
@@ -39,18 +43,22 @@ module SVMKit
       # @param bias_scale [Float] The scale of the bias term.
       # @param max_iter [Integer] The maximum number of iterations.
       # @param batch_size [Integer] The size of the mini batches.
+      # @param normalize [Boolean] The flag indicating whether to normalize the weight vector.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0, max_iter: 100, batch_size: 50, random_seed: nil)
+      def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
+                     max_iter: 100, batch_size: 50, normalize: true, random_seed: nil)
         @params = {}
         @params[:reg_param] = reg_param
         @params[:fit_bias] = fit_bias
         @params[:bias_scale] = bias_scale
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
+        @params[:normalize] = normalize
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
-        @bias_term = 0.0
+        @bias_term = nil
+        @classes = nil
         @rng = Random.new(@params[:random_seed])
       end
 
@@ -58,18 +66,76 @@ module SVMKit
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
-      # @return [SVC] The learned classifier itself.
+      # @return [FactorizationMachineClassifier] The learned classifier itself.
       def fit(x, y)
-        # Generate binary labels
-        negative_label = y.to_a.uniq.sort.shift
-        bin_y = y.to_a.map { |l| l != negative_label ? 1 : -1 }
-        # Expand feature vectors for bias term.
-        samples = x
-        if @params[:fit_bias]
-          samples = Numo::NArray.hstack(
-            [samples, Numo::DFloat.ones([x.shape[0], 1]) * @params[:bias_scale]]
-          )
+        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        n_classes = @classes.size
+        _n_samples, n_features = x.shape
+
+        if n_classes > 2
+          @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
+          @bias_term = Numo::DFloat.zeros(n_classes)
+          n_classes.times do |n|
+            bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+            weight, bias = binary_fit(x, bin_y)
+            @weight_vec[n, true] = weight
+            @bias_term[n] = bias
+          end
+        else
+          negative_label = y.to_a.uniq.sort.first
+          bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
+          @weight_vec, @bias_term = binary_fit(x, bin_y)
         end
+
+        self
+      end
+
+      # Calculate confidence scores for samples.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
+      def decision_function(x)
+        x.dot(@weight_vec.transpose) + @bias_term
+      end
+
+      # Predict class labels for samples.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      def predict(x)
+        return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
+
+        n_samples, = x.shape
+        decision_values = decision_function(x)
+        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
+      end
+
+      # Dump marshal data.
+      # @return [Hash] The marshal data about SVC.
+      def marshal_dump
+        { params: @params,
+          weight_vec: @weight_vec,
+          bias_term: @bias_term,
+          classes: @classes,
+          rng: @rng }
+      end
+
+      # Load marshal data.
+      # @return [nil]
+      def marshal_load(obj)
+        @params = obj[:params]
+        @weight_vec = obj[:weight_vec]
+        @bias_term = obj[:bias_term]
+        @classes = obj[:classes]
+        @rng = obj[:rng]
+        nil
+      end
+
+      private
+
+      def binary_fit(x, bin_y)
+        # Expand feature vectors for bias term.
+        samples = @params[:fit_bias] ? expand_feature(x) : x
         # Initialize some variables.
         n_samples, n_features = samples.shape
         rand_ids = [*0...n_samples].shuffle(random: @rng)
@@ -83,57 +149,31 @@ module SVMKit
           n_subsamples = target_ids.size
           next if n_subsamples.zero?
           # update the weight vector.
-          eta = 1.0 / (@params[:reg_param] * (t + 1))
-          mean_vec = Numo::DFloat.zeros(n_features)
-          target_ids.each { |n| mean_vec += samples[n, true] * bin_y[n] }
-          mean_vec *= eta / n_subsamples
-          weight_vec = weight_vec * (1.0 - eta * @params[:reg_param]) + mean_vec
+          mean_vec = bin_y[target_ids].dot(samples[target_ids, true]) / n_subsamples
+          weight_vec -= learning_rate(t) * (@params[:reg_param] * weight_vec - mean_vec)
           # scale the weight vector.
-          norm = Math.sqrt(weight_vec.dot(weight_vec))
-          scaler = (1.0 / @params[:reg_param]**0.5) / (norm + 1.0e-12)
-          weight_vec *= [1.0, scaler].min
+          normalize_weight_vec(weight_vec) if @params[:normalize]
         end
-        # Store the learned model.
-        if @params[:fit_bias]
-          @weight_vec = weight_vec[0...n_features - 1]
-          @bias_term = weight_vec[n_features - 1]
-        else
-          @weight_vec = weight_vec[0...n_features]
-          @bias_term = 0.0
-        end
-        self
+        split_weight_vec_bias(weight_vec)
       end
 
-      # Calculate confidence scores for samples.
-      #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
-      def decision_function(x)
-        @weight_vec.dot(x.transpose) + @bias_term
+      def expand_feature(x)
+        Numo::NArray.hstack([x, Numo::DFloat.ones([x.shape[0], 1]) * @params[:bias_scale]])
       end
 
-      # Predict class labels for samples.
-      #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
-      def predict(x)
-        Numo::Int32.cast(decision_function(x).map { |v| v >= 0 ? 1 : -1 })
+      def learning_rate(iter)
+        1.0 / (@params[:reg_param] * (iter + 1))
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about SVC.
-      def marshal_dump
-        { params: @params, weight_vec: @weight_vec, bias_term: @bias_term, rng: @rng }
+      def normalize_weight_vec(weight_vec)
+        norm = Math.sqrt(weight_vec.dot(weight_vec))
+        weight_vec * [1.0, (1.0 / @params[:reg_param]**0.5) / (norm + 1.0e-12)].min
       end
 
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @weight_vec = obj[:weight_vec]
-        @bias_term = obj[:bias_term]
-        @rng = obj[:rng]
-        nil
+      def split_weight_vec_bias(weight_vec)
+        weights = @params[:fit_bias] ? weight_vec[0...-1] : weight_vec
+        bias = @params[:fit_bias] ? weight_vec[-1] : 0.0
+        [weights, bias]
       end
     end
   end
