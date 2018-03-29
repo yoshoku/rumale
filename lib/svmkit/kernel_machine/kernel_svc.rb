@@ -23,10 +23,14 @@ module SVMKit
       include Base::Classifier
 
       # Return the weight vector for Kernel SVC.
-      # @return [Numo::DFloat] (shape: [n_trainig_sample])
+      # @return [Numo::DFloat] (shape: [n_classes, n_trainig_sample])
       attr_reader :weight_vec
 
-      # Return the random generator for performing random sampling in the Pegasos algorithm.
+      # Return the class labels.
+      # @return [Numo::Int32] (shape: [n_classes])
+      attr_reader :classes
+
+      # Return the random generator for performing random sampling.
       # @return [Random]
       attr_reader :rng
 
@@ -42,6 +46,7 @@ module SVMKit
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
+        @classes
         @rng = Random.new(@params[:random_seed])
       end
 
@@ -52,25 +57,22 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_training_samples]) The labels to be used for fitting the model.
       # @return [KernelSVC] The learned classifier itself.
       def fit(x, y)
-        # Generate binary labels
-        negative_label = y.to_a.uniq.sort.shift
-        bin_y = y.to_a.map { |l| l != negative_label ? 1 : -1 }
-        # Initialize some variables.
-        n_training_samples = x.shape[0]
-        rand_ids = []
-        weight_vec = Numo::DFloat.zeros(n_training_samples)
-        # Start optimization.
-        @params[:max_iter].times do |t|
-          # random sampling
-          rand_ids = [*0...n_training_samples].shuffle(random: @rng) if rand_ids.empty?
-          target_id = rand_ids.shift
-          # update the weight vector
-          func = (weight_vec * bin_y[target_id]).dot(x[target_id, true].transpose).to_f
-          func *= bin_y[target_id] / (@params[:reg_param] * (t + 1))
-          weight_vec[target_id] += 1.0 if func < 1.0
+        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        n_classes = @classes.size
+        _n_samples, n_features = x.shape
+
+        if n_classes > 2
+          @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
+          n_classes.times do |n|
+            bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+            @weight_vec[n, true] = binary_fit(x, bin_y)
+          end
+        else
+          negative_label = y.to_a.uniq.sort.first
+          bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
+          @weight_vec = binary_fit(x, bin_y)
         end
-        # Store the learned model.
-        @weight_vec = weight_vec * Numo::DFloat[*bin_y]
+
         self
       end
 
@@ -78,9 +80,9 @@ module SVMKit
       #
       # @param x [Numo::DFloat] (shape: [n_testing_samples, n_training_samples])
       #     The kernel matrix between testing samples and training samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_testing_samples]) Confidence score per sample.
+      # @return [Numo::DFloat] (shape: [n_testing_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
-        x.dot(@weight_vec)
+        x.dot(@weight_vec.transpose)
       end
 
       # Predict class labels for samples.
@@ -89,7 +91,11 @@ module SVMKit
       #     The kernel matrix between testing samples and training samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_testing_samples]) Predicted class label per sample.
       def predict(x)
-        Numo::Int32.cast(decision_function(x).map { |v| v >= 0 ? 1 : -1 })
+        return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
+
+        n_samples, = x.shape
+        decision_values = decision_function(x)
+        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
 
       # Claculate the mean accuracy of the given testing data.
@@ -105,7 +111,10 @@ module SVMKit
       # Dump marshal data.
       # @return [Hash] The marshal data about KernelSVC.
       def marshal_dump
-        { params: @params, weight_vec: @weight_vec, rng: @rng }
+        { params: @params,
+          weight_vec: @weight_vec,
+          classes: @classes,
+          rng: @rng }
       end
 
       # Load marshal data.
@@ -113,8 +122,29 @@ module SVMKit
       def marshal_load(obj)
         @params = obj[:params]
         @weight_vec = obj[:weight_vec]
+        @classes = obj[:classes]
         @rng = obj[:rng]
         nil
+      end
+
+      private
+
+      def binary_fit(x, bin_y)
+        # Initialize some variables.
+        n_training_samples = x.shape[0]
+        rand_ids = []
+        weight_vec = Numo::DFloat.zeros(n_training_samples)
+        # Start optimization.
+        @params[:max_iter].times do |t|
+          # random sampling
+          rand_ids = [*0...n_training_samples].shuffle(random: @rng) if rand_ids.empty?
+          target_id = rand_ids.shift
+          # update the weight vector
+          func = (weight_vec * bin_y[target_id]).dot(x[target_id, true].transpose).to_f
+          func *= bin_y[target_id] / (@params[:reg_param] * (t + 1))
+          weight_vec[target_id] += 1.0 if func < 1.0
+        end
+        weight_vec * Numo::DFloat[*bin_y]
       end
     end
   end
