@@ -4,13 +4,16 @@ require 'svmkit/base/base_estimator.rb'
 require 'svmkit/base/classifier.rb'
 
 module SVMKit
-  # This module consists of the classes that implement multi-label classification strategy.
+  # This module consists of the classes that implement multi-class classification strategy.
   module Multiclass
-    # OneVsRestClassifier is a class that implements One-vs-Rest (OvR) strategy for multi-label classification.
+    # @note
+    #   All classifier in SVMKit support multi-class classifiction since version 0.2.7.
+    #   There is no need to explicitly use this class for multiclass classifiction.
+    #
+    # OneVsRestClassifier is a class that implements One-vs-Rest (OvR) strategy for multi-class classification.
     #
     # @example
-    #   base_estimator =
-    #    SVMKit::LinearModel::PegasosSVC.new(penalty: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
+    #   base_estimator = SVMKit::LinearModel::LogisticRegression.new
     #   estimator = SVMKit::Multiclass::OneVsRestClassifier.new(estimator: base_estimator)
     #   estimator.fit(training_samples, training_labels)
     #   results = estimator.predict(testing_samples)
@@ -26,9 +29,9 @@ module SVMKit
       # @return [Numo::Int32] (shape: [n_classes])
       attr_reader :classes
 
-      # Create a new multi-label classifier with the one-vs-rest startegy.
+      # Create a new multi-class classifier with the one-vs-rest startegy.
       #
-      # @param estimator [Classifier] The (binary) classifier for construction a multi-label classifier.
+      # @param estimator [Classifier] The (binary) classifier for construction a multi-class classifier.
       def initialize(estimator: nil)
         @params = {}
         @params[:estimator] = estimator

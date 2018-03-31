@@ -6,9 +6,9 @@ require 'svmkit/base/classifier'
 module SVMKit
   # This module consists of the classes that implement polynomial models.
   module PolynomialModel
-    # FactorizationMachineClassifier is a class that
-    # implements Fatorization Machine for binary classification
-    # with (mini-batch) stochastic gradient descent optimization.
+    # FactorizationMachineClassifier is a class that implements Factorization Machine
+    # with stochastic gradient descent (SGD) optimization.
+    # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
     # @example
     #   estimator =

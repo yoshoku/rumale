@@ -6,7 +6,9 @@ require 'svmkit/base/classifier'
 module SVMKit
   # This module consists of the classes that implement kernel method-based estimator.
   module KernelMachine
-    # KernelSVC is a class that implements (Nonlinear) Kernel Support Vector Classifier with the Pegasos algorithm.
+    # KernelSVC is a class that implements (Nonlinear) Kernel Support Vector Classifier
+    # with stochastic gradient descent (SGD) optimization.
+    # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
     # @example
     #   training_kernel_matrix = SVMKit::PairwiseMetric::rbf_kernel(training_samples)
@@ -34,7 +36,7 @@ module SVMKit
       # @return [Random]
       attr_reader :rng
 
-      # Create a new classifier with Kernel Support Vector Machine by the Pegasos algorithm.
+      # Create a new classifier with Kernel Support Vector Machine by the SGD optimization.
       #
       # @param reg_param [Float] The regularization parameter.
       # @param max_iter [Integer] The maximum number of iterations.

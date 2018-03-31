@@ -6,7 +6,9 @@ require 'svmkit/base/classifier'
 module SVMKit
   # This module consists of the classes that implement generalized linear models.
   module LinearModel
-    # SVC is a class that implements Support Vector Classifier with the Pegasos algorithm.
+    # SVC is a class that implements Support Vector Classifier
+    # with stochastic gradient descent (SGD) optimization.
+    # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
     # @example
     #   estimator =
@@ -36,7 +38,7 @@ module SVMKit
       # @return [Random]
       attr_reader :rng
 
-      # Create a new classifier with Support Vector Machine by the Pegasos algorithm.
+      # Create a new classifier with Support Vector Machine by the SGD optimization.
       #
       # @param reg_param [Float] The regularization parameter.
       # @param fit_bias [Boolean] The flag indicating whether to fit the bias term.
@@ -66,7 +68,7 @@ module SVMKit
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
-      # @return [FactorizationMachineClassifier] The learned classifier itself.
+      # @return [SVC] The learned classifier itself.
       def fit(x, y)
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size

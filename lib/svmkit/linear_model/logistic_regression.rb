@@ -8,6 +8,7 @@ module SVMKit
   module LinearModel
     # LogisticRegression is a class that implements Logistic Regression
     # with stochastic gradient descent (SGD) optimization.
+    # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
     # @example
     #   estimator =
@@ -68,7 +69,7 @@ module SVMKit
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
-      # @return [FactorizationMachineClassifier] The learned classifier itself.
+      # @return [LogisticRegression] The learned classifier itself.
       def fit(x, y)
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
