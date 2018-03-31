@@ -26,22 +26,26 @@ module SVMKit
       include Base::Classifier
 
       # Return the factor matrix for Factorization Machine.
-      # @return [Numo::DFloat] (shape: [n_factors, n_features])
+      # @return [Numo::DFloat] (shape: [n_classes, n_factors, n_features])
       attr_reader :factor_mat
 
       # Return the weight vector for Factorization Machine.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Numo::DFloat] (shape: [n_classes, n_features])
       attr_reader :weight_vec
 
       # Return the bias term for Factoriazation Machine.
-      # @return [Float]
+      # @return [Numo::DFloat] (shape: [n_classes])
       attr_reader :bias_term
 
-      # Return the random generator for transformation.
+      # Return the class labels.
+      # @return [Numo::Int32] (shape: [n_classes])
+      attr_reader :classes
+
+      # Return the random generator for random sampling.
       # @return [Random]
       attr_reader :rng
 
-      # Create a new classifier with Support Vector Machine by the Pegasos algorithm.
+      # Create a new classifier with Factorization Machine.
       #
       # @param n_factors [Integer] The maximum number of iterations.
       # @param loss [String] The loss function ('hinge' or 'logistic').
@@ -67,7 +71,8 @@ module SVMKit
         @params[:random_seed] ||= srand
         @factor_mat = nil
         @weight_vec = nil
-        @bias_term = 0.0
+        @bias_term = nil
+        @classes = nil
         @rng = Random.new(@params[:random_seed])
       end
 
@@ -77,33 +82,27 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [FactorizationMachineClassifier] The learned classifier itself.
       def fit(x, y)
-        # Generate binary labels.
-        negative_label = y.to_a.uniq.sort.shift
-        bin_y = y.map { |l| l != negative_label ? 1.0 : -1.0 }
-        # Initialize some variables.
-        n_samples, n_features = x.shape
-        rand_ids = [*0...n_samples].shuffle(random: @rng)
-        @factor_mat = rand_normal([@params[:n_factors], n_features], 0, @params[:init_std])
-        @weight_vec = Numo::DFloat.zeros(n_features)
-        @bias_term = 0.0
-        # Start optimization.
-        @params[:max_iter].times do |t|
-          # Random sampling.
-          subset_ids = rand_ids.shift(@params[:batch_size])
-          rand_ids.concat(subset_ids)
-          data = x[subset_ids, true]
-          label = bin_y[subset_ids]
-          # Calculate gradients for loss function.
-          loss_grad = loss_gradient(data, label)
-          next if loss_grad.ne(0.0).count.zero?
-          # Update each parameter.
-          @bias_term -= learning_rate(@params[:reg_param_bias], t) * bias_gradient(loss_grad)
-          @weight_vec -= learning_rate(@params[:reg_param_weight], t) * weight_gradient(loss_grad, data)
-          @params[:n_factors].times do |n|
-            @factor_mat[n, true] -= learning_rate(@params[:reg_param_factor], t) *
-                                    factor_gradient(loss_grad, data, @factor_mat[n, true])
+        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        n_classes = @classes.size
+        _n_samples, n_features = x.shape
+
+        if n_classes > 2
+          @factor_mat = Numo::DFloat.zeros(n_classes, @params[:n_factors], n_features)
+          @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
+          @bias_term = Numo::DFloat.zeros(n_classes)
+          n_classes.times do |n|
+            bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+            factor, weight, bias = binary_fit(x, bin_y)
+            @factor_mat[n, true, true] = factor
+            @weight_vec[n, true] = weight
+            @bias_term[n] = bias
           end
+        else
+          negative_label = y.to_a.uniq.sort.first
+          bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
+          @factor_mat, @weight_vec, @bias_term = binary_fit(x, bin_y)
         end
+
         self
       end
 
@@ -112,8 +111,12 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
-        linear_term = @bias_term + x.dot(@weight_vec)
-        factor_term = 0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum
+        linear_term = @bias_term + x.dot(@weight_vec.transpose)
+        factor_term = if @classes.size <= 2
+                        0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum
+                      else
+                        0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum(1).transpose
+                      end
         linear_term + factor_term
       end
 
@@ -122,26 +125,37 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        Numo::Int32.cast(decision_function(x).map { |v| v >= 0.0 ? 1 : -1 })
+        return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
+
+        n_samples, = x.shape
+        decision_values = decision_function(x)
+        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
 
       # Predict probability for samples.
-      # Note that this method works normally only if the 'loss' parameter is set to 'logistic'.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
+        proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
+        return (proba.transpose / proba.sum(axis: 1)).transpose if @classes.size > 2
+
         n_samples, = x.shape
-        proba = Numo::DFloat.zeros(n_samples, 2)
-        proba[true, 1] = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
-        proba[true, 0] = 1.0 - proba[true, 1]
-        proba
+        probs = Numo::DFloat.zeros(n_samples, 2)
+        probs[true, 1] = proba
+        probs[true, 0] = 1.0 - proba
+        probs
       end
 
       # Dump marshal data.
       # @return [Hash] The marshal data about FactorizationMachineClassifier
       def marshal_dump
-        { params: @params, factor_mat: @factor_mat, weight_vec: @weight_vec, bias_term: @bias_term, rng: @rng }
+        { params: @params,
+          factor_mat: @factor_mat,
+          weight_vec: @weight_vec,
+          bias_term: @bias_term,
+          classes: @classes,
+          rng: @rng }
       end
 
       # Load marshal data.
@@ -151,39 +165,76 @@ module SVMKit
         @factor_mat = obj[:factor_mat]
         @weight_vec = obj[:weight_vec]
         @bias_term = obj[:bias_term]
+        @classes = obj[:classes]
         @rng = obj[:rng]
         nil
       end
 
       private
 
-      def hinge_loss_gradient(x, y)
-        evaluated = y * decision_function(x)
+      def binary_fit(x, bin_y)
+        # Initialize some variables.
+        n_samples, n_features = x.shape
+        rand_ids = [*0...n_samples].shuffle(random: @rng)
+        factor_mat = rand_normal([@params[:n_factors], n_features], 0, @params[:init_std])
+        weight_vec = Numo::DFloat.zeros(n_features)
+        bias_term = 0.0
+        # Start optimization.
+        @params[:max_iter].times do |t|
+          # Random sampling.
+          subset_ids = rand_ids.shift(@params[:batch_size])
+          rand_ids.concat(subset_ids)
+          data = x[subset_ids, true]
+          label = bin_y[subset_ids]
+          # Calculate gradients for loss function.
+          loss_grad = loss_gradient(data, label, factor_mat, weight_vec, bias_term)
+          next if loss_grad.ne(0.0).count.zero?
+          # Update each parameter.
+          bias_term -= learning_rate(@params[:reg_param_bias], t) * bias_gradient(loss_grad, bias_term)
+          weight_vec -= learning_rate(@params[:reg_param_weight], t) * weight_gradient(loss_grad, data, weight_vec)
+          @params[:n_factors].times do |n|
+            factor_mat[n, true] -= learning_rate(@params[:reg_param_factor], t) *
+                                   factor_gradient(loss_grad, data, factor_mat[n, true])
+          end
+        end
+        [factor_mat, weight_vec, bias_term]
+      end
+
+      def bin_decision_function(x, factor, weight, bias)
+        bias + x.dot(weight) + 0.5 * (factor.dot(x.transpose)**2 - (factor**2).dot(x.transpose**2)).sum
+      end
+
+      def hinge_loss_gradient(x, y, factor, weight, bias)
+        evaluated = y * bin_decision_function(x, factor, weight, bias)
         gradient = Numo::DFloat.zeros(evaluated.size)
         gradient[evaluated < 1.0] = -y[evaluated < 1.0]
         gradient
       end
 
-      def logistic_loss_gradient(x, y)
-        evaluated = y * decision_function(x)
+      def logistic_loss_gradient(x, y, factor, weight, bias)
+        evaluated = y * bin_decision_function(x, factor, weight, bias)
         sigmoid_func = 1.0 / (Numo::NMath.exp(-evaluated) + 1.0)
         (sigmoid_func - 1.0) * y
       end
 
-      def loss_gradient(x, y)
-        @params[:loss] == 'hinge' ? hinge_loss_gradient(x, y) : logistic_loss_gradient(x, y)
+      def loss_gradient(x, y, factor, weight, bias)
+        if @params[:loss] == 'hinge'
+          hinge_loss_gradient(x, y, factor, weight, bias)
+        else
+          logistic_loss_gradient(x, y, factor, weight, bias)
+        end
       end
 
       def learning_rate(reg_param, iter)
         1.0 / (reg_param * (iter + 1))
       end
 
-      def bias_gradient(loss_grad)
-        loss_grad.mean + @params[:reg_param_bias] * @bias_term
+      def bias_gradient(loss_grad, bias)
+        loss_grad.mean + @params[:reg_param_bias] * bias
       end
 
-      def weight_gradient(loss_grad, data)
-        (loss_grad.expand_dims(1) * data).mean(0) + @params[:reg_param_weight] * @weight_vec
+      def weight_gradient(loss_grad, data, weight)
+        (loss_grad.expand_dims(1) * data).mean(0) + @params[:reg_param_weight] * weight
       end
 
       def factor_gradient(loss_grad, data, factor)
