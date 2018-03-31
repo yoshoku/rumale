@@ -42,9 +42,7 @@ normalized = normalizer.fit_transform(samples)
 transformer = SVMKit::KernelApproximation::RBF.new(gamma: 2.0, n_components: 1024, random_seed: 1)
 transformed = transformer.fit_transform(normalized)
 
-base_classifier =
-  SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 1000, batch_size: 20, random_seed: 1)
-classifier = SVMKit::Multiclass::OneVsRestClassifier.new(estimator: base_classifier)
+classifier = SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 1000, batch_size: 20, random_seed: 1)
 classifier.fit(transformed, labels)
 
 File.open('trained_normalizer.dat', 'wb') { |f| f.write(Marshal.dump(normalizer)) }
@@ -76,12 +74,10 @@ require 'svmkit'
 
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
 
-kernel_svc =
-  SVMKit::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1)
-ovr_kernel_svc = SVMKit::Multiclass::OneVsRestClassifier.new(estimator: kernel_svc)
+kernel_svc = SVMKit::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1)
 
 kf = SVMKit::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1)
-cv = SVMKit::ModelSelection::CrossValidation.new(estimator: ovr_kernel_svc, splitter: kf)
+cv = SVMKit::ModelSelection::CrossValidation.new(estimator: kernel_svc, splitter: kf)
 
 kernel_mat = SVMKit::PairwiseMetric::rbf_kernel(samples, nil, 0.005)
 report = cv.perform(kernel_mat, labels)
