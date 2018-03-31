@@ -1,3 +1,6 @@
+# 0.2.7
+- Fixed to support multiclass classifiction into LinearSVC, LogisticRegression, KernelSVC, and FactorizationMachineClassifier
+
 # 0.2.6
 - Added class for Decision Tree classifier.
 - Added class for Random Forest classifier.

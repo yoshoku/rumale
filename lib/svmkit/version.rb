@@ -3,5 +3,5 @@
 # SVMKit is a machine learning library in Ruby.
 module SVMKit
   # @!visibility private
-  VERSION = '0.2.6'
+  VERSION = '0.2.7'
 end
