@@ -151,7 +151,7 @@ module SVMKit
           n_subsamples = target_ids.size
           next if n_subsamples.zero?
           # update the weight vector.
-          mean_vec = bin_y[target_ids].dot(samples[target_ids, true]) / n_subsamples
+          mean_vec = samples[target_ids, true].transpose.dot(bin_y[target_ids]) / n_subsamples
           weight_vec -= learning_rate(t) * (@params[:reg_param] * weight_vec - mean_vec)
           # scale the weight vector.
           normalize_weight_vec(weight_vec) if @params[:normalize]

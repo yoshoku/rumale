@@ -166,7 +166,7 @@ module SVMKit
           # update the weight vector.
           df = samples[subset_ids, true].dot(weight_vec.transpose)
           coef = bin_y[subset_ids] / (Numo::NMath.exp(-bin_y[subset_ids] * df) + 1.0)
-          mean_vec = coef.dot(samples[subset_ids, true]) / @params[:batch_size]
+          mean_vec = samples[subset_ids, true].transpose.dot(coef) / @params[:batch_size]
           weight_vec -= learning_rate(t) * (@params[:reg_param] * weight_vec - mean_vec)
           # scale the weight vector.
           normalize_weight_vec(weight_vec) if @params[:normalize]
