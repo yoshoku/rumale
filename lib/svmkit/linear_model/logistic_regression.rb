@@ -79,14 +79,14 @@ module SVMKit
           @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
           @bias_term = Numo::DFloat.zeros(n_classes)
           n_classes.times do |n|
-            bin_y = Numo::Int32.cast(y.eq(@classes[n]))
+            bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
             weight, bias = binary_fit(x, bin_y)
             @weight_vec[n, true] = weight
             @bias_term[n] = bias
           end
         else
           negative_label = y.to_a.uniq.sort.first
-          bin_y = Numo::Int32.cast(y.ne(negative_label))
+          bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
           @weight_vec, @bias_term = binary_fit(x, bin_y)
         end
 
@@ -106,10 +106,10 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        return Numo::Int32.cast(decision_function(x).ge(0.5)) * 2 - 1 if @classes.size <= 2
+        return Numo::Int32.cast(predict_proba(x)[true, 1].ge(0.5)) * 2 - 1 if @classes.size <= 2
 
         n_samples, = x.shape
-        decision_values = decision_function(x)
+        decision_values = predict_proba(x)
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
 
@@ -165,9 +165,9 @@ module SVMKit
           rand_ids.concat(subset_ids)
           # update the weight vector.
           df = samples[subset_ids, true].dot(weight_vec.transpose)
-          coef = bin_y[subset_ids] / (Numo::NMath.exp(-bin_y[subset_ids] * df) + 1.0)
+          coef = bin_y[subset_ids] / (Numo::NMath.exp(-bin_y[subset_ids] * df) + 1.0) - bin_y[subset_ids]
           mean_vec = samples[subset_ids, true].transpose.dot(coef) / @params[:batch_size]
-          weight_vec -= learning_rate(t) * (@params[:reg_param] * weight_vec - mean_vec)
+          weight_vec -= learning_rate(t) * (@params[:reg_param] * weight_vec + mean_vec)
           # scale the weight vector.
           normalize_weight_vec(weight_vec) if @params[:normalize]
         end
