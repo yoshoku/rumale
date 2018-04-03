@@ -54,6 +54,11 @@ module SVMKit
       #   It is used to randomly determine the order of features when deciding spliting point.
       def initialize(criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1, max_features: nil,
                      random_seed: nil)
+        SVMKit::Validation.check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                                                    max_features: max_features, random_seed: random_seed)
+        SVMKit::Validation.check_params_integer(min_samples_leaf: min_samples_leaf)
+        SVMKit::Validation.check_params_string(criterion: criterion)
+
         @params = {}
         @params[:criterion] = criterion
         @params[:max_depth] = max_depth
@@ -62,12 +67,12 @@ module SVMKit
         @params[:max_features] = max_features
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
-        @rng = Random.new(@params[:random_seed])
         @tree = nil
         @classes = nil
         @feature_importances = nil
         @n_leaves = nil
         @leaf_labels = nil
+        @rng = Random.new(@params[:random_seed])
       end
 
       # Fit the model with given training data.
@@ -76,6 +81,8 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [DecisionTreeClassifier] The learned classifier itself.
       def fit(x, y)
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_label_array(y)
         n_samples, n_features = x.shape
         @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
@@ -90,6 +97,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
+        SVMKit::Validation.check_sample_array(x)
         @leaf_labels[apply(x)]
       end
 
@@ -98,6 +106,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
+        SVMKit::Validation.check_sample_array(x)
         probs = Numo::DFloat[*(Array.new(x.shape[0]) { |n| predict_at_node(@tree, x[n, true]) })]
         probs[true, @classes]
       end
@@ -107,14 +116,18 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Leaf index for sample.
       def apply(x)
+        SVMKit::Validation.check_sample_array(x)
         Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
       end
 
       # Dump marshal data.
       # @return [Hash] The marshal data about DecisionTreeClassifier
       def marshal_dump
-        { params: @params, classes: @classes, tree: @tree,
-          feature_importances: @feature_importances, leaf_labels: @leaf_labels,
+        { params: @params,
+          classes: @classes,
+          tree: @tree,
+          feature_importances: @feature_importances,
+          leaf_labels: @leaf_labels,
           rng: @rng }
       end
 

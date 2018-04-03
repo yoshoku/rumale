@@ -11,6 +11,8 @@ module SVMKit
       # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
       def euclidean_distance(x, y = nil)
         y = x if y.nil?
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_sample_array(y)
         sum_x_vec = (x**2).sum(1)
         sum_y_vec = (y**2).sum(1)
         dot_xy_mat = x.dot(y.transpose)
@@ -29,6 +31,9 @@ module SVMKit
       def rbf_kernel(x, y = nil, gamma = nil)
         y = x if y.nil?
         gamma ||= 1.0 / x.shape[1]
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_sample_array(y)
+        SVMKit::Validation.check_params_float(gamma: gamma)
         distance_matrix = euclidean_distance(x, y)
         Numo::NMath.exp((distance_matrix**2) * -gamma)
       end
@@ -40,6 +45,8 @@ module SVMKit
       # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
       def linear_kernel(x, y = nil)
         y = x if y.nil?
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_sample_array(y)
         x.dot(y.transpose)
       end
 
@@ -54,6 +61,10 @@ module SVMKit
       def polynomial_kernel(x, y = nil, degree = 3, gamma = nil, coef = 1)
         y = x if y.nil?
         gamma ||= 1.0 / x.shape[1]
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_sample_array(y)
+        SVMKit::Validation.check_params_float(gamma: gamma)
+        SVMKit::Validation.check_params_integer(degree: degree, coef: coef)
         (x.dot(y.transpose) * gamma + coef)**degree
       end
 
@@ -67,6 +78,10 @@ module SVMKit
       def sigmoid_kernel(x, y = nil, gamma = nil, coef = 1)
         y = x if y.nil?
         gamma ||= 1.0 / x.shape[1]
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_sample_array(y)
+        SVMKit::Validation.check_params_float(gamma: gamma)
+        SVMKit::Validation.check_params_integer(coef: coef)
         Numo::NMath.tanh(x.dot(y.transpose) * gamma + coef)
       end
     end

@@ -3,6 +3,7 @@
 require 'numo/narray'
 
 require 'svmkit/version'
+require 'svmkit/validation'
 require 'svmkit/pairwise_metric'
 require 'svmkit/dataset'
 require 'svmkit/base/base_estimator'

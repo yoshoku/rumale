@@ -50,6 +50,11 @@ module SVMKit
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
                      max_iter: 100, batch_size: 50, normalize: true, random_seed: nil)
+        SVMKit::Validation.check_params_float(reg_param: reg_param, bias_scale: bias_scale)
+        SVMKit::Validation.check_params_integer(max_iter: max_iter, batch_size: batch_size)
+        SVMKit::Validation.check_params_boolean(fit_bias: fit_bias, normalize: normalize)
+        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+
         @params = {}
         @params[:reg_param] = reg_param
         @params[:fit_bias] = fit_bias
@@ -71,6 +76,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [LogisticRegression] The learned classifier itself.
       def fit(x, y)
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_label_array(y)
+
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
         _n_samples, n_features = x.shape
@@ -98,6 +106,8 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
+        SVMKit::Validation.check_sample_array(x)
+
         x.dot(@weight_vec.transpose) + @bias_term
       end
 
@@ -106,6 +116,8 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
+        SVMKit::Validation.check_sample_array(x)
+
         return Numo::Int32.cast(predict_proba(x)[true, 1].ge(0.5)) * 2 - 1 if @classes.size <= 2
 
         n_samples, = x.shape
@@ -118,6 +130,8 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
+        SVMKit::Validation.check_sample_array(x)
+
         proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
         return (proba.transpose / proba.sum(axis: 1)).transpose if @classes.size > 2
 

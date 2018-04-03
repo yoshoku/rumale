@@ -28,6 +28,7 @@ module SVMKit
       #
       # @param feature_range [Array<Float>] The desired range of samples.
       def initialize(feature_range: [0.0, 1.0])
+        SVMKit::Validation.check_params_type(Array, feature_range: feature_range)
         @params = {}
         @params[:feature_range] = feature_range
         @min_vec = nil
@@ -41,6 +42,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
       # @return [MinMaxScaler]
       def fit(x, _y = nil)
+        SVMKit::Validation.check_sample_array(x)
         @min_vec = x.min(0)
         @max_vec = x.max(0)
         self
@@ -53,6 +55,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
       # @return [Numo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
+        SVMKit::Validation.check_sample_array(x)
         fit(x).transform(x)
       end
 
@@ -61,6 +64,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
       # @return [Numo::DFloat] The scaled samples.
       def transform(x)
+        SVMKit::Validation.check_sample_array(x)
         n_samples, = x.shape
         dif_vec = @max_vec - @min_vec
         nx = (x - @min_vec.tile(n_samples, 1)) / dif_vec.tile(n_samples, 1)

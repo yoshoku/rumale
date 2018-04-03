@@ -38,6 +38,10 @@ module SVMKit
       # @param evaluator [Evaluator] The evaluator that calculates score of estimator results.
       # @param return_train_score [Boolean] The flag indicating whether to calculate the score of training dataset.
       def initialize(estimator: nil, splitter: nil, evaluator: nil, return_train_score: false)
+        SVMKit::Validation.check_params_type(SVMKit::Base::BaseEstimator, estimator: estimator)
+        SVMKit::Validation.check_params_type(SVMKit::Base::Splitter, splitter: splitter)
+        SVMKit::Validation.check_params_type_or_nil(SVMKit::Base::Evaluator, evaluator: evaluator)
+        SVMKit::Validation.check_params_boolean(return_train_score: return_train_score)
         @estimator = estimator
         @splitter = splitter
         @evaluator = evaluator
@@ -56,6 +60,8 @@ module SVMKit
       #   * :train_score (Array<Float>) The scores of training dataset for each split. This option is nil if
       #     the return_train_score is false.
       def perform(x, y)
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_label_array(y)
         # Initialize the report of cross validation.
         report = { test_score: [], train_score: nil, fit_time: [] }
         report[:train_score] = [] if @return_train_score

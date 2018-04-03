@@ -20,6 +20,8 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
       # @return [Float] Mean accuracy
       def score(x, y)
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_label_array(y)
         evaluator = SVMKit::EvaluationMeasure::Accuracy.new
         evaluator.score(y, predict(x))
       end

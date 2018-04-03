@@ -50,6 +50,11 @@ module SVMKit
       #   It is used to randomly determine the order of features when deciding spliting point.
       def initialize(n_estimators: 10, criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
                      max_features: nil, random_seed: nil)
+        SVMKit::Validation.check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                                                    max_features: max_features, random_seed: random_seed)
+        SVMKit::Validation.check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
+        SVMKit::Validation.check_params_string(criterion: criterion)
+
         @params = {}
         @params[:n_estimators] = n_estimators
         @params[:criterion] = criterion
@@ -59,10 +64,10 @@ module SVMKit
         @params[:max_features] = max_features
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
-        @rng = Random.new(@params[:random_seed])
         @estimators = nil
         @classes = nil
         @feature_importances = nil
+        @rng = Random.new(@params[:random_seed])
       end
 
       # Fit the model with given training data.
@@ -71,6 +76,8 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [RandomForestClassifier] The learned classifier itself.
       def fit(x, y)
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_label_array(y)
         # Initialize some variables.
         n_samples, n_features = x.shape
         @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
@@ -98,6 +105,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
+        SVMKit::Validation.check_sample_array(x)
         n_samples, = x.shape
         n_classes = @classes.size
         classes_arr = @classes.to_a
@@ -117,6 +125,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
+        SVMKit::Validation.check_sample_array(x)
         n_samples, = x.shape
         n_classes = @classes.size
         classes_arr = @classes.to_a
@@ -136,6 +145,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
+        SVMKit::Validation.check_sample_array(x)
         Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
       end
 

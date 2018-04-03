@@ -58,6 +58,12 @@ module SVMKit
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: 'hinge', reg_param_bias: 1.0, reg_param_weight: 1.0, reg_param_factor: 1.0,
                      init_std: 0.1, max_iter: 1000, batch_size: 10, random_seed: nil)
+        SVMKit::Validation.check_params_float(reg_param_bias: reg_param_bias, reg_param_weight: reg_param_weight,
+                                              reg_param_factor: reg_param_factor, init_std: init_std)
+        SVMKit::Validation.check_params_integer(n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
+        SVMKit::Validation.check_params_string(loss: loss)
+        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+
         @params = {}
         @params[:n_factors] = n_factors
         @params[:loss] = loss
@@ -82,6 +88,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [FactorizationMachineClassifier] The learned classifier itself.
       def fit(x, y)
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_label_array(y)
+
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
         _n_samples, n_features = x.shape
@@ -111,6 +120,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
+        SVMKit::Validation.check_sample_array(x)
         linear_term = @bias_term + x.dot(@weight_vec.transpose)
         factor_term = if @classes.size <= 2
                         0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum
@@ -125,6 +135,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
+        SVMKit::Validation.check_sample_array(x)
         return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
 
         n_samples, = x.shape
@@ -137,6 +148,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
+        SVMKit::Validation.check_sample_array(x)
         proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
         return (proba.transpose / proba.sum(axis: 1)).transpose if @classes.size > 2
 

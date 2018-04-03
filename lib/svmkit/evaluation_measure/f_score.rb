@@ -23,6 +23,7 @@ module SVMKit
       #
       # @param average [String] The average type ('binary', 'micro', 'macro')
       def initialize(average: 'binary')
+        SVMKit::Validation.check_params_string(average: average)
         @average = average
       end
 
@@ -32,6 +33,9 @@ module SVMKit
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted labels.
       # @return [Float] Average F1-score
       def score(y_true, y_pred)
+        SVMKit::Validation.check_label_array(y_true)
+        SVMKit::Validation.check_label_array(y_pred)
+
         case @average
         when 'binary'
           f_score_each_class(y_true, y_pred).last

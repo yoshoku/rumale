@@ -32,6 +32,10 @@ module SVMKit
       # @param shuffle [Boolean] The flag indicating whether to shuffle the dataset.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_splits: 3, shuffle: false, random_seed: nil)
+        SVMKit::Validation.check_params_integer(n_splits: n_splits)
+        SVMKit::Validation.check_params_boolean(shuffle: shuffle)
+        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+
         @n_splits = n_splits
         @shuffle = shuffle
         @random_seed = random_seed
@@ -43,11 +47,9 @@ module SVMKit
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features])
       #   The dataset to be used to generate data indices for K-fold cross validation.
-      # @param y [Numo::Int32] (shape: [n_samples])
-      #   The labels to be used to generate data indices for stratified K-fold cross validation.
-      #   This argument exists to unify the interface between the K-fold methods, it is not used in the method.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
-      def split(x, y) # rubocop:disable Lint/UnusedMethodArgument
+      def split(x, _y = nil)
+        SVMKit::Validation.check_sample_array(x)
         # Initialize and check some variables.
         n_samples, = x.shape
         unless @n_splits.between?(2, n_samples)

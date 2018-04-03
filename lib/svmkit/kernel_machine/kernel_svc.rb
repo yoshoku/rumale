@@ -42,13 +42,17 @@ module SVMKit
       # @param max_iter [Integer] The maximum number of iterations.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, max_iter: 1000, random_seed: nil)
+        SVMKit::Validation.check_params_float(reg_param: reg_param)
+        SVMKit::Validation.check_params_integer(max_iter: max_iter)
+        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+
         @params = {}
         @params[:reg_param] = reg_param
         @params[:max_iter] = max_iter
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
-        @classes
+        @classes = nil
         @rng = Random.new(@params[:random_seed])
       end
 
@@ -59,6 +63,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_training_samples]) The labels to be used for fitting the model.
       # @return [KernelSVC] The learned classifier itself.
       def fit(x, y)
+        SVMKit::Validation.check_sample_array(x)
+        SVMKit::Validation.check_label_array(y)
+
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
         _n_samples, n_features = x.shape
@@ -84,6 +91,8 @@ module SVMKit
       #     The kernel matrix between testing samples and training samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_testing_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
+        SVMKit::Validation.check_sample_array(x)
+
         x.dot(@weight_vec.transpose)
       end
 
@@ -93,21 +102,13 @@ module SVMKit
       #     The kernel matrix between testing samples and training samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_testing_samples]) Predicted class label per sample.
       def predict(x)
+        SVMKit::Validation.check_sample_array(x)
+
         return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
 
         n_samples, = x.shape
         decision_values = decision_function(x)
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
-      end
-
-      # Claculate the mean accuracy of the given testing data.
-      #
-      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_training_samples])
-      #     The kernel matrix between testing samples and training samples.
-      # @param y [Numo::Int32] (shape: [n_testing_samples]) True labels for testing data.
-      # @return [Float] Mean accuracy
-      def score(x, y)
-        super
       end
 
       # Dump marshal data.
