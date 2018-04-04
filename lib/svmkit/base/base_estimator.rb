@@ -7,7 +7,7 @@ module SVMKit
     module BaseEstimator
       # Return parameters about an estimator.
       # @return [Hash]
-      attr_accessor :params
+      attr_reader :params
     end
   end
 end
