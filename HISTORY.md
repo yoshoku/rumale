@@ -1,3 +1,8 @@
+# 0.2.8
+- Fixed bug on gradient calculation of Logistic Regression.
+- Fixed to change accessor of params of estimators to read only.
+- Added parameter validation.
+
 # 0.2.7
 - Fixed to support multiclass classifiction into LinearSVC, LogisticRegression, KernelSVC, and FactorizationMachineClassifier
 
