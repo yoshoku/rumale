@@ -18,7 +18,7 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
   it 'classifies three clusters data.' do
     _n_samples, n_features = samples.shape
     estimator.fit(samples, labels)
-    expect(estimator.tree.class).to eq(OpenStruct)
+    expect(estimator.tree.class).to eq(SVMKit::Tree::Node)
     expect(estimator.classes.class).to eq(Numo::Int32)
     expect(estimator.classes.size).to eq(3)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)
