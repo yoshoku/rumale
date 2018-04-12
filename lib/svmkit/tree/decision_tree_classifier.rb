@@ -131,6 +131,8 @@ module SVMKit
         @params[:max_features] = max_features
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
+        @criterion = :gini
+        @criterion = :entropy if @params[:criterion] == 'entropy'
         @tree = nil
         @classes = nil
         @feature_importances = nil
@@ -189,6 +191,7 @@ module SVMKit
       def marshal_dump
         { params: @params,
           classes: @classes,
+          criterion: @criterion,
           tree: @tree,
           feature_importances: @feature_importances,
           leaf_labels: @leaf_labels,
@@ -200,6 +203,7 @@ module SVMKit
       def marshal_load(obj)
         @params = obj[:params]
         @classes = obj[:classes]
+        @criterion = obj[:criterion]
         @tree = obj[:tree]
         @feature_importances = obj[:feature_importances]
         @leaf_labels = obj[:leaf_labels]
@@ -302,16 +306,16 @@ module SVMKit
       end
 
       def impurity(labels)
-        posterior_probs = labels.to_a.uniq.sort.map { |c| labels.eq(c).count / labels.size.to_f }
-        @params[:criterion] == 'entropy' ? entropy(posterior_probs) : gini(posterior_probs)
+        posterior_probs = Numo::DFloat[*(labels.to_a.uniq.sort.map { |c| labels.eq(c).count })] / labels.size.to_f
+        send(@criterion, posterior_probs)
       end
 
       def gini(posterior_probs)
-        1.0 - posterior_probs.map { |p| p**2 }.inject(:+)
+        1.0 - (posterior_probs * posterior_probs).sum
       end
 
       def entropy(posterior_probs)
-        -posterior_probs.map { |p| p * Math.log(p) }.inject(:+)
+        -(posterior_probs * Numo::NMath.log(posterior_probs)).sum
       end
 
       def eval_importance(n_samples, n_features)
