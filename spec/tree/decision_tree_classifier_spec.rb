@@ -87,9 +87,8 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
   context 'when max_features parameter is given' do
     context 'negative value' do
       let(:max_features) { -10 }
-      it 'value of max_features is set to 1' do
-        estimator.fit(samples, labels)
-        expect(estimator.params[:max_features]).to eq(1)
+      it 'raises ArgumentError by validation' do
+        expect { estimator }.to raise_error(ArgumentError)
       end
     end
 

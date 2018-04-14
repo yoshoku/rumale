@@ -40,7 +40,7 @@ module SVMKit
         SVMKit::Validation.check_params_float(gamma: gamma)
         SVMKit::Validation.check_params_integer(n_components: n_components)
         SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-
+        SVMKit::Validation.check_params_positive(gamma: gamma, n_components: n_components)
         @params = {}
         @params[:gamma] = gamma
         @params[:n_components] = n_components

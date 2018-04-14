@@ -45,7 +45,7 @@ module SVMKit
         SVMKit::Validation.check_params_float(reg_param: reg_param)
         SVMKit::Validation.check_params_integer(max_iter: max_iter)
         SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-
+        SVMKit::Validation.check_params_positive(reg_param: reg_param, max_iter: max_iter)
         @params = {}
         @params[:reg_param] = reg_param
         @params[:max_iter] = max_iter

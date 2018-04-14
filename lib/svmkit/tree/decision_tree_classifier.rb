@@ -122,7 +122,8 @@ module SVMKit
                                                     max_features: max_features, random_seed: random_seed)
         SVMKit::Validation.check_params_integer(min_samples_leaf: min_samples_leaf)
         SVMKit::Validation.check_params_string(criterion: criterion)
-
+        SVMKit::Validation.check_params_positive(max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                                                 min_samples_leaf: min_samples_leaf, max_features: max_features)
         @params = {}
         @params[:criterion] = criterion
         @params[:max_depth] = max_depth
@@ -150,8 +151,8 @@ module SVMKit
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
         n_samples, n_features = x.shape
-        @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
-        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
+        @params[:max_features] = n_features if @params[:max_features].nil?
+        @params[:max_features] = [@params[:max_features], n_features].min
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         build_tree(x, y)
         eval_importance(n_samples, n_features)

@@ -24,4 +24,14 @@ RSpec.describe SVMKit::Validation do
     expect(described_class.check_params_boolean(foo: true)).to be_nil
     expect(described_class.check_params_boolean(foo: false)).to be_nil
   end
+
+  it 'detects negative value given.' do
+    expect { described_class.check_params_positive(foo: -1) }.to raise_error(ArgumentError)
+    expect { described_class.check_params_positive(foo: -0.5) }.to raise_error(ArgumentError)
+    expect(described_class.check_params_type(foo: 0)).to be_nil
+    expect(described_class.check_params_type(foo: 0.0)).to be_nil
+    expect(described_class.check_params_type(foo: 1)).to be_nil
+    expect(described_class.check_params_type(foo: 0.5)).to be_nil
+    expect(described_class.check_params_type(foo: nil)).to be_nil
+  end
 end

@@ -54,7 +54,9 @@ module SVMKit
                                                     max_features: max_features, random_seed: random_seed)
         SVMKit::Validation.check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
         SVMKit::Validation.check_params_string(criterion: criterion)
-
+        SVMKit::Validation.check_params_positive(n_estimators: n_estimators, max_depth: max_depth,
+                                                 max_leaf_nodes: max_leaf_nodes, min_samples_leaf: min_samples_leaf,
+                                                 max_features: max_features)
         @params = {}
         @params[:n_estimators] = n_estimators
         @params[:criterion] = criterion

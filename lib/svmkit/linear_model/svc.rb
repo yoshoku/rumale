@@ -53,7 +53,8 @@ module SVMKit
         SVMKit::Validation.check_params_integer(max_iter: max_iter, batch_size: batch_size)
         SVMKit::Validation.check_params_boolean(fit_bias: fit_bias, normalize: normalize)
         SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-
+        SVMKit::Validation.check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter,
+                                                 batch_size: batch_size)
         @params = {}
         @params[:reg_param] = reg_param
         @params[:fit_bias] = fit_bias

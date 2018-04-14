@@ -35,7 +35,7 @@ module SVMKit
         SVMKit::Validation.check_params_integer(n_splits: n_splits)
         SVMKit::Validation.check_params_boolean(shuffle: shuffle)
         SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-
+        SVMKit::Validation.check_params_positive(n_splits: n_splits)
         @n_splits = n_splits
         @shuffle = shuffle
         @random_seed = random_seed

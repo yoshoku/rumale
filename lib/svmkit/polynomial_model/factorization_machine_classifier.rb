@@ -63,7 +63,9 @@ module SVMKit
         SVMKit::Validation.check_params_integer(n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
         SVMKit::Validation.check_params_string(loss: loss)
         SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-
+        SVMKit::Validation.check_params_positive(n_factors: n_factors, reg_param_bias: reg_param_bias,
+                                                 reg_param_weight: reg_param_weight, reg_param_factor: reg_param_factor,
+                                                 max_iter: max_iter, batch_size: batch_size)
         @params = {}
         @params[:n_factors] = n_factors
         @params[:loss] = loss

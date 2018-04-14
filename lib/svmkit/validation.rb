@@ -51,5 +51,11 @@ module SVMKit
       params.each { |k, v| raise TypeError, "Expect class of #{k} to be Boolean" unless v.is_a?(FalseClass) || v.is_a?(TrueClass) }
       nil
     end
+
+    # @!visibility private
+    def check_params_positive(params = {})
+      params.each { |k, v| raise ArgumentError, "Expect #{k} to be positive value" if v < 0 unless v.nil? }
+      nil
+    end
   end
 end
