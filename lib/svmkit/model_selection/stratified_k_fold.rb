@@ -51,7 +51,7 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples])
       #   The labels to be used to generate data indices for stratified K-fold cross validation.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
-      def split(x, y) # rubocop:disable Lint/UnusedMethodArgument
+      def split(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
         # Check the number of samples in each class.

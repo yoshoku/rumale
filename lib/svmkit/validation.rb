@@ -54,7 +54,7 @@ module SVMKit
 
     # @!visibility private
     def check_params_positive(params = {})
-      params.each { |k, v| raise ArgumentError, "Expect #{k} to be positive value" if v < 0 unless v.nil? }
+      params.reject { |_, v| v.nil? }.each { |k, v| raise ArgumentError, "Expect #{k} to be positive value" if v < 0 }
       nil
     end
   end

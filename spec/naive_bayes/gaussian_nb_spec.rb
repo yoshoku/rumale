@@ -32,7 +32,7 @@ RSpec.describe SVMKit::NaiveBayes::GaussianNB do
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(3)
     classes = labels.to_a.uniq.sort
-    predicted = Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }]
+    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
     expect(predicted).to eq(labels)
   end
 

@@ -116,7 +116,7 @@ RSpec.describe SVMKit::LinearModel::LogisticRegression do
     expect(probs.class).to eq(Numo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(n_classes)
-    predicted = Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }]
+    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
     expect(predicted).to eq(y_mlt)
   end
 end

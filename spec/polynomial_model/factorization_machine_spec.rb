@@ -95,7 +95,6 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
     expect(estimator.score(x_mlt, y_mlt)).to eq(1.0)
   end
 
-
   it 'estimates class probabilities with two clusters dataset.' do
     n_samples, _n_features = x_bin.shape
     estimator_logit.fit(x_bin, y_bin)
@@ -117,7 +116,7 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
     expect(probs.class).to eq(Numo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(n_classes)
-    predicted = Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }]
+    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
     expect(predicted).to eq(y_mlt)
   end
 

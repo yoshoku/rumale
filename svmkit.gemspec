@@ -1,8 +1,8 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'svmkit/version'
-
 
 Gem::Specification.new do |spec|
   spec.name          = 'svmkit'
@@ -36,9 +36,9 @@ MSG
   spec.add_runtime_dependency 'numo-narray', '~> 0.9.0'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
+  spec.add_development_dependency 'coveralls', '~> 0.8'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'coveralls', '~> 0.8'
 
   spec.post_install_message = <<MSG
 *************************************************************************
@@ -48,5 +48,4 @@ Note that the SVMKit has been changed to use Numo::NArray for
 linear algebra library from version 0.2.0.
 *************************************************************************
 MSG
-
 end

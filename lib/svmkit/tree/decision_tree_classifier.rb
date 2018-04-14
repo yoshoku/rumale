@@ -119,7 +119,7 @@ module SVMKit
       def initialize(criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1, max_features: nil,
                      random_seed: nil)
         SVMKit::Validation.check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                                                    max_features: max_features, random_seed: random_seed)
+                                                             max_features: max_features, random_seed: random_seed)
         SVMKit::Validation.check_params_integer(min_samples_leaf: min_samples_leaf)
         SVMKit::Validation.check_params_string(criterion: criterion)
         SVMKit::Validation.check_params_positive(max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
