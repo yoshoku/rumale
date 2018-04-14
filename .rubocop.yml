@@ -21,6 +21,9 @@ Metrics/ClassLength:
 Metrics/MethodLength:
   Max: 40
 
+Metrics/AbcSize:
+  Max: 60
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
@@ -29,4 +32,10 @@ ParameterLists:
   Max: 10
 
 Security/MarshalLoad:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+Style/FormatStringToken:
   Enabled: false
