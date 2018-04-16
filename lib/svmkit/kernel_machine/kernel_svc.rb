@@ -52,6 +52,7 @@ module SVMKit
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
+        @prob_param = nil
         @classes = nil
         @rng = Random.new(@params[:random_seed])
       end
@@ -72,14 +73,21 @@ module SVMKit
 
         if n_classes > 2
           @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
+          @prob_param = Numo::DFloat.zeros(n_classes, 2)
           n_classes.times do |n|
             bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
             @weight_vec[n, true] = binary_fit(x, bin_y)
+            @prob_param[n, true] = SVMKit::ProbabilisticOutput.fit_sigmoid(
+              x.dot(@weight_vec[n, true].transpose), bin_y
+            )
           end
         else
           negative_label = y.to_a.uniq.sort.first
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
           @weight_vec = binary_fit(x, bin_y)
+          @prob_param = SVMKit::ProbabilisticOutput.fit_sigmoid(
+            x.dot(@weight_vec.transpose), bin_y
+          )
         end
 
         self
@@ -111,11 +119,32 @@ module SVMKit
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
 
+      # Predict probability for samples.
+      #
+      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_training_samples])
+      #     The kernel matrix between testing samples and training samples to predict the labels.
+      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      def predict_proba(x)
+        SVMKit::Validation.check_sample_array(x)
+
+        if @classes.size > 2
+          probs = 1.0 / (Numo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)
+          return (probs.transpose / probs.sum(axis: 1)).transpose
+        end
+
+        n_samples, = x.shape
+        probs = Numo::DFloat.zeros(n_samples, 2)
+        probs[true, 1] = 1.0 / (Numo::NMath.exp(@prob_param[0] * decision_function(x) + @prob_param[1]) + 1.0)
+        probs[true, 0] = 1.0 - probs[true, 1]
+        probs
+      end
+
       # Dump marshal data.
       # @return [Hash] The marshal data about KernelSVC.
       def marshal_dump
         { params: @params,
           weight_vec: @weight_vec,
+          prob_param: @prob_param,
           classes: @classes,
           rng: @rng }
       end
@@ -125,6 +154,7 @@ module SVMKit
       def marshal_load(obj)
         @params = obj[:params]
         @weight_vec = obj[:weight_vec]
+        @prob_param = obj[:prob_param]
         @classes = obj[:classes]
         @rng = obj[:rng]
         nil

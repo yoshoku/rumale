@@ -62,6 +62,31 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
     expect(estimator.score(kernel_mat_mlt, y_mlt)).to eq(1.0)
   end
 
+  it 'estimates class probabilities with xor data.' do
+    n_samples, = x_xor.shape[0]
+    estimator.fit(kernel_mat_xor, y_xor)
+    probs = estimator.predict_proba(kernel_mat_xor)
+    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.shape[0]).to eq(n_samples)
+    expect(probs.shape[1]).to eq(2)
+    expect(probs.sum(1).eq(1).count).to eq(n_samples)
+    predicted = Numo::Int32.cast(probs[true, 0] < probs[true, 1]) * 2 - 1
+    expect(predicted).to eq(y_xor)
+  end
+
+  it 'estimates class probabilities with three clusters dataset.' do
+    classes = y_mlt.to_a.uniq.sort
+    n_classes = classes.size
+    n_samples = x_mlt.shape[0]
+    estimator.fit(kernel_mat_mlt, y_mlt)
+    probs = estimator.predict_proba(kernel_mat_mlt)
+    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.shape[0]).to eq(n_samples)
+    expect(probs.shape[1]).to eq(n_classes)
+    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
+    expect(predicted).to eq(y_mlt)
+  end
+
   it 'dumps and restores itself using Marshal module.' do
     estimator.fit(kernel_mat_xor, y_xor)
     copied = Marshal.load(Marshal.dump(estimator))

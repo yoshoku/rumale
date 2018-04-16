@@ -49,6 +49,18 @@ RSpec.describe SVMKit::LinearModel::SVC do
     expect(estimator_bias.score(x_bin, y_bin)).to eq(1.0)
   end
 
+  it 'estimates class probabilities with two clusters dataset.' do
+    n_samples, _n_features = x_bin.shape
+    estimator.fit(x_bin, y_bin)
+    probs = estimator.predict_proba(x_bin)
+    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.shape[0]).to eq(n_samples)
+    expect(probs.shape[1]).to eq(2)
+    expect(probs.sum(1).eq(1).count).to eq(n_samples)
+    predicted = Numo::Int32.cast(probs[true, 0] < probs[true, 1]) * 2 - 1
+    expect(predicted).to eq(y_bin)
+  end
+
   it 'dumps and restores itself using Marshal module.' do
     estimator.fit(x_bin, y_bin)
     copied = Marshal.load(Marshal.dump(estimator))
@@ -93,5 +105,18 @@ RSpec.describe SVMKit::LinearModel::SVC do
 
     expect(predicted).to eq(y_mlt)
     expect(estimator_bias.score(x_mlt, y_mlt)).to eq(1.0)
+  end
+
+  it 'estimates class probabilities with three clusters dataset.' do
+    classes = y_mlt.to_a.uniq.sort
+    n_classes = classes.size
+    n_samples, _n_features = x_mlt.shape
+    estimator.fit(x_mlt, y_mlt)
+    probs = estimator.predict_proba(x_mlt)
+    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.shape[0]).to eq(n_samples)
+    expect(probs.shape[1]).to eq(n_classes)
+    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
+    expect(predicted).to eq(y_mlt)
   end
 end
