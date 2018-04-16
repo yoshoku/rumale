@@ -48,6 +48,7 @@ module SVMKit
       def fit(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         y_arr = y.to_a
         @classes = Numo::Int32.asarray(y_arr.uniq.sort)
         @estimators = @classes.to_a.map do |label|

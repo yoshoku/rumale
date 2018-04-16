@@ -20,6 +20,14 @@ module SVMKit
     end
 
     # @!visibility private
+    def check_sample_label_size(x, y)
+      unless x.shape[0] == y.shape[0]
+        raise ArgumentError, 'Expect to have the same number of samples for sample matrix and label vector'
+      end
+      nil
+    end
+
+    # @!visibility private
     def check_params_type(type, params = {})
       params.each { |k, v| raise TypeError, "Expect class of #{k} to be #{type}" unless v.is_a?(type) }
       nil

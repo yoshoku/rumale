@@ -80,6 +80,7 @@ module SVMKit
       def fit(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         n_samples, = x.shape
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         @class_priors = Numo::DFloat[*@classes.to_a.map { |l| y.eq(l).count / n_samples.to_f }]
@@ -168,6 +169,7 @@ module SVMKit
       def fit(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         n_samples, = x.shape
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         @class_priors = Numo::DFloat[*@classes.to_a.map { |l| y.eq(l).count / n_samples.to_f }]
@@ -257,6 +259,7 @@ module SVMKit
       def fit(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         n_samples, = x.shape
         bin_x = Numo::DFloat[*x.gt(@params[:bin_threshold])]
         @classes = Numo::Int32[*y.to_a.uniq.sort]

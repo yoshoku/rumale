@@ -62,6 +62,7 @@ module SVMKit
       def perform(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         # Initialize the report of cross validation.
         report = { test_score: [], train_score: nil, fit_time: [] }
         report[:train_score] = [] if @return_train_score

@@ -80,6 +80,7 @@ module SVMKit
       def fit(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         # Initialize some variables.
         n_samples, n_features = x.shape
         @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)

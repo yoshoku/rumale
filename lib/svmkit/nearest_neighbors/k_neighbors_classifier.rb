@@ -52,6 +52,7 @@ module SVMKit
       def fit(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         @prototypes = Numo::DFloat.asarray(x.to_a)
         @labels = Numo::Int32.asarray(y.to_a)
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)

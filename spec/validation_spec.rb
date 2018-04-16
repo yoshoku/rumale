@@ -15,6 +15,12 @@ RSpec.describe SVMKit::Validation do
     expect { described_class.check_label_array(Numo::Int32[[1, 2, 3], [4, 5, 6]]) }.to raise_error(ArgumentError)
   end
 
+  it 'detects invalid number of samples.' do
+    x = Numo::DFloat[[1, 2], [3, 4], [5, 6]]
+    y = Numo::Int32[1, 2]
+    expect { described_class.check_sample_label_size(x, y) }.to raise_error(ArgumentError)
+  end
+
   it 'detects invalid type variables given.' do
     expect { described_class.check_params_type(Integer, foo: nil) }.to raise_error(TypeError)
     expect(described_class.check_params_type(Integer, foo: 10)).to be_nil

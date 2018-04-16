@@ -22,6 +22,7 @@ module SVMKit
       def score(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         evaluator = SVMKit::EvaluationMeasure::Accuracy.new
         evaluator.score(y, predict(x))
       end

@@ -92,6 +92,7 @@ module SVMKit
       def fit(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size

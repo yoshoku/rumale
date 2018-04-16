@@ -54,6 +54,7 @@ module SVMKit
       def split(x, y)
         SVMKit::Validation.check_sample_array(x)
         SVMKit::Validation.check_label_array(y)
+        SVMKit::Validation.check_sample_label_size(x, y)
         # Check the number of samples in each class.
         unless valid_n_splits?(y)
           raise ArgumentError,
