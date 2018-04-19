@@ -186,11 +186,13 @@ module SVMKit
           # random sampling
           subset_ids = rand_ids.shift(@params[:batch_size])
           rand_ids.concat(subset_ids)
-          target_ids = subset_ids.map { |n| n if weight_vec.dot(samples[n, true]) * bin_y[n] < 1 }.compact
-          n_subsamples = target_ids.size
-          next if n_subsamples.zero?
+          sub_samples = samples[subset_ids, true]
+          sub_bin_y = bin_y[subset_ids]
+          target_ids = (sub_samples.dot(weight_vec.transpose) * sub_bin_y).lt(1.0).where
+          n_targets = target_ids.size
+          next if n_targets.zero?
           # update the weight vector.
-          mean_vec = samples[target_ids, true].transpose.dot(bin_y[target_ids]) / n_subsamples
+          mean_vec = sub_samples[target_ids, true].transpose.dot(sub_bin_y[target_ids]) / n_targets
           weight_vec -= learning_rate(t) * (@params[:reg_param] * weight_vec - mean_vec)
           # scale the weight vector.
           normalize_weight_vec(weight_vec) if @params[:normalize]
