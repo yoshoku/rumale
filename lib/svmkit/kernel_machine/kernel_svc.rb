@@ -40,15 +40,18 @@ module SVMKit
       #
       # @param reg_param [Float] The regularization parameter.
       # @param max_iter [Integer] The maximum number of iterations.
+      # @param probability [Boolean] The flag indicating whether to perform probability estimation.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(reg_param: 1.0, max_iter: 1000, random_seed: nil)
+      def initialize(reg_param: 1.0, max_iter: 1000, probability: false, random_seed: nil)
         SVMKit::Validation.check_params_float(reg_param: reg_param)
         SVMKit::Validation.check_params_integer(max_iter: max_iter)
+        SVMKit::Validation.check_params_boolean(probability: probability)
         SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
         SVMKit::Validation.check_params_positive(reg_param: reg_param, max_iter: max_iter)
         @params = {}
         @params[:reg_param] = reg_param
         @params[:max_iter] = max_iter
+        @params[:probability] = probability
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
@@ -78,17 +81,21 @@ module SVMKit
           n_classes.times do |n|
             bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
             @weight_vec[n, true] = binary_fit(x, bin_y)
-            @prob_param[n, true] = SVMKit::ProbabilisticOutput.fit_sigmoid(
-              x.dot(@weight_vec[n, true].transpose), bin_y
-            )
+            @prob_param[n, true] = if @params[:probability]
+                                     SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec[n, true].transpose), bin_y)
+                                   else
+                                     Numo::DFloat[1, 0]
+                                   end
           end
         else
           negative_label = y.to_a.uniq.sort.first
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
           @weight_vec = binary_fit(x, bin_y)
-          @prob_param = SVMKit::ProbabilisticOutput.fit_sigmoid(
-            x.dot(@weight_vec.transpose), bin_y
-          )
+          @prob_param = if @params[:probability]
+                          SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose), bin_y)
+                        else
+                          Numo::DFloat[1, 0]
+                        end
         end
 
         self

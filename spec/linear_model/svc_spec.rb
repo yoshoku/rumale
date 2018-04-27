@@ -8,6 +8,7 @@ RSpec.describe SVMKit::LinearModel::SVC do
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:estimator) { described_class.new(random_seed: 1) }
+  let(:estimator_prob) { described_class.new(probability: true, random_seed: 1) }
   let(:estimator_bias) { described_class.new(fit_bias: true, random_seed: 1) }
 
   it 'classifies two clusters.' do
@@ -51,30 +52,13 @@ RSpec.describe SVMKit::LinearModel::SVC do
 
   it 'estimates class probabilities with two clusters dataset.' do
     n_samples, _n_features = x_bin.shape
-    estimator.fit(x_bin, y_bin)
-    probs = estimator.predict_proba(x_bin)
+    probs = estimator_prob.fit(x_bin, y_bin).predict_proba(x_bin)
     expect(probs.class).to eq(Numo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(2)
     expect(probs.sum(1).eq(1).count).to eq(n_samples)
     predicted = Numo::Int32.cast(probs[true, 0] < probs[true, 1]) * 2 - 1
     expect(predicted).to eq(y_bin)
-  end
-
-  it 'dumps and restores itself using Marshal module.' do
-    estimator.fit(x_bin, y_bin)
-    copied = Marshal.load(Marshal.dump(estimator))
-    expect(estimator.class).to eq(copied.class)
-    expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])
-    expect(estimator.params[:fit_bias]).to eq(copied.params[:fit_bias])
-    expect(estimator.params[:bias_scale]).to eq(copied.params[:bias_scale])
-    expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
-    expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
-    expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
-    expect(estimator.weight_vec).to eq(copied.weight_vec)
-    expect(estimator.bias_term).to eq(copied.bias_term)
-    expect(estimator.rng).to eq(copied.rng)
-    expect(copied.score(x_bin, y_bin)).to eq(1.0)
   end
 
   it 'classifies three clusters.' do
@@ -111,12 +95,27 @@ RSpec.describe SVMKit::LinearModel::SVC do
     classes = y_mlt.to_a.uniq.sort
     n_classes = classes.size
     n_samples, _n_features = x_mlt.shape
-    estimator.fit(x_mlt, y_mlt)
-    probs = estimator.predict_proba(x_mlt)
+    probs = estimator_prob.fit(x_mlt, y_mlt).predict_proba(x_mlt)
     expect(probs.class).to eq(Numo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(n_classes)
     predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
     expect(predicted).to eq(y_mlt)
+  end
+
+  it 'dumps and restores itself using Marshal module.' do
+    estimator.fit(x_bin, y_bin)
+    copied = Marshal.load(Marshal.dump(estimator))
+    expect(estimator.class).to eq(copied.class)
+    expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])
+    expect(estimator.params[:fit_bias]).to eq(copied.params[:fit_bias])
+    expect(estimator.params[:bias_scale]).to eq(copied.params[:bias_scale])
+    expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
+    expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
+    expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
+    expect(estimator.weight_vec).to eq(copied.weight_vec)
+    expect(estimator.bias_term).to eq(copied.bias_term)
+    expect(estimator.rng).to eq(copied.rng)
+    expect(copied.score(x_bin, y_bin)).to eq(1.0)
   end
 end

@@ -10,6 +10,7 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
   let(:kernel_mat_xor) { SVMKit::PairwiseMetric.rbf_kernel(x_xor, nil, 1.0) }
   let(:kernel_mat_mlt) { SVMKit::PairwiseMetric.rbf_kernel(x_mlt, nil, 1.0) }
   let(:estimator) { described_class.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
+  let(:estimator_prob) { described_class.new(reg_param: 1.0, max_iter: 1000, probability: true, random_seed: 1) }
 
   it 'classifies xor data.' do
     n_samples, = x_xor.shape[0]
@@ -64,8 +65,8 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
 
   it 'estimates class probabilities with xor data.' do
     n_samples, = x_xor.shape[0]
-    estimator.fit(kernel_mat_xor, y_xor)
-    probs = estimator.predict_proba(kernel_mat_xor)
+    estimator_prob.fit(kernel_mat_xor, y_xor)
+    probs = estimator_prob.predict_proba(kernel_mat_xor)
     expect(probs.class).to eq(Numo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(2)
@@ -78,8 +79,8 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
     classes = y_mlt.to_a.uniq.sort
     n_classes = classes.size
     n_samples = x_mlt.shape[0]
-    estimator.fit(kernel_mat_mlt, y_mlt)
-    probs = estimator.predict_proba(kernel_mat_mlt)
+    estimator_prob.fit(kernel_mat_mlt, y_mlt)
+    probs = estimator_prob.predict_proba(kernel_mat_mlt)
     expect(probs.class).to eq(Numo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(n_classes)
@@ -93,6 +94,7 @@ RSpec.describe SVMKit::KernelMachine::KernelSVC do
     expect(estimator.class).to eq(copied.class)
     expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
+    expect(estimator.params[:probability]).to eq(copied.params[:probability])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.weight_vec).to eq(copied.weight_vec)
     expect(estimator.rng).to eq(copied.rng)

@@ -45,13 +45,14 @@ module SVMKit
       # @param bias_scale [Float] The scale of the bias term.
       # @param max_iter [Integer] The maximum number of iterations.
       # @param batch_size [Integer] The size of the mini batches.
+      # @param probability [Boolean] The flag indicating whether to perform probability estimation.
       # @param normalize [Boolean] The flag indicating whether to normalize the weight vector.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
-                     max_iter: 100, batch_size: 50, normalize: true, random_seed: nil)
+                     max_iter: 100, batch_size: 50, probability: false, normalize: true, random_seed: nil)
         SVMKit::Validation.check_params_float(reg_param: reg_param, bias_scale: bias_scale)
         SVMKit::Validation.check_params_integer(max_iter: max_iter, batch_size: batch_size)
-        SVMKit::Validation.check_params_boolean(fit_bias: fit_bias, normalize: normalize)
+        SVMKit::Validation.check_params_boolean(fit_bias: fit_bias, probability: probability, normalize: normalize)
         SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
         SVMKit::Validation.check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter,
                                                  batch_size: batch_size)
@@ -61,6 +62,7 @@ module SVMKit
         @params[:bias_scale] = bias_scale
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
+        @params[:probability] = probability
         @params[:normalize] = normalize
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
@@ -94,13 +96,21 @@ module SVMKit
             weight, bias = binary_fit(x, bin_y)
             @weight_vec[n, true] = weight
             @bias_term[n] = bias
-            @prob_param[n, true] = SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(weight.transpose) + bias, bin_y)
+            @prob_param[n, true] = if @params[:probability]
+                                     SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(weight.transpose) + bias, bin_y)
+                                   else
+                                     Numo::DFloat[1, 0]
+                                   end
           end
         else
           negative_label = y.to_a.uniq.sort.first
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
           @weight_vec, @bias_term = binary_fit(x, bin_y)
-          @prob_param = SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose) + @bias_term, bin_y)
+          @prob_param = if @params[:probability]
+                          SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose) + @bias_term, bin_y)
+                        else
+                          Numo::DFloat[1, 0]
+                        end
         end
 
         self
