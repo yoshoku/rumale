@@ -3,9 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe SVMKit::EvaluationMeasure::LogLoss do
-  let(:bin_ground_truth) { Numo::DFloat[1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0] }
+  let(:bin_ground_truth) { Numo::Int32[1, 1, 1, 1, 1, -1, -1, -1, -1, -1] }
   let(:bin_predicted) { Numo::DFloat[0.9, 0.8, 0.6, 0.6, 0.8, 0.1, 0.2, 0.4, 0.4, 0.2] }
-  let(:mult_ground_truth) { Numo::DFloat[[0.0, 1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]] }
+  let(:mult_ground_truth) { Numo::Int32[1, 0, 0, 2] }
   let(:mult_predicted) { Numo::DFloat[[0.3, 0.5, 0.2], [0.7, 0.3, 0.0], [0.7, 0.2, 0.1], [0.1, 0.1, 0.8]] }
 
   it 'calculates logarithmic loss for binary classification task.' do
