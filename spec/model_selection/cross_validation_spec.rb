@@ -50,12 +50,16 @@ RSpec.describe SVMKit::ModelSelection::CrossValidation do
   end
 
   it 'performs k-fold cross validation with kernel svc to evaluate the results using F1-score.' do
-    cv = described_class.new(estimator: kernel_svc, splitter: kfold, evaluator: f_score)
+    cv = described_class.new(estimator: kernel_svc, splitter: kfold, evaluator: f_score, return_train_score: true)
     report = cv.perform(kernel_mat, labels)
     expect(cv.evaluator.class).to eq(SVMKit::EvaluationMeasure::FScore)
     expect(report[:test_score].size).to eq(n_splits)
-    expect(report[:train_score]).to be_nil
+    expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
+    mean_test_score = report[:test_score].inject(:+) / n_splits
+    mean_train_score = report[:train_score].inject(:+) / n_splits
+    expect(mean_test_score).to be_within(0.1).of(0.9)
+    expect(mean_train_score).to eq(1.0)
   end
 
   describe 'private method' do

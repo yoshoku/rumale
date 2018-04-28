@@ -84,7 +84,7 @@ module SVMKit
             report[:train_score].push(@estimator.score(train_x, train_y)) if @return_train_score
           else
             report[:test_score].push(@evaluator.score(test_y, @estimator.predict(test_x)))
-            report[:train_score].push(@estimator.score(train_x, @estimator.predict(train_x))) if @return_train_score
+            report[:train_score].push(@evaluator.score(train_y, @estimator.predict(train_x))) if @return_train_score
           end
         end
         report
