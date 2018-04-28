@@ -82,6 +82,9 @@ module SVMKit
           if @evaluator.nil?
             report[:test_score].push(@estimator.score(test_x, test_y))
             report[:train_score].push(@estimator.score(train_x, train_y)) if @return_train_score
+          elsif log_loss?
+            report[:test_score].push(@evaluator.score(test_y, @estimator.predict_proba(test_x)))
+            report[:train_score].push(@evaluator.score(train_y, @estimator.predict_proba(train_x))) if @return_train_score
           else
             report[:test_score].push(@evaluator.score(test_y, @estimator.predict(test_x)))
             report[:train_score].push(@evaluator.score(train_y, @estimator.predict(train_x))) if @return_train_score
@@ -96,6 +99,10 @@ module SVMKit
         class_name = @estimator.class.to_s
         class_name = @estimator.params[:estimator].class.to_s if class_name.include?('Multiclass')
         class_name.include?('KernelMachine')
+      end
+
+      def log_loss?
+        @evaluator.is_a?(SVMKit::EvaluationMeasure::LogLoss)
       end
     end
   end
