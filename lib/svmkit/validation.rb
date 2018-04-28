@@ -21,9 +21,7 @@ module SVMKit
 
     # @!visibility private
     def check_sample_label_size(x, y)
-      unless x.shape[0] == y.shape[0]
-        raise ArgumentError, 'Expect to have the same number of samples for sample matrix and label vector'
-      end
+      raise ArgumentError, 'Expect to have the same number of samples for sample matrix and label vector' unless x.shape[0] == y.shape[0]
       nil
     end
 
