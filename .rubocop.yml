@@ -9,7 +9,7 @@ Documentation:
   Enabled: false
 
 Metrics/LineLength:
-  Max: 120
+  Max: 140
   IgnoredPatterns: ['(\A|\s)#']
 
 Metrics/ModuleLength:
