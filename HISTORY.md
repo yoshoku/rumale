@@ -1,3 +1,13 @@
+# 0.2.9
+- Add predict_proba method to SVC and KernelSVC.
+- Add class for evaluating logarithmic loss.
+- Add classes for Label- and One-Hot- encoding.
+- Add some validator.
+- Fix bug on training data score calculation of cross validation.
+- Fix fit method of SVC for performance.
+- Fix criterion calculation on Decision Tree for performance.
+- Fix data structure of Decision Tree for performance.
+
 # 0.2.8
 - Fix bug on gradient calculation of Logistic Regression.
 - Fix to change accessor of params of estimators to read only.
