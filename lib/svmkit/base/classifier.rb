@@ -14,7 +14,7 @@ module SVMKit
         raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
       end
 
-      # Claculate the mean accuracy of the given testing data.
+      # Calculate the mean accuracy of the given testing data.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
       # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.

@@ -13,7 +13,7 @@ module SVMKit
     class Accuracy
       include Base::Evaluator
 
-      # Claculate mean accuracy.
+      # Calculate mean accuracy.
       #
       # @param y_true [Numo::Int32] (shape: [n_samples]) Ground truth labels.
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted labels.

@@ -12,7 +12,7 @@ module SVMKit
     class LogLoss
       include Base::Evaluator
 
-      # Claculate mean logarithmic loss.
+      # Calculate mean logarithmic loss.
       # If both y_true and y_pred are array (both shapes are [n_samples]), this method calculates
       # mean logarithmic loss for binary classification.
       #

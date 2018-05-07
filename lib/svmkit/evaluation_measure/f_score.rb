@@ -27,7 +27,7 @@ module SVMKit
         @average = average
       end
 
-      # Claculate average F1-score
+      # Calculate average F1-score
       #
       # @param y_true [Numo::Int32] (shape: [n_samples]) Ground truth labels.
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted labels.
