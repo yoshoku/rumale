@@ -20,8 +20,20 @@ module SVMKit
     end
 
     # @!visibility private
+    def check_tvalue_array(y)
+      raise TypeError, 'Expect class of target value vector to be Numo::DFloat' unless y.is_a?(Numo::DFloat)
+      nil
+    end
+
+    # @!visibility private
     def check_sample_label_size(x, y)
       raise ArgumentError, 'Expect to have the same number of samples for sample matrix and label vector' unless x.shape[0] == y.shape[0]
+      nil
+    end
+
+    # @!visibility private
+    def check_sample_tvalue_size(x, y)
+      raise ArgumentError, 'Expect to have the same number of samples for sample matrix and target value vector' unless x.shape[0] == y.shape[0]
       nil
     end
 
