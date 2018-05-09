@@ -112,6 +112,8 @@ RSpec.describe SVMKit::LinearModel::SVC do
     expect(estimator.params[:bias_scale]).to eq(copied.params[:bias_scale])
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
+    expect(estimator.params[:probability]).to eq(copied.params[:probability])
+    expect(estimator.params[:normalize]).to eq(copied.params[:normalize])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.weight_vec).to eq(copied.weight_vec)
     expect(estimator.bias_term).to eq(copied.bias_term)

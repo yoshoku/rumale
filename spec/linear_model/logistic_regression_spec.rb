@@ -70,6 +70,7 @@ RSpec.describe SVMKit::LinearModel::LogisticRegression do
     expect(estimator_bias.params[:bias_scale]).to eq(copied.params[:bias_scale])
     expect(estimator_bias.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator_bias.params[:batch_size]).to eq(copied.params[:batch_size])
+    expect(estimator_bias.params[:normalize]).to eq(copied.params[:normalize])
     expect(estimator_bias.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator_bias.weight_vec).to eq(copied.weight_vec)
     expect(estimator_bias.bias_term).to eq(copied.bias_term)
