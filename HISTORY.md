@@ -1,3 +1,14 @@
+# 0.3.0
+- Add class for Support Vector Regression.
+- Add class for K-Nearest Neighbor Regression.
+- Add class for evaluating coefficient of determination.
+- Add class for evaluating mean squared error.
+- Add class for evaluating mean absolute error.
+- Fix to use min method instead of sort and first methods.
+- Fix cross validation class to be able to use for regression problem.
+- Fix some typos on document.
+- Rename spec filename for Factorization Machine classifier.
+
 # 0.2.9
 - Add predict_proba method to SVC and KernelSVC.
 - Add class for evaluating logarithmic loss.
