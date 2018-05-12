@@ -30,7 +30,7 @@ module SVMKit
         clipped_p = y_pred.clip(eps, 1 - eps)
 
         log_loss = if n_classes.nil?
-                     negative_label = y_true.to_a.uniq.sort.first
+                     negative_label = y_true.to_a.uniq.min
                      bin_y_true = Numo::DFloat.cast(y_true.ne(negative_label))
                      -(bin_y_true * Numo::NMath.log(clipped_p) + (1 - bin_y_true) * Numo::NMath.log(1 - clipped_p))
                    else

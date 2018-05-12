@@ -90,7 +90,7 @@ module SVMKit
                                    end
           end
         else
-          negative_label = y.to_a.uniq.sort.first
+          negative_label = y.to_a.uniq.min
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
           @weight_vec = binary_fit(x, bin_y)
           @prob_param = if @params[:probability]

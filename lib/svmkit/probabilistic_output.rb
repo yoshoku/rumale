@@ -27,7 +27,7 @@ module SVMKit
       def fit_sigmoid(df, bin_y, max_iter = 100, min_step = 1e-10, sigma = 1e-12)
         # Initialize some variables.
         n_samples = bin_y.size
-        negative_label = bin_y.to_a.uniq.sort.first
+        negative_label = bin_y.to_a.uniq.min
         pos = bin_y.ne(negative_label)
         neg = bin_y.eq(negative_label)
         n_pos_samples = pos.count
