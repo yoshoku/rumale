@@ -14,7 +14,7 @@ RSpec.describe SVMKit::EvaluationMeasure::R2Score do
     expect(r2_score.class).to eq(Float)
     expect(r2_score).to be_within(1e-6).of(0.987881)
   end
-  
+
   it 'calculates average R^2-score for multiple regression task.' do
     r2_score = evaluator.score(mult_ground_truth, mult_estimated)
     expect(r2_score.class).to eq(Float)
@@ -28,6 +28,6 @@ RSpec.describe SVMKit::EvaluationMeasure::R2Score do
   end
 
   it 'raises ArgumentError when the arrays with different shapes are given.' do
-    expect { evaluator.score(ground_truth, mult_estimated) }.to raise_error(ArgumentError) 
+    expect { evaluator.score(ground_truth, mult_estimated) }.to raise_error(ArgumentError)
   end
 end
