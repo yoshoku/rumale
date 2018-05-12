@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
 require 'svmkit/base/evaluator'
+require 'svmkit/preprocessing/one_hot_encoder'
 
 module SVMKit
   module EvaluationMeasure

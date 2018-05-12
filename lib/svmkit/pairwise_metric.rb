@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
+
 module SVMKit
   # Module for calculating pairwise distances, similarities, and kernels.
   module PairwiseMetric

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
+require 'svmkit/base/base_estimator'
 require 'svmkit/base/splitter'
+require 'svmkit/base/evaluator'
+require 'svmkit/evaluation_measure/log_loss'
 
 module SVMKit
   # This module consists of the classes for model validation techniques.

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
 require 'svmkit/base/splitter'
 
 module SVMKit

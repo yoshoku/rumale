@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
+require 'svmkit/evaluation_measure/accuracy'
+
 module SVMKit
   module Base
     # Module for all classifiers in SVMKit.

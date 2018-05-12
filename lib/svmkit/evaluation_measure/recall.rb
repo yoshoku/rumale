@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
 require 'svmkit/base/evaluator'
 require 'svmkit/evaluation_measure/precision_recall'
 
