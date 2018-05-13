@@ -5,9 +5,11 @@ require 'spec_helper'
 RSpec.describe SVMKit::ModelSelection::CrossValidation do
   let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples_xor.dat')) }
   let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels_xor.dat')) }
+  let(:values) { samples.dot(Numo::DFloat[1.0, 2.0]) }
   let(:kernel_mat) { SVMKit::PairwiseMetric.rbf_kernel(samples, nil, 1.0) }
   let(:kernel_svc) { SVMKit::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
   let(:linear_svc) { SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 100, random_seed: 1) }
+  let(:linear_svr) { SVMKit::LinearModel::SVR.new(reg_param: 1.0, max_iter: 100, random_seed: 1) }
   let(:logit_reg) { SVMKit::LinearModel::LogisticRegression.new(reg_param: 1.0, max_iter: 100, random_seed: 1) }
   let(:f_score) { SVMKit::EvaluationMeasure::FScore.new }
   let(:log_loss) { SVMKit::EvaluationMeasure::LogLoss.new }
@@ -34,6 +36,14 @@ RSpec.describe SVMKit::ModelSelection::CrossValidation do
   it 'performs stratified k-fold cross validation with kernel svc.' do
     cv = described_class.new(estimator: kernel_svc, splitter: skfold)
     report = cv.perform(kernel_mat, labels)
+    expect(report[:test_score].size).to eq(n_splits)
+    expect(report[:train_score]).to be_nil
+    expect(report[:fit_time].size).to eq(n_splits)
+  end
+
+  it 'performs k-fold cross validation with linear svr.' do
+    cv = described_class.new(estimator: linear_svr, splitter: kfold)
+    report = cv.perform(samples, values)
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score]).to be_nil
     expect(report[:fit_time].size).to eq(n_splits)
