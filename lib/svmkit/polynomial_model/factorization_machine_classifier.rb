@@ -127,7 +127,7 @@ module SVMKit
         SVMKit::Validation.check_sample_array(x)
         linear_term = @bias_term + x.dot(@weight_vec.transpose)
         factor_term = if @classes.size <= 2
-                        0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum
+                        0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum(0)
                       else
                         0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum(1).transpose
                       end
@@ -217,7 +217,7 @@ module SVMKit
       end
 
       def bin_decision_function(x, factor, weight, bias)
-        bias + x.dot(weight) + 0.5 * (factor.dot(x.transpose)**2 - (factor**2).dot(x.transpose**2)).sum
+        bias + x.dot(weight) + 0.5 * (factor.dot(x.transpose)**2 - (factor**2).dot(x.transpose**2)).sum(0)
       end
 
       def hinge_loss_gradient(x, y, factor, weight, bias)
