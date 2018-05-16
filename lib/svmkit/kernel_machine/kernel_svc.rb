@@ -183,11 +183,11 @@ module SVMKit
           rand_ids = [*0...n_training_samples].shuffle(random: @rng) if rand_ids.empty?
           target_id = rand_ids.shift
           # update the weight vector
-          func = (weight_vec * bin_y[target_id]).dot(x[target_id, true].transpose).to_f
+          func = (weight_vec * bin_y).dot(x[target_id, true].transpose).to_f
           func *= bin_y[target_id] / (@params[:reg_param] * (t + 1))
           weight_vec[target_id] += 1.0 if func < 1.0
         end
-        weight_vec * Numo::DFloat[*bin_y]
+        weight_vec * bin_y
       end
     end
   end
