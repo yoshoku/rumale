@@ -1,3 +1,7 @@
+# 0.3.1
+- Fix bug on decision function calculation of FactorizationMachineClassifier.
+- Fix bug on weight updating process of KernelSVC.
+
 # 0.3.0
 - Add class for Support Vector Regression.
 - Add class for K-Nearest Neighbor Regression.
