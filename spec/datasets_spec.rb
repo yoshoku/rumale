@@ -5,6 +5,7 @@ require 'spec_helper'
 RSpec.describe SVMKit::Dataset do
   let(:labels) { Numo::Int32.asarray([1, 2, 2, 1, 1, 0]) }
   let(:target_variables) { Numo::DFloat.asarray([1.2, 2.0, 2.3, 1.0, 1.1, 0.64]) }
+  let(:mult_target_vals) { Numo::DFloat.asarray([[1.2, 2.0], [2.3, 1.0], [1.1, 0.64], [2.1, 1.9], [0.0, 1.7], [8.7, 4.1]]) }
 
   let(:matrix_int) do
     Numo::Int32.asarray([
@@ -42,6 +43,15 @@ RSpec.describe SVMKit::Dataset do
     expect(m.class).to eq(Numo::Int32)
     expect(l).to eq(labels)
     expect(l.class).to eq(Numo::Int32)
+  end
+
+  it 'dumps and loads double features wit multi-target variables.' do
+    described_class.dump_libsvm_file(matrix_dbl, mult_target_vals, __dir__ + '/dump_mult_dbl.t')
+    m, t = described_class.load_libsvm_file(__dir__ + '/dump_mult_dbl.t')
+    expect(m).to eq(matrix_dbl)
+    expect(m.class).to eq(Numo::DFloat)
+    expect(t).to eq(mult_target_vals)
+    expect(t.class).to eq(Numo::DFloat)
   end
 
   it 'loads libsvm .t file with zero-based indexing.' do
