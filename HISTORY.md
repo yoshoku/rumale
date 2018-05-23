@@ -1,3 +1,11 @@
+# 0.3.2
+- Add class for Factorization Machine regressor.
+- Add class for Decision Tree regressor.
+- Add class for Random Forest regressor.
+- Fix to support loading and dumping libsvm file with multi-target variables.
+- Fix to require DecisionTreeClassifier on RandomForestClassifier.
+- Fix some mistakes on document.
+
 # 0.3.1
 - Fix bug on decision function calculation of FactorizationMachineClassifier.
 - Fix bug on weight updating process of KernelSVC.
