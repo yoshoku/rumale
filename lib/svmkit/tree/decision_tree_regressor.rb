@@ -29,7 +29,7 @@ module SVMKit
       # @return [Node]
       attr_reader :tree
 
-      # Return the random generator for performing random sampling in the Pegasos algorithm.
+      # Return the random generator for random selection of feature index.
       # @return [Random]
       attr_reader :rng
 

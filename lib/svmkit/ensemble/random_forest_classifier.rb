@@ -32,7 +32,7 @@ module SVMKit
       # @return [Numo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
-      # Return the random generator for performing random sampling in the Pegasos algorithm.
+      # Return the random generator for random selection of feature index.
       # @return [Random]
       attr_reader :rng
 
