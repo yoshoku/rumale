@@ -3,6 +3,7 @@
 require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
+require 'svmkit/tree/decision_tree_classifier'
 
 module SVMKit
   # This module consists of the classes that implement ensemble-based methods.
