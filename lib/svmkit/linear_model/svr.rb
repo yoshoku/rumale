@@ -21,11 +21,11 @@ module SVMKit
       include Base::BaseEstimator
       include Base::Regressor
 
-      # Return the weight vector for SVC.
+      # Return the weight vector for SVR.
       # @return [Numo::DFloat] (shape: [n_outputs, n_features])
       attr_reader :weight_vec
 
-      # Return the bias term (a.k.a. intercept) for SVC.
+      # Return the bias term (a.k.a. intercept) for SVR.
       # @return [Numo::DFloat] (shape: [n_outputs])
       attr_reader :bias_term
 
@@ -104,7 +104,7 @@ module SVMKit
       end
 
       # Dump marshal data.
-      # @return [Hash] The marshal data about SVC.
+      # @return [Hash] The marshal data about SVR.
       def marshal_dump
         { params: @params,
           weight_vec: @weight_vec,

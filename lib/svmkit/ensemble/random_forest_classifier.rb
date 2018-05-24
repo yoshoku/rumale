@@ -155,7 +155,7 @@ module SVMKit
       end
 
       # Dump marshal data.
-      # @return [Hash] The marshal data about RandomForestClassifier
+      # @return [Hash] The marshal data about RandomForestClassifier.
       def marshal_dump
         { params: @params, estimators: @estimators, classes: @classes,
           feature_importances: @feature_importances, rng: @rng }

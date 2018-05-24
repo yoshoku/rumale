@@ -134,7 +134,7 @@ module SVMKit
       end
 
       # Dump marshal data.
-      # @return [Hash] The marshal data about FactorizationMachineRegressor
+      # @return [Hash] The marshal data about FactorizationMachineRegressor.
       def marshal_dump
         { params: @params,
           factor_mat: @factor_mat,
