@@ -1,3 +1,9 @@
+# 0.3.3
+- Add class for Ridge regressor.
+- Add class for Lasso regressor.
+- Fix bug on gradient calculation of FactorizationMachineRegressor.
+- Fix some documents.
+
 # 0.3.2
 - Add class for Factorization Machine regressor.
 - Add class for Decision Tree regressor.
