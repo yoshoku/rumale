@@ -177,7 +177,10 @@ module SVMKit
           data = x[subset_ids, true]
           values = y[subset_ids]
           # Calculate gradients for loss function.
-          loss_grad = loss_gradient(data, values, factor_mat, weight_vec, bias_term)
+          loss_grad = loss_gradient(data, values,
+                                    factor_mat - @params[:momentum] * factor_update,
+                                    weight_vec - @params[:momentum] * weight_update,
+                                    bias_term - @params[:momentum] * bias_update)
           next if loss_grad.ne(0.0).count.zero?
           # Update each parameter.
           bias_term, bias_sqrsum, bias_update =
