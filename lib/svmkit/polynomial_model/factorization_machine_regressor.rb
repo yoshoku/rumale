@@ -3,6 +3,7 @@
 require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
+require 'svmkit/optimizer/nadam'
 
 module SVMKit
   module PolynomialModel
@@ -12,7 +13,7 @@ module SVMKit
     # @example
     #   estimator =
     #     SVMKit::PolynomialModel::FactorizationMachineRegressor.new(
-    #      n_factors: 10, reg_param_bias: 0.1, reg_param_weight: 0.1, reg_param_factor: 0.1,
+    #      n_factors: 10, reg_param_linear: 0.1, reg_param_factor: 0.1,
     #      max_iter: 5000, batch_size: 50, random_seed: 1)
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
@@ -20,8 +21,6 @@ module SVMKit
     # *Reference*
     # - S. Rendle, "Factorization Machines with libFM," ACM Transactions on Intelligent Systems and Technology, vol. 3 (3), pp. 57:1--57:22, 2012.
     # - S. Rendle, "Factorization Machines," Proc. the 10th IEEE International Conference on Data Mining (ICDM'10), pp. 995--1000, 2010.
-    # - I. Sutskever, J. Martens, G. Dahl, and G. Hinton, "On the importance of initialization and momentum in deep learning," Proc. the 30th  International Conference on Machine Learning (ICML' 13), pp. 1139--1147, 2013.
-    # - G. Hinton, N. Srivastava, and K. Swersky, "Lecture 6e rmsprop," Neural Networks for Machine Learning, 2012.
     class FactorizationMachineRegressor
       include Base::BaseEstimator
       include Base::Regressor
@@ -46,40 +45,27 @@ module SVMKit
       # Create a new regressor with Factorization Machine.
       #
       # @param n_factors [Integer] The maximum number of iterations.
-      # @param reg_param_bias [Float] The regularization parameter for bias term.
-      # @param reg_param_weight [Float] The regularization parameter for weight vector.
+      # @param reg_param_linear [Float] The regularization parameter for linear model.
       # @param reg_param_factor [Float] The regularization parameter for factor matrix.
-      # @param init_std [Float] The standard deviation of normal random number for initialization of factor matrix.
-      # @param learning_rate [Float] The learning rate for optimization.
-      # @param decay [Float] The discounting factor for RMS prop optimization.
-      # @param momentum [Float] The Nesterov momentum for optimization.
       # @param max_iter [Integer] The maximum number of iterations.
       # @param batch_size [Integer] The size of the mini batches.
+      # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
+      #   Nadam is selected automatically on current version.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(n_factors: 2,
-                     reg_param_bias: 1.0, reg_param_weight: 1.0, reg_param_factor: 1.0, init_std: 0.01,
-                     learning_rate: 0.01, decay: 0.9, momentum: 0.9,
-                     max_iter: 1000, batch_size: 10, random_seed: nil)
-        check_params_float(reg_param_bias: reg_param_bias, reg_param_weight: reg_param_weight,
-                           reg_param_factor: reg_param_factor, init_std: init_std,
-                           learning_rate: learning_rate, decay: decay, momentum: momentum)
+      def initialize(n_factors: 2, reg_param_linear: 1.0, reg_param_factor: 1.0,
+                     max_iter: 1000, batch_size: 10, optimizer: nil, random_seed: nil)
+        check_params_float(reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor)
         check_params_integer(n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
         check_params_type_or_nil(Integer, random_seed: random_seed)
-        check_params_positive(n_factors: n_factors, reg_param_bias: reg_param_bias,
-                              reg_param_weight: reg_param_weight, reg_param_factor: reg_param_factor,
-                              learning_rate: learning_rate, decay: decay, momentum: momentum,
+        check_params_positive(n_factors: n_factors, reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
                               max_iter: max_iter, batch_size: batch_size)
         @params = {}
         @params[:n_factors] = n_factors
-        @params[:reg_param_bias] = reg_param_bias
-        @params[:reg_param_weight] = reg_param_weight
+        @params[:reg_param_linear] = reg_param_linear
         @params[:reg_param_factor] = reg_param_factor
-        @params[:init_std] = init_std
-        @params[:learning_rate] = learning_rate
-        @params[:decay] = decay
-        @params[:momentum] = momentum
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
+        @params[:optimizer] = optimizer
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @factor_mat = nil
@@ -160,74 +146,52 @@ module SVMKit
         # Initialize some variables.
         n_samples, n_features = x.shape
         rand_ids = [*0...n_samples].shuffle(random: @rng)
-        factor_mat = rand_normal([@params[:n_factors], n_features], 0, @params[:init_std])
-        factor_sqrsum = Numo::DFloat.zeros(factor_mat.shape)
-        factor_update = Numo::DFloat.zeros(factor_mat.shape)
-        weight_vec = Numo::DFloat.zeros(n_features)
-        weight_sqrsum = Numo::DFloat.zeros(n_features)
-        weight_update = Numo::DFloat.zeros(n_features)
-        bias_term = 0.0
-        bias_sqrsum = 0.0
-        bias_update = 0.0
+        weight_vec = Numo::DFloat.zeros(n_features + 1)
+        factor_mat = Numo::DFloat.zeros(@params[:n_factors], n_features)
+        weight_optimizer = Optimizer::Nadam.new
+        factor_optimizers = Array.new(@params[:n_factors]) { Optimizer::Nadam.new }
         # Start optimization.
         @params[:max_iter].times do |_t|
           # Random sampling.
           subset_ids = rand_ids.shift(@params[:batch_size])
           rand_ids.concat(subset_ids)
           data = x[subset_ids, true]
+          ex_data = expand_feature(data)
           values = y[subset_ids]
           # Calculate gradients for loss function.
-          loss_grad = loss_gradient(data, values,
-                                    factor_mat - @params[:momentum] * factor_update,
-                                    weight_vec - @params[:momentum] * weight_update,
-                                    bias_term - @params[:momentum] * bias_update)
+          loss_grad = loss_gradient(data, ex_data, values, factor_mat, weight_vec)
           next if loss_grad.ne(0.0).count.zero?
           # Update each parameter.
-          bias_term, bias_sqrsum, bias_update =
-            update_param(bias_term, bias_sqrsum, bias_update,
-                         bias_gradient(loss_grad, bias_term - @params[:momentum] * bias_update))
-          weight_vec, weight_sqrsum, weight_update =
-            update_param(weight_vec, weight_sqrsum, weight_update,
-                         weight_gradient(loss_grad, data, weight_vec - @params[:momentum] * weight_update))
+          weight_vec = weight_optimizer.call(weight_vec, weight_gradient(loss_grad, ex_data, weight_vec))
           @params[:n_factors].times do |n|
-            factor_update[n, true], factor_sqrsum[n, true], factor_update[n, true] =
-              update_param(factor_update[n, true], factor_sqrsum[n, true], factor_update[n, true],
-                           factor_gradient(loss_grad, data, factor_mat[n, true] - @params[:momentum] * factor_update[n, true]))
+            factor_mat[n, true] = factor_optimizers[n].call(factor_mat[n, true],
+                                                            factor_gradient(loss_grad, data, factor_mat[n, true]))
           end
         end
-        [factor_mat, weight_vec, bias_term]
+        [factor_mat, *split_weight_vec_bias(weight_vec)]
       end
 
-      def loss_gradient(x, y, factor, weight, bias)
-        z = bias + x.dot(weight) + 0.5 * (factor.dot(x.transpose)**2 - (factor**2).dot(x.transpose**2)).sum(0)
+      def loss_gradient(x, ex_x, y, factor, weight)
+        z = ex_x.dot(weight) + 0.5 * (factor.dot(x.transpose)**2 - (factor**2).dot(x.transpose**2)).sum(0)
         2.0 * (z - y)
       end
 
-      def bias_gradient(loss_grad, bias)
-        loss_grad.mean + @params[:reg_param_bias] * bias
-      end
-
       def weight_gradient(loss_grad, data, weight)
-        (loss_grad.expand_dims(1) * data).mean(0) + @params[:reg_param_weight] * weight
+        (loss_grad.expand_dims(1) * data).mean(0) + @params[:reg_param_linear] * weight
       end
 
       def factor_gradient(loss_grad, data, factor)
         (loss_grad.expand_dims(1) * (data * data.dot(factor).expand_dims(1) - factor * (data**2))).mean(0) + @params[:reg_param_factor] * factor
       end
 
-      def update_param(param, sqrsum, update, gr)
-        new_sqrsum = @params[:decay] * sqrsum + (1.0 - @params[:decay]) * gr**2
-        new_update = (@params[:learning_rate] / ((new_sqrsum + 1.0e-8)**0.5)) * gr
-        new_param = param - (new_update + @params[:momentum] * update)
-        [new_param, new_sqrsum, new_update]
+      def expand_feature(x)
+        Numo::NArray.hstack([x, Numo::DFloat.ones([x.shape[0], 1])])
       end
 
-      def rand_uniform(shape)
-        Numo::DFloat[*Array.new(shape.inject(&:*)) { @rng.rand }].reshape(*shape)
-      end
-
-      def rand_normal(shape, mu, sigma)
-        mu + sigma * (Numo::NMath.sqrt(-2.0 * Numo::NMath.log(rand_uniform(shape))) * Numo::NMath.sin(2.0 * Math::PI * rand_uniform(shape)))
+      def split_weight_vec_bias(weight_vec)
+        weights = weight_vec[0...-1]
+        bias = weight_vec[-1]
+        [weights, bias]
       end
     end
   end

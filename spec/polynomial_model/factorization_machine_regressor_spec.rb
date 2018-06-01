@@ -7,10 +7,7 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineRegressor do
   let(:y) { x.dot(Numo::DFloat[0.8, 0.2]) }
   let(:y_mult) { x.dot(Numo::DFloat[[0.8, 0.82], [0.2, 0.18]]) }
   let(:n_factors) { 2 }
-  let(:estimator) do
-    described_class.new(n_factors: n_factors, reg_param_bias: 0.1, reg_param_weight: 0.1, reg_param_factor: 0.1,
-                        init_std: 0.01, learning_rate: 0.05, decay: 0.5, max_iter: 1000, batch_size: 5, random_seed: 1)
-  end
+  let(:estimator) { described_class.new(n_factors: n_factors, reg_param_linear: 0.1, reg_param_factor: 0.1, random_seed: 1) }
 
   it 'learns the the model for single regression problem.' do
     n_samples, n_features = x.shape
@@ -67,16 +64,14 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineRegressor do
     expect(estimator.bias_term).to eq(copied.bias_term)
     expect(estimator.rng).to eq(copied.rng)
     expect(estimator.params[:n_factors]).to eq(copied.params[:n_factors])
-    expect(estimator.params[:reg_param_bias]).to eq(copied.params[:reg_param_bias])
-    expect(estimator.params[:reg_param_weight]).to eq(copied.params[:reg_param_weight])
+    expect(estimator.params[:reg_param_linear]).to eq(copied.params[:reg_param_linear])
     expect(estimator.params[:reg_param_factor]).to eq(copied.params[:reg_param_factor])
-    expect(estimator.params[:init_std]).to eq(copied.params[:init_std])
     expect(estimator.params[:learning_rate]).to eq(copied.params[:learning_rate])
     expect(estimator.params[:decay]).to eq(copied.params[:decay])
     expect(estimator.params[:momentum]).to eq(copied.params[:momentum])
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
-    expect(copied.score(x, y)).to be_within(0.01).of(1.0)
+    expect(estimator.score(x, y)).to eq(copied.score(x, y))
   end
 end

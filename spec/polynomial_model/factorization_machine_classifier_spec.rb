@@ -9,7 +9,10 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
   let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:n_factors) { 2 }
   let(:estimator) { described_class.new(n_factors: n_factors, reg_param_linear: 0.1, reg_param_factor: 0.1, random_seed: 1) }
-  let(:estimator_logit) { described_class.new(n_factors: n_factors, loss: 'logistic', reg_param_linear: 0.001, reg_param_factor: 0.01, random_seed: 1) }
+  let(:estimator_logit) do
+    described_class.new(n_factors: n_factors, loss: 'logistic',
+                        reg_param_linear: 0.001, reg_param_factor: 0.01, random_seed: 1)
+  end
 
   it 'classifies two clusters.' do
     n_samples, n_features = x_bin.shape
