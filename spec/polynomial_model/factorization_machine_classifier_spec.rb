@@ -8,15 +8,8 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:n_factors) { 2 }
-  let(:estimator) do
-    described_class.new(n_factors: n_factors, reg_param_bias: 0.001, reg_param_weight: 0.001, reg_param_factor: 0.01,
-                        init_std: 0.01, max_iter: 1000, batch_size: 10, random_seed: 1)
-  end
-  let(:estimator_logit) do
-    described_class.new(n_factors: n_factors, loss: 'logistic',
-                        reg_param_bias: 0.001, reg_param_weight: 0.001, reg_param_factor: 0.01,
-                        init_std: 0.01, max_iter: 1000, batch_size: 10, random_seed: 1)
-  end
+  let(:estimator) { described_class.new(n_factors: n_factors, reg_param_linear: 0.1, reg_param_factor: 0.1, random_seed: 1) }
+  let(:estimator_logit) { described_class.new(n_factors: n_factors, loss: 'logistic', reg_param_linear: 0.001, reg_param_factor: 0.01, random_seed: 1) }
 
   it 'classifies two clusters.' do
     n_samples, n_features = x_bin.shape
@@ -49,9 +42,9 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
     expect(predicted.class).to eq(Numo::Int32)
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted.shape[1]).to be_nil
-    expect(predicted).to eq(y_bin)
 
     expect(estimator.score(x_bin, y_bin)).to eq(1.0)
+    expect(predicted).to eq(y_bin)
   end
 
   it 'classifies three clusters.' do
@@ -130,12 +123,12 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
     expect(estimator.rng).to eq(copied.rng)
     expect(estimator.params[:n_factors]).to eq(copied.params[:n_factors])
     expect(estimator.params[:loss]).to eq(copied.params[:loss])
-    expect(estimator.params[:reg_param_bias]).to eq(copied.params[:reg_param_bias])
-    expect(estimator.params[:reg_param_weight]).to eq(copied.params[:reg_param_weight])
+    expect(estimator.params[:reg_param_linear]).to eq(copied.params[:reg_param_linear])
     expect(estimator.params[:reg_param_factor]).to eq(copied.params[:reg_param_factor])
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
+    expect(estimator.params[:optimizer]).to eq(copied.params[:optimizer])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
-    expect(copied.score(x_bin, y_bin)).to eq(1.0)
+    expect(estimator.score(x_bin, y_bin)).to eq(copied.score(x_bin, y_bin))
   end
 end
