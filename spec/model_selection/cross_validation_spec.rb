@@ -8,9 +8,9 @@ RSpec.describe SVMKit::ModelSelection::CrossValidation do
   let(:values) { samples.dot(Numo::DFloat[1.0, 2.0]) }
   let(:kernel_mat) { SVMKit::PairwiseMetric.rbf_kernel(samples, nil, 1.0) }
   let(:kernel_svc) { SVMKit::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
-  let(:linear_svc) { SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 100, random_seed: 1) }
-  let(:linear_svr) { SVMKit::LinearModel::SVR.new(reg_param: 1.0, max_iter: 100, random_seed: 1) }
-  let(:logit_reg) { SVMKit::LinearModel::LogisticRegression.new(reg_param: 1.0, max_iter: 100, random_seed: 1) }
+  let(:linear_svc) { SVMKit::LinearModel::SVC.new(random_seed: 1) }
+  let(:linear_svr) { SVMKit::LinearModel::SVR.new(random_seed: 1) }
+  let(:logit_reg) { SVMKit::LinearModel::LogisticRegression.new(random_seed: 1) }
   let(:f_score) { SVMKit::EvaluationMeasure::FScore.new }
   let(:log_loss) { SVMKit::EvaluationMeasure::LogLoss.new }
   let(:n_splits) { 5 }
@@ -83,8 +83,8 @@ RSpec.describe SVMKit::ModelSelection::CrossValidation do
     expect(report[:fit_time].size).to eq(n_splits)
     mean_test_score = report[:test_score].inject(:+) / n_splits
     mean_train_score = report[:train_score].inject(:+) / n_splits
-    expect(mean_test_score).to be_within(5.0e-6).of(0.877406)
-    expect(mean_train_score).to be_within(5.0e-6).of(0.878477)
+    expect(mean_test_score).to be_within(5.0e-6).of(0.849992)
+    expect(mean_train_score).to be_within(5.0e-6).of(0.852817)
   end
 
   describe 'private method' do

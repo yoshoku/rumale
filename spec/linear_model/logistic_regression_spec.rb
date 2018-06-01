@@ -61,23 +61,6 @@ RSpec.describe SVMKit::LinearModel::LogisticRegression do
     expect(predicted).to eq(y_bin)
   end
 
-  it 'dumps and restores itself using Marshal module.' do
-    estimator_bias.fit(x_mlt, y_mlt)
-    copied = Marshal.load(Marshal.dump(estimator_bias))
-    expect(estimator_bias.class).to eq(copied.class)
-    expect(estimator_bias.params[:reg_param]).to eq(copied.params[:reg_param])
-    expect(estimator_bias.params[:fit_bias]).to eq(copied.params[:fit_bias])
-    expect(estimator_bias.params[:bias_scale]).to eq(copied.params[:bias_scale])
-    expect(estimator_bias.params[:max_iter]).to eq(copied.params[:max_iter])
-    expect(estimator_bias.params[:batch_size]).to eq(copied.params[:batch_size])
-    expect(estimator_bias.params[:normalize]).to eq(copied.params[:normalize])
-    expect(estimator_bias.params[:random_seed]).to eq(copied.params[:random_seed])
-    expect(estimator_bias.weight_vec).to eq(copied.weight_vec)
-    expect(estimator_bias.bias_term).to eq(copied.bias_term)
-    expect(estimator_bias.rng).to eq(copied.rng)
-    expect(copied.score(x_mlt, y_mlt)).to eq(1.0)
-  end
-
   it 'classifies three clusters.' do
     n_classes = y_mlt.to_a.uniq.size
     n_samples, n_features = x_mlt.shape
@@ -119,5 +102,22 @@ RSpec.describe SVMKit::LinearModel::LogisticRegression do
     expect(probs.shape[1]).to eq(n_classes)
     predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
     expect(predicted).to eq(y_mlt)
+  end
+
+  it 'dumps and restores itself using Marshal module.' do
+    estimator_bias.fit(x_mlt, y_mlt)
+    copied = Marshal.load(Marshal.dump(estimator_bias))
+    expect(estimator_bias.class).to eq(copied.class)
+    expect(estimator_bias.params[:reg_param]).to eq(copied.params[:reg_param])
+    expect(estimator_bias.params[:fit_bias]).to eq(copied.params[:fit_bias])
+    expect(estimator_bias.params[:bias_scale]).to eq(copied.params[:bias_scale])
+    expect(estimator_bias.params[:max_iter]).to eq(copied.params[:max_iter])
+    expect(estimator_bias.params[:batch_size]).to eq(copied.params[:batch_size])
+    expect(estimator_bias.params[:optimizer]).to eq(copied.params[:optimizer])
+    expect(estimator_bias.params[:random_seed]).to eq(copied.params[:random_seed])
+    expect(estimator_bias.weight_vec).to eq(copied.weight_vec)
+    expect(estimator_bias.bias_term).to eq(copied.bias_term)
+    expect(estimator_bias.rng).to eq(copied.rng)
+    expect(estimator_bias.score(x_mlt, y_mlt)).to eq(copied.score(x_mlt, y_mlt))
   end
 end
