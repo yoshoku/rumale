@@ -3,26 +3,28 @@
 require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
+require 'svmkit/optimizer/nadam'
 require 'svmkit/probabilistic_output'
 
 module SVMKit
   # This module consists of the classes that implement generalized linear models.
   module LinearModel
     # SVC is a class that implements Support Vector Classifier
-    # with stochastic gradient descent (SGD) optimization.
+    # with mini-batch stochastic gradient descent optimization.
     # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
     # @example
     #   estimator =
-    #     SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
+    #     SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 1000, batch_size: 20, random_seed: 1)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # 1. S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
+    # - S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
     class SVC
       include Base::BaseEstimator
       include Base::Classifier
+      include Validation
 
       # Return the weight vector for SVC.
       # @return [Numo::DFloat] (shape: [n_classes, n_features])
@@ -48,16 +50,16 @@ module SVMKit
       # @param max_iter [Integer] The maximum number of iterations.
       # @param batch_size [Integer] The size of the mini batches.
       # @param probability [Boolean] The flag indicating whether to perform probability estimation.
-      # @param normalize [Boolean] The flag indicating whether to normalize the weight vector.
+      # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
+      #   Nadam is selected automatically on current version.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
-                     max_iter: 100, batch_size: 50, probability: false, normalize: true, random_seed: nil)
-        SVMKit::Validation.check_params_float(reg_param: reg_param, bias_scale: bias_scale)
-        SVMKit::Validation.check_params_integer(max_iter: max_iter, batch_size: batch_size)
-        SVMKit::Validation.check_params_boolean(fit_bias: fit_bias, probability: probability, normalize: normalize)
-        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-        SVMKit::Validation.check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter,
-                                                 batch_size: batch_size)
+                     max_iter: 1000, batch_size: 20, probability: false, optimizer: nil, random_seed: nil)
+        check_params_float(reg_param: reg_param, bias_scale: bias_scale)
+        check_params_integer(max_iter: max_iter, batch_size: batch_size)
+        check_params_boolean(fit_bias: fit_bias, probability: probability)
+        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
         @params = {}
         @params[:reg_param] = reg_param
         @params[:fit_bias] = fit_bias
@@ -65,7 +67,7 @@ module SVMKit
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
         @params[:probability] = probability
-        @params[:normalize] = normalize
+        @params[:optimizer] = optimizer
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
@@ -81,9 +83,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [SVC] The learned classifier itself.
       def fit(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_label_array(y)
-        SVMKit::Validation.check_sample_label_size(x, y)
+        check_sample_array(x)
+        check_label_array(y)
+        check_sample_label_size(x, y)
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
@@ -123,8 +125,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
-        SVMKit::Validation.check_sample_array(x)
-
+        check_sample_array(x)
         x.dot(@weight_vec.transpose) + @bias_term
       end
 
@@ -133,7 +134,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
 
@@ -147,7 +148,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         if @classes.size > 2
           probs = 1.0 / (Numo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)
@@ -186,43 +187,43 @@ module SVMKit
 
       private
 
-      def binary_fit(x, bin_y)
+      def binary_fit(x, y)
         # Expand feature vectors for bias term.
         samples = @params[:fit_bias] ? expand_feature(x) : x
         # Initialize some variables.
         n_samples, n_features = samples.shape
         rand_ids = [*0...n_samples].shuffle(random: @rng)
         weight_vec = Numo::DFloat.zeros(n_features)
+        optimizer = Optimizer::Nadam.new
         # Start optimization.
-        @params[:max_iter].times do |t|
-          # random sampling
+        @params[:max_iter].times do |_t|
+          # random sampling.
           subset_ids = rand_ids.shift(@params[:batch_size])
           rand_ids.concat(subset_ids)
-          sub_samples = samples[subset_ids, true]
-          sub_bin_y = bin_y[subset_ids]
-          target_ids = (sub_samples.dot(weight_vec.transpose) * sub_bin_y).lt(1.0).where
-          n_targets = target_ids.size
-          next if n_targets.zero?
-          # update the weight vector.
-          mean_vec = sub_samples[target_ids, true].transpose.dot(sub_bin_y[target_ids]) / n_targets
-          weight_vec -= learning_rate(t) * (@params[:reg_param] * weight_vec - mean_vec)
-          # scale the weight vector.
-          normalize_weight_vec(weight_vec) if @params[:normalize]
+          data = samples[subset_ids, true]
+          labels = y[subset_ids]
+          # calculate gradient for loss function.
+          loss_grad = loss_gradient(data, labels, weight_vec)
+          next if loss_grad.ne(0.0).count.zero?
+          # update weight.
+          weight_vec = optimizer.call(weight_vec, weight_gradient(loss_grad, data, weight_vec))
         end
         split_weight_vec_bias(weight_vec)
       end
 
+      def loss_gradient(x, y, weight)
+        target_ids = (x.dot(weight) * y).lt(1.0).where
+        grad = Numo::DFloat.zeros(@params[:batch_size])
+        grad[target_ids] = -y[target_ids]
+        grad
+      end
+
+      def weight_gradient(loss_grad, x, weight)
+        x.transpose.dot(loss_grad) / @params[:batch_size] + @params[:reg_param] * weight
+      end
+
       def expand_feature(x)
         Numo::NArray.hstack([x, Numo::DFloat.ones([x.shape[0], 1]) * @params[:bias_scale]])
-      end
-
-      def learning_rate(iter)
-        1.0 / (@params[:reg_param] * (iter + 1))
-      end
-
-      def normalize_weight_vec(weight_vec)
-        norm = Math.sqrt(weight_vec.dot(weight_vec))
-        weight_vec * [1.0, (1.0 / @params[:reg_param]**0.5) / (norm + 1.0e-12)].min
       end
 
       def split_weight_vec_bias(weight_vec)

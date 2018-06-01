@@ -113,11 +113,11 @@ RSpec.describe SVMKit::LinearModel::SVC do
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
     expect(estimator.params[:probability]).to eq(copied.params[:probability])
-    expect(estimator.params[:normalize]).to eq(copied.params[:normalize])
+    expect(estimator.params[:optimizer]).to eq(copied.params[:optimizer])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.weight_vec).to eq(copied.weight_vec)
     expect(estimator.bias_term).to eq(copied.bias_term)
     expect(estimator.rng).to eq(copied.rng)
-    expect(copied.score(x_bin, y_bin)).to eq(1.0)
+    expect(estimator.score(x_bin, y_bin)).to eq(copied.score(x_bin, y_bin))
   end
 end
