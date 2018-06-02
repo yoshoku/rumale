@@ -1,3 +1,25 @@
+# 0.4.0
+## Breaking changes
+
+SVMKit introduces optimizer algorithm that calculates learning rates adaptively
+on each iteration of stochastic gradient descent (SGD).
+While Pegasos SGD runs fast, it sometimes fails to optimize complicated models
+like Factorization Machine.
+To solve this problem, in version 0.3.3, SVMKit introduced optimization with RMSProp on
+FactorizationMachineRegressor, Ridge and Lasso.
+This attempt realized stable optimization of those estimators.
+Following the success of the attempt, author decided to use modern optimizer algorithms
+with all SGD optimizations in SVMKit.
+Through some preliminary experiments, author implemented Nadam as the default optimizer.
+SVMKit plans to add other optimizer algorithms sequentially, so that users can select them.
+
+- Fix to use Nadam for optimization on SVC, SVR, LogisticRegression, Ridge, Lasso, and Factorization Machine estimators.
+  - Combine reg_param_weight and reg_param_bias parameters on Factorization Machine estimators into the unified parameter named reg_param_linear.
+  - Remove init_std paramter on Factorization Machine estimators.
+  - Remove learning_rate, decay, and momentum parameters on Ridge, Lasso, and FactorizationMachineRegressor.
+  - Remove normalize parameter on SVC, SVR, and LogisticRegression.
+
+
 # 0.3.3
 - Add class for Ridge regressor.
 - Add class for Lasso regressor.
