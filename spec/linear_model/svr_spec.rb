@@ -6,8 +6,8 @@ RSpec.describe SVMKit::LinearModel::SVR do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
-  let(:estimator) { described_class.new(reg_param: 0.1, epsilon: 0.1, random_seed: 1) }
-  let(:estimator_bias) { described_class.new(reg_param: 0.1, epsilon: 0.1, fit_bias: true, random_seed: 1) }
+  let(:estimator) { described_class.new(reg_param: 0.01, epsilon: 0.1, random_seed: 1) }
+  let(:estimator_bias) { described_class.new(reg_param: 0.01, epsilon: 0.1, fit_bias: true, random_seed: 1) }
 
   it 'learns the linear model.' do
     n_samples, n_features = x.shape
@@ -63,11 +63,11 @@ RSpec.describe SVMKit::LinearModel::SVR do
     expect(estimator.params[:epsilon]).to eq(copied.params[:epsilon])
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
-    expect(estimator.params[:normalize]).to eq(copied.params[:normalize])
+    expect(estimator.params[:optimizer]).to eq(copied.params[:optimizer])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.weight_vec).to eq(copied.weight_vec)
     expect(estimator.bias_term).to eq(copied.bias_term)
     expect(estimator.rng).to eq(copied.rng)
-    expect(copied.score(x, y)).to be_within(0.01).of(1.0)
+    expect(estimator.score(x, y)).to eq(copied.score(x, y))
   end
 end
