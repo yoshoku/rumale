@@ -71,6 +71,7 @@ RSpec.describe SVMKit::PolynomialModel::FactorizationMachineRegressor do
     expect(estimator.params[:momentum]).to eq(copied.params[:momentum])
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
+    expect(estimator.params[:optimizer].class).to eq(copied.params[:optimizer].class)
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.score(x, y)).to eq(copied.score(x, y))
   end

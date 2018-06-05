@@ -19,8 +19,8 @@ module SVMKit
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # - S. Rendle, "Factorization Machines with libFM," ACM Transactions on Intelligent Systems and Technology, vol. 3 (3), pp. 57:1--57:22, 2012.
-    # - S. Rendle, "Factorization Machines," Proc. the 10th IEEE International Conference on Data Mining (ICDM'10), pp. 995--1000, 2010.
+    # - S. Rendle, "Factorization Machines with libFM," ACM TIST, vol. 3 (3), pp. 57:1--57:22, 2012.
+    # - S. Rendle, "Factorization Machines," Proc. ICDM'10, pp. 995--1000, 2010.
     class FactorizationMachineRegressor
       include Base::BaseEstimator
       include Base::Regressor
@@ -50,7 +50,7 @@ module SVMKit
       # @param max_iter [Integer] The maximum number of iterations.
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
-      #   Nadam is selected automatically on current version.
+      #   If nil is given, Nadam is used.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, reg_param_linear: 1.0, reg_param_factor: 1.0,
                      max_iter: 1000, batch_size: 10, optimizer: nil, random_seed: nil)
@@ -66,6 +66,7 @@ module SVMKit
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
         @params[:optimizer] = optimizer
+        @params[:optimizer] ||= Optimizer::Nadam.new
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @factor_mat = nil
@@ -91,12 +92,7 @@ module SVMKit
           @factor_mat = Numo::DFloat.zeros(n_outputs, @params[:n_factors], n_features)
           @weight_vec = Numo::DFloat.zeros(n_outputs, n_features)
           @bias_term = Numo::DFloat.zeros(n_outputs)
-          n_outputs.times do |n|
-            factor, weight, bias = single_fit(x, y[true, n])
-            @factor_mat[n, true, true] = factor
-            @weight_vec[n, true] = weight
-            @bias_term[n] = bias
-          end
+          n_outputs.times { |n| @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = single_fit(x, y[true, n]) }
         else
           @factor_mat, @weight_vec, @bias_term = single_fit(x, y)
         end
@@ -148,8 +144,8 @@ module SVMKit
         rand_ids = [*0...n_samples].shuffle(random: @rng)
         weight_vec = Numo::DFloat.zeros(n_features + 1)
         factor_mat = Numo::DFloat.zeros(@params[:n_factors], n_features)
-        weight_optimizer = Optimizer::Nadam.new
-        factor_optimizers = Array.new(@params[:n_factors]) { Optimizer::Nadam.new }
+        weight_optimizer = @params[:optimizer].dup
+        factor_optimizers = Array.new(@params[:n_factors]) { @params[:optimizer].dup }
         # Start optimization.
         @params[:max_iter].times do |_t|
           # Random sampling.
