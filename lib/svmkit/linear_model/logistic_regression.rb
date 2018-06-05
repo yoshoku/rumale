@@ -49,7 +49,7 @@ module SVMKit
       # @param max_iter [Integer] The maximum number of iterations.
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
-      #   Nadam is selected automatically on current version.
+      #   If nil is given, Nadam is used.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
                      max_iter: 1000, batch_size: 20, optimizer: nil, random_seed: nil)
@@ -65,6 +65,7 @@ module SVMKit
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
         @params[:optimizer] = optimizer
+        @params[:optimizer] ||= Optimizer::Nadam.new
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
@@ -175,7 +176,7 @@ module SVMKit
         n_samples, n_features = samples.shape
         rand_ids = [*0...n_samples].shuffle(random: @rng)
         weight_vec = Numo::DFloat.zeros(n_features)
-        optimizer = Optimizer::Nadam.new
+        optimizer = @params[:optimizer].dup
         # Start optimization.
         @params[:max_iter].times do |_t|
           # random sampling
