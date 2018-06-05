@@ -62,7 +62,7 @@ RSpec.describe SVMKit::LinearModel::Lasso do
     expect(estimator.params[:fit_bias]).to eq(copied.params[:fit_bias])
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
-    expect(estimator.params[:optimizer]).to eq(copied.params[:optimizer])
+    expect(estimator.params[:optimizer].class).to eq(copied.params[:optimizer].class)
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.weight_vec).to eq(copied.weight_vec)
     expect(estimator.bias_term).to eq(copied.bias_term)
