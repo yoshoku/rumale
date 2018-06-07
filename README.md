@@ -8,8 +8,8 @@
 SVMKit is a machine learninig library in Ruby.
 SVMKit provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 SVMKit currently supports Linear / Kernel Support Vector Machine,
-Logistic Regression, Ridge, Lasso, Factorization Machine, Naive Bayes, Decision Tree, Random Forest,
-K-nearest neighbor classifier, and cross-validation.
+Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
+Naive Bayes, Decision Tree, Random Forest, K-nearest neighbor classifier, and cross-validation.
 
 ## Installation
 
@@ -29,61 +29,97 @@ Or install it yourself as:
 
 ## Usage
 
-Training phase:
+### Example 1. Pendigits dataset classification
+
+SVMKit provides function loading libsvm format dataset file.
+We start by downloading the pendigits dataset from LIBSVM Data web site.
+
+```bash
+$ wget https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/pendigits
+$ wget https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/pendigits.t
+```
+
+Training of the classifier with Linear SVM and RBF kernel feature map is the following code.
 
 ```ruby
 require 'svmkit'
 
+# Load the training dataset.
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
 
-normalizer = SVMKit::Preprocessing::MinMaxScaler.new
-normalized = normalizer.fit_transform(samples)
+# If the features consists only of integers, load_libsvm_file method reads in Numo::Int32 format.
+# As necessary, you should convert sample array to Numo::DFloat format.
+samples = Numo::DFloat.cast(samples)
 
-transformer = SVMKit::KernelApproximation::RBF.new(gamma: 2.0, n_components: 1024, random_seed: 1)
-transformed = transformer.fit_transform(normalized)
+# Map training data to RBF kernel feature space.
+transformer = SVMKit::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 1024, random_seed: 1)
+transformed = transformer.fit_transform(samples)
 
-classifier = SVMKit::LinearModel::SVC.new(reg_param: 1.0, max_iter: 1000, batch_size: 20, random_seed: 1)
+# Train linear SVM classifier.
+classifier = SVMKit::LinearModel::SVC.new(reg_param: 0.0001, max_iter: 1000, batch_size: 50, random_seed: 1)
 classifier.fit(transformed, labels)
 
-File.open('trained_normalizer.dat', 'wb') { |f| f.write(Marshal.dump(normalizer)) }
-File.open('trained_transformer.dat', 'wb') { |f| f.write(Marshal.dump(transformer)) }
-File.open('trained_classifier.dat', 'wb') { |f| f.write(Marshal.dump(classifier)) }
+# Save the model.
+File.open('transformer.dat', 'wb') { |f| f.write(Marshal.dump(transformer)) }
+File.open('classifier.dat', 'wb') { |f| f.write(Marshal.dump(classifier)) }
 ```
 
-Testing phase:
+Classifying testing data with the trained classifier is the following code.
 
 ```ruby
 require 'svmkit'
 
+# Load the testing dataset.
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits.t')
+samples = Numo::DFloat.cast(samples)
 
-normalizer = Marshal.load(File.binread('trained_normalizer.dat'))
-transformer = Marshal.load(File.binread('trained_transformer.dat'))
-classifier = Marshal.load(File.binread('trained_classifier.dat'))
+# Load the model.
+transformer = Marshal.load(File.binread('transformer.dat'))
+classifier = Marshal.load(File.binread('classifier.dat'))
 
-normalized = normalizer.transform(samples)
-transformed = transformer.transform(normalized)
+# Map testing data to RBF kernel feature space.
+transformed = transformer.transform(samples)
 
-puts(sprintf("Accuracy: %.1f%%", 100.0 * classifier.score(transformed, labels)))
+# Classify the testing data and evaluate prediction results.
+puts("Accuracy: %.1f%%" % (100.0 * classifier.score(transformed, labels)))
+
+# Other evaluating approach
+# results = classifier.predict(transformed)
+# evaluator = SVMKit::EvaluationMeasure::Accuracy.new
+# puts("Accuracy: %.1f%%" % (100.0 * evaluator.score(results, labels)))
 ```
 
-5-fold cross-validation:
+Execution of the above scripts result in the following.
+
+```bash
+$ ruby train.rb
+$ ruby test.rb
+Accuracy: 98.4%
+```
+
+### Example 2. Cross-validation
 
 ```ruby
 require 'svmkit'
 
+# Load dataset.
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
+samples = Numo::DFloat.cast(samples)
 
-kernel_svc = SVMKit::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1)
+# Define the estimator to be evaluated.
+lr = SVMKit::LinearModel::LogisticRegression.new(reg_param: 0.0001, random_seed: 1)
 
+# Define the evaluation measure, splitting strategy, and cross validation.
+ev = SVMKit::EvaluationMeasure::LogLoss.new
 kf = SVMKit::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1)
-cv = SVMKit::ModelSelection::CrossValidation.new(estimator: kernel_svc, splitter: kf)
+cv = SVMKit::ModelSelection::CrossValidation.new(estimator: lr, splitter: kf, evaluator: ev)
 
-kernel_mat = SVMKit::PairwiseMetric::rbf_kernel(samples, nil, 0.005)
-report = cv.perform(kernel_mat, labels)
+# Perform 5-cross validation.
+report = cv.perform(samples, labels)
 
-mean_accuracy = report[:test_score].inject(:+) / kf.n_splits
-puts(sprintf("Mean Accuracy: %.1f%%", 100.0 * mean_accuracy))
+# Output result.
+mean_logloss = report[:test_score].inject(:+) / kf.n_splits
+puts("5-CV mean log-loss: %.3f" % mean_logloss)
 ```
 
 ## Development
