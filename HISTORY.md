@@ -1,3 +1,10 @@
+# 0.4.1
+- Add class for linear regressor.
+- Add class for SGD optimizer.
+- Add class for RMSProp optimizer.
+- Add class for YellowFin optimizer.
+- Fix to be able to select optimizer on estimators of LineaModel and PolynomialModel.
+
 # 0.4.0
 ## Breaking changes
 
