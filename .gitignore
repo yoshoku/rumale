@@ -14,3 +14,7 @@
 *.swp
 .DS_Store
 .ruby-version
+/spec/dump_dbl.t
+/spec/dump_int.t
+/spec/dump_mult_dbl.t
+/spec/dump_zb.t
