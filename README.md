@@ -9,7 +9,8 @@ SVMKit is a machine learninig library in Ruby.
 SVMKit provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 SVMKit currently supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
-Naive Bayes, Decision Tree, Random Forest, K-nearest neighbor classifier, and cross-validation.
+Naive Bayes, Decision Tree, Random Forest, K-nearest neighbor classifier,
+K-Means and cross-validation.
 
 ## Installation
 
