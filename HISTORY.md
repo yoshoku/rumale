@@ -1,3 +1,8 @@
+# 0.5.0
+- Add class for K-Means clustering.
+- Add class for evaluating purity.
+- Add class for evaluating normalized mutual information.
+
 # 0.4.1
 - Add class for linear regressor.
 - Add class for SGD optimizer.
@@ -25,7 +30,6 @@ SVMKit plans to add other optimizer algorithms sequentially, so that users can s
   - Remove init_std paramter on Factorization Machine estimators.
   - Remove learning_rate, decay, and momentum parameters on Ridge, Lasso, and FactorizationMachineRegressor.
   - Remove normalize parameter on SVC, SVR, and LogisticRegression.
-
 
 # 0.3.3
 - Add class for Ridge regressor.
