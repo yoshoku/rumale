@@ -1,3 +1,6 @@
+# 0.5.1
+- Fix bug on class probability calculation of DecisionTreeClassifier.
+
 # 0.5.0
 - Add class for K-Means clustering.
 - Add class for evaluating purity.
