@@ -112,8 +112,7 @@ module SVMKit
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         SVMKit::Validation.check_sample_array(x)
-        probs = Numo::DFloat[*(Array.new(x.shape[0]) { |n| predict_at_node(@tree, x[n, true]) })]
-        probs[true, @classes]
+        Numo::DFloat[*(Array.new(x.shape[0]) { |n| predict_at_node(@tree, x[n, true]) })]
       end
 
       # Return the index of the leaf that each sample reached.
@@ -214,11 +213,11 @@ module SVMKit
       end
 
       def put_leaf(node, y)
-        node.probs = y.bincount(minlength: @classes.max + 1) / node.n_samples.to_f
+        node.probs = Numo::DFloat[*(@classes.to_a.map { |c| y.eq(c).count })] / node.n_samples
         node.leaf = true
         node.leaf_id = @n_leaves
         @n_leaves += 1
-        @leaf_labels.push(node.probs.max_index)
+        @leaf_labels.push(@classes[node.probs.max_index])
         node
       end
 
