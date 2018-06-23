@@ -1,3 +1,6 @@
+# 0.5.2
+- Add class for DBSCAN clustering.
+
 # 0.5.1
 - Fix bug on class probability calculation of DecisionTreeClassifier.
 
