@@ -9,15 +9,15 @@ RSpec.describe SVMKit::Clustering::KMeans do
   let(:non_learn_analyzer) { described_class.new(n_clusters: 3, init: 'k-means++', max_iter: 0, random_seed: 1) }
 
   it 'analyze cluster.' do
-    cluster_ids = analyzer.fit(x_mlt).predict(x_mlt)
+    cluster_labels = analyzer.fit(x_mlt).predict(x_mlt)
 
-    expect(cluster_ids.class).to eq(Numo::Int32)
-    expect(cluster_ids.size).to eq(x_mlt.shape[0])
-    expect(cluster_ids.shape[0]).to eq(x_mlt.shape[0])
-    expect(cluster_ids.shape[1]).to be_nil
-    expect(cluster_ids.eq(0).count).to eq(100)
-    expect(cluster_ids.eq(1).count).to eq(100)
-    expect(cluster_ids.eq(2).count).to eq(100)
+    expect(cluster_labels.class).to eq(Numo::Int32)
+    expect(cluster_labels.size).to eq(x_mlt.shape[0])
+    expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
+    expect(cluster_labels.shape[1]).to be_nil
+    expect(cluster_labels.eq(0).count).to eq(100)
+    expect(cluster_labels.eq(1).count).to eq(100)
+    expect(cluster_labels.eq(2).count).to eq(100)
 
     expect(analyzer.cluster_centers.class).to eq(Numo::DFloat)
     expect(analyzer.cluster_centers.shape[0]).to eq(3)
