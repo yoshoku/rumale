@@ -10,7 +10,8 @@ SVMKit provides machine learning algorithms with interfaces similar to Scikit-Le
 SVMKit currently supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
 Naive Bayes, Decision Tree, Random Forest, K-nearest neighbor classifier,
-K-Means, DBSCAN and cross-validation.
+K-Means, DBSCAN, Principal Component Analysis, Non-negative Matrix Factorization
+and cross-validation.
 
 ## Installation
 
