@@ -1,3 +1,7 @@
+# 0.6.0
+- Add class for Principal Component Analysis.
+- Add class for Non-negative Matrix Factorization.
+
 # 0.5.2
 - Add class for DBSCAN clustering.
 
