@@ -213,7 +213,7 @@ module SVMKit
       end
 
       def put_leaf(node, y)
-        node.probs = Numo::DFloat[*(@classes.to_a.map { |c| y.eq(c).count })] / node.n_samples
+        node.probs = Numo::DFloat.cast(@classes.map { |c| y.eq(c).count_true }) / node.n_samples
         node.leaf = true
         node.leaf_id = @n_leaves
         @n_leaves += 1
@@ -234,18 +234,18 @@ module SVMKit
       end
 
       def splited_ids(features, threshold)
-        [features.le(threshold).where.to_a, features.gt(threshold).where.to_a]
+        [features.le(threshold).where, features.gt(threshold).where]
       end
 
       def gain(labels, labels_left, labels_right)
-        prob_left = labels_left.size / labels.size.to_f
-        prob_right = labels_right.size / labels.size.to_f
+        prob_left = labels_left.size.fdiv(labels.size)
+        prob_right = labels_right.size.fdiv(labels.size)
         impurity(labels) - prob_left * impurity(labels_left) - prob_right * impurity(labels_right)
       end
 
       def impurity(labels)
-        posterior_probs = Numo::DFloat[*(labels.to_a.uniq.sort.map { |c| labels.eq(c).count })] / labels.size.to_f
-        send(@criterion, posterior_probs)
+        cls = labels.to_a.uniq.sort
+        cls.size == 1 ? 0.0 : send(@criterion, Numo::DFloat[*(cls.map { |c| labels.eq(c).count_true.fdiv(labels.size) })])
       end
 
       def gini(posterior_probs)

@@ -208,7 +208,7 @@ module SVMKit
       end
 
       def splited_ids(features, threshold)
-        [features.le(threshold).where.to_a, features.gt(threshold).where.to_a]
+        [features.le(threshold).where, features.gt(threshold).where]
       end
 
       def gain(values, values_left, values_right)
