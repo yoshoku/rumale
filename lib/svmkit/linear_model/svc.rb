@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 require 'svmkit/validation'
-require 'svmkit/base/base_estimator'
+require 'svmkit/linear_model/sgd_linear_estimator'
 require 'svmkit/base/classifier'
-require 'svmkit/optimizer/nadam'
 require 'svmkit/probabilistic_output'
 
 module SVMKit
@@ -21,8 +20,7 @@ module SVMKit
     #
     # *Reference*
     # - S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
-    class SVC
-      include Base::BaseEstimator
+    class SVC < SGDLinearEstimator
       include Base::Classifier
       include Validation
 
@@ -60,22 +58,11 @@ module SVMKit
         check_params_boolean(fit_bias: fit_bias, probability: probability)
         check_params_type_or_nil(Integer, random_seed: random_seed)
         check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
-        @params = {}
-        @params[:reg_param] = reg_param
-        @params[:fit_bias] = fit_bias
-        @params[:bias_scale] = bias_scale
-        @params[:max_iter] = max_iter
-        @params[:batch_size] = batch_size
+        super(reg_param: reg_param, fit_bias: fit_bias, bias_scale: bias_scale,
+              max_iter: max_iter, batch_size: batch_size, optimizer: optimizer, random_seed: random_seed)
         @params[:probability] = probability
-        @params[:optimizer] = optimizer
-        @params[:optimizer] ||= Optimizer::Nadam.new
-        @params[:random_seed] = random_seed
-        @params[:random_seed] ||= srand
-        @weight_vec = nil
-        @bias_term = nil
         @prob_param = nil
         @classes = nil
-        @rng = Random.new(@params[:random_seed])
       end
 
       # Fit the model with given training data.
@@ -90,7 +77,7 @@ module SVMKit
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
-        _n_samples, n_features = x.shape
+        n_features = x.shape[1]
 
         if n_classes > 2
           @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
@@ -98,11 +85,9 @@ module SVMKit
           @prob_param = Numo::DFloat.zeros(n_classes, 2)
           n_classes.times do |n|
             bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-            weight, bias = binary_fit(x, bin_y)
-            @weight_vec[n, true] = weight
-            @bias_term[n] = bias
+            @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
             @prob_param[n, true] = if @params[:probability]
-                                     SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(weight.transpose) + bias, bin_y)
+                                     SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec[n, true].transpose) + @bias_term[n], bin_y)
                                    else
                                      Numo::DFloat[1, 0]
                                    end
@@ -110,7 +95,7 @@ module SVMKit
         else
           negative_label = y.to_a.uniq.min
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
-          @weight_vec, @bias_term = binary_fit(x, bin_y)
+          @weight_vec, @bias_term = partial_fit(x, bin_y)
           @prob_param = if @params[:probability]
                           SVMKit::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose) + @bias_term, bin_y)
                         else
@@ -188,49 +173,11 @@ module SVMKit
 
       private
 
-      def binary_fit(x, y)
-        # Expand feature vectors for bias term.
-        samples = @params[:fit_bias] ? expand_feature(x) : x
-        # Initialize some variables.
-        n_samples, n_features = samples.shape
-        rand_ids = [*0...n_samples].shuffle(random: @rng)
-        weight_vec = Numo::DFloat.zeros(n_features)
-        optimizer = @params[:optimizer].dup
-        # Start optimization.
-        @params[:max_iter].times do |_t|
-          # random sampling.
-          subset_ids = rand_ids.shift(@params[:batch_size])
-          rand_ids.concat(subset_ids)
-          data = samples[subset_ids, true]
-          labels = y[subset_ids]
-          # calculate gradient for loss function.
-          loss_grad = loss_gradient(data, labels, weight_vec)
-          next if loss_grad.ne(0.0).count.zero?
-          # update weight.
-          weight_vec = optimizer.call(weight_vec, weight_gradient(loss_grad, data, weight_vec))
-        end
-        split_weight_vec_bias(weight_vec)
-      end
-
-      def loss_gradient(x, y, weight)
+      def calc_loss_gradient(x, y, weight)
         target_ids = (x.dot(weight) * y).lt(1.0).where
         grad = Numo::DFloat.zeros(@params[:batch_size])
         grad[target_ids] = -y[target_ids]
         grad
-      end
-
-      def weight_gradient(loss_grad, x, weight)
-        x.transpose.dot(loss_grad) / @params[:batch_size] + @params[:reg_param] * weight
-      end
-
-      def expand_feature(x)
-        Numo::NArray.hstack([x, Numo::DFloat.ones([x.shape[0], 1]) * @params[:bias_scale]])
-      end
-
-      def split_weight_vec_bias(weight_vec)
-        weights = @params[:fit_bias] ? weight_vec[0...-1] : weight_vec
-        bias = @params[:fit_bias] ? weight_vec[-1] : 0.0
-        [weights, bias]
       end
     end
   end
