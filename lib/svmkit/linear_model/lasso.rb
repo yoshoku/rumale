@@ -120,7 +120,7 @@ module SVMKit
         2.0 * (x.dot(weight) - y)
       end
 
-      def calc_new_weight(_optimizer, x, weight, loss_gradient)
+      def calc_new_weight(_optimizer, x, _weight, loss_gradient)
         @left_weight = round_weight(@left_optimizer.call(@left_weight, calc_weight_gradient(loss_gradient, x)))
         @right_weight = round_weight(@right_optimizer.call(@right_weight, calc_weight_gradient(-loss_gradient, x)))
         @left_weight - @right_weight

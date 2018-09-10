@@ -121,11 +121,11 @@ module SVMKit
           # update
           if update_comps
             nume = coefficients.transpose.dot(x)
-            deno = (coefficients.transpose.dot(coefficients)).dot(@components) + @params[:eps]
+            deno = coefficients.transpose.dot(coefficients).dot(@components) + @params[:eps]
             @components *= (nume / deno)
           end
           nume = x.dot(@components.transpose)
-          deno = (coefficients.dot(@components)).dot(@components.transpose) + @params[:eps]
+          deno = coefficients.dot(@components).dot(@components.transpose) + @params[:eps]
           coefficients *= (nume / deno)
           # normalize
           norm = Numo::NMath.sqrt((@components**2).sum(1)) + @params[:eps]
