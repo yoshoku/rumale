@@ -1,3 +1,8 @@
+# 0.6.1
+- Add abstract class for linear estimator with stochastic gradient descent.
+- Refactor linear estimators to use linear esitmator abstract class.
+- Refactor decistion tree classes to avoid unneeded type conversion.
+
 # 0.6.0
 - Add class for Principal Component Analysis.
 - Add class for Non-negative Matrix Factorization.
