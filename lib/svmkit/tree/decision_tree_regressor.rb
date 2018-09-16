@@ -151,12 +151,12 @@ module SVMKit
       def build_tree(x, y)
         @n_leaves = 0
         @leaf_values = []
-        @tree = grow_node(0, x, y)
+        @tree = grow_node(0, x, y, impurity(y))
         @leaf_values = Numo::DFloat.cast(@leaf_values)
         nil
       end
 
-      def grow_node(depth, x, y)
+      def grow_node(depth, x, y, whole_impurity)
         unless @params[:max_leaf_nodes].nil?
           return nil if @n_leaves >= @params[:max_leaf_nodes]
         end
@@ -164,7 +164,7 @@ module SVMKit
         n_samples, n_features = x.shape
         return nil if n_samples <= @params[:min_samples_leaf]
 
-        node = Node.new(depth: depth, impurity: impurity(y), n_samples: n_samples)
+        node = Node.new(depth: depth, impurity: whole_impurity, n_samples: n_samples)
 
         return put_leaf(node, y) if (y - y.mean(0)).sum.abs.zero?
 
@@ -172,12 +172,14 @@ module SVMKit
           return put_leaf(node, y) if depth == @params[:max_depth]
         end
 
-        feature_id, threshold, left_ids, right_ids, max_gain =
-          rand_ids(n_features).map { |f_id| [f_id, *best_split(x[true, f_id], y)] }.max_by(&:last)
-        return put_leaf(node, y) if max_gain.nil? || max_gain.zero?
+        feature_id, threshold, left_ids, right_ids, left_impurity, right_impurity, gain =
+          rand_ids(n_features).map { |f_id| [f_id, *best_split(x[true, f_id], y, whole_impurity)] }.max_by(&:last)
 
-        node.left = grow_node(depth + 1, x[left_ids, true], y[left_ids, true])
-        node.right = grow_node(depth + 1, x[right_ids, true], y[right_ids, true])
+        return put_leaf(node, y) if gain.nil? || gain.zero?
+
+        node.left = grow_node(depth + 1, x[left_ids, true], y[left_ids, true], left_impurity)
+        node.right = grow_node(depth + 1, x[right_ids, true], y[right_ids, true], right_impurity)
+
         return put_leaf(node, y) if node.left.nil? && node.right.nil?
 
         node.feature_id = feature_id
@@ -199,22 +201,19 @@ module SVMKit
         [*0...n].sample(@params[:max_features], random: @rng)
       end
 
-      def best_split(features, values)
+      def best_split(features, values, whole_impurity)
+        n_samples = values.shape[0]
         features.to_a.uniq.sort.each_cons(2).map do |l, r|
           threshold = 0.5 * (l + r)
-          left_ids, right_ids = splited_ids(features, threshold)
-          [threshold, left_ids, right_ids, gain(values, values[left_ids], values[right_ids])]
+          left_ids = features.le(threshold).where
+          right_ids = features.gt(threshold).where
+          left_impurity = impurity(values[left_ids, true])
+          right_impurity = impurity(values[right_ids, true])
+          gain = whole_impurity -
+                 left_impurity * left_ids.size.fdiv(n_samples) -
+                 right_impurity * right_ids.size.fdiv(n_samples)
+          [threshold, left_ids, right_ids, left_impurity, right_impurity, gain]
         end.max_by(&:last)
-      end
-
-      def splited_ids(features, threshold)
-        [features.le(threshold).where, features.gt(threshold).where]
-      end
-
-      def gain(values, values_left, values_right)
-        prob_left = values_left.shape[0].fdiv(values.shape[0])
-        prob_right = values_right.shape[0].fdiv(values.shape[0])
-        impurity(values) - prob_left * impurity(values_left) - prob_right * impurity(values_right)
       end
 
       def impurity(values)
