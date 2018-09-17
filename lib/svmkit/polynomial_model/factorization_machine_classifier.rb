@@ -253,7 +253,7 @@ module SVMKit
       end
 
       def split_weight_vec_bias(weight_vec)
-        weights = weight_vec[0...-1]
+        weights = weight_vec[0...-1].dup
         bias = weight_vec[-1]
         [weights, bias]
       end

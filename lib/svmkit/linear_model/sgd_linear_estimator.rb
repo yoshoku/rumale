@@ -79,7 +79,7 @@ module SVMKit
 
       def split_weight(weight)
         if @params[:fit_bias]
-          [weight[0...-1], weight[-1]]
+          [weight[0...-1].dup, weight[-1]]
         else
           [weight, 0.0]
         end
