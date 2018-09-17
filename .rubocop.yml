@@ -42,3 +42,6 @@ Style/FormatStringToken:
 
 Style/NumericLiterals:
   Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
