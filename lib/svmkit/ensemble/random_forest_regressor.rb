@@ -80,21 +80,22 @@ module SVMKit
         check_sample_tvalue_size(x, y)
         # Initialize some variables.
         n_samples, n_features = x.shape
-        @params[:max_features] ||= n_features
-        @params[:max_features] = [[1, @params[:max_features]].max, Math.sqrt(n_features).to_i].min
+        @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
+        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
+        @feature_importances = Numo::DFloat.zeros(n_features)
         single_target = y.shape[1].nil?
         # Construct forest.
-        @estimators = Array.new(@params[:n_estimators]) do |_n|
+        @estimators = Array.new(@params[:n_estimators]) do
           tree = Tree::DecisionTreeRegressor.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @params[:random_seed]
+            max_features: @params[:max_features], random_seed: @rng.rand(int_max)
           )
           bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
           tree.fit(x[bootstrap_ids, true], single_target ? y[bootstrap_ids] : y[bootstrap_ids, true])
+          @feature_importances += tree.feature_importances
+          tree
         end
-        # Calculate feature importances.
-        @feature_importances = @estimators.map(&:feature_importances).reduce(&:+)
         @feature_importances /= @feature_importances.sum
         self
       end
@@ -134,6 +135,12 @@ module SVMKit
         @feature_importances = obj[:feature_importances]
         @rng = obj[:rng]
         nil
+      end
+
+      private
+
+      def int_max
+        @int_max ||= 2**([42].pack('i').size * 16 - 2) - 1
       end
     end
   end

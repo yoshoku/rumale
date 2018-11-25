@@ -6,7 +6,7 @@ RSpec.describe SVMKit::Ensemble::RandomForestRegressor do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x[true, 0] + x[true, 1]**2 }
   let(:y_mult) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.0, 0.1]]) }
-  let(:n_estimators) { 20 }
+  let(:n_estimators) { 10 }
   let(:estimator) { described_class.new(n_estimators: n_estimators, criterion: 'mae', max_features: 2, random_seed: 9) }
 
   it 'learns the model for single regression problem.' do
@@ -14,6 +14,9 @@ RSpec.describe SVMKit::Ensemble::RandomForestRegressor do
 
     estimator.fit(x, y)
 
+    expect(estimator.params[:n_estimators]).to eq(n_estimators)
+    expect(estimator.params[:criterion]).to eq('mae')
+    expect(estimator.params[:max_features]).to eq(2)
     expect(estimator.estimators.class).to eq(Array)
     expect(estimator.estimators.size).to eq(n_estimators)
     expect(estimator.estimators[0].class).to eq(SVMKit::Tree::DecisionTreeRegressor)

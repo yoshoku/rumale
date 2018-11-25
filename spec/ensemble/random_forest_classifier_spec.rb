@@ -8,11 +8,14 @@ RSpec.describe SVMKit::Ensemble::RandomForestClassifier do
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:n_estimators) { 10 }
-  let(:estimator) { described_class.new(n_estimators: n_estimators, random_seed: 1) }
+  let(:estimator) { described_class.new(n_estimators: n_estimators, max_depth: 2, max_features: 2, random_seed: 1) }
 
   it 'classifies two clusters data.' do
     _n_samples, n_features = x_bin.shape
     estimator.fit(x_bin, y_bin)
+    expect(estimator.params[:n_estimators]).to eq(n_estimators)
+    expect(estimator.params[:max_depth]).to eq(2)
+    expect(estimator.params[:max_features]).to eq(2)
     expect(estimator.estimators.class).to eq(Array)
     expect(estimator.estimators.size).to eq(n_estimators)
     expect(estimator.estimators[0].class).to eq(SVMKit::Tree::DecisionTreeClassifier)
