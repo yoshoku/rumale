@@ -1,3 +1,6 @@
+# 0.6.3
+- Fix bug on setting random seed and max_features parameter of Random Forest estimators.
+
 # 0.6.2
 - Refactor decision tree classes for improving performance.
 
