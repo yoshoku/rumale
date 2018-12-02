@@ -89,7 +89,7 @@ module SVMKit
         n_samples, n_features = x.shape
         @estimators = []
         @feature_importances = Numo::DFloat.zeros(n_features)
-        @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
+        @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         n_classes = @classes.shape[0]

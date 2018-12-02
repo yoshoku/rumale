@@ -97,7 +97,7 @@ module SVMKit
         raise ArgumentError, 'Expect target value vector to be 1-D arrray' unless y.shape.size == 1
         # Initialize some variables.
         n_samples, n_features = x.shape
-        @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
+        @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         observation_weights = Numo::DFloat.zeros(n_samples) + 1.fdiv(n_samples)
         @estimators = []
