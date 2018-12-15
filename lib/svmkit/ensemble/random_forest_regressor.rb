@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'svmkit/validation'
+require 'svmkit/values'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
 require 'svmkit/tree/decision_tree_regressor'
@@ -46,7 +47,8 @@ module SVMKit
       #   If nil is given, split process considers all features.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
-      def initialize(n_estimators: 10, criterion: 'mse', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
+      def initialize(n_estimators: 10,
+                     criterion: 'mse', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
                      max_features: nil, random_seed: nil)
         check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
                                           max_features: max_features, random_seed: random_seed)
@@ -89,7 +91,7 @@ module SVMKit
           tree = Tree::DecisionTreeRegressor.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @rng.rand(int_max)
+            max_features: @params[:max_features], random_seed: @rng.rand(SVMKit::Values::int_max)
           )
           bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
           tree.fit(x[bootstrap_ids, true], single_target ? y[bootstrap_ids] : y[bootstrap_ids, true])
@@ -135,12 +137,6 @@ module SVMKit
         @feature_importances = obj[:feature_importances]
         @rng = obj[:rng]
         nil
-      end
-
-      private
-
-      def int_max
-        @int_max ||= 2**([42].pack('i').size * 16 - 2) - 1
       end
     end
   end

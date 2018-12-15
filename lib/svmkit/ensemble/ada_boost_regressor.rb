@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'svmkit/validation'
+require 'svmkit/values'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
 require 'svmkit/tree/decision_tree_regressor'
@@ -106,11 +107,11 @@ module SVMKit
         # Construct forest.
         @params[:n_estimators].times do |_t|
           # Fit weak learner.
-          ids = weighted_sampling(observation_weights)
+          ids = SVMKit::Utils.choice_ids(n_samples, observation_weights, @rng)
           tree = Tree::DecisionTreeRegressor.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @rng.rand(int_max)
+            max_features: @params[:max_features], random_seed: @rng.rand(SVMKit::Values::int_max)
           )
           tree.fit(x[ids, true], y[ids])
           p = tree.predict(x)
@@ -173,27 +174,6 @@ module SVMKit
         @feature_importances = obj[:feature_importances]
         @rng = obj[:rng]
         nil
-      end
-
-      private
-
-      def weighted_sampling(weights)
-        Array.new(weights.size) do
-          target = @rng.rand
-          chosen = 0
-          weights.each_with_index do |w, idx|
-            if target <= w
-              chosen = idx
-              break
-            end
-            target -= w
-          end
-          chosen
-        end
-      end
-
-      def int_max
-        @int_max ||= 2**([42].pack('i').size * 16 - 2) - 1
       end
     end
   end

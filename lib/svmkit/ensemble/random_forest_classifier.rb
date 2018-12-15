@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'svmkit/validation'
+require 'svmkit/values'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
 require 'svmkit/tree/decision_tree_classifier'
@@ -20,6 +21,7 @@ module SVMKit
     class RandomForestClassifier
       include Base::BaseEstimator
       include Base::Classifier
+      include Validation
 
       # Return the set of estimators.
       # @return [Array<DecisionTreeClassifier>]
@@ -50,15 +52,16 @@ module SVMKit
       #   If nil is given, split process considers all features.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
-      def initialize(n_estimators: 10, criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
+      def initialize(n_estimators: 10,
+                     criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
                      max_features: nil, random_seed: nil)
-        SVMKit::Validation.check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                                                             max_features: max_features, random_seed: random_seed)
-        SVMKit::Validation.check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
-        SVMKit::Validation.check_params_string(criterion: criterion)
-        SVMKit::Validation.check_params_positive(n_estimators: n_estimators, max_depth: max_depth,
-                                                 max_leaf_nodes: max_leaf_nodes, min_samples_leaf: min_samples_leaf,
-                                                 max_features: max_features)
+        check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                                          max_features: max_features, random_seed: random_seed)
+        check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
+        check_params_string(criterion: criterion)
+        check_params_positive(n_estimators: n_estimators, max_depth: max_depth,
+                              max_leaf_nodes: max_leaf_nodes, min_samples_leaf: min_samples_leaf,
+                              max_features: max_features)
         @params = {}
         @params[:n_estimators] = n_estimators
         @params[:criterion] = criterion
@@ -80,9 +83,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [RandomForestClassifier] The learned classifier itself.
       def fit(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_label_array(y)
-        SVMKit::Validation.check_sample_label_size(x, y)
+        check_sample_array(x)
+        check_label_array(y)
+        check_sample_label_size(x, y)
         # Initialize some variables.
         n_samples, n_features = x.shape
         @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
@@ -94,7 +97,7 @@ module SVMKit
           tree = Tree::DecisionTreeClassifier.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @rng.rand(int_max)
+            max_features: @params[:max_features], random_seed: @rng.rand(SVMKit::Values::int_max)
           )
           bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
           tree.fit(x[bootstrap_ids, true], y[bootstrap_ids])
@@ -110,7 +113,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         n_samples, = x.shape
         n_classes = @classes.size
         classes_arr = @classes.to_a
@@ -130,7 +133,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         n_samples, = x.shape
         n_classes = @classes.size
         classes_arr = @classes.to_a
@@ -150,7 +153,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
       end
 
@@ -173,12 +176,6 @@ module SVMKit
         @feature_importances = obj[:feature_importances]
         @rng = obj[:rng]
         nil
-      end
-
-      private
-
-      def int_max
-        @int_max ||= 2**([42].pack('i').size * 16 - 2) - 1
       end
     end
   end
