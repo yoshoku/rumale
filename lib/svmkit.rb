@@ -4,6 +4,7 @@ require 'numo/narray'
 
 require 'svmkit/version'
 require 'svmkit/validation'
+require 'svmkit/values'
 require 'svmkit/pairwise_metric'
 require 'svmkit/dataset'
 require 'svmkit/probabilistic_output'
