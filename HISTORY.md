@@ -1,3 +1,7 @@
+# 0.7.1
+- Fix to use CSV class in parsing libsvm format file.
+- Refactor ensemble estimators.
+
 # 0.7.0
 - Add class for AdaBoost classifier.
 - Add class for AdaBoost regressor.
