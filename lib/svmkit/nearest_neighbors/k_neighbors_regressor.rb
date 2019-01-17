@@ -11,7 +11,7 @@ module SVMKit
     #
     # @example
     #   estimator =
-    #     SVMKit::NearestNeighbor::KNeighborsRegressor.new(n_neighbors = 5)
+    #     SVMKit::NearestNeighbors::KNeighborsRegressor.new(n_neighbors = 5)
     #   estimator.fit(training_samples, traininig_target_values)
     #   results = estimator.predict(testing_samples)
     #

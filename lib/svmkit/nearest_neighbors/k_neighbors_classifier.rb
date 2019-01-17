@@ -12,7 +12,7 @@ module SVMKit
     #
     # @example
     #   estimator =
-    #     SVMKit::NearestNeighbor::KNeighborsClassifier.new(n_neighbors = 5)
+    #     SVMKit::NearestNeighbors::KNeighborsClassifier.new(n_neighbors = 5)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
