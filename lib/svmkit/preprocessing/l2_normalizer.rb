@@ -49,6 +49,15 @@ module SVMKit
         fit(x)
         x / @norm_vec.tile(x.shape[1], 1).transpose
       end
+
+      # Calculate L2-norms of each sample, and then normalize samples to unit L2-norm.
+      # This method calls the fit_transform method. This method exists for the Pipeline class.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @return [Numo::DFloat] The normalized samples.
+      def transform(x)
+        fit_transform(x)
+      end
     end
   end
 end
