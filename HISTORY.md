@@ -1,3 +1,7 @@
+# 0.7.2
+- Add class for Pipeline that constructs chain of transformers and estimators.
+- Fix some typos on document.
+
 # 0.7.1
 - Fix to use CSV class in parsing libsvm format file.
 - Refactor ensemble estimators.
