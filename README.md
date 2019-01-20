@@ -124,6 +124,39 @@ mean_logloss = report[:test_score].inject(:+) / kf.n_splits
 puts("5-CV mean log-loss: %.3f" % mean_logloss)
 ```
 
+### Example 3. Pipeline
+
+```ruby
+require 'svmkit'
+
+# Load dataset.
+samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
+samples = Numo::DFloat.cast(samples)
+
+# Construct pipeline with kernel approximation and SVC.
+rbf = SVMKit::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 800, random_seed: 1)
+svc = SVMKit::LinearModel::SVC.new(reg_param: 0.0001, max_iter: 1000, random_seed: 1)
+pipeline = SVMKit::Pipeline::Pipeline.new(steps: { trns: rbf, clsf: svc })
+
+# Define the splitting strategy and cross validation.
+kf = SVMKit::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1)
+cv = SVMKit::ModelSelection::CrossValidation.new(estimator: pipeline, splitter: kf)
+
+# Perform 5-cross validation.
+report = cv.perform(samples, labels)
+
+# Output result.
+mean_accuracy = report[:test_score].inject(:+) / kf.n_splits
+puts("5-CV mean accuracy: %.1f %%" % (mean_accuracy * 100.0))
+```
+
+Execution of the above scripts result in the following.
+
+```bash
+$ ruby pipeline.rb
+5-CV mean accuracy: 99.2 %
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
