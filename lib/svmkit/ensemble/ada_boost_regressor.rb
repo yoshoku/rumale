@@ -8,7 +8,7 @@ require 'svmkit/tree/decision_tree_regressor'
 
 module SVMKit
   module Ensemble
-    # AdaBoostRegressor is a class that implements random forest for regression
+    # AdaBoostRegressor is a class that implements random forest for regression.
     # This class uses decision tree for a weak learner.
     #
     # @example
