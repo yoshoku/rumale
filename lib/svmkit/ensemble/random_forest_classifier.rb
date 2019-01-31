@@ -97,7 +97,7 @@ module SVMKit
           tree = Tree::DecisionTreeClassifier.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @rng.rand(SVMKit::Values::int_max)
+            max_features: @params[:max_features], random_seed: @rng.rand(SVMKit::Values.int_max)
           )
           bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
           tree.fit(x[bootstrap_ids, true], y[bootstrap_ids])

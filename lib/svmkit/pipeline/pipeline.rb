@@ -125,7 +125,7 @@ module SVMKit
       def inverse_transform(z)
         check_sample_array(z)
         itrans_z = z
-        @steps.keys.reverse.each do |name|
+        @steps.keys.reverse_each do |name|
           transformer = @steps[name]
           next if transformer.nil?
           itrans_z = transformer.inverse_transform(itrans_z)

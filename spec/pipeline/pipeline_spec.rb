@@ -62,8 +62,8 @@ RSpec.describe SVMKit::Pipeline::Pipeline do
     expect(reconst_x.shape).to match([n_samples, n_high_features])
   end
 
-  it 'estimates class probabilities with Kernel approximation, PCA, and Naive bayes.'  do
-    n_samples, n_features = x.shape
+  it 'estimates class probabilities with Kernel approximation, PCA, and Naive bayes.' do
+    n_samples, = x.shape
     classes = y.to_a.uniq.sort
 
     pipe = described_class.new(steps: { rbf: rbf, pca: pca, nbs: nbs })
@@ -92,7 +92,7 @@ RSpec.describe SVMKit::Pipeline::Pipeline do
   end
 
   it 'raises TypeError when given steps including a non-transformer and non-estimator.' do
-    expect { described_class.new(steps: { rbf: rbf, bad: 'skip',  svc: svc }) }.to raise_error(TypeError)
+    expect { described_class.new(steps: { rbf: rbf, bad: 'skip', svc: svc }) }.to raise_error(TypeError)
     expect { described_class.new(steps: { rbf: rbf, bad: 'skip' }) }.to raise_error(TypeError)
   end
 end

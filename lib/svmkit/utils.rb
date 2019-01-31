@@ -6,7 +6,7 @@ module SVMKit
     module_function
 
     # @!visibility private
-    def choice_ids(size, probs, rng=nil)
+    def choice_ids(size, probs, rng = nil)
       rng ||= Random.new
       Array.new(size) do
         target = rng.rand
