@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
+
 module SVMKit
   module Base
     # Module for all validation methods in SVMKit.
     module Splitter
+      include Validation
+
       # Return the number of splits.
       # @return [Integer]
       attr_reader :n_splits

@@ -7,6 +7,8 @@ module SVMKit
   module Base
     # Module for all classifiers in SVMKit.
     module Classifier
+      include Validation
+
       # An abstract method for fitting a model.
       def fit
         raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
@@ -23,9 +25,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
       # @return [Float] Mean accuracy
       def score(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_label_array(y)
-        SVMKit::Validation.check_sample_label_size(x, y)
+        check_sample_array(x)
+        check_label_array(y)
+        check_sample_label_size(x, y)
         evaluator = SVMKit::EvaluationMeasure::Accuracy.new
         evaluator.score(y, predict(x))
       end

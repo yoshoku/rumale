@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
 require 'svmkit/tree/node'
@@ -19,7 +18,6 @@ module SVMKit
     class DecisionTreeRegressor
       include Base::BaseEstimator
       include Base::Regressor
-      include Validation
 
       # Return the importance for each feature.
       # @return [Numo::DFloat] (size: n_features)

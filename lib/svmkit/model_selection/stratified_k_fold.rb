@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/splitter'
 
 module SVMKit
@@ -33,10 +32,10 @@ module SVMKit
       # @param shuffle [Boolean] The flag indicating whether to shuffle the dataset.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_splits: 3, shuffle: false, random_seed: nil)
-        SVMKit::Validation.check_params_integer(n_splits: n_splits)
-        SVMKit::Validation.check_params_boolean(shuffle: shuffle)
-        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-        SVMKit::Validation.check_params_positive(n_splits: n_splits)
+        check_params_integer(n_splits: n_splits)
+        check_params_boolean(shuffle: shuffle)
+        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_positive(n_splits: n_splits)
         @n_splits = n_splits
         @shuffle = shuffle
         @random_seed = random_seed
@@ -53,9 +52,9 @@ module SVMKit
       #   The labels to be used to generate data indices for stratified K-fold cross validation.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
       def split(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_label_array(y)
-        SVMKit::Validation.check_sample_label_size(x, y)
+        check_sample_array(x)
+        check_label_array(y)
+        check_sample_label_size(x, y)
         # Check the number of samples in each class.
         unless valid_n_splits?(y)
           raise ArgumentError,

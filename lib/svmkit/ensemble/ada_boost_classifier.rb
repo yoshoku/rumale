@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/values'
 require 'svmkit/utils'
 require 'svmkit/base/base_estimator'
@@ -24,7 +23,6 @@ module SVMKit
     class AdaBoostClassifier
       include Base::BaseEstimator
       include Base::Classifier
-      include Validation
 
       # Return the set of estimators.
       # @return [Array<DecisionTreeClassifier>]

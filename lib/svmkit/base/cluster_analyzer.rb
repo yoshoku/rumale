@@ -7,6 +7,8 @@ module SVMKit
   module Base
     # Module for all clustering algorithms in SVMKit.
     module ClusterAnalyzer
+      include Validation
+
       # An abstract method for analyzing clusters and predicting cluster indices.
       def fit_predict
         raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
@@ -18,9 +20,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
       # @return [Float] Purity
       def score(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_label_array(y)
-        SVMKit::Validation.check_sample_label_size(x, y)
+        check_sample_array(x)
+        check_label_array(y)
+        check_sample_label_size(x, y)
         evaluator = SVMKit::EvaluationMeasure::Purity.new
         evaluator.score(y, fit_predict(x))
       end

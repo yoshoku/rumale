@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/transformer'
 
@@ -38,10 +37,10 @@ module SVMKit
       # @param n_components [Integer] The number of dimensions of the RBF kernel feature space.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(gamma: 1.0, n_components: 128, random_seed: nil)
-        SVMKit::Validation.check_params_float(gamma: gamma)
-        SVMKit::Validation.check_params_integer(n_components: n_components)
-        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-        SVMKit::Validation.check_params_positive(gamma: gamma, n_components: n_components)
+        check_params_float(gamma: gamma)
+        check_params_integer(n_components: n_components)
+        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_positive(gamma: gamma, n_components: n_components)
         @params = {}
         @params[:gamma] = gamma
         @params[:n_components] = n_components
@@ -60,7 +59,7 @@ module SVMKit
       #   This method uses only the number of features of the data.
       # @return [RBF] The learned transformer itself.
       def fit(x, _y = nil)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         n_features = x.shape[1]
         @params[:n_components] = 2 * n_features if @params[:n_components] <= 0
@@ -79,7 +78,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         fit(x).transform(x)
       end
@@ -91,7 +90,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         n_samples, = x.shape
         projection = x.dot(@random_mat) + @random_vec.tile(n_samples, 1)

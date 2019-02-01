@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/values'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
@@ -20,7 +19,6 @@ module SVMKit
     class RandomForestRegressor
       include Base::BaseEstimator
       include Base::Regressor
-      include Validation
 
       # Return the set of estimators.
       # @return [Array<DecisionTreeRegressor>]
@@ -116,7 +114,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to assign each leaf.
       # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
       end
 

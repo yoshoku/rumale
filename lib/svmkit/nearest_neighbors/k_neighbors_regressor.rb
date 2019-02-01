@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
 
@@ -31,8 +30,8 @@ module SVMKit
       #
       # @param n_neighbors [Integer] The number of neighbors.
       def initialize(n_neighbors: 5)
-        SVMKit::Validation.check_params_integer(n_neighbors: n_neighbors)
-        SVMKit::Validation.check_params_positive(n_neighbors: n_neighbors)
+        check_params_integer(n_neighbors: n_neighbors)
+        check_params_positive(n_neighbors: n_neighbors)
         @params = {}
         @params[:n_neighbors] = n_neighbors
         @prototypes = nil
@@ -45,9 +44,9 @@ module SVMKit
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [KNeighborsRegressor] The learned regressor itself.
       def fit(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_tvalue_array(y)
-        SVMKit::Validation.check_sample_tvalue_size(x, y)
+        check_sample_array(x)
+        check_tvalue_array(y)
+        check_sample_tvalue_size(x, y)
         @prototypes = x.dup
         @values = y.dup
         self
@@ -58,7 +57,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         # Initialize some variables.
         n_samples, = x.shape
         n_prototypes, n_outputs = @values.shape

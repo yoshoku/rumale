@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/linear_model/sgd_linear_estimator'
 require 'svmkit/base/regressor'
 
@@ -19,7 +18,6 @@ module SVMKit
     # 1. S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
     class SVR < SGDLinearEstimator
       include Base::Regressor
-      include Validation
 
       # Return the weight vector for SVR.
       # @return [Numo::DFloat] (shape: [n_outputs, n_features])

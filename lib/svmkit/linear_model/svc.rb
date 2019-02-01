@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/linear_model/sgd_linear_estimator'
 require 'svmkit/base/classifier'
 require 'svmkit/probabilistic_output'
@@ -22,7 +21,6 @@ module SVMKit
     # - S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
     class SVC < SGDLinearEstimator
       include Base::Classifier
-      include Validation
 
       # Return the weight vector for SVC.
       # @return [Numo::DFloat] (shape: [n_classes, n_features])

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/cluster_analyzer'
 require 'svmkit/pairwise_metric'
@@ -19,7 +18,6 @@ module SVMKit
     class DBSCAN
       include Base::BaseEstimator
       include Base::ClusterAnalyzer
-      include Validation
 
       # Return the core sample indices.
       # @return [Numo::Int32] (shape: [n_core_samples])

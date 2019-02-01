@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/evaluator'
 require 'svmkit/evaluation_measure/precision_recall'
 
@@ -23,8 +22,8 @@ module SVMKit
       # @param y_pred [Numo::DFloat] (shape: [n_samples, n_outputs]) Estimated taget values.
       # @return [Float] Coefficient of determination
       def score(y_true, y_pred)
-        SVMKit::Validation.check_tvalue_array(y_true)
-        SVMKit::Validation.check_tvalue_array(y_pred)
+        check_tvalue_array(y_true)
+        check_tvalue_array(y_pred)
         raise ArgumentError, 'Expect to have the same size both y_true and y_pred.' unless y_true.shape == y_pred.shape
 
         n_samples, n_outputs = y_true.shape

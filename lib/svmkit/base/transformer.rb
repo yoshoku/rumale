@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require 'svmkit/validation'
+
 module SVMKit
   module Base
     # Module for all transfomers in SVMKit.
     module Transformer
+      include Validation
+
       # An abstract method for fitting a model.
       def fit
         raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."

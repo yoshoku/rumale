@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/values'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
@@ -21,7 +20,6 @@ module SVMKit
     class RandomForestClassifier
       include Base::BaseEstimator
       include Base::Classifier
-      include Validation
 
       # Return the set of estimators.
       # @return [Array<DecisionTreeClassifier>]

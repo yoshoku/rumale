@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/transformer'
 
@@ -40,7 +39,7 @@ module SVMKit
       # @return [LabelEncoder]
       def fit(x, _y = nil)
         x = x.to_a if x.is_a?(Numo::NArray)
-        SVMKit::Validation.check_params_type(Array, x: x)
+        check_params_type(Array, x: x)
         @classes = x.sort.uniq
         self
       end
@@ -53,7 +52,7 @@ module SVMKit
       # @return [Numo::Int32] The encoded labels.
       def fit_transform(x, _y = nil)
         x = x.to_a if x.is_a?(Numo::NArray)
-        SVMKit::Validation.check_params_type(Array, x: x)
+        check_params_type(Array, x: x)
         fit(x).transform(x)
       end
 
@@ -63,7 +62,7 @@ module SVMKit
       # @return [Numo::Int32] The encoded labels.
       def transform(x)
         x = x.to_a if x.is_a?(Numo::NArray)
-        SVMKit::Validation.check_params_type(Array, x: x)
+        check_params_type(Array, x: x)
         Numo::Int32[*(x.map { |v| @classes.index(v) })]
       end
 
@@ -72,7 +71,7 @@ module SVMKit
       # @param x [Numo::Int32] (shape: [n_samples]) The labels to be decoded.
       # @return [Array] The decoded labels.
       def inverse_transform(x)
-        SVMKit::Validation.check_label_array(x)
+        check_label_array(x)
         x.to_a.map { |n| @classes[n] }
       end
 

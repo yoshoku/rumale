@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/linear_model/sgd_linear_estimator'
 require 'svmkit/base/regressor'
 
@@ -20,7 +19,6 @@ module SVMKit
     # - L. Bottou, "Large-Scale Machine Learning with Stochastic Gradient Descent," Proc. COMPSTAT'10, pp. 177--186, 2010.
     class Lasso < SGDLinearEstimator
       include Base::Regressor
-      include Validation
 
       # Return the weight vector.
       # @return [Numo::DFloat] (shape: [n_outputs, n_features])

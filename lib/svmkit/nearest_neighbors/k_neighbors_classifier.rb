@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
 
@@ -36,8 +35,8 @@ module SVMKit
       #
       # @param n_neighbors [Integer] The number of neighbors.
       def initialize(n_neighbors: 5)
-        SVMKit::Validation.check_params_integer(n_neighbors: n_neighbors)
-        SVMKit::Validation.check_params_positive(n_neighbors: n_neighbors)
+        check_params_integer(n_neighbors: n_neighbors)
+        check_params_positive(n_neighbors: n_neighbors)
         @params = {}
         @params[:n_neighbors] = n_neighbors
         @prototypes = nil
@@ -51,9 +50,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [KNeighborsClassifier] The learned classifier itself.
       def fit(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_label_array(y)
-        SVMKit::Validation.check_sample_label_size(x, y)
+        check_sample_array(x)
+        check_label_array(y)
+        check_sample_label_size(x, y)
         @prototypes = Numo::DFloat.asarray(x.to_a)
         @labels = Numo::Int32.asarray(y.to_a)
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
@@ -65,7 +64,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         distance_matrix = PairwiseMetric.euclidean_distance(x, @prototypes)
         n_samples, n_prototypes = distance_matrix.shape
         n_classes = @classes.size
@@ -83,7 +82,7 @@ module SVMKit
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         n_samples = x.shape.first
         decision_values = decision_function(x)
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
 require 'svmkit/optimizer/nadam'
@@ -24,7 +23,6 @@ module SVMKit
     class FactorizationMachineRegressor
       include Base::BaseEstimator
       include Base::Regressor
-      include Validation
 
       # Return the factor matrix for Factorization Machine.
       # @return [Numo::DFloat] (shape: [n_outputs, n_factors, n_features])

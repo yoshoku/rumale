@@ -21,6 +21,8 @@ module SVMKit
     #   mean_test_score = report[:test_score].inject(:+) / kf.n_splits
     #
     class CrossValidation
+      include Validation
+
       # Return the classifier of which performance is evaluated.
       # @return [Classifier]
       attr_reader :estimator
@@ -44,10 +46,10 @@ module SVMKit
       # @param evaluator [Evaluator] The evaluator that calculates score of estimator results.
       # @param return_train_score [Boolean] The flag indicating whether to calculate the score of training dataset.
       def initialize(estimator: nil, splitter: nil, evaluator: nil, return_train_score: false)
-        SVMKit::Validation.check_params_type(SVMKit::Base::BaseEstimator, estimator: estimator)
-        SVMKit::Validation.check_params_type(SVMKit::Base::Splitter, splitter: splitter)
-        SVMKit::Validation.check_params_type_or_nil(SVMKit::Base::Evaluator, evaluator: evaluator)
-        SVMKit::Validation.check_params_boolean(return_train_score: return_train_score)
+        check_params_type(SVMKit::Base::BaseEstimator, estimator: estimator)
+        check_params_type(SVMKit::Base::Splitter, splitter: splitter)
+        check_params_type_or_nil(SVMKit::Base::Evaluator, evaluator: evaluator)
+        check_params_boolean(return_train_score: return_train_score)
         @estimator = estimator
         @splitter = splitter
         @evaluator = evaluator
@@ -66,14 +68,14 @@ module SVMKit
       #   * :train_score (Array<Float>) The scores of training dataset for each split. This option is nil if
       #     the return_train_score is false.
       def perform(x, y)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
         if @estimator.is_a?(SVMKit::Base::Classifier)
-          SVMKit::Validation.check_label_array(y)
-          SVMKit::Validation.check_sample_label_size(x, y)
+          check_label_array(y)
+          check_sample_label_size(x, y)
         end
         if @estimator.is_a?(SVMKit::Base::Regressor)
-          SVMKit::Validation.check_tvalue_array(y)
-          SVMKit::Validation.check_sample_tvalue_size(x, y)
+          check_tvalue_array(y)
+          check_sample_tvalue_size(x, y)
         end
         # Initialize the report of cross validation.
         report = { test_score: [], train_score: nil, fit_time: [] }

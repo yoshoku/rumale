@@ -7,6 +7,8 @@ module SVMKit
   module Base
     # Module for all regressors in SVMKit.
     module Regressor
+      include Validation
+
       # An abstract method for fitting a model.
       def fit
         raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
@@ -23,9 +25,9 @@ module SVMKit
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) Target values for testing data.
       # @return [Float] Coefficient of determination
       def score(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_tvalue_array(y)
-        SVMKit::Validation.check_sample_tvalue_size(x, y)
+        check_sample_array(x)
+        check_tvalue_array(y)
+        check_sample_tvalue_size(x, y)
         evaluator = SVMKit::EvaluationMeasure::R2Score.new
         evaluator.score(y, predict(x))
       end

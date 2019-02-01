@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/transformer'
 
@@ -17,7 +16,6 @@ module SVMKit
     class NMF
       include Base::BaseEstimator
       include Base::Transformer
-      include Validation
 
       # Returns the factorization matrix.
       # @return [Numo::DFloat] (shape: [n_components, n_features])

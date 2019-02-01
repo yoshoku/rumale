@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/evaluator'
 require 'svmkit/preprocessing/one_hot_encoder'
 
@@ -23,8 +22,8 @@ module SVMKit
       # @param eps [Float] A small value close to zero to avoid outputting infinity in logarithmic calcuation.
       # @return [Float] mean logarithmic loss
       def score(y_true, y_pred, eps = 1e-15)
-        SVMKit::Validation.check_params_type(Numo::Int32, y_true: y_true)
-        SVMKit::Validation.check_params_type(Numo::DFloat, y_pred: y_pred)
+        check_params_type(Numo::Int32, y_true: y_true)
+        check_params_type(Numo::DFloat, y_pred: y_pred)
 
         n_samples, n_classes = y_pred.shape
         clipped_p = y_pred.clip(eps, 1 - eps)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/evaluator'
 
 module SVMKit
@@ -23,8 +22,8 @@ module SVMKit
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted cluster labels.
       # @return [Float] Normalized mutual information
       def score(y_true, y_pred)
-        SVMKit::Validation.check_label_array(y_true)
-        SVMKit::Validation.check_label_array(y_pred)
+        check_label_array(y_true)
+        check_label_array(y_pred)
         # initiazlie some variables.
         mutual_information = 0.0
         n_samples = y_pred.size

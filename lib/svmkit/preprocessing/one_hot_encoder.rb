@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/transformer'
 
@@ -46,7 +45,7 @@ module SVMKit
       # @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to fit one-hot-encoder.
       # @return [OneHotEncoder]
       def fit(x, _y = nil)
-        SVMKit::Validation.check_params_type(Numo::Int32, x: x)
+        check_params_type(Numo::Int32, x: x)
         @n_values = x.max(0) + 1
         @feature_indices = Numo::Int32.hstack([[0], @n_values]).cumsum
         self
@@ -59,7 +58,7 @@ module SVMKit
       # @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to encode into one-hot-vectors.
       # @return [Numo::DFloat] The one-hot-vectors.
       def fit_transform(x, _y = nil)
-        SVMKit::Validation.check_params_type(Numo::Int32, x: x)
+        check_params_type(Numo::Int32, x: x)
         fit(x).transform(x)
       end
 
@@ -68,7 +67,7 @@ module SVMKit
       # @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to encode into one-hot-vectors.
       # @return [Numo::DFloat] The one-hot-vectors.
       def transform(x)
-        SVMKit::Validation.check_params_type(Numo::Int32, x: x)
+        check_params_type(Numo::Int32, x: x)
         n_samples, n_features = x.shape
         n_features = 1 if n_features.nil?
         column_indices = (x + @feature_indices[0...-1]).flatten.to_a

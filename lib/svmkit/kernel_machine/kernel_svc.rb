@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/classifier'
 require 'svmkit/probabilistic_output'
@@ -45,11 +44,11 @@ module SVMKit
       # @param probability [Boolean] The flag indicating whether to perform probability estimation.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, max_iter: 1000, probability: false, random_seed: nil)
-        SVMKit::Validation.check_params_float(reg_param: reg_param)
-        SVMKit::Validation.check_params_integer(max_iter: max_iter)
-        SVMKit::Validation.check_params_boolean(probability: probability)
-        SVMKit::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
-        SVMKit::Validation.check_params_positive(reg_param: reg_param, max_iter: max_iter)
+        check_params_float(reg_param: reg_param)
+        check_params_integer(max_iter: max_iter)
+        check_params_boolean(probability: probability)
+        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_positive(reg_param: reg_param, max_iter: max_iter)
         @params = {}
         @params[:reg_param] = reg_param
         @params[:max_iter] = max_iter
@@ -69,9 +68,9 @@ module SVMKit
       # @param y [Numo::Int32] (shape: [n_training_samples]) The labels to be used for fitting the model.
       # @return [KernelSVC] The learned classifier itself.
       def fit(x, y)
-        SVMKit::Validation.check_sample_array(x)
-        SVMKit::Validation.check_label_array(y)
-        SVMKit::Validation.check_sample_label_size(x, y)
+        check_sample_array(x)
+        check_label_array(y)
+        check_sample_label_size(x, y)
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
@@ -109,7 +108,7 @@ module SVMKit
       #     The kernel matrix between testing samples and training samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_testing_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         x.dot(@weight_vec.transpose)
       end
@@ -120,7 +119,7 @@ module SVMKit
       #     The kernel matrix between testing samples and training samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_testing_samples]) Predicted class label per sample.
       def predict(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
 
@@ -135,7 +134,7 @@ module SVMKit
       #     The kernel matrix between testing samples and training samples to predict the labels.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        SVMKit::Validation.check_sample_array(x)
+        check_sample_array(x)
 
         if @classes.size > 2
           probs = 1.0 / (Numo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'svmkit/validation'
 require 'svmkit/base/evaluator'
 require 'svmkit/evaluation_measure/precision_recall'
 
@@ -24,7 +23,7 @@ module SVMKit
       #
       # @param average [String] The average type ('binary', 'micro', 'macro')
       def initialize(average: 'binary')
-        SVMKit::Validation.check_params_string(average: average)
+        check_params_string(average: average)
         @average = average
       end
 
@@ -34,8 +33,8 @@ module SVMKit
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted labels.
       # @return [Float] Average precision
       def score(y_true, y_pred)
-        SVMKit::Validation.check_label_array(y_true)
-        SVMKit::Validation.check_label_array(y_pred)
+        check_label_array(y_true)
+        check_label_array(y_pred)
 
         case @average
         when 'binary'
