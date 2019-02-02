@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'svmkit/base/base_estimator'
 require 'svmkit/base/regressor'
-require 'svmkit/optimizer/nadam'
+require 'svmkit/polynomial_model/base_factorization_machine'
 
 module SVMKit
   module PolynomialModel
@@ -20,8 +19,7 @@ module SVMKit
     # *Reference*
     # - S. Rendle, "Factorization Machines with libFM," ACM TIST, vol. 3 (3), pp. 57:1--57:22, 2012.
     # - S. Rendle, "Factorization Machines," Proc. ICDM'10, pp. 995--1000, 2010.
-    class FactorizationMachineRegressor
-      include Base::BaseEstimator
+    class FactorizationMachineRegressor < BaseFactorizationMachine
       include Base::Regressor
 
       # Return the factor matrix for Factorization Machine.
@@ -57,20 +55,8 @@ module SVMKit
         check_params_type_or_nil(Integer, random_seed: random_seed)
         check_params_positive(n_factors: n_factors, reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
                               max_iter: max_iter, batch_size: batch_size)
-        @params = {}
-        @params[:n_factors] = n_factors
-        @params[:reg_param_linear] = reg_param_linear
-        @params[:reg_param_factor] = reg_param_factor
-        @params[:max_iter] = max_iter
-        @params[:batch_size] = batch_size
-        @params[:optimizer] = optimizer
-        @params[:optimizer] ||= Optimizer::Nadam.new
-        @params[:random_seed] = random_seed
-        @params[:random_seed] ||= srand
-        @factor_mat = nil
-        @weight_vec = nil
-        @bias_term = nil
-        @rng = Random.new(@params[:random_seed])
+        keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h.merge(loss: nil)
+        super(keywd_args)
       end
 
       # Fit the model with given training data.
@@ -90,9 +76,9 @@ module SVMKit
           @factor_mat = Numo::DFloat.zeros(n_outputs, @params[:n_factors], n_features)
           @weight_vec = Numo::DFloat.zeros(n_outputs, n_features)
           @bias_term = Numo::DFloat.zeros(n_outputs)
-          n_outputs.times { |n| @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = single_fit(x, y[true, n]) }
+          n_outputs.times { |n| @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = partial_fit(x, y[true, n]) }
         else
-          @factor_mat, @weight_vec, @bias_term = single_fit(x, y)
+          @factor_mat, @weight_vec, @bias_term = partial_fit(x, y)
         end
 
         self
@@ -136,56 +122,9 @@ module SVMKit
 
       private
 
-      def single_fit(x, y)
-        # Initialize some variables.
-        n_samples, n_features = x.shape
-        rand_ids = [*0...n_samples].shuffle(random: @rng)
-        weight_vec = Numo::DFloat.zeros(n_features + 1)
-        factor_mat = Numo::DFloat.zeros(@params[:n_factors], n_features)
-        weight_optimizer = @params[:optimizer].dup
-        factor_optimizers = Array.new(@params[:n_factors]) { @params[:optimizer].dup }
-        # Start optimization.
-        @params[:max_iter].times do |_t|
-          # Random sampling.
-          subset_ids = rand_ids.shift(@params[:batch_size])
-          rand_ids.concat(subset_ids)
-          data = x[subset_ids, true]
-          ex_data = expand_feature(data)
-          values = y[subset_ids]
-          # Calculate gradients for loss function.
-          loss_grad = loss_gradient(data, ex_data, values, factor_mat, weight_vec)
-          next if loss_grad.ne(0.0).count.zero?
-          # Update each parameter.
-          weight_vec = weight_optimizer.call(weight_vec, weight_gradient(loss_grad, ex_data, weight_vec))
-          @params[:n_factors].times do |n|
-            factor_mat[n, true] = factor_optimizers[n].call(factor_mat[n, true],
-                                                            factor_gradient(loss_grad, data, factor_mat[n, true]))
-          end
-        end
-        [factor_mat, *split_weight_vec_bias(weight_vec)]
-      end
-
       def loss_gradient(x, ex_x, y, factor, weight)
         z = ex_x.dot(weight) + 0.5 * (factor.dot(x.transpose)**2 - (factor**2).dot(x.transpose**2)).sum(0)
         2.0 * (z - y)
-      end
-
-      def weight_gradient(loss_grad, data, weight)
-        (loss_grad.expand_dims(1) * data).mean(0) + @params[:reg_param_linear] * weight
-      end
-
-      def factor_gradient(loss_grad, data, factor)
-        (loss_grad.expand_dims(1) * (data * data.dot(factor).expand_dims(1) - factor * (data**2))).mean(0) + @params[:reg_param_factor] * factor
-      end
-
-      def expand_feature(x)
-        Numo::NArray.hstack([x, Numo::DFloat.ones([x.shape[0], 1])])
-      end
-
-      def split_weight_vec_bias(weight_vec)
-        weights = weight_vec[0...-1].dup
-        bias = weight_vec[-1]
-        [weights, bias]
       end
     end
   end
