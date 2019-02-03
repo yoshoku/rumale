@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'svmkit/base/base_estimator'
+require 'svmkit/tree/base_decision_tree'
 require 'svmkit/base/regressor'
-require 'svmkit/tree/node'
 
 module SVMKit
   module Tree
@@ -15,8 +14,7 @@ module SVMKit
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     #
-    class DecisionTreeRegressor
-      include Base::BaseEstimator
+    class DecisionTreeRegressor < BaseDecisionTree
       include Base::Regressor
 
       # Return the importance for each feature.
@@ -55,21 +53,8 @@ module SVMKit
         check_params_string(criterion: criterion)
         check_params_positive(max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
                               min_samples_leaf: min_samples_leaf, max_features: max_features)
-        @params = {}
-        @params[:criterion] = criterion
-        @params[:max_depth] = max_depth
-        @params[:max_leaf_nodes] = max_leaf_nodes
-        @params[:min_samples_leaf] = min_samples_leaf
-        @params[:max_features] = max_features
-        @params[:random_seed] = random_seed
-        @params[:random_seed] ||= srand
-        @criterion = :mse
-        @criterion = :mae if @params[:criterion] == 'mae'
-        @tree = nil
-        @feature_importances = nil
-        @n_leaves = nil
+        super
         @leaf_values = nil
-        @rng = Random.new(@params[:random_seed])
       end
 
       # Fit the model with given training data.
@@ -81,14 +66,15 @@ module SVMKit
         check_sample_array(x)
         check_tvalue_array(y)
         check_sample_tvalue_size(x, y)
-        single_target = y.shape[1].nil?
-        y = y.expand_dims(1) if single_target
         n_samples, n_features = x.shape
         @params[:max_features] = n_features if @params[:max_features].nil?
         @params[:max_features] = [@params[:max_features], n_features].min
+        @n_leaves = 0
+        @leaf_values = []
         build_tree(x, y)
-        @leaf_values = @leaf_values[true] if single_target
         eval_importance(n_samples, n_features)
+        @leaf_values = Numo::DFloat.cast(@leaf_values)
+        @leaf_values = @leaf_values.flatten.dup if @leaf_values.shape[1] == 1
         self
       end
 
@@ -101,20 +87,10 @@ module SVMKit
         @leaf_values.shape[1].nil? ? @leaf_values[apply(x)] : @leaf_values[apply(x), true]
       end
 
-      # Return the index of the leaf that each sample reached.
-      #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::Int32] (shape: [n_samples]) Leaf index for sample.
-      def apply(x)
-        check_sample_array(x)
-        Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
-      end
-
       # Dump marshal data.
       # @return [Hash] The marshal data about DecisionTreeRegressor
       def marshal_dump
         { params: @params,
-          criterion: @criterion,
           tree: @tree,
           feature_importances: @feature_importances,
           leaf_values: @leaf_values,
@@ -125,7 +101,6 @@ module SVMKit
       # @return [nil]
       def marshal_load(obj)
         @params = obj[:params]
-        @criterion = obj[:criterion]
         @tree = obj[:tree]
         @feature_importances = obj[:feature_importances]
         @leaf_values = obj[:leaf_values]
@@ -135,114 +110,25 @@ module SVMKit
 
       private
 
-      def apply_at_node(node, sample)
-        return node.leaf_id if node.leaf
-        return apply_at_node(node.left, sample) if node.right.nil?
-        return apply_at_node(node.right, sample) if node.left.nil?
-        if sample[node.feature_id] <= node.threshold
-          apply_at_node(node.left, sample)
-        else
-          apply_at_node(node.right, sample)
-        end
+      def stop_growing?(y)
+        (y - y.mean(0)).sum.abs.zero?
       end
 
-      def build_tree(x, y)
-        @n_leaves = 0
-        @leaf_values = []
-        @tree = grow_node(0, x, y, impurity(y))
-        @leaf_values = Numo::DFloat.cast(@leaf_values)
-        nil
-      end
-
-      def grow_node(depth, x, y, whole_impurity)
-        unless @params[:max_leaf_nodes].nil?
-          return nil if @n_leaves >= @params[:max_leaf_nodes]
-        end
-
-        n_samples, n_features = x.shape
-        return nil if n_samples <= @params[:min_samples_leaf]
-
-        node = Node.new(depth: depth, impurity: whole_impurity, n_samples: n_samples)
-
-        return put_leaf(node, y) if (y - y.mean(0)).sum.abs.zero?
-
-        unless @params[:max_depth].nil?
-          return put_leaf(node, y) if depth == @params[:max_depth]
-        end
-
-        feature_id, threshold, left_ids, right_ids, left_impurity, right_impurity, gain =
-          rand_ids(n_features).map { |f_id| [f_id, *best_split(x[true, f_id], y, whole_impurity)] }.max_by(&:last)
-
-        return put_leaf(node, y) if gain.nil? || gain.zero?
-
-        node.left = grow_node(depth + 1, x[left_ids, true], y[left_ids, true], left_impurity)
-        node.right = grow_node(depth + 1, x[right_ids, true], y[right_ids, true], right_impurity)
-
-        return put_leaf(node, y) if node.left.nil? && node.right.nil?
-
-        node.feature_id = feature_id
-        node.threshold = threshold
-        node.leaf = false
-        node
-      end
-
-      def put_leaf(node, values)
+      def put_leaf(node, y)
         node.probs = nil
         node.leaf = true
         node.leaf_id = @n_leaves
         @n_leaves += 1
-        @leaf_values.push(values.mean(0))
+        @leaf_values.push(y.mean(0))
         node
       end
 
-      def rand_ids(n)
-        [*0...n].sample(@params[:max_features], random: @rng)
-      end
-
-      def best_split(features, values, whole_impurity)
-        n_samples = values.shape[0]
-        features.to_a.uniq.sort.each_cons(2).map do |l, r|
-          threshold = 0.5 * (l + r)
-          left_ids = features.le(threshold).where
-          right_ids = features.gt(threshold).where
-          left_impurity = impurity(values[left_ids, true])
-          right_impurity = impurity(values[right_ids, true])
-          gain = whole_impurity -
-                 left_impurity * left_ids.size.fdiv(n_samples) -
-                 right_impurity * right_ids.size.fdiv(n_samples)
-          [threshold, left_ids, right_ids, left_impurity, right_impurity, gain]
-        end.max_by(&:last)
-      end
-
       def impurity(values)
-        send(@criterion, values)
-      end
-
-      def mse(values)
-        ((values - values.mean(0))**2).mean
-      end
-
-      def mae(values)
-        (values - values.mean(0)).abs.mean
-      end
-
-      def eval_importance(n_samples, n_features)
-        @feature_importances = Numo::DFloat.zeros(n_features)
-        eval_importance_at_node(@tree)
-        @feature_importances /= n_samples
-        normalizer = @feature_importances.sum
-        @feature_importances /= normalizer if normalizer > 0.0
-        nil
-      end
-
-      def eval_importance_at_node(node)
-        return nil if node.leaf
-        return nil if node.left.nil? || node.right.nil?
-        gain = node.n_samples * node.impurity -
-               node.left.n_samples * node.left.impurity - node.right.n_samples * node.right.impurity
-        @feature_importances[node.feature_id] += gain
-        eval_importance_at_node(node.left)
-        eval_importance_at_node(node.right)
+        if @params[:criterion] == 'mae'
+          (values - values.mean(0)).abs.mean
+        else
+          ((values - values.mean(0))**2).mean
+        end
       end
     end
   end
