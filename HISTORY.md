@@ -1,6 +1,10 @@
+# 0.7.3
+- Add class for grid search performing hyperparameter optimization.
+- Add argument validations to Pipeline.
+
 # 0.7.2
 - Add class for Pipeline that constructs chain of transformers and estimators.
-- Fix some typos on document.
+- Fix some typos on document ([#1](https://github.com/yoshoku/SVMKit/pull/1)).
 
 # 0.7.1
 - Fix to use CSV class in parsing libsvm format file.
