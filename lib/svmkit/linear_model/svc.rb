@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'svmkit/linear_model/sgd_linear_estimator'
+require 'svmkit/linear_model/base_linear_model'
 require 'svmkit/base/classifier'
 require 'svmkit/probabilistic_output'
 
@@ -19,7 +19,7 @@ module SVMKit
     #
     # *Reference*
     # - S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
-    class SVC < SGDLinearEstimator
+    class SVC < BaseLinearModel
       include Base::Classifier
 
       # Return the weight vector for SVC.
@@ -56,8 +56,9 @@ module SVMKit
         check_params_boolean(fit_bias: fit_bias, probability: probability)
         check_params_type_or_nil(Integer, random_seed: random_seed)
         check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
-        super(reg_param: reg_param, fit_bias: fit_bias, bias_scale: bias_scale,
-              max_iter: max_iter, batch_size: batch_size, optimizer: optimizer, random_seed: random_seed)
+        keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h
+        keywd_args.delete(:probability)
+        super(keywd_args)
         @params[:probability] = probability
         @prob_param = nil
         @classes = nil

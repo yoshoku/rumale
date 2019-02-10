@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'svmkit/linear_model/sgd_linear_estimator'
+require 'svmkit/linear_model/base_linear_model'
 require 'svmkit/base/regressor'
 
 module SVMKit
@@ -14,7 +14,7 @@ module SVMKit
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     #
-    class LinearRegression < SGDLinearEstimator
+    class LinearRegression < BaseLinearModel
       include Base::Regressor
 
       # Return the weight vector.
@@ -44,8 +44,8 @@ module SVMKit
         check_params_boolean(fit_bias: fit_bias)
         check_params_type_or_nil(Integer, random_seed: random_seed)
         check_params_positive(max_iter: max_iter, batch_size: batch_size)
-        super(reg_param: 0.0, fit_bias: fit_bias, bias_scale: bias_scale,
-              max_iter: max_iter, batch_size: batch_size, optimizer: optimizer, random_seed: random_seed)
+        keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h.merge(reg_param: 0.0)
+        super(keywd_args)
       end
 
       # Fit the model with given training data.

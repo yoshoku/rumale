@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'svmkit/linear_model/sgd_linear_estimator'
+require 'svmkit/linear_model/base_linear_model'
 require 'svmkit/base/classifier'
 
 module SVMKit
@@ -17,7 +17,7 @@ module SVMKit
     #
     # *Reference*
     # - S. Shalev-Shwartz, Y. Singer, N. Srebro, and A. Cotter, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Mathematical Programming, vol. 127 (1), pp. 3--30, 2011.
-    class LogisticRegression < SGDLinearEstimator
+    class LogisticRegression < BaseLinearModel
       include Base::Classifier
 
       # Return the weight vector for Logistic Regression.

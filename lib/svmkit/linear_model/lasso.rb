@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'svmkit/linear_model/sgd_linear_estimator'
+require 'svmkit/linear_model/base_linear_model'
 require 'svmkit/base/regressor'
 
 module SVMKit
@@ -17,7 +17,7 @@ module SVMKit
     # *Reference*
     # - S. Shalev-Shwartz and Y. Singer, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
     # - L. Bottou, "Large-Scale Machine Learning with Stochastic Gradient Descent," Proc. COMPSTAT'10, pp. 177--186, 2010.
-    class Lasso < SGDLinearEstimator
+    class Lasso < BaseLinearModel
       include Base::Regressor
 
       # Return the weight vector.

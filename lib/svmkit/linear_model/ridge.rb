@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'svmkit/linear_model/sgd_linear_estimator'
+require 'svmkit/linear_model/base_linear_model'
 require 'svmkit/base/regressor'
 
 module SVMKit
@@ -14,7 +14,7 @@ module SVMKit
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     #
-    class Ridge < SGDLinearEstimator
+    class Ridge < BaseLinearModel
       include Base::Regressor
 
       # Return the weight vector.

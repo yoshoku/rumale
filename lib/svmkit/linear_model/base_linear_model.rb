@@ -5,10 +5,10 @@ require 'svmkit/optimizer/nadam'
 
 module SVMKit
   module LinearModel
-    # SGDLinearEstimator is an abstract class for implementation of linear estimator
+    # BaseLinearModel is an abstract class for implementation of linear estimator
     # with mini-batch stochastic gradient descent optimization.
     # This class is used for internal process.
-    class SGDLinearEstimator
+    class BaseLinearModel
       include Base::BaseEstimator
 
       # Initialize a linear estimator.
