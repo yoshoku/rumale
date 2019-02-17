@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'svmkit/utils'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/transformer'
 
@@ -112,8 +113,8 @@ module SVMKit
         # initialize some variables.
         n_samples, n_features = x.shape
         scale = Math.sqrt(x.mean / @params[:n_components])
-        @components = rand_uniform([@params[:n_components], n_features]) * scale if update_comps
-        coefficients = rand_uniform([n_samples, @params[:n_components]]) * scale
+        @components = SVMKit::Utils.rand_uniform([@params[:n_components], n_features], @rng) * scale if update_comps
+        coefficients = SVMKit::Utils.rand_uniform([n_samples, @params[:n_components]], @rng) * scale
         # optimization.
         @params[:max_iter].times do
           # update
@@ -134,11 +135,6 @@ module SVMKit
           break if err < @params[:tol]
         end
         coefficients
-      end
-
-      def rand_uniform(shape)
-        rnd_vals = Array.new(shape.inject(:*)) { @rng.rand }
-        Numo::DFloat.asarray(rnd_vals).reshape(shape[0], shape[1])
       end
     end
   end

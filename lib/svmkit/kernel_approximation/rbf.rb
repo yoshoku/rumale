@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'svmkit/utils'
 require 'svmkit/base/base_estimator'
 require 'svmkit/base/transformer'
 
@@ -63,7 +64,7 @@ module SVMKit
 
         n_features = x.shape[1]
         @params[:n_components] = 2 * n_features if @params[:n_components] <= 0
-        @random_mat = rand_normal([n_features, @params[:n_components]]) * (2.0 * @params[:gamma])**0.5
+        @random_mat = SVMKit::Utils.rand_normal([n_features, @params[:n_components]], @rng) * (2.0 * @params[:gamma])**0.5
         n_half_components = @params[:n_components] / 2
         @random_vec = Numo::DFloat.zeros(@params[:n_components] - n_half_components).concatenate(
           Numo::DFloat.ones(n_half_components) * (0.5 * Math::PI)
@@ -114,21 +115,6 @@ module SVMKit
         @random_vec = obj[:random_vec]
         @rng = obj[:rng]
         nil
-      end
-
-      private
-
-      # Generate the uniform random matrix with the given shape.
-      def rand_uniform(shape)
-        rnd_vals = Array.new(shape.inject(:*)) { @rng.rand }
-        Numo::DFloat.asarray(rnd_vals).reshape(shape[0], shape[1])
-      end
-
-      # Generate the normal random matrix with the given shape, mean, and standard deviation.
-      def rand_normal(shape, mu = 0.0, sigma = 1.0)
-        a = rand_uniform(shape)
-        b = rand_uniform(shape)
-        (Numo::NMath.sqrt(Numo::NMath.log(a) * -2.0) * Numo::NMath.sin(b * 2.0 * Math::PI)) * sigma + mu
       end
     end
   end
