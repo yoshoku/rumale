@@ -38,7 +38,7 @@ RSpec.describe SVMKit::Dataset do
   end
 
   it 'loads libsvm .t file containing integer features for classification task.' do
-    m, l = described_class.load_libsvm_file(__dir__ + '/test_int.t')
+    m, l = described_class.load_libsvm_file(__dir__ + '/test_int.t', dtype: Numo::Int32)
     expect(m).to eq(matrix_int)
     expect(m.class).to eq(Numo::Int32)
     expect(l).to eq(labels)

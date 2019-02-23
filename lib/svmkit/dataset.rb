@@ -10,11 +10,12 @@ module SVMKit
       #
       # @param filename [String] A path to a dataset file.
       # @param zero_based [Boolean] Whether the column index starts from 0 (true) or 1 (false).
+      # @param dtype [Numo::NArray] Data type of Numo::NArray for features to be loaded.
       #
       # @return [Array<Numo::NArray>]
       #   Returns array containing the (n_samples x n_features) matrix for feature vectors
       #   and (n_samples) vector for labels or target values.
-      def load_libsvm_file(filename, zero_based: false)
+      def load_libsvm_file(filename, zero_based: false, dtype: Numo::DFloat)
         ftvecs = []
         labels = []
         n_features = 0
@@ -24,7 +25,7 @@ module SVMKit
           ftvecs.push(ftvec)
           n_features = max_idx if n_features < max_idx
         end
-        [convert_to_matrix(ftvecs, n_features), Numo::NArray.asarray(labels)]
+        [convert_to_matrix(ftvecs, n_features, dtype), Numo::NArray.asarray(labels)]
       end
 
       # Dump the dataset with the libsvm file format.
@@ -69,14 +70,14 @@ module SVMKit
         lbl_arr.size > 1 ? lbl_arr : lbl_arr[0]
       end
 
-      def convert_to_matrix(data, n_features)
+      def convert_to_matrix(data, n_features, dtype)
         mat = []
         data.each do |ft|
           vec = Array.new(n_features) { 0 }
           ft.each { |el| vec[el[0]] = el[1] }
           mat.push(vec)
         end
-        Numo::NArray.asarray(mat)
+        dtype.asarray(mat)
       end
 
       def detect_dtype(data)
