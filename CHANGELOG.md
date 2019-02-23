@@ -1,3 +1,16 @@
+# 0.8.0
+## Information
+- Rename the project to [Rumale](https://github.com/yoshoku/Rumale).
+  - SVMKit has been deprecated and has been renamed to Rumale. SVMKit will release only bugfix.
+
+## Breaking changes
+- Rename SGDLienareEstimator class to BaseLienarModel class.
+- Add data type option to load_libsvm_file method. By default, the method represents the feature with Numo::DFloat.
+
+## Refactoring
+- Refactor factorization machine estimators.
+- Refactor decision tree estimators.
+
 # 0.7.3
 - Add class for grid search performing hyperparameter optimization.
 - Add argument validations to Pipeline.
