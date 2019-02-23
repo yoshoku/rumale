@@ -1,17 +1,22 @@
 # SVMKit
 
-[![Build Status](https://travis-ci.org/yoshoku/SVMKit.svg?branch=master)](https://travis-ci.org/yoshoku/SVMKit)
-[![Coverage Status](https://coveralls.io/repos/github/yoshoku/SVMKit/badge.svg?branch=master)](https://coveralls.io/github/yoshoku/SVMKit?branch=master)
+[![Build Status](https://travis-ci.org/yoshoku/svmkit.svg?branch=master)](https://travis-ci.org/yoshoku/svmkit)
+[![Coverage Status](https://coveralls.io/repos/github/yoshoku/svmkit/badge.svg?branch=master)](https://coveralls.io/github/yoshoku/svmkit?branch=master)
 [![Gem Version](https://badge.fury.io/rb/svmkit.svg)](https://badge.fury.io/rb/svmkit)
-[![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/SVMKit/blob/master/LICENSE.txt)
+[![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/svmkit/blob/master/LICENSE.txt)
+[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](https://www.rubydoc.info/gems/svmkit/)
+
+SVMKit has been deprecated and has been renamed to [Rumale](https://github.com/yoshoku/rumale).
+Initially, I started developing SVMKit as an experimental library aiming at implementing SVM in Ruby.
+However, since I added many other machine learning algorithms to SVMKit, I decided to change the library name.
+SVMKit will continue releasing for bugfix but will not add new features.
 
 SVMKit is a machine learninig library in Ruby.
 SVMKit provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
-SVMKit currently supports Linear / Kernel Support Vector Machine,
+SVMKit supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Random Forest, K-nearest neighbor classifier,
-K-Means, DBSCAN, Principal Component Analysis, Non-negative Matrix Factorization
-and cross-validation.
+K-Means, DBSCAN, Principal Component Analysis, and Non-negative Matrix Factorization.
 
 ## Installation
 
@@ -49,10 +54,6 @@ require 'svmkit'
 # Load the training dataset.
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
 
-# If the features consists only of integers, load_libsvm_file method reads in Numo::Int32 format.
-# As necessary, you should convert sample array to Numo::DFloat format.
-samples = Numo::DFloat.cast(samples)
-
 # Map training data to RBF kernel feature space.
 transformer = SVMKit::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 1024, random_seed: 1)
 transformed = transformer.fit_transform(samples)
@@ -73,7 +74,6 @@ require 'svmkit'
 
 # Load the testing dataset.
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits.t')
-samples = Numo::DFloat.cast(samples)
 
 # Load the model.
 transformer = Marshal.load(File.binread('transformer.dat'))
@@ -106,7 +106,6 @@ require 'svmkit'
 
 # Load dataset.
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
-samples = Numo::DFloat.cast(samples)
 
 # Define the estimator to be evaluated.
 lr = SVMKit::LinearModel::LogisticRegression.new(reg_param: 0.0001, random_seed: 1)
@@ -131,7 +130,6 @@ require 'svmkit'
 
 # Load dataset.
 samples, labels = SVMKit::Dataset.load_libsvm_file('pendigits')
-samples = Numo::DFloat.cast(samples)
 
 # Construct pipeline with kernel approximation and SVC.
 rbf = SVMKit::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 800, random_seed: 1)
