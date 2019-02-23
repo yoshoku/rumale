@@ -15,11 +15,18 @@ MSG
   spec.description   = <<MSG
 SVMKit is a machine learninig library in Ruby.
 SVMKit provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
-SVMKit currently supports Linear / Kernel Support Vector Machine,
+SVMKit supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Random Forest, K-nearest neighbor algorithm,
-K-Means, DBSCAN, Principal Component Analysis, Non-negative Matrix Factorization
-and cross-validation.
+K-Means, DBSCAN, Principal Component Analysis, and Non-negative Matrix Factorization.
+Note that the SVMKit has been deprecated and has been renamed to Rumale.
+SVMKit will continue releasing for bugfix but will not add new features.
+MSG
+  spec.post_install_message = <<MSG
+*************************************************************************
+Note that the SVMKit has been deprecated and has been renamed to Rumale.
+Please see https://rubygems.org/gems/rumale
+*************************************************************************
 MSG
   spec.homepage      = 'https://github.com/yoshoku/svmkit'
   spec.license       = 'BSD-2-Clause'
