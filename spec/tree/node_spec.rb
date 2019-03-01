@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Tree::Node do
+RSpec.describe Rumale::Tree::Node do
   it 'stores properties.' do
     left = described_class.new
     right = described_class.new
@@ -16,8 +16,8 @@ RSpec.describe SVMKit::Tree::Node do
     expect(root.leaf_id).to eq(0)
     expect(root.left).to_not be_nil
     expect(root.right).to_not be_nil
-    expect(root.left.class).to be(SVMKit::Tree::Node)
-    expect(root.right.class).to be(SVMKit::Tree::Node)
+    expect(root.left.class).to be(Rumale::Tree::Node)
+    expect(root.right.class).to be(Rumale::Tree::Node)
     expect(root.feature_id).to eq(2)
     expect(root.threshold).to eq(0.5)
   end

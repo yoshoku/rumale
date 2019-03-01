@@ -10,7 +10,7 @@
 # Cop supports --auto-correct.
 Layout/ClosingHeredocIndentation:
   Exclude:
-    - 'svmkit.gemspec'
+    - 'rumale.gemspec'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -18,13 +18,13 @@ Layout/ClosingHeredocIndentation:
 # SupportedStyles: auto_detection, squiggly, active_support, powerpack, unindent
 Layout/IndentHeredoc:
   Exclude:
-    - 'svmkit.gemspec'
+    - 'rumale.gemspec'
 
 # Offense count: 1
 # Cop supports --auto-correct.
 Layout/LeadingBlankLines:
   Exclude:
-    - 'svmkit.gemspec'
+    - 'rumale.gemspec'
 
 # Offense count: 1
 # Configuration parameters: CountComments, ExcludedMethods.

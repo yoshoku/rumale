@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::EvaluationMeasure::Purity do
+RSpec.describe Rumale::EvaluationMeasure::Purity do
   let(:ground_truth) { Numo::Int32[1, 1, 2, 2, 3, 3, 0, 0, 4, 4] }
   let(:predicted) { Numo::Int32[2, 1, 1, 2, 0, 3, 0, 0, 4, 4] }
 

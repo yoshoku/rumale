@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Tree::BaseDecisionTree do
+RSpec.describe Rumale::Tree::BaseDecisionTree do
   let(:estimator) do
     described_class.new(criterion: 'foo',
                         max_depth: 5, max_leaf_nodes: 4, min_samples_leaf: 3, max_features: 2,

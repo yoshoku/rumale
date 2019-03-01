@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::ProbabilisticOutput do
+RSpec.describe Rumale::ProbabilisticOutput do
   let(:x_bin) { Marshal.load(File.read(__dir__ + '/test_samples.dat')) }
   let(:y_bin) { Marshal.load(File.read(__dir__ + '/test_labels.dat')) }
-  let(:estimator) { SVMKit::LinearModel::SVC.new(random_seed: 1) }
+  let(:estimator) { Rumale::LinearModel::SVC.new(random_seed: 1) }
 
   it 'calculates class probability with svc' do
     n_samples, = x_bin.shape

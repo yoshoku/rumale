@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Base::Evaluator do
+RSpec.describe Rumale::Base::Evaluator do
   let(:dummy_class) do
     class Dummy
-      include SVMKit::Base::Evaluator
+      include Rumale::Base::Evaluator
     end
     Dummy.new
   end

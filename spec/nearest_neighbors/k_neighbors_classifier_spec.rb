@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::NearestNeighbors::KNeighborsClassifier do
+RSpec.describe Rumale::NearestNeighbors::KNeighborsClassifier do
   let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:estimator) { described_class.new(n_neighbors: 5) }

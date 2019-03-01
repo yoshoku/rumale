@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Base::Splitter do
+RSpec.describe Rumale::Base::Splitter do
   let(:dummy_class) do
     class Dummy
-      include SVMKit::Base::Splitter
+      include Rumale::Base::Splitter
     end
     Dummy.new
   end

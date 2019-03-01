@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::ModelSelection::KFold do
+RSpec.describe Rumale::ModelSelection::KFold do
   let(:n_splits) { 3 }
   let(:n_samples) { 9 }
   let(:n_features) { 3 }

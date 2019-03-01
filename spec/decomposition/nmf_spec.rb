@@ -2,15 +2,15 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Decomposition::NMF do
+RSpec.describe Rumale::Decomposition::NMF do
   let(:n_samples) { 200 }
   let(:n_features) { 6 }
   let(:n_components) { 3 }
   let(:decomposer) { described_class.new(n_components: n_components, max_iter: 10000, tol: 1.0e-4, random_seed: 1) }
   let(:x) do
     rng = Random.new(1)
-    a = SVMKit::Utils.rand_uniform([n_samples, n_components], rng)
-    b = SVMKit::Utils.rand_uniform([n_components, n_features], rng)
+    a = Rumale::Utils.rand_uniform([n_samples, n_components], rng)
+    b = Rumale::Utils.rand_uniform([n_components, n_features], rng)
     a.dot(b)
   end
 

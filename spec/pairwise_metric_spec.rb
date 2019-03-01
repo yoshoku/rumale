@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::PairwiseMetric do
+RSpec.describe Rumale::PairwiseMetric do
   let(:n_features) { 3 }
   let(:n_samples_a) { 10 }
   let(:n_samples_b) { 5 }

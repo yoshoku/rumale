@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Ensemble::AdaBoostRegressor do
+RSpec.describe Rumale::Ensemble::AdaBoostRegressor do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x[true, 0] + x[true, 1]**2 }
   let(:y_mult) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.0, 0.1]]) }
@@ -15,7 +15,7 @@ RSpec.describe SVMKit::Ensemble::AdaBoostRegressor do
     estimator.fit(x, y)
 
     expect(estimator.estimators.class).to eq(Array)
-    expect(estimator.estimators[0].class).to eq(SVMKit::Tree::DecisionTreeRegressor)
+    expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeRegressor)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil

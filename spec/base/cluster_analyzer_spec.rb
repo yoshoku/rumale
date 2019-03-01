@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Base::ClusterAnalyzer do
+RSpec.describe Rumale::Base::ClusterAnalyzer do
   let(:dummy_class) do
     class Dummy
-      include SVMKit::Base::ClusterAnalyzer
+      include Rumale::Base::ClusterAnalyzer
     end
     Dummy.new
   end

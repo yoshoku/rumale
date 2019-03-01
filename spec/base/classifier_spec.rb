@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Base::Classifier do
+RSpec.describe Rumale::Base::Classifier do
   let(:dummy_class) do
     class Dummy
-      include SVMKit::Base::Classifier
+      include Rumale::Base::Classifier
     end
     Dummy.new
   end

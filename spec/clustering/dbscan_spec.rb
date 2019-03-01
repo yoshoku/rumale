@@ -3,7 +3,7 @@
 require 'pp'
 require 'spec_helper'
 
-RSpec.describe SVMKit::Clustering::DBSCAN do
+RSpec.describe Rumale::Clustering::DBSCAN do
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) - 1 }
   let(:analyzer) { described_class.new(eps: 1.0) }

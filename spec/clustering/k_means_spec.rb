@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Clustering::KMeans do
+RSpec.describe Rumale::Clustering::KMeans do
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) - 1 }
   let(:analyzer) { described_class.new(n_clusters: 3, max_iter: 50, random_seed: 1) }

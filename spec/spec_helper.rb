@@ -10,7 +10,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([SimpleCov::Forma
 SimpleCov.start
 
 require 'bundler/setup'
-require 'svmkit'
+require 'rumale'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

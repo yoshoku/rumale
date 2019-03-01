@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Optimizer::RMSProp do
+RSpec.describe Rumale::Optimizer::RMSProp do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:optimizer) { described_class.new(learning_rate: 0.1, momentum: 0.9, decay: 0.1) }
-  let(:estimator) { SVMKit::LinearModel::LinearRegression.new(optimizer: optimizer, max_iter: 100, random_seed: 1) }
+  let(:estimator) { Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, max_iter: 100, random_seed: 1) }
 
   it 'learns the model for single regression problem with optimizer.' do
     estimator.fit(x, y)

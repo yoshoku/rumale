@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Validation do
+RSpec.describe Rumale::Validation do
   it 'detects invalid type array given.' do
     expect { described_class.check_sample_array([[1, 2, 3], [4, 5, 6]]) }.to raise_error(TypeError)
     expect { described_class.check_sample_array(Numo::Int32[[1, 2, 3], [4, 5, 6]]) }.to raise_error(TypeError)

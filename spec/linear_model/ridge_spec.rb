@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::LinearModel::Ridge do
+RSpec.describe Rumale::LinearModel::Ridge do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }

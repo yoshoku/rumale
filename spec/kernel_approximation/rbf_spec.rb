@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::KernelApproximation::RBF do
+RSpec.describe Rumale::KernelApproximation::RBF do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
   let(:n_components) { 4096 }

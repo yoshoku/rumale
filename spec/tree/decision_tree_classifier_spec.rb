@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
+RSpec.describe Rumale::Tree::DecisionTreeClassifier do
   let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y_bin) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
@@ -20,7 +20,7 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
   it 'classifies two clusters data.' do
     _n_samples, n_features = x_bin.shape
     estimator.fit(x_bin, y_bin)
-    expect(estimator.tree.class).to eq(SVMKit::Tree::Node)
+    expect(estimator.tree.class).to eq(Rumale::Tree::Node)
     expect(estimator.classes.class).to eq(Numo::Int32)
     expect(estimator.classes.size).to eq(2)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)
@@ -32,7 +32,7 @@ RSpec.describe SVMKit::Tree::DecisionTreeClassifier do
   it 'classifies three clusters data.' do
     _n_samples, n_features = x_mlt.shape
     estimator.fit(x_mlt, y_mlt)
-    expect(estimator.tree.class).to eq(SVMKit::Tree::Node)
+    expect(estimator.tree.class).to eq(Rumale::Tree::Node)
     expect(estimator.classes.class).to eq(Numo::Int32)
     expect(estimator.classes.size).to eq(3)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)

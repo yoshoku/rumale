@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::PolynomialModel::FactorizationMachineClassifier do
+RSpec.describe Rumale::PolynomialModel::FactorizationMachineClassifier do
   let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y_bin) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }

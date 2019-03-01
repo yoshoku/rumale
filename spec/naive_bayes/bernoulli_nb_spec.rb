@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::NaiveBayes::BernoulliNB do
+RSpec.describe Rumale::NaiveBayes::BernoulliNB do
   let(:samples) { Numo::DFloat[[4, 3, 0, 0], [4, 0, 0, 0], [4, 0, 1, 0], [0, 0, 5, 3], [0, 0, 0, 3], [0, 1, 5, 3]] }
   let(:labels) { Numo::Int32[1, 1, 1, -1, -1, -1] }
   let(:estimator) { described_class.new(smoothing_param: 1.0, bin_threshold: 0.0) }

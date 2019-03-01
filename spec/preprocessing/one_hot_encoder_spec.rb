@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Preprocessing::OneHotEncoder do
+RSpec.describe Rumale::Preprocessing::OneHotEncoder do
   let(:encoder) { described_class.new }
   let(:labels) { Numo::Int32[0, 0, 2, 3, 2, 1] }
   let(:codes) { Numo::DFloat[[1, 0, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0]] }

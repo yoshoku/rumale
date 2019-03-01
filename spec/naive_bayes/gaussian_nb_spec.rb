@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::NaiveBayes::GaussianNB do
+RSpec.describe Rumale::NaiveBayes::GaussianNB do
   let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:estimator) { described_class.new }

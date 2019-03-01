@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Base::Transformer do
+RSpec.describe Rumale::Base::Transformer do
   let(:dummy_class) do
     class Dummy
-      include SVMKit::Base::Transformer
+      include Rumale::Base::Transformer
     end
     Dummy.new
   end

@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Decomposition::PCA do
+RSpec.describe Rumale::Decomposition::PCA do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:n_components) { 16 }
   let(:decomposer) { described_class.new(n_components: n_components, tol: 1.0e-8, random_seed: 1) }
-  let(:transformer) { SVMKit::KernelApproximation::RBF.new(gamma: 1.0, n_components: 32, random_seed: 1) }
+  let(:transformer) { Rumale::KernelApproximation::RBF.new(gamma: 1.0, n_components: 32, random_seed: 1) }
 
   it 'projects high-dimensinal data into subspace.' do
     samples = transformer.fit_transform(x)

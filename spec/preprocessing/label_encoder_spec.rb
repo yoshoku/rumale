@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Preprocessing::LabelEncoder do
+RSpec.describe Rumale::Preprocessing::LabelEncoder do
   let(:encoder) { described_class.new }
   let(:labels) { Numo::Int32[0, 0, 2, 3, 2, 1] }
   let(:int_labels) { [1, 8, 8, 15, -1] }

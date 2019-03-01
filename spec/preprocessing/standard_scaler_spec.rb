@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Preprocessing::StandardScaler do
+RSpec.describe Rumale::Preprocessing::StandardScaler do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
   let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }

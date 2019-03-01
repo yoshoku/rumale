@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Base::Regressor do
+RSpec.describe Rumale::Base::Regressor do
   let(:dummy_class) do
     class Dummy
-      include SVMKit::Base::Regressor
+      include Rumale::Base::Regressor
     end
     Dummy.new
   end

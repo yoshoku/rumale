@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::EvaluationMeasure::R2Score do
+RSpec.describe Rumale::EvaluationMeasure::R2Score do
   let(:ground_truth) { Numo::DFloat[3, -0.2, 2, 7] }
   let(:estimated)    { Numo::DFloat[2.5, 0.0, 2, 7.2] }
   let(:mult_ground_truth) { Numo::DFloat[[0.5, 1], [-0.7, 1], [7, -6]] }

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::ModelSelection::StratifiedKFold do
+RSpec.describe Rumale::ModelSelection::StratifiedKFold do
   let(:n_splits) { 3 }
   let(:n_samples) { 12 }
   let(:n_features) { 3 }

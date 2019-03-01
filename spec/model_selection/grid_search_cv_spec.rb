@@ -2,25 +2,25 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::ModelSelection::GridSearchCV do
+RSpec.describe Rumale::ModelSelection::GridSearchCV do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
   let(:y) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:x_xor) { Marshal.load(File.read(__dir__ + '/../test_samples_xor.dat')) }
   let(:y_xor) { Marshal.load(File.read(__dir__ + '/../test_labels_xor.dat')) }
   let(:x_reg) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y_reg) { x_reg[true, 0] + x_reg[true, 1]**2 }
-  let(:kfold) { SVMKit::ModelSelection::KFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
-  let(:skfold) { SVMKit::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
-  let(:rbf) { SVMKit::KernelApproximation::RBF.new(gamma: 0.1, random_seed: 1) }
-  let(:svc) { SVMKit::LinearModel::SVC.new(random_seed: 1) }
-  let(:scl) { SVMKit::Preprocessing::MinMaxScaler.new }
-  let(:nbs) { SVMKit::NaiveBayes::GaussianNB.new }
-  let(:rfr) { SVMKit::Ensemble::RandomForestRegressor.new(random_seed: 1) }
-  let(:mae) { SVMKit::EvaluationMeasure::MeanAbsoluteError.new }
+  let(:kfold) { Rumale::ModelSelection::KFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
+  let(:skfold) { Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
+  let(:rbf) { Rumale::KernelApproximation::RBF.new(gamma: 0.1, random_seed: 1) }
+  let(:svc) { Rumale::LinearModel::SVC.new(random_seed: 1) }
+  let(:scl) { Rumale::Preprocessing::MinMaxScaler.new }
+  let(:nbs) { Rumale::NaiveBayes::GaussianNB.new }
+  let(:rfr) { Rumale::Ensemble::RandomForestRegressor.new(random_seed: 1) }
+  let(:mae) { Rumale::EvaluationMeasure::MeanAbsoluteError.new }
 
   it 'searches the best parameter among array-type parameters.' do
     param_grid = { scl__feature_range: [[-1.0, 1.0], [0.0, 1.0]] }
-    pipe = SVMKit::Pipeline::Pipeline.new(steps: { scl: scl, nbs: nbs })
+    pipe = Rumale::Pipeline::Pipeline.new(steps: { scl: scl, nbs: nbs })
     gs = described_class.new(estimator: pipe, param_grid: param_grid, splitter: skfold)
     gs.fit(x, y)
 
@@ -46,7 +46,7 @@ RSpec.describe SVMKit::ModelSelection::GridSearchCV do
       rbf__n_components: [4, 128],
       svc__reg_param: [16.0, 0.1]
     }
-    pipe = SVMKit::Pipeline::Pipeline.new(steps: { rbf: rbf, svc: svc })
+    pipe = Rumale::Pipeline::Pipeline.new(steps: { rbf: rbf, svc: svc })
     gs = described_class.new(estimator: pipe, param_grid: param_grid, splitter: skfold)
     gs.fit(x_xor, y_xor)
 
@@ -67,7 +67,7 @@ RSpec.describe SVMKit::ModelSelection::GridSearchCV do
     expect(gs.best_params[:rbf__gamma]).to eq(1.0)
     expect(gs.best_params[:rbf__n_components]).to eq(128)
     expect(gs.best_params[:svc__reg_param]).to eq(0.1)
-    expect(gs.best_estimator).to be_a(SVMKit::Pipeline::Pipeline)
+    expect(gs.best_estimator).to be_a(Rumale::Pipeline::Pipeline)
     expect(gs.best_estimator.steps[:rbf].params[:gamma]).to eq(1.0)
     expect(gs.best_estimator.steps[:rbf].params[:n_components]).to eq(128)
     expect(gs.best_estimator.steps[:svc].params[:reg_param]).to eq(0.1)

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::EvaluationMeasure::MeanSquaredError do
+RSpec.describe Rumale::EvaluationMeasure::MeanSquaredError do
   let(:ground_truth) { Numo::DFloat[3.2, -0.2, 2.2, 6.8] }
   let(:estimated) { Numo::DFloat[2.9, -0.1, 2.3, 7.2] }
   let(:mult_ground_truth) { Numo::DFloat[[0.5, 1.9], [-0.7, 1.8], [7.9, -6.5]] }

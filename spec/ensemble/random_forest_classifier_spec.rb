@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Ensemble::RandomForestClassifier do
+RSpec.describe Rumale::Ensemble::RandomForestClassifier do
   let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y_bin) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
   let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
@@ -18,7 +18,7 @@ RSpec.describe SVMKit::Ensemble::RandomForestClassifier do
     expect(estimator.params[:max_features]).to eq(2)
     expect(estimator.estimators.class).to eq(Array)
     expect(estimator.estimators.size).to eq(n_estimators)
-    expect(estimator.estimators[0].class).to eq(SVMKit::Tree::DecisionTreeClassifier)
+    expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
     expect(estimator.classes.class).to eq(Numo::Int32)
     expect(estimator.classes.size).to eq(2)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)
@@ -32,7 +32,7 @@ RSpec.describe SVMKit::Ensemble::RandomForestClassifier do
     estimator.fit(x_mlt, y_mlt)
     expect(estimator.estimators.class).to eq(Array)
     expect(estimator.estimators.size).to eq(n_estimators)
-    expect(estimator.estimators[0].class).to eq(SVMKit::Tree::DecisionTreeClassifier)
+    expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
     expect(estimator.classes.class).to eq(Numo::Int32)
     expect(estimator.classes.size).to eq(3)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)

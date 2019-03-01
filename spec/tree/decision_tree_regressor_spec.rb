@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Tree::DecisionTreeRegressor do
+RSpec.describe Rumale::Tree::DecisionTreeRegressor do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x[true, 0] + x[true, 1]**2 }
   let(:y_mult) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
@@ -21,7 +21,7 @@ RSpec.describe SVMKit::Tree::DecisionTreeRegressor do
 
     estimator.fit(x, y)
 
-    expect(estimator.tree.class).to eq(SVMKit::Tree::Node)
+    expect(estimator.tree.class).to eq(Rumale::Tree::Node)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
@@ -42,7 +42,7 @@ RSpec.describe SVMKit::Tree::DecisionTreeRegressor do
 
     estimator.fit(x, y_mult)
 
-    expect(estimator.tree.class).to eq(SVMKit::Tree::Node)
+    expect(estimator.tree.class).to eq(Rumale::Tree::Node)
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil

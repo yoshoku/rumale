@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Dataset do
+RSpec.describe Rumale::Dataset do
   let(:labels) { Numo::Int32.asarray([1, 2, 2, 1, 1, 0]) }
   let(:target_variables) { Numo::DFloat.asarray([1.2, 2.0, 2.3, 1.0, 1.1, 0.64]) }
   let(:mult_target_vals) { Numo::DFloat.asarray([[1.2, 2.0], [2.3, 1.0], [1.1, 0.64], [2.1, 1.9], [0.0, 1.7], [8.7, 4.1]]) }

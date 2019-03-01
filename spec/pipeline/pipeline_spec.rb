@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::Pipeline::Pipeline do
+RSpec.describe Rumale::Pipeline::Pipeline do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples_xor.dat')) }
   let(:y) { Marshal.load(File.read(__dir__ + '/../test_labels_xor.dat')) }
   let(:xc) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
@@ -11,13 +11,13 @@ RSpec.describe SVMKit::Pipeline::Pipeline do
   let(:n_nmf_comps) { 8 }
   let(:n_pca_comps) { 4 }
   let(:n_clusters) { 3 }
-  let(:rbf) { SVMKit::KernelApproximation::RBF.new(gamma: 0.1, n_components: n_rbf_comps, random_seed: 1) }
-  let(:pca) { SVMKit::Decomposition::PCA.new(n_components: n_pca_comps, tol: 1.0e-8, random_seed: 1) }
-  let(:nmf) { SVMKit::Decomposition::NMF.new(n_components: n_nmf_comps, random_seed: 1) }
-  let(:svc) { SVMKit::LinearModel::SVC.new(random_seed: 1) }
-  let(:nrm) { SVMKit::Preprocessing::L2Normalizer.new }
-  let(:nbs) { SVMKit::NaiveBayes::GaussianNB.new }
-  let(:kms) { SVMKit::Clustering::KMeans.new(n_clusters: n_clusters, random_seed: 1) }
+  let(:rbf) { Rumale::KernelApproximation::RBF.new(gamma: 0.1, n_components: n_rbf_comps, random_seed: 1) }
+  let(:pca) { Rumale::Decomposition::PCA.new(n_components: n_pca_comps, tol: 1.0e-8, random_seed: 1) }
+  let(:nmf) { Rumale::Decomposition::NMF.new(n_components: n_nmf_comps, random_seed: 1) }
+  let(:svc) { Rumale::LinearModel::SVC.new(random_seed: 1) }
+  let(:nrm) { Rumale::Preprocessing::L2Normalizer.new }
+  let(:nbs) { Rumale::NaiveBayes::GaussianNB.new }
+  let(:kms) { Rumale::Clustering::KMeans.new(n_clusters: n_clusters, random_seed: 1) }
 
   it 'classifies xor data with Kernel approximation, PCA, and SVC.' do
     n_samples, n_features = x.shape

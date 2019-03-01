@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::EvaluationMeasure::FScore do
+RSpec.describe Rumale::EvaluationMeasure::FScore do
   let(:bin_ground_truth) { Numo::Int32[1, 1, 1, 1, -1, -1, -1, -1] }
   let(:bin_predicted) { Numo::Int32[-1, -1, 1, 1, -1, -1, 1, 1] }
   let(:mult_ground_truth) { Numo::Int32[0, 1, 2, 0, 1, 2, 3, 3, 0, 0] }

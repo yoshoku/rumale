@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe SVMKit::PolynomialModel::BaseFactorizationMachine do
+RSpec.describe Rumale::PolynomialModel::BaseFactorizationMachine do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:estimator) { described_class.new(random_seed: 1) }
@@ -18,7 +18,7 @@ RSpec.describe SVMKit::PolynomialModel::BaseFactorizationMachine do
     expect(estimator.params[:reg_param_factor]).to eq(1.0)
     expect(estimator.params[:max_iter]).to eq(1000)
     expect(estimator.params[:batch_size]).to eq(10)
-    expect(estimator.params[:optimizer]).to be_a(SVMKit::Optimizer::Nadam)
+    expect(estimator.params[:optimizer]).to be_a(Rumale::Optimizer::Nadam)
     expect(estimator.params[:random_seed]).to eq(1)
   end
 end
