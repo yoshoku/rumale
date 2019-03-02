@@ -13,8 +13,8 @@ Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Random Forest, K-nearest neighbor classifier,
 K-Means, DBSCAN, Principal Component Analysis, and Non-negative Matrix Factorization.
 
-This project was formerly known as SVMKit.
-If you use SVMKit, please replace `SVMKit` constants with `Rumale`.
+This project was formerly known as "SVMKit".
+If you are using SVMKit, please install Rumale and replace `SVMKit` constants with `Rumale`.
 
 ## Installation
 
@@ -161,7 +161,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/yoshoku/Rumale.
+Bug reports and pull requests are welcome on GitHub at https://github.com/yoshoku/rumale.
 This project is intended to be a safe, welcoming space for collaboration,
 and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
