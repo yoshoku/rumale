@@ -20,7 +20,7 @@ Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Random Forest, K-nearest neighbor algorithm,
 K-Means, DBSCAN, Principal Component Analysis, and Non-negative Matrix Factorization.
 MSG
-  spec.homepage      = 'https://github.com/yoshoku/Rumale'
+  spec.homepage      = 'https://github.com/yoshoku/rumale'
   spec.license       = 'BSD-2-Clause'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
