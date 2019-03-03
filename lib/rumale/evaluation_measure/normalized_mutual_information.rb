@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require 'rumale/base/evaluator'
+require 'rumale/evaluation_measure/mutual_information'
 
 module Rumale
   module EvaluationMeasure
-    # NormalizedMutualInformation is a class that calculates the normalized mutual information of cluatering results.
+    # NormalizedMutualInformation is a class that calculates the normalized mutual information.
     #
     # @example
     #   evaluator = Rumale::EvaluationMeasure::NormalizedMutualInformation.new
@@ -24,38 +25,26 @@ module Rumale
       def score(y_true, y_pred)
         check_label_array(y_true)
         check_label_array(y_pred)
-        # initiazlie some variables.
-        mutual_information = 0.0
-        n_samples = y_pred.size
-        class_ids = y_true.to_a.uniq
-        cluster_ids = y_pred.to_a.uniq
-        # calculate entropy.
-        class_entropy = -1.0 * class_ids.map do |k|
-          ratio = y_true.eq(k).count.fdiv(n_samples)
-          ratio * Math.log(ratio)
-        end.reduce(:+)
+        # calculate entropies.
+        class_entropy = entropy(y_true)
         return 0.0 if class_entropy.zero?
-        cluster_entropy = -1.0 * cluster_ids.map do |k|
-          ratio = y_pred.eq(k).count.fdiv(n_samples)
-          ratio * Math.log(ratio)
-        end.reduce(:+)
+        cluster_entropy = entropy(y_pred)
         return 0.0 if cluster_entropy.zero?
         # calculate mutual information.
-        cluster_ids.map do |k|
-          pr_sample_ids = y_pred.eq(k).where.to_a
-          n_pr_samples = pr_sample_ids.size
-          class_ids.map do |j|
-            tr_sample_ids = y_true.eq(j).where.to_a
-            n_tr_samples = tr_sample_ids.size
-            n_intr_samples = (pr_sample_ids & tr_sample_ids).size
-            if n_intr_samples.positive?
-              mutual_information +=
-                n_intr_samples.fdiv(n_samples) * Math.log((n_samples * n_intr_samples).fdiv(n_pr_samples * n_tr_samples))
-            end
-          end
-        end
-        # return normalized mutual information.
-        mutual_information / Math.sqrt(class_entropy * cluster_entropy)
+        mi = MutualInformation.new
+        mi.score(y_true, y_pred) / Math.sqrt(class_entropy * cluster_entropy)
+      end
+
+      private
+
+      def entropy(y)
+        n_samples = y.size
+        indices = y.to_a.uniq
+        sum_log = indices.map do |k|
+          ratio = y.eq(k).count.fdiv(n_samples)
+          ratio * Math.log(ratio)
+        end.reduce(:+)
+        -sum_log
       end
     end
   end
