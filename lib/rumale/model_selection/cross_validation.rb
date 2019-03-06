@@ -17,7 +17,7 @@ module Rumale
     #   svc = Rumale::LinearModel::SVC.new
     #   kf = Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5)
     #   cv = Rumale::ModelSelection::CrossValidation.new(estimator: svc, splitter: kf)
-    #   report = cv.perform(samples, lables)
+    #   report = cv.perform(samples, labels)
     #   mean_test_score = report[:test_score].inject(:+) / kf.n_splits
     #
     class CrossValidation
