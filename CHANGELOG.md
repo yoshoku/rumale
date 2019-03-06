@@ -1,3 +1,13 @@
+# 0.8.1
+- Add some evaluator classes.
+  - MeanSquaredLogError
+  - MedianAbsoluteError
+  - ExplainedVarianceScore
+  - AdjustedRandScore
+  - MutualInformation
+- Refactor normalized mutual infomation evaluator.
+- Fix typo on document ([#2](https://github.com/yoshoku/rumale/pull/2)).
+
 # 0.8.0
 ## Breaking changes
 - Rename SVMKit to Rumale.
