@@ -4,6 +4,11 @@ AllCops:
   TargetRubyVersion: 2.3
   DisplayCopNames: true
   DisplayStyleGuide: true
+  Exclude:
+    - 'bin/*'
+    - 'rumale.gemspec'
+    - 'Rakefile'
+    - 'Gemfile'
 
 Documentation:
   Enabled: false
