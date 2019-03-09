@@ -121,6 +121,13 @@ mean_logloss = report[:test_score].inject(:+) / kf.n_splits
 puts("5-CV mean log-loss: %.3f" % mean_logloss)
 ```
 
+Execution of the above scripts result in the following.
+
+```bash
+$ ruby cross_validation.rb
+5-CV mean log-loss: 0.476
+```
+
 ### Example 3. Pipeline
 
 ```ruby
