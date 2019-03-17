@@ -18,6 +18,10 @@ module Rumale
     class StratifiedKFold
       include Base::Splitter
 
+      # Return the number of folds.
+      # @return [Integer]
+      attr_reader :n_splits
+
       # Return the flag indicating whether to shuffle the dataset.
       # @return [Boolean]
       attr_reader :shuffle
