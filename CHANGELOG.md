@@ -1,3 +1,9 @@
+# 0.8.2
+- Add class for Adam optimizer.
+- Add data splitter classes for random permutation cross validation.
+- Add accessor method for number of splits to K-fold splitter classes.
+- Add execution result of example script on README ([#3](https://github.com/yoshoku/rumale/pull/3)).
+
 # 0.8.1
 - Add some evaluator classes.
   - MeanSquaredLogError
