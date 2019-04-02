@@ -1,3 +1,8 @@
+# 0.8.3
+- Add optimizer class for AdaGrad.
+- Add evaluator class for ROC AUC.
+- Add class for scaling with maximum absolute value.
+
 # 0.8.2
 - Add class for Adam optimizer.
 - Add data splitter classes for random permutation cross validation.
