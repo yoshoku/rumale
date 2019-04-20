@@ -1,3 +1,7 @@
+# 0.8.4
+- Remove unused parameter on Nadam.
+- Fix condition to stop growing tree about decision tree.
+
 # 0.8.3
 - Add optimizer class for AdaGrad.
 - Add evaluator class for ROC AUC.
