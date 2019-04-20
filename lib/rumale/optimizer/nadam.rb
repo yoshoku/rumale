@@ -9,7 +9,7 @@ module Rumale
     # Nadam is a class that implements Nadam optimizer.
     #
     # @example
-    #   optimizer = Rumale::Optimizer::Nadam.new(learning_rate: 0.01, momentum: 0.9, decay1: 0.9, decay2: 0.999)
+    #   optimizer = Rumale::Optimizer::Nadam.new(learning_rate: 0.01, decay1: 0.9, decay2: 0.999)
     #   estimator = Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, random_seed: 1)
     #   estimator.fit(samples, values)
     #
@@ -22,15 +22,13 @@ module Rumale
       # Create a new optimizer with Nadam
       #
       # @param learning_rate [Float] The initial value of learning rate.
-      # @param momentum [Float] The initial value of momentum.
       # @param decay1 [Float] The smoothing parameter for the first moment.
       # @param decay2 [Float] The smoothing parameter for the second moment.
-      def initialize(learning_rate: 0.01, momentum: 0.9, decay1: 0.9, decay2: 0.999)
-        check_params_float(learning_rate: learning_rate, momentum: momentum, decay1: decay1, decay2: decay2)
-        check_params_positive(learning_rate: learning_rate, momentum: momentum, decay1: decay1, decay2: decay2)
+      def initialize(learning_rate: 0.01, decay1: 0.9, decay2: 0.999)
+        check_params_float(learning_rate: learning_rate, decay1: decay1, decay2: decay2)
+        check_params_positive(learning_rate: learning_rate, decay1: decay1, decay2: decay2)
         @params = {}
         @params[:learning_rate] = learning_rate
-        @params[:momentum] = momentum
         @params[:decay1] = decay1
         @params[:decay2] = decay2
         @fst_moment = nil

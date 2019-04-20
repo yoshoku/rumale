@@ -6,7 +6,7 @@ RSpec.describe Rumale::Optimizer::Nadam do
   let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
-  let(:optimizer) { described_class.new(learning_rate: 0.1, momentum: 0.8, decay1: 0.8, decay2: 0.8) }
+  let(:optimizer) { described_class.new(learning_rate: 0.1, decay1: 0.8, decay2: 0.8) }
   let(:estimator) { Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, max_iter: 100, random_seed: 1) }
 
   it 'learns the model for single regression problem with optimizer.' do
