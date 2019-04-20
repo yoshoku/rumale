@@ -2,6 +2,8 @@
 
 require 'numo/narray'
 
+require 'rumale/rumale'
+
 require 'rumale/version'
 require 'rumale/validation'
 require 'rumale/values'

@@ -29,6 +29,7 @@ MSG
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
+  spec.extensions    = ['ext/rumale/extconf.rb']
 
   spec.required_ruby_version = '>= 2.3'
 
@@ -37,5 +38,6 @@ MSG
   spec.add_development_dependency 'bundler', '>= 1.16'
   spec.add_development_dependency 'coveralls', '~> 0.8'
   spec.add_development_dependency 'rake', '~> 12.0'
+  spec.add_development_dependency 'rake-compiler'
   spec.add_development_dependency 'rspec', '~> 3.0'
 end
