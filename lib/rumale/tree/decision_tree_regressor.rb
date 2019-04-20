@@ -111,7 +111,7 @@ module Rumale
       private
 
       def stop_growing?(y)
-        (y - y.mean(0)).sum.abs.zero?
+        y.to_a.uniq.size == 1
       end
 
       def put_leaf(node, y)

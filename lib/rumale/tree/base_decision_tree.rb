@@ -67,21 +67,25 @@ module Rumale
       end
 
       def grow_node(depth, x, y, whole_impurity)
+        # intialize node.
+        n_samples, n_features = x.shape
+        node = Node.new(depth: depth, impurity: whole_impurity, n_samples: n_samples)
+
+        # terminate growing.
         unless @params[:max_leaf_nodes].nil?
           return nil if @n_leaves >= @params[:max_leaf_nodes]
         end
 
-        n_samples, n_features = x.shape
-        return nil if n_samples <= @params[:min_samples_leaf]
-
-        node = Node.new(depth: depth, impurity: whole_impurity, n_samples: n_samples)
-
-        return put_leaf(node, y) if stop_growing?(y)
+        return nil if n_samples < @params[:min_samples_leaf]
+        return put_leaf(node, y) if n_samples == @params[:min_samples_leaf]
 
         unless @params[:max_depth].nil?
           return put_leaf(node, y) if depth == @params[:max_depth]
         end
 
+        return put_leaf(node, y) if stop_growing?(y)
+
+        # calculate optimal parameters.
         feature_id, threshold, left_ids, right_ids, left_impurity, right_impurity, gain =
           rand_ids(n_features).map { |f_id| [f_id, *best_split(x[true, f_id], y, whole_impurity)] }.max_by(&:last)
 
