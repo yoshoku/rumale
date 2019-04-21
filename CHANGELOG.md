@@ -1,3 +1,8 @@
+# 0.9.0
+## Breaking changes
+- Decide to introduce Ruby extensions for improving performance.
+- Fix to find split point on decision tree estimators using extension modules.
+
 # 0.8.4
 - Remove unused parameter on Nadam.
 - Fix condition to stop growing tree about decision tree.
