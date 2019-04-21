@@ -86,13 +86,16 @@ module Rumale
         return put_leaf(node, y) if stop_growing?(y)
 
         # calculate optimal parameters.
-        feature_id, threshold, left_ids, right_ids, left_impurity, right_impurity, gain =
-          rand_ids(n_features).map { |f_id| [f_id, *best_split(x[true, f_id], y, whole_impurity)] }.max_by(&:last)
+        feature_id, left_ids, right_ids, left_imp, right_imp, threshold, gain = rand_ids(n_features).map do |fid|
+          ft = x[true, fid]
+          limp, rimp, th, ga = best_split(ft, y, whole_impurity)
+          [fid, ft.le(th).where, ft.gt(th).where, limp, rimp, th, ga]
+        end.max_by(&:last)
 
         return put_leaf(node, y) if gain.nil? || gain.zero?
 
-        node.left = grow_node(depth + 1, x[left_ids, true], y[left_ids, true], left_impurity)
-        node.right = grow_node(depth + 1, x[right_ids, true], y[right_ids, true], right_impurity)
+        node.left = grow_node(depth + 1, x[left_ids, true], y[left_ids, true], left_imp)
+        node.right = grow_node(depth + 1, x[right_ids, true], y[right_ids, true], right_imp)
 
         return put_leaf(node, y) if node.left.nil? && node.right.nil?
 
@@ -114,22 +117,11 @@ module Rumale
         [*0...n].sample(@params[:max_features], random: @rng)
       end
 
-      def best_split(features, targets, whole_impurity)
-        n_samples = targets.shape[0]
-        features.to_a.uniq.sort.each_cons(2).map do |l, r|
-          threshold = 0.5 * (l + r)
-          left_ids = features.le(threshold).where
-          right_ids = features.gt(threshold).where
-          left_impurity = impurity(targets[left_ids, true])
-          right_impurity = impurity(targets[right_ids, true])
-          gain = whole_impurity -
-                 left_impurity * left_ids.size.fdiv(n_samples) -
-                 right_impurity * right_ids.size.fdiv(n_samples)
-          [threshold, left_ids, right_ids, left_impurity, right_impurity, gain]
-        end.max_by(&:last)
+      def best_split(_features, _y, _impurity)
+        raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
       end
 
-      def impurity(_targets)
+      def impurity(_y)
         raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
       end
 

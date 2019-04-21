@@ -17,6 +17,10 @@ RSpec.describe Rumale::Tree::BaseDecisionTree do
     expect { estimator.send(:put_leaf, nil, nil) }.to raise_error(NotImplementedError)
   end
 
+  it 'raises NotImplementedError when calls best_split method.' do
+    expect { estimator.send(:best_split, nil, nil, nil) }.to raise_error(NotImplementedError)
+  end
+
   it 'raises NotImplementedError when calls impurity method.' do
     expect { estimator.send(:impurity, nil) }.to raise_error(NotImplementedError)
   end

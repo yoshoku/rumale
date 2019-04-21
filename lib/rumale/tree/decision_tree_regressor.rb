@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rumale/rumale'
 require 'rumale/tree/base_decision_tree'
 require 'rumale/base/regressor'
 
@@ -16,6 +17,7 @@ module Rumale
     #
     class DecisionTreeRegressor < BaseDecisionTree
       include Base::Regressor
+      include ExtDecisionTreeRegressor
 
       # Return the importance for each feature.
       # @return [Numo::DFloat] (size: n_features)
@@ -35,7 +37,7 @@ module Rumale
 
       # Create a new regressor with decision tree algorithm.
       #
-      # @param criterion [String] The function to evalue spliting point. Supported criteria are 'mae' and 'mse'.
+      # @param criterion [String] The function to evaluate spliting point. Supported criteria are 'mae' and 'mse'.
       # @param max_depth [Integer] The maximum depth of the tree.
       #   If nil is given, decision tree grows without concern for depth.
       # @param max_leaf_nodes [Integer] The maximum number of leaves on decision tree.
@@ -84,7 +86,7 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
         check_sample_array(x)
-        @leaf_values.shape[1].nil? ? @leaf_values[apply(x)] : @leaf_values[apply(x), true]
+        @leaf_values.shape[1].nil? ? @leaf_values[apply(x)].dup : @leaf_values[apply(x), true].dup
       end
 
       # Dump marshal data.
@@ -123,12 +125,15 @@ module Rumale
         node
       end
 
-      def impurity(values)
-        if @params[:criterion] == 'mae'
-          (values - values.mean(0)).abs.mean
-        else
-          ((values - values.mean(0))**2).mean
-        end
+      def best_split(features, y, whole_impurity)
+        order = features.sort_index
+        sorted_f = features[order].to_a
+        sorted_y = y[order, true].to_a
+        find_split_params(@params[:criterion], whole_impurity, sorted_f, sorted_y, sorted_f.uniq)
+      end
+
+      def impurity(y)
+        node_impurity(@params[:criterion], y.to_a)
       end
     end
   end

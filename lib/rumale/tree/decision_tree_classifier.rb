@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rumale/rumale'
 require 'rumale/tree/base_decision_tree'
 require 'rumale/base/classifier'
 
@@ -16,6 +17,7 @@ module Rumale
     #
     class DecisionTreeClassifier < BaseDecisionTree
       include Base::Classifier
+      include ExtDecisionTreeClassifier
 
       # Return the class labels.
       # @return [Numo::Int32] (size: n_classes)
@@ -39,7 +41,7 @@ module Rumale
 
       # Create a new classifier with decision tree algorithm.
       #
-      # @param criterion [String] The function to evalue spliting point. Supported criteria are 'gini' and 'entropy'.
+      # @param criterion [String] The function to evaluate spliting point. Supported criteria are 'gini' and 'entropy'.
       # @param max_depth [Integer] The maximum depth of the tree.
       #   If nil is given, decision tree grows without concern for depth.
       # @param max_leaf_nodes [Integer] The maximum number of leaves on decision tree.
@@ -89,7 +91,7 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         check_sample_array(x)
-        @leaf_labels[apply(x)]
+        @leaf_labels[apply(x)].dup
       end
 
       # Predict probability for samples.
@@ -138,7 +140,7 @@ module Rumale
       end
 
       def stop_growing?(y)
-        y.flatten.to_a.uniq.size == 1
+        y[true, 0].to_a.uniq.size == 1
       end
 
       def put_leaf(node, y)
@@ -150,13 +152,17 @@ module Rumale
         node
       end
 
+      def best_split(features, y, whole_impurity)
+        order = features.sort_index
+        sorted_f = features[order].to_a
+        sorted_y = y[order, true].to_a.flatten
+        n_classes = @classes.size
+        find_split_params(@params[:criterion], whole_impurity, sorted_f, sorted_y, sorted_f.uniq, n_classes)
+      end
+
       def impurity(y)
-        posterior_probs = y.flatten.bincount / y.size.to_f
-        if @params[:criterion] == 'entropy'
-          -(posterior_probs * Numo::NMath.log(posterior_probs + 1)).sum
-        else
-          1.0 - (posterior_probs * posterior_probs).sum
-        end
+        n_classes = @classes.size
+        node_impurity(@params[:criterion], y[true, 0].to_a, n_classes)
       end
     end
   end
