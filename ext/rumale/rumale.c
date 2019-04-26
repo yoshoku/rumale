@@ -183,33 +183,32 @@ sub_sum_vec(VALUE sum_vec, VALUE target)
  * @!visibility private
  * Find for split point with maximum information gain.
  *
- * @overload find_split_params(criterion, impurity, sorted_features, sorted_labels, uniqed_features, n_classes) -> Array<Float>
+ * @overload find_split_params(criterion, impurity, sorted_features, sorted_labels, n_classes) -> Array<Float>
  *
  * @param criterion [String] The function to evaluate spliting point. Supported criteria are 'gini' and 'entropy'.
  * @param impurity [Float] The impurity of whole dataset.
  * @param sorted_features [Numo::DFloat] (shape: [n_samples]) The feature values sorted in ascending order.
  * @param sorted_labels [Numo::Int32] (shape: [n_labels]) The labels sorted according to feature values.
- * @param uniqed_features [Numo::DFloat] (shape: [n_uniqed_features]) The unique feature values.
  * @param n_classes [Integer] The number of classes.
  * @return [Float] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
  */
 static VALUE
-find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE sorted_f, VALUE sorted_y, VALUE uniqed_f, VALUE n_classes_)
+find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE sorted_f, VALUE sorted_y, VALUE n_classes_)
 {
-  long i;
-  long curr_pos;
-  long next_pos;
-  long n_l_elements;
-  long n_r_elements;
   const long n_classes = NUM2LONG(n_classes_);
   const long n_elements = RARRAY_LEN(sorted_f);
-  const long n_uniq_elements = RARRAY_LEN(uniqed_f);
   const double w_impurity = NUM2DBL(whole_impurity);
+  long iter = 0;
+  long curr_pos = 0;
+  long next_pos = 0;
+  long n_l_elements = 0;
+  long n_r_elements = n_elements;
+  double last_el = NUM2DBL(rb_ary_entry(sorted_f, n_elements - 1));
+  double curr_el = NUM2DBL(rb_ary_entry(sorted_f, 0));
+  double next_el;
   double l_impurity;
   double r_impurity;
   double gain;
-  double curr_el;
-  double next_el;
   VALUE l_histogram = create_zero_vector(n_classes);
   VALUE r_histogram = create_zero_vector(n_classes);
   VALUE opt_params = rb_ary_new2(4);
@@ -217,22 +216,18 @@ find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
   /* Initialize optimal parameters. */
   rb_ary_store(opt_params, 0, DBL2NUM(0));                /* left impurity */
   rb_ary_store(opt_params, 1, DBL2NUM(w_impurity));       /* right impurity */
-  rb_ary_store(opt_params, 2, rb_ary_entry(uniqed_f, 0)); /* threshold */
+  rb_ary_store(opt_params, 2, rb_ary_entry(sorted_f, 0)); /* threshold */
   rb_ary_store(opt_params, 3, DBL2NUM(0));                /* gain */
 
   /* Initialize child node variables. */
-  n_l_elements = 0;
-  n_r_elements = n_elements;
-  for (i = 0; i < n_elements; i++) {
-    increment_histogram(r_histogram, NUM2LONG(rb_ary_entry(sorted_y, i)));
+  for (iter = 0; iter < n_elements; iter++) {
+    increment_histogram(r_histogram, NUM2LONG(rb_ary_entry(sorted_y, iter)));
   }
 
   /* Find optimal parameters. */
-  for (curr_pos = 0, next_pos = 0; curr_pos < n_uniq_elements - 1; curr_pos++) {
-    /* Find new split point. */
-    curr_el = NUM2DBL(rb_ary_entry(uniqed_f, curr_pos));
+  while (curr_pos < n_elements && curr_el != last_el) {
     next_el = NUM2DBL(rb_ary_entry(sorted_f, next_pos));
-    while (next_pos < n_elements && next_el <= curr_el) {
+    while (next_pos < n_elements && next_el == curr_el) {
       increment_histogram(l_histogram, NUM2LONG(rb_ary_entry(sorted_y, next_pos)));
       n_l_elements++;
       decrement_histogram(r_histogram, NUM2LONG(rb_ary_entry(sorted_y, next_pos)));
@@ -250,6 +245,9 @@ find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
       rb_ary_store(opt_params, 2, DBL2NUM(0.5 * (curr_el + next_el)));
       rb_ary_store(opt_params, 3, DBL2NUM(gain));
     }
+    if (next_pos == n_elements) break;
+    curr_pos = next_pos;
+    curr_el = NUM2DBL(rb_ary_entry(sorted_f, curr_pos));
   }
 
   return opt_params;
@@ -259,32 +257,31 @@ find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
  * @!visibility private
  * Find for split point with maximum information gain.
  *
- * @overload find_split_params(criterion, impurity, sorted_features, sorted_targets, uniqed_features) -> Array<Float>
+ * @overload find_split_params(criterion, impurity, sorted_features, sorted_targets) -> Array<Float>
  *
  * @param criterion [String] The function to evaluate spliting point. Supported criteria are 'mae' and 'mse'.
  * @param impurity [Float] The impurity of whole dataset.
  * @param sorted_features [Numo::DFloat] (shape: [n_samples]) The feature values sorted in ascending order.
  * @param sorted_targets [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values sorted according to feature values.
- * @param uniqed_features [Numo::DFloat] (shape: [n_uniqed_features]) The unique feature values.
  * @return [Float] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
  */
 static VALUE
-find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE sorted_f, VALUE sorted_y, VALUE uniqed_f)
+find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE sorted_f, VALUE sorted_y)
 {
-  long i;
-  long curr_pos;
-  long next_pos;
-  long n_l_elements;
-  long n_r_elements;
   const long n_elements = RARRAY_LEN(sorted_f);
-  const long n_uniq_elements = RARRAY_LEN(uniqed_f);
   const long n_dimensions = RARRAY_LEN(rb_ary_entry(sorted_y, 0));
   const double w_impurity = NUM2DBL(whole_impurity);
+  long iter = 0;
+  long curr_pos = 0;
+  long next_pos = 0;
+  long n_l_elements = 0;
+  long n_r_elements = n_elements;
+  double last_el = NUM2DBL(rb_ary_entry(sorted_f, n_elements - 1));
+  double curr_el = NUM2DBL(rb_ary_entry(sorted_f, 0));
+  double next_el;
   double l_impurity;
   double r_impurity;
   double gain;
-  double curr_el;
-  double next_el;
   VALUE l_sum_vec = create_zero_vector(n_dimensions);
   VALUE r_sum_vec = create_zero_vector(n_dimensions);
   VALUE l_target_vecs = rb_ary_new();
@@ -295,24 +292,20 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
   /* Initialize optimal parameters. */
   rb_ary_store(opt_params, 0, DBL2NUM(0));                /* left impurity */
   rb_ary_store(opt_params, 1, DBL2NUM(w_impurity));       /* right impurity */
-  rb_ary_store(opt_params, 2, rb_ary_entry(uniqed_f, 0)); /* threshold */
+  rb_ary_store(opt_params, 2, rb_ary_entry(sorted_f, 0)); /* threshold */
   rb_ary_store(opt_params, 3, DBL2NUM(0));                /* gain */
 
   /* Initialize child node variables. */
-  n_l_elements = 0;
-  n_r_elements = n_elements;
-  for (i = 0; i < n_elements; i++) {
-    target = rb_ary_entry(sorted_y, i);
+  for (iter = 0; iter < n_elements; iter++) {
+    target = rb_ary_entry(sorted_y, iter);
     add_sum_vec(r_sum_vec, target);
     rb_ary_push(r_target_vecs, target);
   }
 
   /* Find optimal parameters. */
-  for (curr_pos = 0, next_pos = 0; curr_pos < n_uniq_elements - 1; curr_pos++) {
-    /* Find new split point. */
-    curr_el = NUM2DBL(rb_ary_entry(uniqed_f, curr_pos));
+  while (curr_pos < n_elements && curr_el != last_el) {
     next_el = NUM2DBL(rb_ary_entry(sorted_f, next_pos));
-    while (next_pos < n_elements && next_el <= curr_el) {
+    while (next_pos < n_elements && next_el == curr_el) {
       target = rb_ary_entry(sorted_y, next_pos);
       add_sum_vec(l_sum_vec, target);
       rb_ary_push(l_target_vecs, target);
@@ -333,6 +326,9 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
       rb_ary_store(opt_params, 2, DBL2NUM(0.5 * (curr_el + next_el)));
       rb_ary_store(opt_params, 3, DBL2NUM(gain));
     }
+    if (next_pos == n_elements) break;
+    curr_pos = next_pos;
+    curr_el = NUM2DBL(rb_ary_entry(sorted_f, curr_pos));
   }
 
   return opt_params;
@@ -411,8 +407,8 @@ void Init_rumale(void)
    */
   VALUE mExtDTreeReg = rb_define_module_under(mTree, "ExtDecisionTreeRegressor");
 
-  rb_define_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 6);
-  rb_define_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 5);
-  rb_define_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 3);
-  rb_define_method(mExtDTreeReg, "node_impurity", node_impurity_reg, 2);
+  rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 5);
+  rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 4);
+  rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 3);
+  rb_define_private_method(mExtDTreeReg, "node_impurity", node_impurity_reg, 2);
 }

@@ -129,7 +129,7 @@ module Rumale
         order = features.sort_index
         sorted_f = features[order].to_a
         sorted_y = y[order, true].to_a
-        find_split_params(@params[:criterion], whole_impurity, sorted_f, sorted_y, sorted_f.uniq)
+        find_split_params(@params[:criterion], whole_impurity, sorted_f, sorted_y)
       end
 
       def impurity(y)
