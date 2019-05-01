@@ -1,3 +1,8 @@
+# 0.9.1
+- Add class for Extra-Trees classifier.
+- Add class for Extra-Trees regressor.
+- Refactor extension modules of decision tree estimators for improving performance.
+
 # 0.9.0
 ## Breaking changes
 - Decide to introduce Ruby extensions for improving performance.
