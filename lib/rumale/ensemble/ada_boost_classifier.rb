@@ -42,7 +42,7 @@ module Rumale
 
       # Create a new classifier with AdaBoost.
       #
-      # @param n_estimators [Integer] The numeber of decision trees for contructing random forest.
+      # @param n_estimators [Integer] The numeber of decision trees for contructing AdaBoost classifier.
       # @param criterion [String] The function to evalue spliting point. Supported criteria are 'gini' and 'entropy'.
       # @param max_depth [Integer] The maximum depth of the tree.
       #   If nil is given, decision tree grows without concern for depth.

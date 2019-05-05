@@ -42,7 +42,7 @@ module Rumale
 
       # Create a new regressor with random forest.
       #
-      # @param n_estimators [Integer] The numeber of decision trees for contructing random forest.
+      # @param n_estimators [Integer] The numeber of decision trees for contructing AdaBoost regressor.
       # @param threshold [Float] The threshold for delimiting correct and incorrect predictions. That is constrained to [0, 1]
       # @param exponent [Float] The exponent for the weight of each weak learner.
       # @param criterion [String] The function to evalue spliting point. Supported criteria are 'gini' and 'entropy'.
