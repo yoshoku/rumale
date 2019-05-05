@@ -9,7 +9,7 @@ module Rumale
     # Normalize samples to unit L2-norm.
     #
     # @example
-    #   normalizer = Rumale::Preprocessing::StandardScaler.new
+    #   normalizer = Rumale::Preprocessing::L2Normalizer.new
     #   new_samples = normalizer.fit_transform(samples)
     class L2Normalizer
       include Base::BaseEstimator
