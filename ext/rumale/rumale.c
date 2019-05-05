@@ -336,6 +336,72 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
 
 /**
  * @!visibility private
+ * Find for split point with maximum information gain.
+ *
+ * @overload find_split_params(sorted_features, sorted_gradient, sorted_hessian, sum_gradient, sum_hessian) -> Array<Float>
+ *
+ * @param sorted_features [Array<Float>] (size: n_samples) The feature values sorted in ascending order.
+ * @param sorted_targets [Array<Float>] (size: n_samples) The target values sorted according to feature values.
+ * @param sorted_gradient [Array<Float>] (size: n_samples) The gradient values of loss function sorted according to feature values.
+ * @param sorted_hessian [Array<Float>] (size: n_samples) The hessian values of loss function sorted according to feature values.
+ * @param sum_gradient [Float] The sum of gradient values.
+ * @param sum_hessian [Float] The sum of hessian values.
+ * @param reg_lambda [Float] The L2 regularization term on weight.
+ * @return [Array<Float>] The array consists of optimal parameters including threshold and gain.
+ */
+static VALUE
+find_split_params_grad_reg
+(VALUE self, VALUE sorted_f, VALUE sorted_g, VALUE sorted_h, VALUE sum_g, VALUE sum_h, VALUE reg_l)
+{
+  const long n_elements = RARRAY_LEN(sorted_f);
+  const double s_grad = NUM2DBL(sum_g);
+  const double s_hess = NUM2DBL(sum_h);
+  const double reg_lambda = NUM2DBL(reg_l);
+  long curr_pos = 0;
+  long next_pos = 0;
+  double last_el = NUM2DBL(rb_ary_entry(sorted_f, n_elements - 1));
+  double curr_el = NUM2DBL(rb_ary_entry(sorted_f, 0));
+  double next_el;
+  double l_grad = 0.0;
+  double l_hess = 0.0;
+  double r_grad;
+  double r_hess;
+  double gain;
+  VALUE opt_params = rb_ary_new2(2);
+
+  /* Initialize optimal parameters. */
+  rb_ary_store(opt_params, 0, rb_ary_entry(sorted_f, 0)); /* threshold */
+  rb_ary_store(opt_params, 1, DBL2NUM(0));                /* gain */
+
+  /* Find optimal parameters. */
+  while (curr_pos < n_elements && curr_el != last_el) {
+    next_el = NUM2DBL(rb_ary_entry(sorted_f, next_pos));
+    while (next_pos < n_elements && next_el == curr_el) {
+      l_grad += NUM2DBL(rb_ary_entry(sorted_g, next_pos));
+      l_hess += NUM2DBL(rb_ary_entry(sorted_h, next_pos));
+      next_el = NUM2DBL(rb_ary_entry(sorted_f, ++next_pos));
+    }
+    /* Calculate gain of new split. */
+    r_grad = s_grad - l_grad;
+    r_hess = s_hess - l_hess;
+    gain = (l_grad * l_grad) / (l_hess + reg_lambda) +
+           (r_grad * r_grad) / (r_hess + reg_lambda) -
+           (s_grad * s_grad) / (s_hess + reg_lambda);
+    /* Update optimal parameters. */
+    if (gain > NUM2DBL(rb_ary_entry(opt_params, 1))) {
+      rb_ary_store(opt_params, 0, DBL2NUM(0.5 * (curr_el + next_el)));
+      rb_ary_store(opt_params, 1, DBL2NUM(gain));
+    }
+    if (next_pos == n_elements) break;
+    curr_pos = next_pos;
+    curr_el = NUM2DBL(rb_ary_entry(sorted_f, curr_pos));
+  }
+
+  return opt_params;
+}
+
+/**
+ * @!visibility private
  * Calculate impurity based on criterion.
  *
  * @overload node_impurity(criterion, y, n_classes) -> Float
@@ -406,9 +472,17 @@ void Init_rumale(void)
    * This module is used internally.
    */
   VALUE mExtDTreeReg = rb_define_module_under(mTree, "ExtDecisionTreeRegressor");
+  /**
+   * Document-module: Rumale::Tree::ExtGradientTreeRegressor
+   * @!visibility private
+   * The mixin module consisting of extension method for GradientTreeRegressor class.
+   * This module is used internally.
+   */
+  VALUE mExtGTreeReg = rb_define_module_under(mTree, "ExtGradientTreeRegressor");
 
   rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 5);
   rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 4);
+  rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 6);
   rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 3);
   rb_define_private_method(mExtDTreeReg, "node_impurity", node_impurity_reg, 2);
 }
