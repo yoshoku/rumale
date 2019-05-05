@@ -21,7 +21,7 @@ module Rumale
       # @param feature_id [Integer] The feature index used for evaluation.
       # @param threshold [Float] The threshold value of the feature for splitting the node.
       def initialize(depth: 0, impurity: 0.0, n_samples: 0, probs: 0.0,
-                     leaf: true, leaf_id: 0,
+                     leaf: false, leaf_id: nil,
                      left: nil, right: nil, feature_id: 0, threshold: 0.0)
         @depth = depth
         @impurity = impurity
