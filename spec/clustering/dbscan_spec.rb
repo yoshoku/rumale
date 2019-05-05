@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
 require 'spec_helper'
 
 RSpec.describe Rumale::Clustering::DBSCAN do
