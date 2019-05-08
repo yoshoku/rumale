@@ -107,8 +107,8 @@ module Rumale
         threshold = @rng.rand(features.min..features.max)
         l_ids = features.le(threshold).where
         r_ids = features.gt(threshold).where
-        l_impurity = l_ids.size > 0 ? impurity(y[l_ids, true]) : 0.0
-        r_impurity = r_ids.size > 0 ? impurity(y[r_ids, true]) : 0.0
+        l_impurity = l_ids.empty? ? 0.0 : impurity(y[l_ids, true])
+        r_impurity = r_ids.empty? ? 0.0 : impurity(y[r_ids, true])
         gain = whole_impurity -
                l_impurity * l_ids.size.fdiv(y.shape[0]) -
                r_impurity * r_ids.size.fdiv(y.shape[0])
