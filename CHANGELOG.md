@@ -1,3 +1,11 @@
+# 0.9.2
+- Add class for Gradient tree boosting classifier.
+- Add class for Gradient tree boosting regressor.
+- Add class for discretizing feature values.
+- Refactor extra-trees estimators.
+- Refactor decision tree base class.
+- Fix some typos on document ([#6](https://github.com/yoshoku/rumale/pull/6)).
+
 # 0.9.1
 - Add class for Extra-Trees classifier.
 - Add class for Extra-Trees regressor.

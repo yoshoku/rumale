@@ -12,7 +12,7 @@ Rumale (**Ru**by **ma**chine **le**arning) is a machine learninig library in Rub
 Rumale provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 Rumale supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
-Naive Bayes, Decision Tree, AdaBoost, Random Forest, Extra-Trees, K-nearest neighbor classifier,
+Naive Bayes, Decision Tree, AdaBoost, Gradient Tree Boosting, Random Forest, Extra-Trees, K-nearest neighbor classifier,
 K-Means, DBSCAN, Principal Component Analysis, and Non-negative Matrix Factorization.
 
 This project was formerly known as "SVMKit".
