@@ -9,11 +9,11 @@ Gem::Specification.new do |spec|
   spec.email         = ['yoshoku@outlook.com']
 
   spec.summary       = <<MSG
-Rumale is a machine learninig library in Ruby.
+Rumale is a machine learning library in Ruby.
 Rumale provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 MSG
   spec.description   = <<MSG
-Rumale is a machine learninig library in Ruby.
+Rumale is a machine learning library in Ruby.
 Rumale provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 Rumale currently supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,

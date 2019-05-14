@@ -8,7 +8,7 @@
 [![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/rumale/blob/master/LICENSE.txt)
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](https://www.rubydoc.info/gems/rumale/)
 
-Rumale (**Ru**by **ma**chine **le**arning) is a machine learninig library in Ruby.
+Rumale (**Ru**by **ma**chine **le**arning) is a machine learning library in Ruby.
 Rumale provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 Rumale supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
