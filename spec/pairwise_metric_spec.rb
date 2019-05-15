@@ -12,6 +12,20 @@ RSpec.describe Rumale::PairwiseMetric do
   let(:gamma) { 0.5 }
   let(:coef) { 1 }
 
+  it 'calculates the pairwise squared errors between different datasets.' do
+    dist_mat_bf = Numo::DFloat.zeros(n_samples_a, n_samples_b)
+    n_samples_a.times do |m|
+      n_samples_b.times do |n|
+        dist_mat_bf[m, n] = ((samples_a[m, true] - samples_b[n, true])**2).sum
+      end
+    end
+    dist_mat = described_class.squared_error(samples_a, samples_b)
+    expect(dist_mat.class).to eq(Numo::DFloat)
+    expect(dist_mat.shape[0]).to eq(n_samples_a)
+    expect(dist_mat.shape[1]).to eq(n_samples_b)
+    expect(dist_mat).to be_within(1.0e-5).of(dist_mat_bf)
+  end
+
   it 'calculates the euclidean distance matrix between different datasets.' do
     dist_mat_bf = Numo::DFloat.zeros(n_samples_a, n_samples_b)
     n_samples_a.times do |m|

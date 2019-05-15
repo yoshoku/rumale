@@ -15,13 +15,29 @@ module Rumale
         y = x if y.nil?
         Rumale::Validation.check_sample_array(x)
         Rumale::Validation.check_sample_array(y)
-        sum_x_vec = (x**2).sum(1)
-        sum_y_vec = (y**2).sum(1)
+        Numo::NMath.sqrt(squared_error(x, y).abs)
+      end
+
+      # Calculate the pairwise squared errors between x and y.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples_x, n_features])
+      # @param y [Numo::DFloat] (shape: [n_samples_y, n_features])
+      # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
+      def squared_error(x, y = nil)
+        y = x if y.nil?
+        Rumale::Validation.check_sample_array(x)
+        Rumale::Validation.check_sample_array(y)
+        # sum_x_vec = (x**2).sum(1)
+        # sum_y_vec = (y**2).sum(1)
+        # dot_xy_mat = x.dot(y.transpose)
+        # dot_xy_mat * -2.0 + sum_x_vec.tile(y.shape[0], 1).transpose + sum_y_vec.tile(x.shape[0], 1)
+        #
+        n_features = x.shape[1]
+        one_vec = Numo::DFloat.ones(n_features).expand_dims(1)
+        sum_x_vec = (x**2).dot(one_vec)
+        sum_y_vec = (y**2).dot(one_vec).transpose
         dot_xy_mat = x.dot(y.transpose)
-        distance_matrix = dot_xy_mat * -2.0 +
-                          sum_x_vec.tile(y.shape[0], 1).transpose +
-                          sum_y_vec.tile(x.shape[0], 1)
-        Numo::NMath.sqrt(distance_matrix.abs)
+        dot_xy_mat * -2.0 + sum_x_vec + sum_y_vec
       end
 
       # Calculate the rbf kernel between x and y.
