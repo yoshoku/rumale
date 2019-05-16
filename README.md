@@ -13,7 +13,7 @@ Rumale provides machine learning algorithms with interfaces similar to Scikit-Le
 Rumale supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Gradient Tree Boosting, Random Forest, Extra-Trees, K-nearest neighbor classifier,
-K-Means, DBSCAN, Principal Component Analysis, and Non-negative Matrix Factorization.
+K-Means, DBSCAN, t-SNE, Principal Component Analysis, and Non-negative Matrix Factorization.
 
 This project was formerly known as "SVMKit".
 If you are using SVMKit, please install Rumale and replace `SVMKit` constants with `Rumale`.

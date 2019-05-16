@@ -18,7 +18,7 @@ Rumale provides machine learning algorithms with interfaces similar to Scikit-Le
 Rumale currently supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Gradient Tree Boosting, Random Forest, Extra-Trees, K-nearest neighbor algorithm,
-K-Means, DBSCAN, Principal Component Analysis, and Non-negative Matrix Factorization.
+K-Means, DBSCAN, t-SNE, Principal Component Analysis, and Non-negative Matrix Factorization.
 MSG
   spec.homepage      = 'https://github.com/yoshoku/rumale'
   spec.license       = 'BSD-2-Clause'
