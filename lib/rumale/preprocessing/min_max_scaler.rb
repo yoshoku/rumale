@@ -67,6 +67,7 @@ module Rumale
         check_sample_array(x)
         n_samples, = x.shape
         dif_vec = @max_vec - @min_vec
+        dif_vec[dif_vec.eq(0)] = 1.0
         nx = (x - @min_vec.tile(n_samples, 1)) / dif_vec.tile(n_samples, 1)
         nx * (@params[:feature_range][1] - @params[:feature_range][0]) + @params[:feature_range][0]
       end
