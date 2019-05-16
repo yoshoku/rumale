@@ -1,3 +1,7 @@
+# 0.10.0
+- Add class for t-distributed Stochastic Neighborhood Embedding.
+- Fix bug of zero division on min-max scaling class.
+
 # 0.9.2
 - Add class for Gradient tree boosting classifier.
 - Add class for Gradient tree boosting regressor.
