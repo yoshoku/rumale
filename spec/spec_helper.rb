@@ -12,6 +12,7 @@ SimpleCov.start
 
 require 'bundler/setup'
 require 'rumale'
+require 'parallel'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

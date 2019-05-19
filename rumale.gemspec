@@ -39,5 +39,6 @@ MSG
   spec.add_development_dependency 'coveralls', '~> 0.8'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rake-compiler'
+  spec.add_development_dependency 'parallel'
   spec.add_development_dependency 'rspec', '~> 3.0'
 end
