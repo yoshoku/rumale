@@ -13,6 +13,9 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineClassifier do
     described_class.new(n_factors: n_factors, loss: 'logistic',
                         reg_param_linear: 0.001, reg_param_factor: 0.01, random_seed: 1)
   end
+  let(:estimator_parallel) do
+    described_class.new(n_factors: n_factors, reg_param_linear: 0.1, reg_param_factor: 0.1, n_jobs: -1, random_seed: 1)
+  end
 
   it 'classifies two clusters.' do
     n_samples, n_features = x_bin.shape
@@ -116,6 +119,39 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineClassifier do
     expect(predicted).to eq(y_mlt)
   end
 
+  it 'classifies three clusters in parallel.' do
+    n_classes = y_mlt.to_a.uniq.size
+    n_samples, n_features = x_mlt.shape
+    estimator_parallel.fit(x_mlt, y_mlt)
+    func_vals = estimator_parallel.decision_function(x_mlt)
+    predicted = estimator_parallel.predict(x_mlt)
+    expect(estimator_parallel.classes.class).to eq(Numo::Int32)
+    expect(estimator_parallel.classes.size).to eq(n_classes)
+    expect(estimator_parallel.classes.shape[0]).to eq(n_classes)
+    expect(estimator_parallel.classes.shape[1]).to be_nil
+    expect(estimator_parallel.factor_mat.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.factor_mat.size).to eq(n_classes * n_factors * n_features)
+    expect(estimator_parallel.factor_mat.shape[0]).to eq(n_classes)
+    expect(estimator_parallel.factor_mat.shape[1]).to eq(n_factors)
+    expect(estimator_parallel.factor_mat.shape[2]).to eq(n_features)
+    expect(estimator_parallel.weight_vec.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.weight_vec.size).to eq(n_classes * n_features)
+    expect(estimator_parallel.weight_vec.shape[0]).to eq(n_classes)
+    expect(estimator_parallel.weight_vec.shape[1]).to eq(n_features)
+    expect(estimator_parallel.bias_term.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.bias_term.size).to eq(n_classes)
+    expect(estimator_parallel.bias_term.shape[0]).to eq(n_classes)
+    expect(estimator_parallel.bias_term.shape[1]).to be_nil
+    expect(func_vals.class).to eq(Numo::DFloat)
+    expect(func_vals.shape[0]).to eq(n_samples)
+    expect(func_vals.shape[1]).to eq(n_classes)
+    expect(predicted.class).to eq(Numo::Int32)
+    expect(predicted.shape[0]).to eq(n_samples)
+    expect(predicted.shape[1]).to be_nil
+    expect(predicted).to eq(y_mlt)
+    expect(estimator_parallel.score(x_mlt, y_mlt)).to eq(1.0)
+  end
+
   it 'dumps and restores itself using Marshal module.' do
     estimator.fit(x_bin, y_bin)
     copied = Marshal.load(Marshal.dump(estimator))
@@ -131,6 +167,7 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineClassifier do
     expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
     expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
     expect(estimator.params[:optimizer].class).to eq(copied.params[:optimizer].class)
+    expect(estimator.params[:n_jobs]).to eq(copied.params[:n_jobs])
     expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
     expect(estimator.score(x_bin, y_bin)).to eq(copied.score(x_bin, y_bin))
   end

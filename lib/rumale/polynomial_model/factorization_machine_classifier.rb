@@ -54,13 +54,17 @@ module Rumale
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
+      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
+      #   If nil is given, the methods do not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
+      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: 'hinge', reg_param_linear: 1.0, reg_param_factor: 1.0,
-                     max_iter: 1000, batch_size: 10, optimizer: nil, random_seed: nil)
+                     max_iter: 1000, batch_size: 10, optimizer: nil, n_jobs: nil, random_seed: nil)
         check_params_float(reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor)
         check_params_integer(n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
         check_params_string(loss: loss)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_type_or_nil(Integer, n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(n_factors: n_factors,
                               reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
                               max_iter: max_iter, batch_size: batch_size)
@@ -86,9 +90,17 @@ module Rumale
           @factor_mat = Numo::DFloat.zeros(n_classes, @params[:n_factors], n_features)
           @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
           @bias_term = Numo::DFloat.zeros(n_classes)
-          n_classes.times do |n|
-            bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-            @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
+          if enable_parallel?
+            models = parallel_map(n_classes) do |n|
+              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              partial_fit(x, bin_y)
+            end
+            n_classes.times { |n| @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = models[n] }
+          else
+            n_classes.times do |n|
+              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
+            end
           end
         else
           negative_label = y.to_a.uniq.min
@@ -122,9 +134,14 @@ module Rumale
         check_sample_array(x)
         return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
 
-        n_samples, = x.shape
+        n_samples = x.shape[0]
         decision_values = decision_function(x)
-        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
+        predicted = if enable_parallel?
+                      parallel_map(n_samples) { |n| @classes[decision_values[n, true].max_index] }
+                    else
+                      Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] }
+                    end
+        Numo::Int32.asarray(predicted)
       end
 
       # Predict probability for samples.
