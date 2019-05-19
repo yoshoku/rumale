@@ -10,6 +10,7 @@ RSpec.describe Rumale::LinearModel::SVC do
   let(:estimator) { described_class.new(random_seed: 1) }
   let(:estimator_prob) { described_class.new(probability: true, random_seed: 1) }
   let(:estimator_bias) { described_class.new(fit_bias: true, random_seed: 1) }
+  let(:estimator_parallel) { described_class.new(probability: true, n_jobs: -1, random_seed: 1) }
 
   it 'classifies two clusters.' do
     n_samples, n_features = x_bin.shape
@@ -101,6 +102,37 @@ RSpec.describe Rumale::LinearModel::SVC do
     expect(probs.shape[1]).to eq(n_classes)
     predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
     expect(predicted).to eq(y_mlt)
+  end
+
+  it 'estimates class probabilities with three clusters dataset in parallel.' do
+    classes = y_mlt.to_a.uniq.sort
+    n_classes = classes.size
+    n_samples, n_features = x_mlt.shape
+    estimator_parallel.fit(x_mlt, y_mlt)
+    predicted = estimator_parallel.predict(x_mlt)
+    probs = estimator_parallel.predict_proba(x_mlt)
+    prob_predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
+    expect(estimator_parallel.classes.class).to eq(Numo::Int32)
+    expect(estimator_parallel.classes.size).to eq(n_classes)
+    expect(estimator_parallel.classes.shape[0]).to eq(n_classes)
+    expect(estimator_parallel.classes.shape[1]).to be_nil
+    expect(estimator_parallel.weight_vec.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.weight_vec.size).to eq(n_classes * n_features)
+    expect(estimator_parallel.weight_vec.shape[0]).to eq(n_classes)
+    expect(estimator_parallel.weight_vec.shape[1]).to eq(n_features)
+    expect(estimator_parallel.bias_term.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.bias_term.size).to eq(n_classes)
+    expect(estimator_parallel.bias_term.shape[0]).to eq(n_classes)
+    expect(estimator_parallel.bias_term.shape[1]).to be_nil
+    expect(predicted.class).to eq(Numo::Int32)
+    expect(predicted.shape[0]).to eq(n_samples)
+    expect(predicted.shape[1]).to be_nil
+    expect(predicted).to eq(y_mlt)
+    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.shape[0]).to eq(n_samples)
+    expect(probs.shape[1]).to eq(n_classes)
+    expect(prob_predicted).to eq(y_mlt)
+    expect(estimator_parallel.score(x_mlt, y_mlt)).to eq(1.0)
   end
 
   it 'dumps and restores itself using Marshal module.' do

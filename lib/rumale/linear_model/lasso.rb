@@ -41,12 +41,17 @@ module Rumale
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
+      # @param n_jobs [Integer] The number of jobs for running the fit method in parallel.
+      #   If nil is given, the method does not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
+      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0, max_iter: 1000, batch_size: 10, optimizer: nil, random_seed: nil)
+      def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0, max_iter: 1000, batch_size: 10, optimizer: nil,
+                     n_jobs: nil, random_seed: nil)
         check_params_float(reg_param: reg_param, bias_scale: bias_scale)
         check_params_integer(max_iter: max_iter, batch_size: batch_size)
         check_params_boolean(fit_bias: fit_bias)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_type_or_nil(Integer, n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(reg_param: reg_param, max_iter: max_iter, batch_size: batch_size)
         super
       end
@@ -67,11 +72,15 @@ module Rumale
         if n_outputs > 1
           @weight_vec = Numo::DFloat.zeros(n_outputs, n_features)
           @bias_term = Numo::DFloat.zeros(n_outputs)
-          n_outputs.times { |n| @weight_vec[n, true], @bias_term[n] = partial_fit(x, y[true, n]) }
+          if enable_parallel?
+            models = parallel_map(n_outputs) { |n| partial_fit(x, y[true, n]) }
+            n_outputs.times { |n| @weight_vec[n, true], @bias_term[n] = models[n] }
+          else
+            n_outputs.times { |n| @weight_vec[n, true], @bias_term[n] = partial_fit(x, y[true, n]) }
+          end
         else
           @weight_vec, @bias_term = partial_fit(x, y)
         end
-
         self
       end
 

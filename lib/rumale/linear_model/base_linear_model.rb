@@ -20,9 +20,12 @@ module Rumale
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
+      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
+      #   If nil is given, the methods do not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
-                     max_iter: 1000, batch_size: 10, optimizer: nil, random_seed: nil)
+                     max_iter: 1000, batch_size: 10, optimizer: nil, n_jobs: nil, random_seed: nil)
         @params = {}
         @params[:reg_param] = reg_param
         @params[:fit_bias] = fit_bias
@@ -31,6 +34,7 @@ module Rumale
         @params[:batch_size] = batch_size
         @params[:optimizer] = optimizer
         @params[:optimizer] ||= Optimizer::Nadam.new
+        @params[:n_jobs] = n_jobs
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil

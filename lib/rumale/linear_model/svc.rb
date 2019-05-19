@@ -48,13 +48,17 @@ module Rumale
       # @param probability [Boolean] The flag indicating whether to perform probability estimation.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
+      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
+      #   If nil is given, the methods do not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
+      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
-                     max_iter: 1000, batch_size: 20, probability: false, optimizer: nil, random_seed: nil)
+                     max_iter: 1000, batch_size: 20, probability: false, optimizer: nil, n_jobs: nil, random_seed: nil)
         check_params_float(reg_param: reg_param, bias_scale: bias_scale)
         check_params_integer(max_iter: max_iter, batch_size: batch_size)
         check_params_boolean(fit_bias: fit_bias, probability: probability)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_type_or_nil(Integer, n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
         keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h
         keywd_args.delete(:probability)
@@ -82,14 +86,30 @@ module Rumale
           @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
           @bias_term = Numo::DFloat.zeros(n_classes)
           @prob_param = Numo::DFloat.zeros(n_classes, 2)
-          n_classes.times do |n|
-            bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-            @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
-            @prob_param[n, true] = if @params[:probability]
-                                     Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec[n, true].transpose) + @bias_term[n], bin_y)
-                                   else
-                                     Numo::DFloat[1, 0]
-                                   end
+          if enable_parallel?
+            models = parallel_map(n_classes) do |n|
+              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              w, b = partial_fit(x, bin_y)
+              p = if @params[:probability]
+                    Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(w.transpose) + b, bin_y)
+                  else
+                    Numo::DFloat[1, 0]
+                  end
+              [w, b, p]
+            end
+            n_classes.times { |n| @weight_vec[n, true], @bias_term[n], @prob_param[n, true] = models[n] }
+          else
+            n_classes.times do |n|
+              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
+              @prob_param[n, true] = if @params[:probability]
+                                       Rumale::ProbabilisticOutput.fit_sigmoid(
+                                         x.dot(@weight_vec[n, true].transpose) + @bias_term[n], bin_y
+                                       )
+                                     else
+                                       Numo::DFloat[1, 0]
+                                     end
+            end
           end
         else
           negative_label = y.to_a.uniq.min
@@ -125,7 +145,12 @@ module Rumale
 
         n_samples, = x.shape
         decision_values = decision_function(x)
-        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
+        predicted = if enable_parallel?
+                      parallel_map(n_samples) { |n| @classes[decision_values[n, true].max_index] }
+                    else
+                      Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] }
+                    end
+        Numo::Int32.asarray(predicted)
       end
 
       # Predict probability for samples.
