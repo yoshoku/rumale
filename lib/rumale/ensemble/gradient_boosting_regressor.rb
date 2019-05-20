@@ -51,19 +51,22 @@ module Rumale
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
       # @param max_features [Integer] The number of features to consider when searching optimal split point.
       #   If nil is given, split process considers all features.
+      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
+      #   If nil is given, the methods do not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
+      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
       def initialize(n_estimators: 100, learning_rate: 0.1, reg_lambda: 0.0, subsample: 1.0,
                      max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
-                     max_features: nil, random_seed: nil)
+                     max_features: nil, n_jobs: nil, random_seed: nil)
         check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                                          max_features: max_features, random_seed: random_seed)
+                                          max_features: max_features, n_jobs: n_jobs, random_seed: random_seed)
         check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
         check_params_float(learning_rate: learning_rate, reg_lambda: reg_lambda, subsample: subsample)
-        check_params_positive(n_estimators: n_estimators,
-                              learning_rate: learning_rate, reg_lambda: reg_lambda, subsample: subsample,
-                              max_depth: max_depth, max_leaf_nodes: max_leaf_nodes, min_samples_leaf: min_samples_leaf,
-                              max_features: max_features)
+        check_params_positive(n_estimators: n_estimators, learning_rate: learning_rate, reg_lambda: reg_lambda,
+                              subsample: subsample, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                              min_samples_leaf: min_samples_leaf, max_features: max_features)
         @params = {}
         @params[:n_estimators] = n_estimators
         @params[:learning_rate] = learning_rate
@@ -73,6 +76,7 @@ module Rumale
         @params[:max_leaf_nodes] = max_leaf_nodes
         @params[:min_samples_leaf] = min_samples_leaf
         @params[:max_features] = max_features
+        @params[:n_jobs] = n_jobs
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @estimators = nil
@@ -90,32 +94,24 @@ module Rumale
         check_sample_array(x)
         check_tvalue_array(y)
         check_sample_tvalue_size(x, y)
-
+        # initialize some variables.
         n_features = x.shape[1]
         @params[:max_features] = n_features if @params[:max_features].nil?
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
-
-        # train regressor.
         n_outputs = y.shape[1].nil? ? 1 : y.shape[1]
+        # train regressor.
         @base_predictions = n_outputs > 1 ? y.mean(0) : y.mean
         @estimators = if n_outputs > 1
-                        Array.new(n_outputs) do |n|
-                          partial_fit(x, y[true, n], @base_predictions[n])
-                        end
+                        multivar_estimators(x, y)
                       else
                         partial_fit(x, y, @base_predictions)
                       end
-
         # calculate feature importances.
-        @feature_importances = Numo::DFloat.zeros(n_features)
-        if n_outputs > 1
-          n_outputs.times do |n|
-            @estimators[n].each { |tree| @feature_importances += tree.feature_importances }
-          end
-        else
-          @estimators.each { |tree| @feature_importances += tree.feature_importances }
-        end
-
+        @feature_importances = if n_outputs > 1
+                                 multivar_feature_importances
+                               else
+                                 @estimators.map(&:feature_importances).reduce(&:+)
+                               end
         self
       end
 
@@ -125,18 +121,16 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples]) Predicted values per sample.
       def predict(x)
         check_sample_array(x)
-        n_samples = x.shape[0]
         n_outputs = @estimators.first.is_a?(Array) ? @estimators.size : 1
         if n_outputs > 1
-          predicted = Numo::DFloat.ones(n_samples, n_outputs) * @base_predictions
-          n_outputs.times do |n|
-            @estimators[n].each { |tree| predicted[true, n] += tree.predict(x) }
-          end
+          multivar_predict(x)
         else
-          predicted = Numo::DFloat.ones(n_samples) * @base_predictions
-          @estimators.each { |tree| predicted += tree.predict(x) }
+          if enable_parallel?
+            parallel_map(@params[:n_estimators]) { |n| @estimators[n].predict(x) }.reduce(&:+) + @base_predictions
+          else
+            @estimators.map { |tree| tree.predict(x) }.reduce(&:+) + @base_predictions
+          end
         end
-        predicted
       end
 
       # Return the index of the leaf that each sample reached.
@@ -224,6 +218,38 @@ module Rumale
           max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
           max_features: @params[:max_features], random_seed: @rng.rand(Rumale::Values.int_max)
         )
+      end
+
+      def multivar_estimators(x, y)
+        n_outputs = y.shape[1]
+        if enable_parallel?
+          parallel_map(n_outputs) { |n| partial_fit(x, y[true, n], @base_predictions[n]) }
+        else
+          Array.new(n_outputs) { |n| partial_fit(x, y[true, n], @base_predictions[n]) }
+        end
+      end
+
+      def multivar_feature_importances
+        n_outputs = @estimators.size
+        if enable_parallel?
+          parallel_map(n_outputs) { |n| @estimators[n].map(&:feature_importances).reduce(&:+) }.reduce(&:+)
+        else
+          Array.new(n_outputs) { |n| @estimators[n].map(&:feature_importances).reduce(&:+) }.reduce(&:+)
+        end
+      end
+
+      def multivar_predict(x)
+        n_outputs = @estimators.size
+        p = if enable_parallel?
+              parallel_map(n_outputs) do |n|
+                @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
+              end
+            else
+              Array.new(n_outputs) do |n|
+                @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
+              end
+            end
+        Numo::DFloat.asarray(p).transpose + @base_predictions
       end
     end
   end

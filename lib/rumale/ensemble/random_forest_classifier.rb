@@ -48,13 +48,17 @@ module Rumale
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
       # @param max_features [Integer] The number of features to consider when searching optimal split point.
       #   If nil is given, split process considers all features.
+      # @param n_jobs [Integer] The number of jobs for running the fit method in parallel.
+      #   If nil is given, the method does not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
+      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
       def initialize(n_estimators: 10,
                      criterion: 'gini', max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
-                     max_features: nil, random_seed: nil)
+                     max_features: nil, n_jobs: nil, random_seed: nil)
         check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                                          max_features: max_features, random_seed: random_seed)
+                                          max_features: max_features, n_jobs: n_jobs, random_seed: random_seed)
         check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
         check_params_string(criterion: criterion)
         check_params_positive(n_estimators: n_estimators, max_depth: max_depth,
@@ -67,6 +71,7 @@ module Rumale
         @params[:max_leaf_nodes] = max_leaf_nodes
         @params[:min_samples_leaf] = min_samples_leaf
         @params[:max_features] = max_features
+        @params[:n_jobs] = n_jobs
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @estimators = nil
@@ -89,19 +94,26 @@ module Rumale
         @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
-        @feature_importances = Numo::DFloat.zeros(n_features)
         # Construct forest.
-        @estimators = Array.new(@params[:n_estimators]) do
-          tree = Tree::DecisionTreeClassifier.new(
-            criterion: @params[:criterion], max_depth: @params[:max_depth],
-            max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @rng.rand(Rumale::Values.int_max)
-          )
-          bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
-          tree.fit(x[bootstrap_ids, true], y[bootstrap_ids])
-          @feature_importances += tree.feature_importances
-          tree
-        end
+        @estimators =
+          if enable_parallel?
+            rngs = Array.new(@params[:n_estimators]) { Random.new(@rng.rand(Rumale::Values.int_max)) }
+            parallel_map(@params[:n_estimators]) do |n|
+              bootstrap_ids = Array.new(n_samples) { rngs[n].rand(0...n_samples) }
+              plant_tree(rngs[n].rand(Rumale::Values.int_max)).fit(x[bootstrap_ids, true], y[bootstrap_ids])
+            end
+          else
+            Array.new(@params[:n_estimators]) do
+              bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
+              plant_tree(@rng.rand(Rumale::Values.int_max)).fit(x[bootstrap_ids, true], y[bootstrap_ids])
+            end
+          end
+        @feature_importances =
+          if enable_parallel?
+            parallel_map(@params[:n_estimators]) { |n| @estimators[n].feature_importances }.reduce(&:+)
+          else
+            @estimators.map(&:feature_importances).reduce(&:+)
+          end
         @feature_importances /= @feature_importances.sum
         self
       end
@@ -123,7 +135,12 @@ module Rumale
             ballot_box[n, class_id] += 1.0 unless class_id.nil?
           end
         end
-        Numo::Int32[*Array.new(n_samples) { |n| @classes[ballot_box[n, true].max_index] }]
+        predicted = if enable_parallel?
+                      parallel_map(n_samples) { |n| @classes[ballot_box[n, true].max_index] }
+                    else
+                      Array.new(n_samples) { |n| @classes[ballot_box[n, true].max_index] }
+                    end
+        Numo::Int32.asarray(predicted)
       end
 
       # Predict probability for samples.
@@ -174,6 +191,16 @@ module Rumale
         @feature_importances = obj[:feature_importances]
         @rng = obj[:rng]
         nil
+      end
+
+      private
+
+      def plant_tree(rnd_seed)
+        Tree::DecisionTreeClassifier.new(
+          criterion: @params[:criterion], max_depth: @params[:max_depth],
+          max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
+          max_features: @params[:max_features], random_seed: rnd_seed
+        )
       end
     end
   end

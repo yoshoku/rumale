@@ -56,19 +56,22 @@ module Rumale
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
       # @param max_features [Integer] The number of features to consider when searching optimal split point.
       #   If nil is given, split process considers all features.
+      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
+      #   If nil is given, the methods do not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
+      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
       def initialize(n_estimators: 100, learning_rate: 0.1, reg_lambda: 0.0, subsample: 1.0,
                      max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
-                     max_features: nil, random_seed: nil)
+                     max_features: nil, n_jobs: nil, random_seed: nil)
         check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                                          max_features: max_features, random_seed: random_seed)
+                                          max_features: max_features, n_jobs: n_jobs, random_seed: random_seed)
         check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
         check_params_float(learning_rate: learning_rate, reg_lambda: reg_lambda, subsample: subsample)
-        check_params_positive(n_estimators: n_estimators,
-                              learning_rate: learning_rate, reg_lambda: reg_lambda, subsample: subsample,
-                              max_depth: max_depth, max_leaf_nodes: max_leaf_nodes, min_samples_leaf: min_samples_leaf,
-                              max_features: max_features)
+        check_params_positive(n_estimators: n_estimators, learning_rate: learning_rate, reg_lambda: reg_lambda,
+                              subsample: subsample, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                              min_samples_leaf: min_samples_leaf, max_features: max_features)
         @params = {}
         @params[:n_estimators] = n_estimators
         @params[:learning_rate] = learning_rate
@@ -78,6 +81,7 @@ module Rumale
         @params[:max_leaf_nodes] = max_leaf_nodes
         @params[:min_samples_leaf] = min_samples_leaf
         @params[:max_features] = max_features
+        @params[:n_jobs] = n_jobs
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @estimators = nil
@@ -96,22 +100,16 @@ module Rumale
         check_sample_array(x)
         check_label_array(y)
         check_sample_label_size(x, y)
-
+        # initialize some variables.
         n_features = x.shape[1]
         @params[:max_features] = n_features if @params[:max_features].nil?
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
-
-        # train estimator.
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
+        # train estimator.
         if n_classes > 2
-          @base_predictions = Numo::DFloat.zeros(n_classes)
-          @estimators = Array.new(n_classes) do |n|
-            bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
-            y_mean = bin_y.mean
-            @base_predictions[n] = 0.5 * Numo::NMath.log((1.0 + y_mean) / (1.0 - y_mean))
-            partial_fit(x, bin_y, @base_predictions[n])
-          end
+          @base_predictions = multiclass_base_predictions(y)
+          @estimators = multiclass_estimators(x, y)
         else
           negative_label = y.to_a.uniq.min
           bin_y = Numo::DFloat.cast(y.ne(negative_label)) * 2 - 1
@@ -119,17 +117,12 @@ module Rumale
           @base_predictions = 0.5 * Numo::NMath.log((1.0 + y_mean) / (1.0 - y_mean))
           @estimators = partial_fit(x, bin_y, @base_predictions)
         end
-
         # calculate feature importances.
-        @feature_importances = Numo::DFloat.zeros(n_features)
-        if n_classes > 2
-          n_classes.times do |n|
-            @estimators[n].each { |tree| @feature_importances += tree.feature_importances }
-          end
-        else
-          @estimators.each { |tree| @feature_importances += tree.feature_importances }
-        end
-
+        @feature_importances = if n_classes > 2
+                                 multiclass_feature_importances
+                               else
+                                 @estimators.map(&:feature_importances).reduce(&:+)
+                               end
         self
       end
 
@@ -139,18 +132,12 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
         check_sample_array(x)
-        n_samples = x.shape[0]
         n_classes = @classes.size
         if n_classes > 2
-          scores = Numo::DFloat.ones(n_samples, n_classes) * @base_predictions
-          n_classes.times do |n|
-            @estimators[n].each { |tree| scores[true, n] += tree.predict(x) }
-          end
+          multiclass_scores(x)
         else
-          scores = Numo::DFloat.ones(n_samples) * @base_predictions
-          @estimators.each { |tree| scores += tree.predict(x) }
+          @estimators.map { |tree| tree.predict(x) }.reduce(&:+) + @base_predictions
         end
-        scores
       end
 
       # Predict class labels for samples.
@@ -272,6 +259,62 @@ module Rumale
           max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
           max_features: @params[:max_features], random_seed: @rng.rand(Rumale::Values.int_max)
         )
+      end
+
+      def multiclass_base_predictions(y)
+        n_classes = @classes.size
+        b = if enable_parallel?
+              parallel_map(n_classes) do |n|
+                bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+                y_mean = bin_y.mean
+                0.5 * Math.log((1.0 + y_mean) / (1.0 - y_mean))
+              end
+            else
+              Array.new(n_classes) do |n|
+                bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+                y_mean = bin_y.mean
+                0.5 * Math.log((1.0 + y_mean) / (1.0 - y_mean))
+              end
+            end
+        Numo::DFloat.asarray(b)
+      end
+
+      def multiclass_estimators(x, y)
+        n_classes = @classes.size
+        if enable_parallel?
+          parallel_map(n_classes) do |n|
+            bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+            partial_fit(x, bin_y, @base_predictions[n])
+          end
+        else
+          Array.new(n_classes) do |n|
+            bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+            partial_fit(x, bin_y, @base_predictions[n])
+          end
+        end
+      end
+
+      def multiclass_feature_importances
+        n_classes = @classes.size
+        if enable_parallel?
+          parallel_map(n_classes) { |n| @estimators[n].map(&:feature_importances).reduce(&:+) }.reduce(&:+)
+        else
+          Array.new(n_classes) { |n| @estimators[n].map(&:feature_importances).reduce(&:+) }.reduce(&:+)
+        end
+      end
+
+      def multiclass_scores(x)
+        n_classes = @classes.size
+        s = if enable_parallel?
+              parallel_map(n_classes) do |n|
+                @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
+              end
+            else
+              Array.new(n_classes) do |n|
+                @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
+              end
+            end
+        Numo::DFloat.asarray(s).transpose + @base_predictions
       end
     end
   end

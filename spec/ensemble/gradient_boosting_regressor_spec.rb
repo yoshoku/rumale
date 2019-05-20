@@ -11,6 +11,9 @@ RSpec.describe Rumale::Ensemble::GradientBoostingRegressor do
   let(:n_outputs) { y_mult.shape[1] }
   let(:n_estimators) { 10 }
   let(:estimator) { described_class.new(n_estimators: n_estimators, learning_rate: 0.9, reg_lambda: 0.001, max_features: 1, random_seed: 9) }
+  let(:estimator_parallel) do
+    described_class.new(n_estimators: n_estimators, learning_rate: 0.9, reg_lambda: 0.001, max_features: 1, n_jobs: -1, random_seed: 9)
+  end
 
   it 'learns the model for single regression problem.' do
     estimator.fit(x, y)
@@ -48,6 +51,46 @@ RSpec.describe Rumale::Ensemble::GradientBoostingRegressor do
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted.shape[1]).to eq(n_outputs)
     expect(estimator.score(x, y_mult)).to be_within(0.02).of(1.0)
+    expect(leaf_ids.class).to eq(Numo::Int32)
+    expect(leaf_ids.shape).to eq([n_samples, n_estimators, n_outputs])
+  end
+
+  it 'learns the model for single regression problem in parallel.' do
+    estimator_parallel.fit(x, y)
+    leaf_ids = estimator_parallel.apply(x)
+    predicted = estimator_parallel.predict(x)
+    expect(estimator_parallel.params[:n_estimators]).to eq(n_estimators)
+    expect(estimator_parallel.params[:max_features]).to eq(1)
+    expect(estimator_parallel.estimators.class).to eq(Array)
+    expect(estimator_parallel.estimators[0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+    expect(estimator_parallel.estimators.size).to eq(n_estimators)
+    expect(estimator_parallel.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.feature_importances.shape[0]).to eq(n_features)
+    expect(estimator_parallel.feature_importances.shape[1]).to be_nil
+    expect(predicted.class).to eq(Numo::DFloat)
+    expect(predicted.shape[0]).to eq(n_samples)
+    expect(predicted.shape[1]).to be_nil
+    expect(estimator_parallel.score(x, y)).to be_within(0.02).of(1.0)
+    expect(leaf_ids.class).to eq(Numo::Int32)
+    expect(leaf_ids.shape).to eq([n_samples, n_estimators])
+  end
+
+  it 'learns the model for multiple regression problem in parallel.' do
+    estimator_parallel.fit(x, y_mult)
+    leaf_ids = estimator_parallel.apply(x)
+    predicted = estimator_parallel.predict(x)
+    expect(estimator_parallel.estimators.class).to eq(Array)
+    expect(estimator_parallel.estimators[0].class).to eq(Array)
+    expect(estimator_parallel.estimators[0][0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+    expect(estimator_parallel.estimators.size).to eq(n_outputs)
+    expect(estimator_parallel.estimators[0].size).to eq(n_estimators)
+    expect(estimator_parallel.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.feature_importances.shape[0]).to eq(n_features)
+    expect(estimator_parallel.feature_importances.shape[1]).to be_nil
+    expect(predicted.class).to eq(Numo::DFloat)
+    expect(predicted.shape[0]).to eq(n_samples)
+    expect(predicted.shape[1]).to eq(n_outputs)
+    expect(estimator_parallel.score(x, y_mult)).to be_within(0.02).of(1.0)
     expect(leaf_ids.class).to eq(Numo::Int32)
     expect(leaf_ids.shape).to eq([n_samples, n_estimators, n_outputs])
   end

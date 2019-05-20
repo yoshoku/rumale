@@ -9,6 +9,9 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
   let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
   let(:n_estimators) { 10 }
   let(:estimator) { described_class.new(n_estimators: n_estimators, max_depth: 2, max_features: 2, random_seed: 1) }
+  let(:estimator_parallel) do
+    described_class.new(n_estimators: n_estimators, max_depth: 2, max_features: 2, n_jobs: -1, random_seed: 1)
+  end
 
   it 'classifies two clusters data.' do
     _n_samples, n_features = x_bin.shape
@@ -53,6 +56,20 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
     expect(predicted).to eq(y_mlt)
   end
 
+  it 'classifies three clusters data in parallel.' do
+    _n_samples, n_features = x_mlt.shape
+    estimator_parallel.fit(x_mlt, y_mlt)
+    expect(estimator_parallel.estimators.class).to eq(Array)
+    expect(estimator_parallel.estimators.size).to eq(n_estimators)
+    expect(estimator_parallel.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
+    expect(estimator_parallel.classes.class).to eq(Numo::Int32)
+    expect(estimator_parallel.classes.size).to eq(3)
+    expect(estimator_parallel.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.feature_importances.shape[0]).to eq(n_features)
+    expect(estimator_parallel.feature_importances.shape[1]).to be_nil
+    expect(estimator_parallel.score(x_mlt, y_mlt)).to eq(1.0)
+  end
+
   it 'returns leaf index that each sample reached' do
     n_samples, = x_mlt.shape
     estimator.fit(x_mlt, y_mlt)
@@ -66,6 +83,7 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
     estimator.fit(x_mlt, y_mlt)
     copied = Marshal.load(Marshal.dump(estimator))
     expect(estimator.class).to eq(copied.class)
+    expect(estimator.params).to match(copied.params)
     expect(estimator.estimators.size).to eq(copied.estimators.size)
     expect(estimator.classes).to eq(copied.classes)
     expect(estimator.feature_importances).to eq(copied.feature_importances)
