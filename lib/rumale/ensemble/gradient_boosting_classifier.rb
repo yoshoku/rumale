@@ -264,11 +264,13 @@ module Rumale
       def multiclass_base_predictions(y)
         n_classes = @classes.size
         b = if enable_parallel?
+              # :nocov:
               parallel_map(n_classes) do |n|
                 bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
                 y_mean = bin_y.mean
                 0.5 * Math.log((1.0 + y_mean) / (1.0 - y_mean))
               end
+              # :nocov:
             else
               Array.new(n_classes) do |n|
                 bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
@@ -282,10 +284,12 @@ module Rumale
       def multiclass_estimators(x, y)
         n_classes = @classes.size
         if enable_parallel?
+          # :nocov:
           parallel_map(n_classes) do |n|
             bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
             partial_fit(x, bin_y, @base_predictions[n])
           end
+          # :nocov:
         else
           Array.new(n_classes) do |n|
             bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
@@ -306,9 +310,11 @@ module Rumale
       def multiclass_scores(x)
         n_classes = @classes.size
         s = if enable_parallel?
+              # :nocov:
               parallel_map(n_classes) do |n|
                 @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
               end
+              # :nocov:
             else
               Array.new(n_classes) do |n|
                 @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)

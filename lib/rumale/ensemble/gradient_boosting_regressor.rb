@@ -241,9 +241,11 @@ module Rumale
       def multivar_predict(x)
         n_outputs = @estimators.size
         p = if enable_parallel?
+              # :nocov:
               parallel_map(n_outputs) do |n|
                 @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
               end
+              # :nocov:
             else
               Array.new(n_outputs) do |n|
                 @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)

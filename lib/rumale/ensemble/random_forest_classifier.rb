@@ -98,10 +98,12 @@ module Rumale
         @estimators =
           if enable_parallel?
             rngs = Array.new(@params[:n_estimators]) { Random.new(@rng.rand(Rumale::Values.int_max)) }
+            # :nocov:
             parallel_map(@params[:n_estimators]) do |n|
               bootstrap_ids = Array.new(n_samples) { rngs[n].rand(0...n_samples) }
               plant_tree(rngs[n].rand(Rumale::Values.int_max)).fit(x[bootstrap_ids, true], y[bootstrap_ids])
             end
+            # :nocov:
           else
             Array.new(@params[:n_estimators]) do
               bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }

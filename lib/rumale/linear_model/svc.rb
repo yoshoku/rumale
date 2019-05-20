@@ -87,6 +87,7 @@ module Rumale
           @bias_term = Numo::DFloat.zeros(n_classes)
           @prob_param = Numo::DFloat.zeros(n_classes, 2)
           if enable_parallel?
+            # :nocov:
             models = parallel_map(n_classes) do |n|
               bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
               w, b = partial_fit(x, bin_y)
@@ -97,6 +98,7 @@ module Rumale
                   end
               [w, b, p]
             end
+            # :nocov:
             n_classes.times { |n| @weight_vec[n, true], @bias_term[n], @prob_param[n, true] = models[n] }
           else
             n_classes.times do |n|
