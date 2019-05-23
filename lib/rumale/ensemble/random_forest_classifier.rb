@@ -126,21 +126,14 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         check_sample_array(x)
-        n_samples, = x.shape
-        n_classes = @classes.size
-        classes_arr = @classes.to_a
-        ballot_box = Numo::DFloat.zeros(n_samples, n_classes)
-        @estimators.each do |tree|
-          predicted = tree.predict(x)
-          n_samples.times do |n|
-            class_id = classes_arr.index(predicted[n])
-            ballot_box[n, class_id] += 1.0 unless class_id.nil?
-          end
-        end
+        n_samples = x.shape[0]
+        n_estimators = @estimators.size
         predicted = if enable_parallel?
-                      parallel_map(n_samples) { |n| @classes[ballot_box[n, true].max_index] }
+                      predict_set = parallel_map(n_estimators) { |n| @estimators[n].predict(x).to_a }.transpose
+                      parallel_map(n_samples) { |n| predict_set[n].group_by { |v| v }.max_by { |_k, v| v.size }.first }
                     else
-                      Array.new(n_samples) { |n| @classes[ballot_box[n, true].max_index] }
+                      predict_set = @estimators.map { |tree| tree.predict(x).to_a }.transpose
+                      Array.new(n_samples) { |n| predict_set[n].group_by { |v| v }.max_by { |_k, v| v.size }.first }
                     end
         Numo::Int32.asarray(predicted)
       end
@@ -151,18 +144,12 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         check_sample_array(x)
-        n_samples, = x.shape
-        n_classes = @classes.size
-        classes_arr = @classes.to_a
-        ballot_box = Numo::DFloat.zeros(n_samples, n_classes)
-        @estimators.each do |tree|
-          probs = tree.predict_proba(x)
-          tree.classes.size.times do |n|
-            class_id = classes_arr.index(tree.classes[n])
-            ballot_box[true, class_id] += probs[true, n] unless class_id.nil?
-          end
+        n_estimators = @estimators.size
+        if enable_parallel?
+          parallel_map(n_estimators) { |n| predict_proba_tree(@estimators[n], x) }.reduce(&:+) / n_estimators
+        else
+          @estimators.map { |tree| predict_proba_tree(tree, x) }.reduce(&:+) / n_estimators
         end
-        (ballot_box.transpose / ballot_box.sum(axis: 1)).transpose
       end
 
       # Return the index of the leaf that each sample reached.
@@ -203,6 +190,19 @@ module Rumale
           max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
           max_features: @params[:max_features], random_seed: rnd_seed
         )
+      end
+
+      def predict_proba_tree(tree, x)
+        # initialize some variables.
+        n_samples = x.shape[0]
+        base_classes = @classes.to_a
+        n_classes = base_classes.size
+        class_ids = tree.classes.map { |c| base_classes.index(c) }
+        # predict probabilities.
+        probs = Numo::DFloat.zeros(n_samples, n_classes)
+        tree_probs = tree.predict_proba(x)
+        class_ids.each_with_index { |i, j| probs[true, i] = tree_probs[true, j] }
+        probs
       end
     end
   end

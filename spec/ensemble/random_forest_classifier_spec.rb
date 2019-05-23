@@ -10,7 +10,7 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
   let(:n_estimators) { 10 }
   let(:estimator) { described_class.new(n_estimators: n_estimators, max_depth: 2, max_features: 2, random_seed: 1) }
   let(:estimator_parallel) do
-    described_class.new(n_estimators: n_estimators, max_depth: 2, max_features: 2, n_jobs: -1, random_seed: 1)
+    described_class.new(n_estimators: n_estimators, max_depth: 1, max_features: 1, n_jobs: -1, random_seed: 1)
   end
 
   it 'classifies two clusters data.' do
@@ -57,8 +57,11 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
   end
 
   it 'classifies three clusters data in parallel.' do
-    _n_samples, n_features = x_mlt.shape
+    n_samples, n_features = x_mlt.shape
     estimator_parallel.fit(x_mlt, y_mlt)
+    probs = estimator_parallel.predict_proba(x_mlt)
+    classes = y_mlt.to_a.uniq.sort
+    predicted = Numo::Int32.asarray(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })
     expect(estimator_parallel.estimators.class).to eq(Array)
     expect(estimator_parallel.estimators.size).to eq(n_estimators)
     expect(estimator_parallel.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
@@ -68,6 +71,10 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
     expect(estimator_parallel.feature_importances.shape[0]).to eq(n_features)
     expect(estimator_parallel.feature_importances.shape[1]).to be_nil
     expect(estimator_parallel.score(x_mlt, y_mlt)).to eq(1.0)
+    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.shape[0]).to eq(n_samples)
+    expect(probs.shape[1]).to eq(3)
+    expect(predicted).to eq(y_mlt)
   end
 
   it 'returns leaf index that each sample reached' do
