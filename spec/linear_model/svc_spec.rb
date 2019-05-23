@@ -10,7 +10,7 @@ RSpec.describe Rumale::LinearModel::SVC do
   let(:estimator) { described_class.new(random_seed: 1) }
   let(:estimator_prob) { described_class.new(probability: true, random_seed: 1) }
   let(:estimator_bias) { described_class.new(fit_bias: true, random_seed: 1) }
-  let(:estimator_parallel) { described_class.new(probability: true, n_jobs: -1, random_seed: 1) }
+  let(:estimator_parallel) { described_class.new(fit_bias: true, probability: true, n_jobs: -1, random_seed: 1) }
 
   it 'classifies two clusters.' do
     n_samples, n_features = x_bin.shape
