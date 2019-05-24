@@ -1,3 +1,15 @@
+# 0.11.0
+- Introduce [Parallel gem](https://github.com/grosser/parallel) to improve execution speed for one-vs-the-rest and bagging methods.
+- Add the n_jobs parameter that specifies the number of jobs for parallel processing in some estimators belong to the Rumale::LinearModel, Rumale::PolynomialModel, and Rumale::Ensemble.
+- The n_jobs parameter is valid only when parallel gem is loaded.
+
+```ruby
+require 'rumale'
+require 'parallel'
+
+svc = Rumale::LinearModel::SVC.new(n_jobs: -1)
+```
+
 # 0.10.0
 - Add class for t-distributed Stochastic Neighborhood Embedding.
 - Fix bug of zero division on min-max scaling class.
