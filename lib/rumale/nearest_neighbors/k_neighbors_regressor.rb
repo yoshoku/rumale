@@ -10,7 +10,7 @@ module Rumale
     #
     # @example
     #   estimator =
-    #     Rumale::NearestNeighbors::KNeighborsRegressor.new(n_neighbors = 5)
+    #     Rumale::NearestNeighbors::KNeighborsRegressor.new(n_neighbors: 5)
     #   estimator.fit(training_samples, traininig_target_values)
     #   results = estimator.predict(testing_samples)
     #

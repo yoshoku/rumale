@@ -11,7 +11,7 @@ module Rumale
     #
     # @example
     #   estimator =
-    #     Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors = 5)
+    #     Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 5)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
