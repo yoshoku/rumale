@@ -88,10 +88,11 @@ module Rumale
         @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         single_target = y.shape[1].nil?
+        sub_rng = @rng.dup
+        rngs = Array.new(@params[:n_estimators]) { Random.new(sub_rng.rand(Rumale::Values.int_max)) }
         # Construct forest.
         @estimators =
           if enable_parallel?
-            rngs = Array.new(@params[:n_estimators]) { Random.new(@rng.rand(Rumale::Values.int_max)) }
             # :nocov:
             parallel_map(@params[:n_estimators]) do |n|
               bootstrap_ids = Array.new(n_samples) { rngs[n].rand(0...n_samples) }
@@ -100,9 +101,9 @@ module Rumale
             end
             # :nocov:
           else
-            Array.new(@params[:n_estimators]) do
-              bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
-              tree = plant_tree(@rng.rand(Rumale::Values.int_max))
+            Array.new(@params[:n_estimators]) do |n|
+              bootstrap_ids = Array.new(n_samples) { rngs[n].rand(0...n_samples) }
+              tree = plant_tree(rngs[n].rand(Rumale::Values.int_max))
               tree.fit(x[bootstrap_ids, true], single_target ? y[bootstrap_ids] : y[bootstrap_ids, true])
             end
           end

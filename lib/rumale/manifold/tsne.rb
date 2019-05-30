@@ -155,7 +155,8 @@ module Rumale
           pca.fit_transform(x)
         else
           n_samples = x.shape[0]
-          Rumale::Utils.rand_normal([n_samples, @params[:n_components]], @rng, 0, 0.0001)
+          sub_rng = @rng.dup
+          Rumale::Utils.rand_normal([n_samples, @params[:n_components]], sub_rng, 0, 0.0001)
         end
       end
 

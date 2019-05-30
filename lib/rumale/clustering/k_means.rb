@@ -120,7 +120,8 @@ module Rumale
       def init_cluster_centers(x)
         # random initialize
         n_samples = x.shape[0]
-        rand_id = [*0...n_samples].sample(@params[:n_clusters], random: @rng)
+        sub_rng = @rng.dup
+        rand_id = [*0...n_samples].sample(@params[:n_clusters], random: sub_rng)
         @cluster_centers = x[rand_id, true].dup
         return unless @params[:init] == 'k-means++'
         # k-means++ initialize
@@ -129,7 +130,7 @@ module Rumale
           min_distances = distance_matrix.flatten[distance_matrix.min_index(axis: 1)]
           probs = min_distances**2 / (min_distances**2).sum
           cum_probs = probs.cumsum
-          selected_id = cum_probs.gt(@rng.rand).where.to_a.first
+          selected_id = cum_probs.gt(sub_rng.rand).where.to_a.first
           @cluster_centers[n, true] = x[selected_id, true].dup
         end
       end

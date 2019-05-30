@@ -74,14 +74,15 @@ module Rumale
           raise RangeError,
                 'The total number of samples in test split and train split must be not more than the number of samples.'
         end
+        sub_rng = @rng.dup
         # Returns array consisting of the training and testing ids for each fold.
         dataset_ids = [*0...n_samples]
         Array.new(@n_splits) do
-          test_ids = dataset_ids.sample(n_test_samples, random: @rng)
+          test_ids = dataset_ids.sample(n_test_samples, random: sub_rng)
           train_ids = if @train_size.nil?
                         dataset_ids - test_ids
                       else
-                        (dataset_ids - test_ids).sample(n_train_samples, random: @rng)
+                        (dataset_ids - test_ids).sample(n_train_samples, random: sub_rng)
                       end
           [train_ids, test_ids]
         end

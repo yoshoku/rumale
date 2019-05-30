@@ -93,6 +93,7 @@ module Rumale
         @n_leaves = 0
         @leaf_weights = []
         @feature_importances = Numo::DFloat.zeros(n_features)
+        @sub_rng = @rng.dup
         # Build tree.
         build_tree(x, y, g, h)
         @leaf_weights = Numo::DFloat[*@leaf_weights]
@@ -221,7 +222,7 @@ module Rumale
       end
 
       def rand_ids(n)
-        [*0...n].sample(@params[:max_features], random: @rng)
+        [*0...n].sample(@params[:max_features], random: @sub_rng)
       end
     end
   end

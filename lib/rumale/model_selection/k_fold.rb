@@ -60,9 +60,10 @@ module Rumale
           raise ArgumentError,
                 'The value of n_splits must be not less than 2 and not more than the number of samples.'
         end
+        sub_rng = @rng.dup
         # Splits dataset ids to each fold.
         dataset_ids = [*0...n_samples]
-        dataset_ids.shuffle!(random: @rng) if @shuffle
+        dataset_ids.shuffle!(random: sub_rng) if @shuffle
         fold_sets = Array.new(@n_splits) do |n|
           n_fold_samples = n_samples / @n_splits
           n_fold_samples += 1 if n < n_samples % @n_splits

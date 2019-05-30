@@ -216,10 +216,11 @@ module Rumale
         n_sub_samples = [n_samples, [(n_samples * @params[:subsample]).to_i, 1].max].min
         whole_ids = Array.new(n_samples) { |v| v }
         y_pred = Numo::DFloat.ones(n_samples) * init_pred
+        sub_rng = @rng.dup
         # grow trees.
         @params[:n_estimators].times do |_t|
           # subsampling
-          ids = whole_ids.sample(n_sub_samples, random: @rng)
+          ids = whole_ids.sample(n_sub_samples, random: sub_rng)
           x_sub = x[ids, true]
           y_sub = y[ids]
           y_pred_sub = y_pred[ids]

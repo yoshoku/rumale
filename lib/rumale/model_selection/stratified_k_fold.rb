@@ -65,7 +65,8 @@ module Rumale
                 'The value of n_splits must be not less than 2 and not more than the number of samples in each class.'
         end
         # Splits dataset ids of each class to each fold.
-        fold_sets_each_class = y.to_a.uniq.map { |label| fold_sets(y, label) }
+        sub_rng = @rng.dup
+        fold_sets_each_class = y.to_a.uniq.map { |label| fold_sets(y, label, sub_rng) }
         # Returns array consisting of the training and testing ids for each fold.
         Array.new(@n_splits) { |fold_id| train_test_sets(fold_sets_each_class, fold_id) }
       end
@@ -76,9 +77,9 @@ module Rumale
         y.to_a.uniq.map { |label| y.eq(label).where.size }.all? { |n_samples| @n_splits.between?(2, n_samples) }
       end
 
-      def fold_sets(y, label)
+      def fold_sets(y, label, sub_rng)
         sample_ids = y.eq(label).where.to_a
-        sample_ids.shuffle!(random: @rng) if @shuffle
+        sample_ids.shuffle!(random: sub_rng) if @shuffle
         n_samples = sample_ids.size
         Array.new(@n_splits) do |n|
           n_fold_samples = n_samples / @n_splits

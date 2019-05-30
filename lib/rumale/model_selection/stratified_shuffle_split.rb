@@ -62,6 +62,7 @@ module Rumale
         check_sample_label_size(x, y)
         # Initialize and check some variables.
         train_sz = @train_size.nil? ? 1.0 - @test_size : @train_size
+        sub_rng = @rng.dup
         # Check the number of samples in each class.
         unless valid_n_splits?(y)
           raise ArgumentError,
@@ -88,11 +89,11 @@ module Rumale
             n_samples = sample_ids.size
             n_test_samples = (@test_size * n_samples).to_i
             n_train_samples = (train_sz * n_samples).to_i
-            test_ids += sample_ids.sample(n_test_samples, random: @rng)
+            test_ids += sample_ids.sample(n_test_samples, random: sub_rng)
             train_ids += if @train_size.nil?
                            sample_ids - test_ids
                          else
-                           (sample_ids - test_ids).sample(n_train_samples, random: @rng)
+                           (sample_ids - test_ids).sample(n_train_samples, random: sub_rng)
                          end
           end
           [train_ids, test_ids]

@@ -75,8 +75,9 @@ module Rumale
         n_features = x.shape[1]
         @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
+        sub_rng = @rng.dup
         # Construct forest.
-        rng_seeds = Array.new(@params[:n_estimators]) { @rng.rand(Rumale::Values.int_max) }
+        rng_seeds = Array.new(@params[:n_estimators]) { sub_rng.rand(Rumale::Values.int_max) }
         @estimators = if enable_parallel?
                         parallel_map(@params[:n_estimators]) { |n| plant_tree(rng_seeds[n]).fit(x, y) }
                       else

@@ -73,6 +73,7 @@ module Rumale
         @params[:max_features] = [@params[:max_features], n_features].min
         @n_leaves = 0
         @leaf_values = []
+        @sub_rng = @rng.dup
         build_tree(x, y)
         eval_importance(n_samples, n_features)
         @leaf_values = Numo::DFloat.cast(@leaf_values)

@@ -63,13 +63,14 @@ module Rumale
         # initialize some variables.
         @components = nil
         n_samples, n_features = x.shape
+        sub_rng = @rng.dup
         # centering.
         @mean = x.mean(0)
         centered_x = x - @mean
         # optimization.
         covariance_mat = centered_x.transpose.dot(centered_x) / (n_samples - 1)
         @params[:n_components].times do
-          comp_vec = random_vec(n_features)
+          comp_vec = Rumale::Utils.rand_uniform(n_features, sub_rng)
           @params[:max_iter].times do
             updated = orthogonalize(covariance_mat.dot(comp_vec))
             break if (updated.dot(comp_vec) - 1).abs < @params[:tol]
@@ -138,10 +139,6 @@ module Rumale
           pcvec -= delta
         end
         pcvec / Math.sqrt((pcvec**2).sum.abs) + 1.0e-12
-      end
-
-      def random_vec(n_features)
-        Numo::DFloat[*(Array.new(n_features) { @rng.rand })]
       end
     end
   end

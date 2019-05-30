@@ -102,14 +102,15 @@ module Rumale
         @estimators = []
         @estimator_weights = []
         @feature_importances = Numo::DFloat.zeros(n_features)
+        sub_rng = @rng.dup
         # Construct forest.
         @params[:n_estimators].times do |_t|
           # Fit weak learner.
-          ids = Rumale::Utils.choice_ids(n_samples, observation_weights, @rng)
+          ids = Rumale::Utils.choice_ids(n_samples, observation_weights, sub_rng)
           tree = Tree::DecisionTreeRegressor.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @rng.rand(Rumale::Values.int_max)
+            max_features: @params[:max_features], random_seed: sub_rng.rand(Rumale::Values.int_max)
           )
           tree.fit(x[ids, true], y[ids])
           p = tree.predict(x)

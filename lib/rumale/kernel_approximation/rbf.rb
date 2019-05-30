@@ -63,8 +63,9 @@ module Rumale
         check_sample_array(x)
 
         n_features = x.shape[1]
+        sub_rng = @rng.dup
         @params[:n_components] = 2 * n_features if @params[:n_components] <= 0
-        @random_mat = Rumale::Utils.rand_normal([n_features, @params[:n_components]], @rng) * (2.0 * @params[:gamma])**0.5
+        @random_mat = Rumale::Utils.rand_normal([n_features, @params[:n_components]], sub_rng) * (2.0 * @params[:gamma])**0.5
         n_half_components = @params[:n_components] / 2
         @random_vec = Numo::DFloat.zeros(@params[:n_components] - n_half_components).concatenate(
           Numo::DFloat.ones(n_half_components) * (0.5 * Math::PI)

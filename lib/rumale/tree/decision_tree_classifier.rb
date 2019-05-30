@@ -79,6 +79,7 @@ module Rumale
         @classes = Numo::Int32.asarray(uniq_y)
         @n_leaves = 0
         @leaf_labels = []
+        @sub_rng = @rng.dup
         build_tree(x, y.map { |v| uniq_y.index(v) })
         eval_importance(n_samples, n_features)
         @leaf_labels = Numo::Int32[*@leaf_labels]

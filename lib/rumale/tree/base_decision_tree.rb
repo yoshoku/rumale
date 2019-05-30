@@ -113,7 +113,7 @@ module Rumale
       end
 
       def rand_ids(n)
-        [*0...n].sample(@params[:max_features], random: @rng)
+        [*0...n].sample(@params[:max_features], random: @sub_rng)
       end
 
       def best_split(_features, _y, _impurity)

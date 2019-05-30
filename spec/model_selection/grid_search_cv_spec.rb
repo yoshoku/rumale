@@ -79,17 +79,18 @@ RSpec.describe Rumale::ModelSelection::GridSearchCV do
   end
 
   it 'searches the best parameter of regressor.' do
-    param_grid = { n_estimator: [1, 10], max_features: [1, 2] }
+    param_grid = { n_estimator: [5, 10], max_features: [1, 2] }
     gs = described_class.new(estimator: rfr, param_grid: param_grid, splitter: kfold,
                              evaluator: mae, greater_is_better: false)
     gs.fit(x_reg, y_reg)
-
-    expect(gs.best_score).to eq(gs.cv_results[:mean_test_score].min)
-    expect(gs.best_index).to eq(gs.cv_results[:mean_test_score].index(gs.cv_results[:mean_test_score].min))
-    expect(gs.best_params).to eq(n_estimator: 10, max_features: 2)
-    expect(gs.best_estimator.params[:n_estimator]).to eq(10)
-    expect(gs.best_estimator.params[:max_features]).to eq(2)
-    expect(gs.score(x_reg, y_reg)).to be_within(0.01).of(1.0)
+    aggregate_failures do
+      expect(gs.best_score).to eq(gs.cv_results[:mean_test_score].min)
+      expect(gs.best_index).to eq(gs.cv_results[:mean_test_score].index(gs.cv_results[:mean_test_score].min))
+      expect(gs.best_params).to eq(n_estimator: 5, max_features: 2)
+      expect(gs.best_estimator.params[:n_estimator]).to eq(5)
+      expect(gs.best_estimator.params[:max_features]).to eq(2)
+      expect(gs.score(x_reg, y_reg)).to be_within(0.01).of(1.0)
+    end
   end
 
   it 'raises TypeError given a invalid param grid.' do

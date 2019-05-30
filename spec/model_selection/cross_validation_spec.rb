@@ -52,11 +52,11 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
   it 'also calculates scores of training dataset.' do
     cv = described_class.new(estimator: kernel_svc, splitter: skfold, return_train_score: true)
     report = cv.perform(kernel_mat, labels)
+    mean_test_score = report[:test_score].inject(:+) / n_splits
+    mean_train_score = report[:train_score].inject(:+) / n_splits
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
-    mean_test_score = report[:test_score].inject(:+) / n_splits
-    mean_train_score = report[:train_score].inject(:+) / n_splits
     expect(mean_test_score).to be_within(0.1).of(0.9)
     expect(mean_train_score).to eq(1.0)
   end
@@ -64,12 +64,12 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
   it 'performs k-fold cross validation with kernel svc to evaluate the results using F1-score.' do
     cv = described_class.new(estimator: kernel_svc, splitter: kfold, evaluator: f_score, return_train_score: true)
     report = cv.perform(kernel_mat, labels)
+    mean_test_score = report[:test_score].inject(:+) / n_splits
+    mean_train_score = report[:train_score].inject(:+) / n_splits
     expect(cv.evaluator.class).to eq(Rumale::EvaluationMeasure::FScore)
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
-    mean_test_score = report[:test_score].inject(:+) / n_splits
-    mean_train_score = report[:train_score].inject(:+) / n_splits
     expect(mean_test_score).to be_within(0.1).of(0.9)
     expect(mean_train_score).to eq(1.0)
   end
@@ -77,14 +77,14 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
   it 'performs k-fold cross validation with logistic regression to evaluate the results using Log-loss.' do
     cv = described_class.new(estimator: logit_reg, splitter: kfold, evaluator: log_loss, return_train_score: true)
     report = cv.perform(kernel_mat, labels)
+    mean_test_score = report[:test_score].inject(:+) / n_splits
+    mean_train_score = report[:train_score].inject(:+) / n_splits
     expect(cv.evaluator.class).to eq(Rumale::EvaluationMeasure::LogLoss)
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
-    mean_test_score = report[:test_score].inject(:+) / n_splits
-    mean_train_score = report[:train_score].inject(:+) / n_splits
-    expect(mean_test_score).to be_within(5.0e-6).of(0.849992)
-    expect(mean_train_score).to be_within(5.0e-6).of(0.852817)
+    expect(mean_test_score).to be_within(5.0e-5).of(0.8479)
+    expect(mean_train_score).to be_within(5.0e-5).of(0.8541)
   end
 
   describe 'private method' do

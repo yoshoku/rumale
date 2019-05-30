@@ -51,7 +51,7 @@ module Rumale
       def partial_fit(x, y)
         # Initialize some variables.
         n_samples, n_features = x.shape
-        rand_ids = [*0...n_samples].shuffle(random: @rng)
+        rand_ids = [*0...n_samples].shuffle(random: @rng.dup)
         weight_vec = Numo::DFloat.zeros(n_features + 1)
         factor_mat = Numo::DFloat.zeros(@params[:n_factors], n_features)
         weight_optimizer = @params[:optimizer].dup

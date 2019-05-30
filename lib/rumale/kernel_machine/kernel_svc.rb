@@ -202,10 +202,11 @@ module Rumale
         n_training_samples = x.shape[0]
         rand_ids = []
         weight_vec = Numo::DFloat.zeros(n_training_samples)
+        sub_rng = @rng.dup
         # Start optimization.
         @params[:max_iter].times do |t|
           # random sampling
-          rand_ids = [*0...n_training_samples].shuffle(random: @rng) if rand_ids.empty?
+          rand_ids = [*0...n_training_samples].shuffle(random: sub_rng) if rand_ids.empty?
           target_id = rand_ids.shift
           # update the weight vector
           func = (weight_vec * bin_y).dot(x[target_id, true].transpose).to_f

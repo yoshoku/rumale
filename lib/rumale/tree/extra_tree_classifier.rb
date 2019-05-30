@@ -104,7 +104,7 @@ module Rumale
       private
 
       def best_split(features, y, whole_impurity)
-        threshold = @rng.rand(features.min..features.max)
+        threshold = @sub_rng.rand(features.min..features.max)
         l_ids = features.le(threshold).where
         r_ids = features.gt(threshold).where
         l_impurity = l_ids.empty? ? 0.0 : impurity(y[l_ids, true])

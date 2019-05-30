@@ -113,8 +113,9 @@ module Rumale
         # initialize some variables.
         n_samples, n_features = x.shape
         scale = Math.sqrt(x.mean / @params[:n_components])
-        @components = Rumale::Utils.rand_uniform([@params[:n_components], n_features], @rng) * scale if update_comps
-        coefficients = Rumale::Utils.rand_uniform([n_samples, @params[:n_components]], @rng) * scale
+        sub_rng = @rng.dup
+        @components = Rumale::Utils.rand_uniform([@params[:n_components], n_features], sub_rng) * scale if update_comps
+        coefficients = Rumale::Utils.rand_uniform([n_samples, @params[:n_components]], sub_rng) * scale
         # optimization.
         @params[:max_iter].times do
           # update

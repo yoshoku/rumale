@@ -22,8 +22,12 @@ module Rumale
     # @!visibility private
     def rand_uniform(shape, rng = nil)
       rng ||= Random.new
-      rnd_vals = Array.new(shape.inject(:*)) { rng.rand }
-      Numo::DFloat.asarray(rnd_vals).reshape(shape[0], shape[1])
+      if shape.is_a?(Array)
+        rnd_vals = Array.new(shape.inject(:*)) { rng.rand }
+        Numo::DFloat.asarray(rnd_vals).reshape(shape[0], shape[1])
+      else
+        Numo::DFloat.asarray(Array.new(shape) { rng.rand })
+      end
     end
 
     # @!visibility private

@@ -95,6 +95,7 @@ module Rumale
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         n_classes = @classes.shape[0]
+        sub_rng = @rng.dup
         ## Boosting.
         classes_arr = @classes.to_a
         y_codes = Numo::DFloat.zeros(n_samples, n_classes) - 1.fdiv(n_classes - 1)
@@ -102,12 +103,12 @@ module Rumale
         observation_weights = Numo::DFloat.zeros(n_samples) + 1.fdiv(n_samples)
         @params[:n_estimators].times do |_t|
           # Fit classfier.
-          ids = Rumale::Utils.choice_ids(n_samples, observation_weights, @rng)
+          ids = Rumale::Utils.choice_ids(n_samples, observation_weights, sub_rng)
           break if y[ids].to_a.uniq.size != n_classes
           tree = Tree::DecisionTreeClassifier.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-            max_features: @params[:max_features], random_seed: @rng.rand(Rumale::Values.int_max)
+            max_features: @params[:max_features], random_seed: sub_rng.rand(Rumale::Values.int_max)
           )
           tree.fit(x[ids, true], y[ids])
           # Calculate estimator error.
