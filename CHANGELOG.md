@@ -1,3 +1,25 @@
+# 0.12.0
+## Breaking changes
+- For reproductivity, Rumale changes to not repeatedly use the same random number generator in the same estimator.
+In the training phase, estimators use a copy of the random number generator created in the initialize method.
+Even with the same algorithm and the same data, the order of random number generation
+may make slight differences in learning results.
+By this change, even if the fit method is executed multiple times,
+the same learning result can be obtained if the same data is given.
+
+```ruby
+svc = Rumale::LinearModel::SVC.new(random_seed: 0)
+svc.fit(x, y)
+a = svc.weight_vec
+svc.fit(x, y)
+b = svc.weight_vec
+err = ((a - b)**2).mean
+
+# In version 0.11.0 or earlier, false may be output,
+# but from this version, true is always output.
+puts(err < 1e-4)
+```
+
 # 0.11.0
 - Introduce [Parallel gem](https://github.com/grosser/parallel) to improve execution speed for one-vs-the-rest and bagging methods.
 - Add the n_jobs parameter that specifies the number of jobs for parallel processing in some estimators belong to the Rumale::LinearModel, Rumale::PolynomialModel, and Rumale::Ensemble.
