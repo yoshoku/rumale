@@ -36,7 +36,43 @@ Or install it yourself as:
 
 ## Usage
 
-### Example 1. Pendigits dataset classification
+### Example 1. XOR data
+First, let's classify simple xor data.
+In Rumale, feature vectors and labels are represented by Numo::NArray.
+
+```ruby
+require 'rumale'
+
+# Prepare XOR data.
+features = [[0, 0], [0, 1], [1, 0], [1, 1]]
+labels = [0, 1, 1, 0]
+
+# Convert Ruby Array into Numo::NArray.
+x = Numo::DFloat.asarray(features)
+y = Numo::Int32.asarray(labels)
+
+# Train classifier with nearest neighbor rule.
+Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 1)
+estimator.fit(x, y)
+
+# Predict labels.
+p y
+p estimator.predict(x)
+```
+
+Execution of the above script result in the following.
+
+```ruby
+Numo::Int32#shape=[4]
+[0, 1, 1, 0]
+Numo::Int32#shape=[4]
+[0, 1, 1, 0]
+```
+
+The basic usage of Rumale is to first train the model with the fit method
+and then estimate with the predict method.
+
+### Example 2. Pendigits dataset classification
 
 Rumale provides function loading libsvm format dataset file.
 We start by downloading the pendigits dataset from LIBSVM Data web site.
@@ -99,7 +135,7 @@ $ ruby test.rb
 Accuracy: 98.4%
 ```
 
-### Example 2. Cross-validation
+### Example 3. Cross-validation
 
 ```ruby
 require 'rumale'
@@ -130,7 +166,7 @@ $ ruby cross_validation.rb
 5-CV mean log-loss: 0.476
 ```
 
-### Example 3. Pipeline
+### Example 4. Pipeline
 
 ```ruby
 require 'rumale'
