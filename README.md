@@ -198,6 +198,66 @@ $ ruby pipeline.rb
 5-CV mean accuracy: 99.2 %
 ```
 
+## Speeding up
+
+### Numo::Linalg
+Loading the [Numo::Linalg](https://github.com/ruby-numo/numo-linalg) allows to perform matrix product of Numo::NArray using BLAS libraries.
+For example, using the [OpenBLAS](https://github.com/xianyi/OpenBLAS) speeds up many estimators in Rumale.
+
+Install OpenBLAS library.
+
+Mac:
+
+```bash
+$ brew install openblas --with-openmp
+```
+
+Ubuntu:
+
+```bash
+$ sudo apt-get install gcc gfortran
+$ wget https://github.com/xianyi/OpenBLAS/archive/v0.3.5.tar.gz
+$ tar xzf v0.3.5.tar.gz
+$ cd OpenBLAS-0.3.5
+$ make USE_OPENMP=1
+$ sudo make PREFIX=/usr/local install
+```
+
+Install Numo::Linalg gem.
+
+```bash
+$ gem install numo-linalg
+```
+
+In ruby script, you only need to require the autoloader module of Numo::Linalg.
+
+```ruby
+require 'numo/linalg/autoloader'
+require 'rumale'
+```
+
+### Parallel
+Several estimators in Rumale support parallel processing.
+Parallel processing in Rumale is realized by [Parallel](https://github.com/grosser/parallel) gem,
+so install and load it.
+
+```bash
+$ gem install parallel
+```
+
+```ruby
+require 'parallel'
+require 'rumale'
+```
+
+Estimators that support parallel processing have n_jobs parameter.
+When -1 is given to n_jobs parameter, all processors are used.
+
+```ruby
+estimator = Rumale::Ensemble::RandomForestClassifier.new(n_jobs: -1, random_seed: 1)
+```
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
