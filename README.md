@@ -38,7 +38,7 @@ Or install it yourself as:
 
 ### Example 1. XOR data
 First, let's classify simple xor data.
-In Rumale, feature vectors and labels are represented by Numo::NArray.
+In Rumale, feature vectors and labels are represented by [Numo::NArray](https://github.com/ruby-numo/numo-narray).
 
 ```ruby
 require 'rumale'
@@ -52,7 +52,7 @@ x = Numo::DFloat.asarray(features)
 y = Numo::Int32.asarray(labels)
 
 # Train classifier with nearest neighbor rule.
-Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 1)
+estimator = Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 1)
 estimator.fit(x, y)
 
 # Predict labels.
