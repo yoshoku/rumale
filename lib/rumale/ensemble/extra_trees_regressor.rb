@@ -129,7 +129,7 @@ module Rumale
         Tree::ExtraTreeRegressor.new(
           criterion: @params[:criterion], max_depth: @params[:max_depth],
           max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-          max_features: @params[:max_features], random_seed:rnd_seed
+          max_features: @params[:max_features], random_seed: rnd_seed
         )
       end
     end
