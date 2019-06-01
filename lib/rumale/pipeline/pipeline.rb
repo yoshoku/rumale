@@ -9,7 +9,7 @@ module Rumale
     # Pipeline is a class that implements the function to perform the transformers and estimators sequencially.
     #
     # @example
-    #   rbf = Rumale::KernelApproximation::RBF.new(gamma: 1.0, n_coponents: 128, random_seed: 1)
+    #   rbf = Rumale::KernelApproximation::RBF.new(gamma: 1.0, n_components: 128, random_seed: 1)
     #   svc = Rumale::LinearModel::SVC.new(reg_param: 1.0, fit_bias: true, max_iter: 5000, random_seed: 1)
     #   pipeline = Rumale::Pipeline::Pipeline.new(steps: { trs: rbf, est: svc })
     #   pipeline.fit(training_samples, traininig_labels)

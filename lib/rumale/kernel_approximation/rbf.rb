@@ -10,7 +10,7 @@ module Rumale
     # Class for RBF kernel feature mapping.
     #
     # @example
-    #   transformer = Rumale::KernelApproximation::RBF.new(gamma: 1.0, n_coponents: 128, random_seed: 1)
+    #   transformer = Rumale::KernelApproximation::RBF.new(gamma: 1.0, n_components: 128, random_seed: 1)
     #   new_training_samples = transformer.fit_transform(training_samples)
     #   new_testing_samples = transformer.transform(testing_samples)
     #
