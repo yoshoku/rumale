@@ -13,6 +13,7 @@
 
 *.swp
 *.bundle
+tags
 .DS_Store
 .ruby-version
 /spec/dump_dbl.t
