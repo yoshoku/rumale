@@ -79,45 +79,29 @@ module Rumale
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
-        _n_samples, n_features = x.shape
+        n_features = x.shape[1]
 
         if n_classes > 2
           @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
           @prob_param = Numo::DFloat.zeros(n_classes, 2)
-          if enable_parallel?
-            # :nocov:
-            models = parallel_map(n_classes) do |n|
-              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-              w = binary_fit(x, bin_y)
-              p = if @params[:probability]
-                    Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(w), bin_y)
-                  else
-                    Numo::DFloat[1, 0]
-                  end
-              [w, p]
-            end
-            # :nocov:
-            n_classes.times { |n| @weight_vec[n, true], @prob_param[n, true] = models[n] }
-          else
-            n_classes.times do |n|
-              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-              @weight_vec[n, true] = binary_fit(x, bin_y)
-              @prob_param[n, true] = if @params[:probability]
-                                       Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec[n, true].transpose), bin_y)
-                                     else
-                                       Numo::DFloat[1, 0]
-                                     end
-            end
-          end
+          models = if enable_parallel?
+                     # :nocov:
+                     parallel_map(n_classes) do |n|
+                       bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+                       partial_fit(x, bin_y)
+                     end
+                     # :nocov:
+                   else
+                     Array.new(n_classes) do |n|
+                       bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+                       partial_fit(x, bin_y)
+                     end
+                   end
+          models.each_with_index { |model, n| @weight_vec[n, true], @prob_param[n, true] = model }
         else
           negative_label = y.to_a.uniq.min
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
-          @weight_vec = binary_fit(x, bin_y)
-          @prob_param = if @params[:probability]
-                          Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose), bin_y)
-                        else
-                          Numo::DFloat[1, 0]
-                        end
+          @weight_vec, @prob_param = partial_fit(x, bin_y)
         end
 
         self
@@ -197,7 +181,7 @@ module Rumale
 
       private
 
-      def binary_fit(x, bin_y)
+      def partial_fit(x, bin_y)
         # Initialize some variables.
         n_training_samples = x.shape[0]
         rand_ids = []
@@ -213,7 +197,13 @@ module Rumale
           func *= bin_y[target_id] / (@params[:reg_param] * (t + 1))
           weight_vec[target_id] += 1.0 if func < 1.0
         end
-        weight_vec * bin_y
+        w = weight_vec * bin_y
+        p = if @params[:probability]
+              Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(w), bin_y)
+            else
+              Numo::DFloat[1, 0]
+            end
+        [w, p]
       end
     end
   end
