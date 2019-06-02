@@ -209,7 +209,7 @@ Install OpenBLAS library.
 Mac:
 
 ```bash
-$ brew install openblas --with-openmp
+$ brew install openblas
 ```
 
 Ubuntu:
