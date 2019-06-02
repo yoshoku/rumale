@@ -153,7 +153,9 @@ module Rumale
       end
 
       def build_tree(x, y, g, h)
+        @feature_ids = Array.new(x.shape[1]) { |v| v }
         @tree = grow_node(0, x, y, g, h)
+				@feature_ids = nil
         nil
       end
 
@@ -179,8 +181,7 @@ module Rumale
         return put_leaf(node, sum_g, sum_h) if stop_growing?(y)
 
         # calculate optimal parameters.
-        feature_id, threshold, gain =
-          rand_ids(n_features).map { |n| [n, *best_split(x[true, n], g, h, sum_g, sum_h)] }.max_by(&:last)
+        feature_id, threshold, gain = rand_ids.map { |n| [n, *best_split(x[true, n], g, h, sum_g, sum_h)] }.max_by(&:last)
 
         return put_leaf(node, sum_g, sum_h) if gain.nil? || gain.zero?
 
@@ -221,8 +222,8 @@ module Rumale
         find_split_params(sorted_f, sorted_g, sorted_h, sum_g, sum_h, @params[:reg_lambda])
       end
 
-      def rand_ids(n)
-        [*0...n].sample(@params[:max_features], random: @sub_rng)
+      def rand_ids
+        @feature_ids.sample(@params[:max_features], random: @sub_rng)
       end
     end
   end

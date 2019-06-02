@@ -62,14 +62,16 @@ module Rumale
 
       def build_tree(x, y)
         y = y.expand_dims(1).dup if y.shape[1].nil?
+        @feature_ids = Array.new(x.shape[1]) { |v| v }
         @tree = grow_node(0, x, y, impurity(y))
+        @feature_ids = nil
         nil
       end
 
-      def grow_node(depth, x, y, whole_impurity)
+      def grow_node(depth, x, y, impurity)
         # intialize node.
         n_samples, n_features = x.shape
-        node = Node.new(depth: depth, impurity: whole_impurity, n_samples: n_samples)
+        node = Node.new(depth: depth, impurity: impurity, n_samples: n_samples)
 
         # terminate growing.
         unless @params[:max_leaf_nodes].nil?
@@ -87,7 +89,7 @@ module Rumale
 
         # calculate optimal parameters.
         feature_id, left_imp, right_imp, threshold, gain =
-          rand_ids(n_features).map { |n| [n, *best_split(x[true, n], y, whole_impurity)] }.max_by(&:last)
+          rand_ids.map { |n| [n, *best_split(x[true, n], y, impurity)] }.max_by(&:last)
 
         return put_leaf(node, y) if gain.nil? || gain.zero?
 
@@ -112,8 +114,8 @@ module Rumale
         raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
       end
 
-      def rand_ids(n)
-        [*0...n].sample(@params[:max_features], random: @sub_rng)
+      def rand_ids
+        @feature_ids.sample(@params[:max_features], random: @sub_rng)
       end
 
       def best_split(_features, _y, _impurity)
