@@ -31,7 +31,14 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Max: 60
 
+Metrics/CyclomaticComplexity:
+  Max: 16
+
+Metrics/PerceivedComplexity:
+  Max: 16
+
 Metrics/BlockLength:
+  Max: 40
   Exclude:
     - 'spec/**/*'
 
