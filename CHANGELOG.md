@@ -1,3 +1,7 @@
+# 0.12.1
+- Refactor kernel support vector classifier.
+- Refactor random sampling on tree estimators.
+
 # 0.12.0
 ## Breaking changes
 - For reproductivity, Rumale changes to not repeatedly use the same random number generator in the same estimator.
