@@ -155,7 +155,7 @@ module Rumale
       def build_tree(x, y, g, h)
         @feature_ids = Array.new(x.shape[1]) { |v| v }
         @tree = grow_node(0, x, y, g, h)
-				@feature_ids = nil
+        @feature_ids = nil
         nil
       end
 
@@ -163,7 +163,7 @@ module Rumale
         # intialize some variables.
         sum_g = g.sum
         sum_h = h.sum
-        n_samples, n_features = x.shape
+        n_samples = x.shape[0]
         node = Node.new(depth: depth, n_samples: n_samples)
 
         # terminate growing.

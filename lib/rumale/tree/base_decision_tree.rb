@@ -70,7 +70,7 @@ module Rumale
 
       def grow_node(depth, x, y, impurity)
         # intialize node.
-        n_samples, n_features = x.shape
+        n_samples = x.shape[0]
         node = Node.new(depth: depth, impurity: impurity, n_samples: n_samples)
 
         # terminate growing.
