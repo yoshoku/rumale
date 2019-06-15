@@ -1,3 +1,7 @@
+# 0.12.2
+- Add class for cluster analysis with Gaussian Mixture Model.
+- Add encoder class for categorical features.
+
 # 0.12.1
 - Refactor kernel support vector classifier.
 - Refactor random sampling on tree estimators.
