@@ -79,4 +79,28 @@ RSpec.describe Rumale::Dataset do
     expect(m).to eq(matrix_dbl)
     expect(l).to eq(labels)
   end
+
+  it 'generates two circles data.' do
+    x, y = described_class.make_circles(100, noise: 0.05)
+    expect(x.class).to eq(Numo::DFloat)
+    expect(x.shape[0]).to eq(100)
+    expect(x.shape[1]).to eq(2)
+    expect(y.class).to eq(Numo::Int32)
+    expect(y.shape[0]).to eq(100)
+    expect(y.shape[1]).to be_nil
+    expect(y.eq(0).count).to eq(50)
+    expect(y.eq(1).count).to eq(50)
+  end
+
+  it 'generates two moons data.' do
+    x, y = described_class.make_moons(100, noise: 0.05)
+    expect(x.class).to eq(Numo::DFloat)
+    expect(x.shape[0]).to eq(100)
+    expect(x.shape[1]).to eq(2)
+    expect(y.class).to eq(Numo::Int32)
+    expect(y.shape[0]).to eq(100)
+    expect(y.shape[1]).to be_nil
+    expect(y.eq(0).count).to eq(50)
+    expect(y.eq(1).count).to eq(50)
+  end
 end
