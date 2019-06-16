@@ -52,8 +52,7 @@ module Rumale
         Rumale::Validation.check_sample_array(x)
         Rumale::Validation.check_sample_array(y)
         Rumale::Validation.check_params_float(gamma: gamma)
-        distance_matrix = euclidean_distance(x, y)
-        Numo::NMath.exp((distance_matrix**2) * -gamma)
+        Numo::NMath.exp(-gamma * squared_error(x, y).abs)
       end
 
       # Calculate the linear kernel between x and y.
