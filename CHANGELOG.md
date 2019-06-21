@@ -1,3 +1,7 @@
+# 0.12.3
+- Add class for Power Iteration clustering.
+- Add classes for artificial dataset generation.
+
 # 0.12.2
 - Add class for cluster analysis with Gaussian Mixture Model.
 - Add encoder class for categorical features.
