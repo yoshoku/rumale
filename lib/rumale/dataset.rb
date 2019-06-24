@@ -56,7 +56,7 @@ module Rumale
       # @param noise [Float] The standard deviaion of gaussian noise added to the data.
       #   If nil is given, no noise is added.
       # @param factor [Float] The scale factor between inner and outer circles. The interval of factor is (0, 1).
-      # @random_seed [Integer] The seed value using to initialize the random generator.
+      # @param random_seed [Integer] The seed value using to initialize the random generator.
       def make_circles(n_samples, shuffle: true, noise: nil, factor: 0.8, random_seed: nil)
         Rumale::Validation.check_params_integer(n_samples: n_samples)
         Rumale::Validation.check_params_boolean(shuffle: shuffle)
@@ -95,7 +95,7 @@ module Rumale
       # @param shuffle [Boolean] The flag indicating whether to shuffle the dataset
       # @param noise [Float] The standard deviaion of gaussian noise added to the data.
       #   If nil is given, no noise is added.
-      # @random_seed [Integer] The seed value using to initialize the random generator.
+      # @param random_seed [Integer] The seed value using to initialize the random generator.
       def make_moons(n_samples, shuffle: true, noise: nil, random_seed: nil)
         Rumale::Validation.check_params_integer(n_samples: n_samples)
         Rumale::Validation.check_params_boolean(shuffle: shuffle)
