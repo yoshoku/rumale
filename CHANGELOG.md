@@ -1,3 +1,7 @@
+# 0.12.4
+- Add class for multidimensional scaling.
+- Fix parameter description on artificial dataset generation method.
+
 # 0.12.3
 - Add class for Power Iteration clustering.
 - Add classes for artificial dataset generation.
