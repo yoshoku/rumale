@@ -19,7 +19,8 @@ Gem::Specification.new do |spec|
     Rumale currently supports Linear / Kernel Support Vector Machine,
     Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
     Naive Bayes, Decision Tree, AdaBoost, Gradient Tree Boosting, Random Forest, Extra-Trees, K-nearest neighbor algorithm,
-    K-Means, Gaussian Mixture Model, DBSCAN, Power Iteration Clustering, t-SNE, Principal Component Analysis, and Non-negative Matrix Factorization.
+    K-Means, Gaussian Mixture Model, DBSCAN, Power Iteration Clustering,
+    Multidimensional Scaling, t-SNE, Principal Component Analysis, and Non-negative Matrix Factorization.
   MSG
   spec.homepage      = 'https://github.com/yoshoku/rumale'
   spec.license       = 'BSD-2-Clause'
