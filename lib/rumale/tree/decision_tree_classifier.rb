@@ -155,15 +155,15 @@ module Rumale
 
       def best_split(features, y, whole_impurity)
         order = features.sort_index
-        sorted_f = features[order].to_a
-        sorted_y = y[order, 0].to_a
+        n_elements = features.shape[0]
         n_classes = @classes.size
-        find_split_params(@params[:criterion], whole_impurity, sorted_f, sorted_y, n_classes)
+        find_split_params(@params[:criterion], whole_impurity, order, features.dup, y[true, 0].dup, n_elements, n_classes)
       end
 
       def impurity(y)
+        n_elements = y.shape[0]
         n_classes = @classes.size
-        node_impurity(@params[:criterion], y[true, 0].to_a, n_classes)
+        node_impurity(@params[:criterion], y[true, 0].dup, n_elements, n_classes)
       end
     end
   end

@@ -187,24 +187,29 @@ sub_sum_vec(VALUE sum_vec, VALUE target)
  *
  * @param criterion [String] The function to evaluate spliting point. Supported criteria are 'gini' and 'entropy'.
  * @param impurity [Float] The impurity of whole dataset.
- * @param sorted_features [Numo::DFloat] (shape: [n_samples]) The feature values sorted in ascending order.
- * @param sorted_labels [Numo::Int32] (shape: [n_labels]) The labels sorted according to feature values.
- * @param n_classes [Integer] The number of classes.
+ * @param order_nary [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
+ * @param f_nary [Numo::DFloat] (shape: [n_elements]) The feature values.
+ * @param y_nary [Numo::Int32] (shape: [n_elements]) The labels.
+ * @param n_elements_ [Integer] The number of samples.
+ * @param n_classes_ [Integer] The number of classes.
  * @return [Float] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
  */
 static VALUE
-find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE sorted_f, VALUE sorted_y, VALUE n_classes_)
+find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE order_nary, VALUE f_nary, VALUE y_nary, VALUE n_elements_, VALUE n_classes_)
 {
+  const long n_elements = NUM2LONG(n_elements_);
   const long n_classes = NUM2LONG(n_classes_);
-  const long n_elements = RARRAY_LEN(sorted_f);
   const double w_impurity = NUM2DBL(whole_impurity);
-  long iter = 0;
+  const int32_t* order = (int32_t*)na_get_pointer_for_read(order_nary);
+  const double* f = (double*)na_get_pointer_for_read(f_nary);
+  const int32_t* y = (int32_t*)na_get_pointer_for_read(y_nary);
+  long i;
   long curr_pos = 0;
   long next_pos = 0;
   long n_l_elements = 0;
   long n_r_elements = n_elements;
-  double last_el = NUM2DBL(rb_ary_entry(sorted_f, n_elements - 1));
-  double curr_el = NUM2DBL(rb_ary_entry(sorted_f, 0));
+  double curr_el = f[order[0]];
+  double last_el = f[order[n_elements - 1]];
   double next_el;
   double l_impurity;
   double r_impurity;
@@ -214,25 +219,26 @@ find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
   VALUE opt_params = rb_ary_new2(4);
 
   /* Initialize optimal parameters. */
-  rb_ary_store(opt_params, 0, DBL2NUM(0));                /* left impurity */
-  rb_ary_store(opt_params, 1, DBL2NUM(w_impurity));       /* right impurity */
-  rb_ary_store(opt_params, 2, rb_ary_entry(sorted_f, 0)); /* threshold */
-  rb_ary_store(opt_params, 3, DBL2NUM(0));                /* gain */
+  rb_ary_store(opt_params, 0, DBL2NUM(0));          /* left impurity */
+  rb_ary_store(opt_params, 1, DBL2NUM(w_impurity)); /* right impurity */
+  rb_ary_store(opt_params, 2, DBL2NUM(curr_el));    /* threshold */
+  rb_ary_store(opt_params, 3, DBL2NUM(0));          /* gain */
 
   /* Initialize child node variables. */
-  for (iter = 0; iter < n_elements; iter++) {
-    increment_histogram(r_histogram, NUM2LONG(rb_ary_entry(sorted_y, iter)));
+  for (i = 0; i < n_elements; i++) {
+    increment_histogram(r_histogram, y[order[i]]);
   }
 
   /* Find optimal parameters. */
   while (curr_pos < n_elements && curr_el != last_el) {
-    next_el = NUM2DBL(rb_ary_entry(sorted_f, next_pos));
+    next_el = f[order[next_pos]];
     while (next_pos < n_elements && next_el == curr_el) {
-      increment_histogram(l_histogram, NUM2LONG(rb_ary_entry(sorted_y, next_pos)));
+      increment_histogram(l_histogram, y[order[next_pos]]);
       n_l_elements++;
-      decrement_histogram(r_histogram, NUM2LONG(rb_ary_entry(sorted_y, next_pos)));
+      decrement_histogram(r_histogram, y[order[next_pos]]);
       n_r_elements--;
-      next_el = NUM2DBL(rb_ary_entry(sorted_f, ++next_pos));
+      next_pos++;
+      next_el = f[order[next_pos]];
     }
     /* Calculate gain of new split. */
     l_impurity = calc_impurity_cls(criterion, l_histogram, n_l_elements);
@@ -247,7 +253,7 @@ find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
     }
     if (next_pos == n_elements) break;
     curr_pos = next_pos;
-    curr_el = NUM2DBL(rb_ary_entry(sorted_f, curr_pos));
+    curr_el = f[order[curr_pos]];
   }
 
   return opt_params;
@@ -407,19 +413,21 @@ find_split_params_grad_reg
  * @overload node_impurity(criterion, y, n_classes) -> Float
  *
  * @param criterion [String] The function to calculate impurity. Supported criteria are 'gini' and 'entropy'.
- * @param y [Numo::Int32] (shape: [n_samples]) The labels.
+ * @param y_nary [Numo::Int32] (shape: [n_samples]) The labels.
+ * @param n_elements_ [Integer] The number of elements.
  * @param n_classes [Integer] The number of classes.
  * @return [Float] impurity
  */
 static VALUE
-node_impurity_cls(VALUE self, VALUE criterion, VALUE y, VALUE n_classes)
+node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, VALUE n_classes)
 {
   long i;
-  const long n_elements = RARRAY_LEN(y);
+  const long n_elements = NUM2LONG(n_elements_);
+  const int32_t* y = (int32_t*)na_get_pointer_for_read(y_nary);
   VALUE histogram = create_zero_vector(NUM2LONG(n_classes));
 
   for (i = 0; i < n_elements; i++) {
-    increment_histogram(histogram, NUM2LONG(rb_ary_entry(y, i)));
+    increment_histogram(histogram, y[i]);
   }
 
   return DBL2NUM(calc_impurity_cls(criterion, histogram, n_elements));
@@ -480,9 +488,9 @@ void Init_rumale(void)
    */
   VALUE mExtGTreeReg = rb_define_module_under(mTree, "ExtGradientTreeRegressor");
 
-  rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 5);
+  rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 7);
   rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 4);
   rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 6);
-  rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 3);
+  rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 4);
   rb_define_private_method(mExtDTreeReg, "node_impurity", node_impurity_reg, 2);
 }
