@@ -344,12 +344,13 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
  * @!visibility private
  * Find for split point with maximum information gain.
  *
- * @overload find_split_params(sorted_features, sorted_gradient, sorted_hessian, sum_gradient, sum_hessian) -> Array<Float>
+ * @overload find_split_params(order, features, gradient, hessian, n_elements, sum_gradient, sum_hessian) -> Array<Float>
  *
- * @param sorted_features [Array<Float>] (size: n_samples) The feature values sorted in ascending order.
- * @param sorted_targets [Array<Float>] (size: n_samples) The target values sorted according to feature values.
- * @param sorted_gradient [Array<Float>] (size: n_samples) The gradient values of loss function sorted according to feature values.
- * @param sorted_hessian [Array<Float>] (size: n_samples) The hessian values of loss function sorted according to feature values.
+ * @param order_nary [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
+ * @param f_nary [Numo::DFloat] (shape: [n_elements]) The feature values.
+ * @param g_nary [Numo::DFloat] (shape: [n_elements]) The gradient values.
+ * @param h_nary [Numo::DFloat] (shape: [n_elements]) The hessian values.
+ * @param n_elements_ [Integer] The number of samples.
  * @param sum_gradient [Float] The sum of gradient values.
  * @param sum_hessian [Float] The sum of hessian values.
  * @param reg_lambda [Float] The L2 regularization term on weight.
@@ -357,35 +358,38 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
  */
 static VALUE
 find_split_params_grad_reg
-(VALUE self, VALUE sorted_f, VALUE sorted_g, VALUE sorted_h, VALUE sum_g, VALUE sum_h, VALUE reg_l)
+(VALUE self, VALUE order_nary, VALUE f_nary, VALUE g_nary, VALUE h_nary, VALUE n_elements_, VALUE sum_g, VALUE sum_h, VALUE reg_l)
 {
-  const long n_elements = RARRAY_LEN(sorted_f);
+  const int32_t* order = (int32_t*)na_get_pointer_for_read(order_nary);
+  const double* f = (double*)na_get_pointer_for_read(f_nary);
+  const double* g = (double*)na_get_pointer_for_read(g_nary);
+  const double* h = (double*)na_get_pointer_for_read(h_nary);
+  const long n_elements = NUM2LONG(n_elements_);
   const double s_grad = NUM2DBL(sum_g);
   const double s_hess = NUM2DBL(sum_h);
   const double reg_lambda = NUM2DBL(reg_l);
   long curr_pos = 0;
   long next_pos = 0;
-  double last_el = NUM2DBL(rb_ary_entry(sorted_f, n_elements - 1));
-  double curr_el = NUM2DBL(rb_ary_entry(sorted_f, 0));
+  double curr_el = f[order[0]];
+  double last_el = f[order[n_elements - 1]];
   double next_el;
   double l_grad = 0.0;
   double l_hess = 0.0;
   double r_grad;
   double r_hess;
+  double threshold = curr_el;
+  double gain_max = 0.0;
   double gain;
   VALUE opt_params = rb_ary_new2(2);
 
-  /* Initialize optimal parameters. */
-  rb_ary_store(opt_params, 0, rb_ary_entry(sorted_f, 0)); /* threshold */
-  rb_ary_store(opt_params, 1, DBL2NUM(0));                /* gain */
-
   /* Find optimal parameters. */
   while (curr_pos < n_elements && curr_el != last_el) {
-    next_el = NUM2DBL(rb_ary_entry(sorted_f, next_pos));
+    next_el = f[order[next_pos]];
     while (next_pos < n_elements && next_el == curr_el) {
-      l_grad += NUM2DBL(rb_ary_entry(sorted_g, next_pos));
-      l_hess += NUM2DBL(rb_ary_entry(sorted_h, next_pos));
-      next_el = NUM2DBL(rb_ary_entry(sorted_f, ++next_pos));
+      l_grad += g[order[next_pos]];
+      l_hess += h[order[next_pos]];
+      next_pos++;
+      next_el = f[order[next_pos]];
     }
     /* Calculate gain of new split. */
     r_grad = s_grad - l_grad;
@@ -394,14 +398,17 @@ find_split_params_grad_reg
            (r_grad * r_grad) / (r_hess + reg_lambda) -
            (s_grad * s_grad) / (s_hess + reg_lambda);
     /* Update optimal parameters. */
-    if (gain > NUM2DBL(rb_ary_entry(opt_params, 1))) {
-      rb_ary_store(opt_params, 0, DBL2NUM(0.5 * (curr_el + next_el)));
-      rb_ary_store(opt_params, 1, DBL2NUM(gain));
+    if (gain > gain_max) {
+      threshold = 0.5 * (curr_el + next_el);
+      gain_max = gain;
     }
     if (next_pos == n_elements) break;
     curr_pos = next_pos;
-    curr_el = NUM2DBL(rb_ary_entry(sorted_f, curr_pos));
+    curr_el = f[order[curr_pos]];
   }
+
+  rb_ary_store(opt_params, 0, DBL2NUM(threshold));
+  rb_ary_store(opt_params, 1, DBL2NUM(gain_max));
 
   return opt_params;
 }
@@ -490,7 +497,7 @@ void Init_rumale(void)
 
   rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 7);
   rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 4);
-  rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 6);
+  rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 8);
   rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 4);
   rb_define_private_method(mExtDTreeReg, "node_impurity", node_impurity_reg, 2);
 }
