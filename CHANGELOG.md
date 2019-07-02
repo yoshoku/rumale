@@ -1,3 +1,7 @@
+# 0.12.5
+- Fix random number generator initialization on gradient boosting estimators
+to obtain the same result with and without parallel option.
+
 # 0.12.4
 - Add class for multidimensional scaling.
 - Fix parameter description on artificial dataset generation method.
