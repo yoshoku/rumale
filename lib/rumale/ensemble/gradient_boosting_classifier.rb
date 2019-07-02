@@ -227,7 +227,7 @@ module Rumale
           # train tree
           g = gradient(y_sub, y_pred_sub)
           h = hessian(y_sub, y_pred_sub)
-          tree = plant_tree
+          tree = plant_tree(sub_rng)
           tree.fit(x_sub, y_sub, g, h)
           estimators.push(tree)
           # update
@@ -253,12 +253,12 @@ module Rumale
         abs_response * (2.0 - abs_response)
       end
 
-      def plant_tree
+      def plant_tree(sub_rng)
         Rumale::Tree::GradientTreeRegressor.new(
           reg_lambda: @params[:reg_lambda], shrinkage_rate: @params[:learning_rate],
           max_depth: @params[:max_depth],
           max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-          max_features: @params[:max_features], random_seed: @rng.rand(Rumale::Values.int_max)
+          max_features: @params[:max_features], random_seed: sub_rng.rand(Rumale::Values.int_max)
         )
       end
 
