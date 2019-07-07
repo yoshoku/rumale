@@ -342,36 +342,23 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE s
 
 /**
  * @!visibility private
- * Find for split point with maximum information gain.
- *
- * @overload find_split_params(order, features, gradient, hessian, n_elements, sum_gradient, sum_hessian) -> Array<Float>
- *
- * @param order_nary [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
- * @param f_nary [Numo::DFloat] (shape: [n_elements]) The feature values.
- * @param g_nary [Numo::DFloat] (shape: [n_elements]) The gradient values.
- * @param h_nary [Numo::DFloat] (shape: [n_elements]) The hessian values.
- * @param n_elements_ [Integer] The number of samples.
- * @param sum_gradient [Float] The sum of gradient values.
- * @param sum_hessian [Float] The sum of hessian values.
- * @param reg_lambda [Float] The L2 regularization term on weight.
- * @return [Array<Float>] The array consists of optimal parameters including threshold and gain.
  */
-static VALUE
-find_split_params_grad_reg
-(VALUE self, VALUE order_nary, VALUE f_nary, VALUE g_nary, VALUE h_nary, VALUE n_elements_, VALUE sum_g, VALUE sum_h, VALUE reg_l)
+static void
+iter_find_split_params_grad_reg(na_loop_t const* lp)
 {
-  const int32_t* order = (int32_t*)na_get_pointer_for_read(order_nary);
-  const double* f = (double*)na_get_pointer_for_read(f_nary);
-  const double* g = (double*)na_get_pointer_for_read(g_nary);
-  const double* h = (double*)na_get_pointer_for_read(h_nary);
-  const long n_elements = NUM2LONG(n_elements_);
-  const double s_grad = NUM2DBL(sum_g);
-  const double s_hess = NUM2DBL(sum_h);
-  const double reg_lambda = NUM2DBL(reg_l);
+  const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
+  const double* f = (double*)NDL_PTR(lp, 1);
+  const double* g = (double*)NDL_PTR(lp, 2);
+  const double* h = (double*)NDL_PTR(lp, 3);
+  const double s_grad = ((double*)lp->opt_ptr)[0];
+  const double s_hess = ((double*)lp->opt_ptr)[1];
+  const double reg_lambda = ((double*)lp->opt_ptr)[2];
+  const long n_elements = NDL_SHAPE(lp, 0)[0];
+  double* params = (double*)NDL_PTR(lp, 4);
   long curr_pos = 0;
   long next_pos = 0;
-  double curr_el = f[order[0]];
-  double last_el = f[order[n_elements - 1]];
+  double curr_el = f[o[0]];
+  double last_el = f[o[n_elements - 1]];
   double next_el;
   double l_grad = 0.0;
   double l_hess = 0.0;
@@ -380,16 +367,15 @@ find_split_params_grad_reg
   double threshold = curr_el;
   double gain_max = 0.0;
   double gain;
-  VALUE opt_params = rb_ary_new2(2);
 
   /* Find optimal parameters. */
   while (curr_pos < n_elements && curr_el != last_el) {
-    next_el = f[order[next_pos]];
+    next_el = f[o[next_pos]];
     while (next_pos < n_elements && next_el == curr_el) {
-      l_grad += g[order[next_pos]];
-      l_hess += h[order[next_pos]];
+      l_grad += g[o[next_pos]];
+      l_hess += h[o[next_pos]];
       next_pos++;
-      next_el = f[order[next_pos]];
+      next_el = f[o[next_pos]];
     }
     /* Calculate gain of new split. */
     r_grad = s_grad - l_grad;
@@ -404,13 +390,42 @@ find_split_params_grad_reg
     }
     if (next_pos == n_elements) break;
     curr_pos = next_pos;
-    curr_el = f[order[curr_pos]];
+    curr_el = f[o[curr_pos]];
   }
 
-  rb_ary_store(opt_params, 0, DBL2NUM(threshold));
-  rb_ary_store(opt_params, 1, DBL2NUM(gain_max));
+  params[0] = threshold;
+  params[1] = gain_max;
+}
 
-  return opt_params;
+/**
+ * @!visibility private
+ * Find for split point with maximum information gain.
+ *
+ * @overload find_split_params(order, features, gradients, hessians, sum_gradient, sum_hessian, reg_lambda) -> Array<Float>
+ *
+ * @param order [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
+ * @param features [Numo::DFloat] (shape: [n_elements]) The feature values.
+ * @param gradients [Numo::DFloat] (shape: [n_elements]) The gradient values.
+ * @param hessians [Numo::DFloat] (shape: [n_elements]) The hessian values.
+ * @param sum_gradient [Float] The sum of gradient values.
+ * @param sum_hessian [Float] The sum of hessian values.
+ * @param reg_lambda [Float] The L2 regularization term on weight.
+ * @return [Array<Float>] The array consists of optimal parameters including threshold and gain.
+ */
+static VALUE
+find_split_params_grad_reg
+(VALUE self, VALUE order, VALUE features, VALUE gradients, VALUE hessians, VALUE sum_gradient, VALUE sum_hessian, VALUE reg_lambda)
+{
+  ndfunc_arg_in_t ain[4] = { {numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 1} };
+  size_t out_shape[1] = { 2 };
+  ndfunc_arg_out_t aout[1] = { {numo_cDFloat, 1, out_shape} };
+  ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_grad_reg, NO_LOOP, 4, 1, ain, aout };
+  double opts[3] = { NUM2DBL(sum_gradient), NUM2DBL(sum_hessian), NUM2DBL(reg_lambda) };
+  VALUE params = na_ndloop3(&ndf, opts, 4, order, features, gradients, hessians);
+  VALUE results = rb_ary_new2(2);
+  rb_ary_store(results, 0, DBL2NUM(((double*)na_get_pointer_for_read(params))[0]));
+  rb_ary_store(results, 1, DBL2NUM(((double*)na_get_pointer_for_read(params))[1]));
+  return results;
 }
 
 /**
@@ -497,7 +512,7 @@ void Init_rumale(void)
 
   rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 7);
   rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 4);
-  rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 8);
+  rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 7);
   rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 4);
   rb_define_private_method(mExtDTreeReg, "node_impurity", node_impurity_reg, 2);
 }

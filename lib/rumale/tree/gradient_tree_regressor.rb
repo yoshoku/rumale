@@ -215,9 +215,7 @@ module Rumale
       end
 
       def best_split(f, g, h, sum_g, sum_h)
-        order = f.sort_index
-        n_elements = f.shape[0]
-        find_split_params(order, f.dup, g.dup, h.dup, n_elements, sum_g, sum_h, @params[:reg_lambda])
+        find_split_params(f.sort_index, f, g, h, sum_g, sum_h, @params[:reg_lambda])
       end
 
       def rand_ids
