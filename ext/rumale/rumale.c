@@ -122,9 +122,9 @@ calc_mse(VALUE target_vecs, VALUE sum_vec)
 }
 
 double
-calc_impurity_cls(VALUE criterion, VALUE histogram, const long n_elements)
+calc_impurity_cls(const char* criterion, VALUE histogram, const long n_elements)
 {
-  if (strcmp(StringValuePtr(criterion), "entropy") == 0) {
+  if (strcmp(criterion, "entropy") == 0) {
     return calc_entropy(histogram, n_elements);
   }
   return calc_gini_coef(histogram, n_elements);
@@ -181,82 +181,107 @@ sub_sum_vec(VALUE sum_vec, VALUE target)
 
 /**
  * @!visibility private
- * Find for split point with maximum information gain.
- *
- * @overload find_split_params(criterion, impurity, sorted_features, sorted_labels, n_classes) -> Array<Float>
- *
- * @param criterion [String] The function to evaluate spliting point. Supported criteria are 'gini' and 'entropy'.
- * @param impurity [Float] The impurity of whole dataset.
- * @param order_nary [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
- * @param f_nary [Numo::DFloat] (shape: [n_elements]) The feature values.
- * @param y_nary [Numo::Int32] (shape: [n_elements]) The labels.
- * @param n_elements_ [Integer] The number of samples.
- * @param n_classes_ [Integer] The number of classes.
- * @return [Float] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
  */
-static VALUE
-find_split_params_cls(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE order_nary, VALUE f_nary, VALUE y_nary, VALUE n_elements_, VALUE n_classes_)
+typedef struct {
+  char* criterion;
+  long n_classes;
+  double impurity;
+} split_opts_cls;
+/**
+ * @!visibility private
+ */
+static void
+iter_find_split_params_cls(na_loop_t const* lp)
 {
-  const long n_elements = NUM2LONG(n_elements_);
-  const long n_classes = NUM2LONG(n_classes_);
-  const double w_impurity = NUM2DBL(whole_impurity);
-  const int32_t* order = (int32_t*)na_get_pointer_for_read(order_nary);
-  const double* f = (double*)na_get_pointer_for_read(f_nary);
-  const int32_t* y = (int32_t*)na_get_pointer_for_read(y_nary);
+  const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
+  const double* f = (double*)NDL_PTR(lp, 1);
+  const int32_t* y = (int32_t*)NDL_PTR(lp, 2);
+  const long n_elements = NDL_SHAPE(lp, 0)[0];
+  const char* criterion = ((split_opts_cls*)lp->opt_ptr)->criterion;
+  const long n_classes = ((split_opts_cls*)lp->opt_ptr)->n_classes;
+  const double w_impurity = ((split_opts_cls*)lp->opt_ptr)->impurity;
+  double* params = (double*)NDL_PTR(lp, 3);
   long i;
   long curr_pos = 0;
   long next_pos = 0;
   long n_l_elements = 0;
   long n_r_elements = n_elements;
-  double curr_el = f[order[0]];
-  double last_el = f[order[n_elements - 1]];
+  double curr_el = f[o[0]];
+  double last_el = f[o[n_elements - 1]];
   double next_el;
   double l_impurity;
   double r_impurity;
   double gain;
   VALUE l_histogram = create_zero_vector(n_classes);
   VALUE r_histogram = create_zero_vector(n_classes);
-  VALUE opt_params = rb_ary_new2(4);
 
   /* Initialize optimal parameters. */
-  rb_ary_store(opt_params, 0, DBL2NUM(0));          /* left impurity */
-  rb_ary_store(opt_params, 1, DBL2NUM(w_impurity)); /* right impurity */
-  rb_ary_store(opt_params, 2, DBL2NUM(curr_el));    /* threshold */
-  rb_ary_store(opt_params, 3, DBL2NUM(0));          /* gain */
+  params[0] = 0.0;        /* left impurity */
+  params[1] = w_impurity; /* right impurity */
+  params[2] = curr_el;    /* threshold */
+  params[3] = 0.0;        /* gain */
 
   /* Initialize child node variables. */
   for (i = 0; i < n_elements; i++) {
-    increment_histogram(r_histogram, y[order[i]]);
+    increment_histogram(r_histogram, y[o[i]]);
   }
 
   /* Find optimal parameters. */
   while (curr_pos < n_elements && curr_el != last_el) {
-    next_el = f[order[next_pos]];
+    next_el = f[o[next_pos]];
     while (next_pos < n_elements && next_el == curr_el) {
-      increment_histogram(l_histogram, y[order[next_pos]]);
+      increment_histogram(l_histogram, y[o[next_pos]]);
       n_l_elements++;
-      decrement_histogram(r_histogram, y[order[next_pos]]);
+      decrement_histogram(r_histogram, y[o[next_pos]]);
       n_r_elements--;
       next_pos++;
-      next_el = f[order[next_pos]];
+      next_el = f[o[next_pos]];
     }
     /* Calculate gain of new split. */
     l_impurity = calc_impurity_cls(criterion, l_histogram, n_l_elements);
     r_impurity = calc_impurity_cls(criterion, r_histogram, n_r_elements);
     gain = w_impurity - (n_l_elements * l_impurity + n_r_elements * r_impurity) / n_elements;
     /* Update optimal parameters. */
-    if (gain > NUM2DBL(rb_ary_entry(opt_params, 3))) {
-      rb_ary_store(opt_params, 0, DBL2NUM(l_impurity));
-      rb_ary_store(opt_params, 1, DBL2NUM(r_impurity));
-      rb_ary_store(opt_params, 2, DBL2NUM(0.5 * (curr_el + next_el)));
-      rb_ary_store(opt_params, 3, DBL2NUM(gain));
+    if (gain > params[3]) {
+      params[0] = l_impurity;
+      params[1] = r_impurity;
+      params[2] = 0.5 * (curr_el + next_el);
+      params[3] = gain;
     }
     if (next_pos == n_elements) break;
     curr_pos = next_pos;
-    curr_el = f[order[curr_pos]];
+    curr_el = f[o[curr_pos]];
   }
-
-  return opt_params;
+}
+/**
+ * @!visibility private
+ * Find for split point with maximum information gain.
+ *
+ * @overload find_split_params(criterion, impurity, order, features, labels, n_classes) -> Array<Float>
+ *
+ * @param criterion [String] The function to evaluate spliting point. Supported criteria are 'gini' and 'entropy'.
+ * @param impurity [Float] The impurity of whole dataset.
+ * @param order [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
+ * @param features [Numo::DFloat] (shape: [n_elements]) The feature values.
+ * @param labels [Numo::Int32] (shape: [n_elements]) The labels.
+ * @param n_classes [Integer] The number of classes.
+ * @return [Array<Float>] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
+ */
+static VALUE
+find_split_params_cls(VALUE self, VALUE criterion, VALUE impurity, VALUE order, VALUE features, VALUE labels, VALUE n_classes)
+{
+  ndfunc_arg_in_t ain[3] = { {numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cInt32, 1} };
+  size_t out_shape[1] = { 4 };
+  ndfunc_arg_out_t aout[1] = { {numo_cDFloat, 1, out_shape} };
+  ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_cls, NO_LOOP, 3, 1, ain, aout };
+  split_opts_cls opts = { StringValuePtr(criterion), NUM2LONG(n_classes), NUM2DBL(impurity) };
+  VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, labels);
+  VALUE results = rb_ary_new2(4);
+  rb_ary_store(results, 0, DBL2NUM(((double*)na_get_pointer_for_read(params))[0]));
+  rb_ary_store(results, 1, DBL2NUM(((double*)na_get_pointer_for_read(params))[1]));
+  rb_ary_store(results, 2, DBL2NUM(((double*)na_get_pointer_for_read(params))[2]));
+  rb_ary_store(results, 3, DBL2NUM(((double*)na_get_pointer_for_read(params))[3]));
+  return results;
 }
 
 /**
@@ -452,7 +477,7 @@ node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, 
     increment_histogram(histogram, y[i]);
   }
 
-  return DBL2NUM(calc_impurity_cls(criterion, histogram, n_elements));
+  return DBL2NUM(calc_impurity_cls(StringValuePtr(criterion), histogram, n_elements));
 }
 
 /**
@@ -510,7 +535,7 @@ void Init_rumale(void)
    */
   VALUE mExtGTreeReg = rb_define_module_under(mTree, "ExtGradientTreeRegressor");
 
-  rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 7);
+  rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 6);
   rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 4);
   rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 7);
   rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 4);
