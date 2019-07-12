@@ -1,3 +1,6 @@
+# 0.12.6
+- Fix extension codes of decision tree classifier and gradient tree regressor for using Numo::NArray.
+
 # 0.12.5
 - Fix random number generator initialization on gradient boosting estimators
 to obtain the same result with and without parallel option.
