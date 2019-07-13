@@ -126,11 +126,8 @@ module Rumale
         node
       end
 
-      def best_split(features, y, whole_impurity)
-        order = features.sort_index
-        sorted_f = features[order].to_a
-        sorted_y = y[order, true].to_a
-        find_split_params(@params[:criterion], whole_impurity, sorted_f, sorted_y)
+      def best_split(f, y, impurity)
+        find_split_params(@params[:criterion], impurity, f.sort_index, f, y)
       end
 
       def impurity(y)

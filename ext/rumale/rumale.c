@@ -131,9 +131,9 @@ calc_impurity_cls(const char* criterion, VALUE histogram, const long n_elements)
 }
 
 double
-calc_impurity_reg(VALUE criterion, VALUE target_vecs, VALUE sum_vec)
+calc_impurity_reg(const char* criterion, VALUE target_vecs, VALUE sum_vec)
 {
-  if (strcmp(StringValuePtr(criterion), "mae") == 0) {
+  if (strcmp(criterion, "mae") == 0) {
     return calc_mae(target_vecs, sum_vec);
   }
   return calc_mse(target_vecs, sum_vec);
@@ -286,83 +286,115 @@ find_split_params_cls(VALUE self, VALUE criterion, VALUE impurity, VALUE order, 
 
 /**
  * @!visibility private
- * Find for split point with maximum information gain.
- *
- * @overload find_split_params(criterion, impurity, sorted_features, sorted_targets) -> Array<Float>
- *
- * @param criterion [String] The function to evaluate spliting point. Supported criteria are 'mae' and 'mse'.
- * @param impurity [Float] The impurity of whole dataset.
- * @param sorted_features [Numo::DFloat] (shape: [n_samples]) The feature values sorted in ascending order.
- * @param sorted_targets [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values sorted according to feature values.
- * @return [Float] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
  */
-static VALUE
-find_split_params_reg(VALUE self, VALUE criterion, VALUE whole_impurity, VALUE sorted_f, VALUE sorted_y)
+typedef struct {
+  char* criterion;
+  double impurity;
+} split_opts_reg;
+/**
+ * @!visibility private
+ */
+static void
+iter_find_split_params_reg(na_loop_t const* lp)
 {
-  const long n_elements = RARRAY_LEN(sorted_f);
-  const long n_dimensions = RARRAY_LEN(rb_ary_entry(sorted_y, 0));
-  const double w_impurity = NUM2DBL(whole_impurity);
-  long iter = 0;
+  const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
+  const double* f = (double*)NDL_PTR(lp, 1);
+  const double* y = (double*)NDL_PTR(lp, 2);
+  const long n_elements = NDL_SHAPE(lp, 0)[0];
+  const long n_outputs = NDL_SHAPE(lp, 2)[1];
+  const char* criterion = ((split_opts_reg*)lp->opt_ptr)->criterion;
+  const double w_impurity = ((split_opts_reg*)lp->opt_ptr)->impurity;
+  double* params = (double*)NDL_PTR(lp, 3);
+  long i, j;
   long curr_pos = 0;
   long next_pos = 0;
   long n_l_elements = 0;
   long n_r_elements = n_elements;
-  double last_el = NUM2DBL(rb_ary_entry(sorted_f, n_elements - 1));
-  double curr_el = NUM2DBL(rb_ary_entry(sorted_f, 0));
+  double curr_el = f[o[0]];
+  double last_el = f[o[n_elements - 1]];
   double next_el;
   double l_impurity;
   double r_impurity;
   double gain;
-  VALUE l_sum_vec = create_zero_vector(n_dimensions);
-  VALUE r_sum_vec = create_zero_vector(n_dimensions);
+  VALUE l_sum_vec = create_zero_vector(n_outputs);
+  VALUE r_sum_vec = create_zero_vector(n_outputs);
   VALUE l_target_vecs = rb_ary_new();
   VALUE r_target_vecs = rb_ary_new();
   VALUE target;
-  VALUE opt_params = rb_ary_new2(4);
 
   /* Initialize optimal parameters. */
-  rb_ary_store(opt_params, 0, DBL2NUM(0));                /* left impurity */
-  rb_ary_store(opt_params, 1, DBL2NUM(w_impurity));       /* right impurity */
-  rb_ary_store(opt_params, 2, rb_ary_entry(sorted_f, 0)); /* threshold */
-  rb_ary_store(opt_params, 3, DBL2NUM(0));                /* gain */
+  params[0] = 0.0;        /* left impurity */
+  params[1] = w_impurity; /* right impurity */
+  params[2] = curr_el;    /* threshold */
+  params[3] = 0.0;        /* gain */
 
   /* Initialize child node variables. */
-  for (iter = 0; iter < n_elements; iter++) {
-    target = rb_ary_entry(sorted_y, iter);
+  for (i = 0; i < n_elements; i++) {
+    target = rb_ary_new2(n_outputs);
+    for (j = 0; j < n_outputs; j++) {
+      rb_ary_store(target, j, DBL2NUM(y[o[i] * n_outputs + j]));
+    }
     add_sum_vec(r_sum_vec, target);
     rb_ary_push(r_target_vecs, target);
   }
 
   /* Find optimal parameters. */
   while (curr_pos < n_elements && curr_el != last_el) {
-    next_el = NUM2DBL(rb_ary_entry(sorted_f, next_pos));
+    next_el = f[o[next_pos]];
     while (next_pos < n_elements && next_el == curr_el) {
-      target = rb_ary_entry(sorted_y, next_pos);
-      add_sum_vec(l_sum_vec, target);
+      target = rb_ary_shift(r_target_vecs);
+      n_r_elements--;
+      sub_sum_vec(r_sum_vec, target);
       rb_ary_push(l_target_vecs, target);
       n_l_elements++;
-      sub_sum_vec(r_sum_vec, target);
-      rb_ary_shift(r_target_vecs);
-      n_r_elements--;
-      next_el = NUM2DBL(rb_ary_entry(sorted_f, ++next_pos));
+      add_sum_vec(l_sum_vec, target);
+      next_pos++;
+      next_el = f[o[next_pos]];
     }
     /* Calculate gain of new split. */
     l_impurity = calc_impurity_reg(criterion, l_target_vecs, l_sum_vec);
     r_impurity = calc_impurity_reg(criterion, r_target_vecs, r_sum_vec);
     gain = w_impurity - (n_l_elements * l_impurity + n_r_elements * r_impurity) / n_elements;
     /* Update optimal parameters. */
-    if (gain > NUM2DBL(rb_ary_entry(opt_params, 3))) {
-      rb_ary_store(opt_params, 0, DBL2NUM(l_impurity));
-      rb_ary_store(opt_params, 1, DBL2NUM(r_impurity));
-      rb_ary_store(opt_params, 2, DBL2NUM(0.5 * (curr_el + next_el)));
-      rb_ary_store(opt_params, 3, DBL2NUM(gain));
+    if (gain > params[3]) {
+      params[0] = l_impurity;
+      params[1] = r_impurity;
+      params[2] = 0.5 * (curr_el + next_el);
+      params[3] = gain;
     }
     if (next_pos == n_elements) break;
     curr_pos = next_pos;
-    curr_el = NUM2DBL(rb_ary_entry(sorted_f, curr_pos));
+    curr_el = f[o[curr_pos]];
   }
-
-  return opt_params;
+}
+/**
+ * @!visibility private
+ * Find for split point with maximum information gain.
+ *
+ * @overload find_split_params(criterion, impurity, order, features, targets) -> Array<Float>
+ *
+ * @param criterion [String] The function to evaluate spliting point. Supported criteria are 'mae' and 'mse'.
+ * @param impurity [Float] The impurity of whole dataset.
+ * @param order [Numo::Int32] (shape: [n_samples]) The element indices sorted according to feature values in ascending order.
+ * @param features [Numo::DFloat] (shape: [n_samples]) The feature values.
+ * @param targets [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values.
+ * @return [Array<Float>] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
+ */
+static VALUE
+find_split_params_reg(VALUE self, VALUE criterion, VALUE impurity, VALUE order, VALUE features, VALUE targets)
+{
+  ndfunc_arg_in_t ain[3] = { {numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 2} };
+  size_t out_shape[1] = { 4 };
+  ndfunc_arg_out_t aout[1] = { {numo_cDFloat, 1, out_shape} };
+  ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_reg, NO_LOOP, 3, 1, ain, aout };
+  split_opts_reg opts = { StringValuePtr(criterion), NUM2DBL(impurity) };
+  VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, targets);
+  VALUE results = rb_ary_new2(4);
+  rb_ary_store(results, 0, DBL2NUM(((double*)na_get_pointer_for_read(params))[0]));
+  rb_ary_store(results, 1, DBL2NUM(((double*)na_get_pointer_for_read(params))[1]));
+  rb_ary_store(results, 2, DBL2NUM(((double*)na_get_pointer_for_read(params))[2]));
+  rb_ary_store(results, 3, DBL2NUM(((double*)na_get_pointer_for_read(params))[3]));
+  return results;
 }
 
 /**
@@ -487,7 +519,7 @@ node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, 
  * @overload node_impurity(criterion, y) -> Float
  *
  * @param criterion [String] The function to calculate impurity. Supported criteria are 'mae' and 'mse'.
- * @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The taget values.
+ * @param y [Array<Float>] (shape: [n_samples, n_outputs]) The taget values.
  * @return [Float] impurity
  */
 static VALUE
@@ -495,8 +527,8 @@ node_impurity_reg(VALUE self, VALUE criterion, VALUE y)
 {
   long i;
   const long n_elements = RARRAY_LEN(y);
-  const long n_dimensions = RARRAY_LEN(rb_ary_entry(y, 0));
-  VALUE sum_vec = create_zero_vector(n_dimensions);
+  const long n_outputs = RARRAY_LEN(rb_ary_entry(y, 0));
+  VALUE sum_vec = create_zero_vector(n_outputs);
   VALUE target_vecs = rb_ary_new();
   VALUE target;
 
@@ -506,7 +538,7 @@ node_impurity_reg(VALUE self, VALUE criterion, VALUE y)
     rb_ary_push(target_vecs, target);
   }
 
-  return DBL2NUM(calc_impurity_reg(criterion, target_vecs, sum_vec));
+  return DBL2NUM(calc_impurity_reg(StringValuePtr(criterion), target_vecs, sum_vec));
 }
 
 void Init_rumale(void)
@@ -536,7 +568,7 @@ void Init_rumale(void)
   VALUE mExtGTreeReg = rb_define_module_under(mTree, "ExtGradientTreeRegressor");
 
   rb_define_private_method(mExtDTreeCls, "find_split_params", find_split_params_cls, 6);
-  rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 4);
+  rb_define_private_method(mExtDTreeReg, "find_split_params", find_split_params_reg, 5);
   rb_define_private_method(mExtGTreeReg, "find_split_params", find_split_params_grad_reg, 7);
   rb_define_private_method(mExtDTreeCls, "node_impurity", node_impurity_cls, 4);
   rb_define_private_method(mExtDTreeReg, "node_impurity", node_impurity_reg, 2);
