@@ -1,3 +1,6 @@
+# 0.12.7
+- Fix bug that fails to build and install on Windows.
+
 # 0.12.6
 - Fix extension codes of decision tree classifier and gradient tree regressor for using Numo::NArray.
 
