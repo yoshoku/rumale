@@ -1,5 +1,8 @@
+# 0.12.8
+- Fix bug that fails to build and install on Windows again. Fix extconf to add Numo::NArray libraries to $lib.
+
 # 0.12.7
-- Fix bug that fails to build and install on Windows.
+- Fix bug that fails to build and install on Windows. Add search for Numo::NArray static library path to extconf.
 
 # 0.12.6
 - Fix extension codes of decision tree classifier and gradient tree regressor for using Numo::NArray.
