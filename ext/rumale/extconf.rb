@@ -10,4 +10,13 @@ $LOAD_PATH.each do |lp|
   end
 end
 
+if RUBY_PLATFORM =~ /mswin|cygwin|mingw/
+  $LOAD_PATH.each do |lp|
+    if File.exist? File.join(lp, 'numo/libnarray.a')
+      $LDFLAGS = "-L#{lp}/numo #{$LDFLAGS}"
+      break
+    end
+  end
+end
+
 create_makefile('rumale/rumale')
