@@ -5,10 +5,8 @@ require 'rumale/base/cluster_analyzer'
 require 'rumale/pairwise_metric'
 
 module Rumale
-  # This module consists of classes that implement cluster analysis methods.
   module Clustering
     # KMedoids is a class that implements K-Medoids cluster analysis.
-    # The current implementation uses the Euclidean distance for analyzing the clusters.
     #
     # @example
     #   analyzer = Rumale::Clustering::KMedoids.new(n_clusters: 10, max_iter: 50)
@@ -28,7 +26,7 @@ module Rumale
       # @return [Random]
       attr_reader :rng
 
-      # Create a new cluster analyzer with K-Means method.
+      # Create a new cluster analyzer with K-Medoids method.
       #
       # @param n_clusters [Integer] The number of clusters.
       # @param metric [String] The metric to calculate the distances in original space.
