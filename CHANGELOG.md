@@ -1,3 +1,7 @@
+# 0.12.9
+- Add class for K-Medoids clustering.
+- Fix extension codes of decision tree regressor for using Numo::NArray.
+
 # 0.12.8
 - Fix bug that fails to build and install on Windows again. Fix extconf to add Numo::NArray libraries to $lib.
 
