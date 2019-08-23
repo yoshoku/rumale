@@ -11,8 +11,24 @@ module Rumale
 
       private
 
+      def enable_linalg?
+        if defined?(Numo::Linalg).nil?
+          warn('If you want to use features that depend on Numo::Linalg, you should install and load Numo::Linalg in advance.')
+          return false
+        end
+        if Numo::Linalg::VERSION < '0.1.4'
+          warn('The loaded Numo::Linalg does not implement the methods required by Rumale. Please load Numo::Linalg version 0.1.4 or later.')
+          return false
+        end
+        true
+      end
+
       def enable_parallel?
-        return false if @params[:n_jobs].nil? || defined?(Parallel).nil?
+        return false if @params[:n_jobs].nil?
+        if defined?(Parallel).nil?
+          warn('If you want to use parallel option, you should install and load Parallel in advance.')
+          return false
+        end
         true
       end
 

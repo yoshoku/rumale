@@ -11,6 +11,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([SimpleCov::Forma
 SimpleCov.start
 
 require 'bundler/setup'
+require 'numo/linalg/autoloader'
 require 'rumale'
 require 'parallel'
 

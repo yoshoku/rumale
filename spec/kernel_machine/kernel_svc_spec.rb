@@ -90,6 +90,10 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
   end
 
   it 'estimates class probabilities with three clusters dataset in parallel.' do
+    # FIXME: Remove Numo::Linalg temporarily for avoiding Parallel::DeadWorker error.
+    backup = Numo::Linalg
+    Numo.class_eval { remove_const(:Linalg) }
+
     classes = y_mlt.to_a.uniq.sort
     n_classes = classes.size
     n_samples = x_mlt.shape[0]
@@ -118,6 +122,8 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
     expect(probs.shape[1]).to eq(n_classes)
     expect(prob_predicted).to eq(y_mlt)
     expect(estimator_parallel.score(kernel_mat_mlt, y_mlt)).to eq(1.0)
+
+    Numo::Linalg = backup
   end
 
   it 'dumps and restores itself using Marshal module.' do
