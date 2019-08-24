@@ -12,6 +12,11 @@ module Rumale
     #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2)
     #   representaion = decomposer.fit_transform(samples)
     #
+    #   # If Numo::Linalg is installed, you can specify 'evd' for the solver option.
+    #   require 'numo/linalg/autoloader'
+    #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2, solver: 'evd')
+    #   representaion = decomposer.fit_transform(samples)
+    #
     # *Reference*
     # - A. Sharma and K K. Paliwal, "Fast principal component analysis using fixed-point algorithm," Pattern Recognition Letters, 28, pp. 1151--1155, 2007.
     class PCA
@@ -23,7 +28,7 @@ module Rumale
       attr_reader :components
 
       # Returns the mean vector.
-      # @return [Numo::DFloat] (shape: [n_features]
+      # @return [Numo::DFloat] (shape: [n_features])
       attr_reader :mean
 
       # Return the random generator.
@@ -33,15 +38,19 @@ module Rumale
       # Create a new transformer with PCA.
       #
       # @param n_components [Integer] The number of principal components.
-      # @param max_iter [Integer] The maximum number of iterations.
-      # @param tol [Float] The tolerance of termination criterion.
+      # @param solver [String] The algorithm for the optimization ('fpt' or 'evd').
+      #   'fpt' uses the fixed-point algorithm. 'evd' performs eigen value decomposition of the covariance matrix of samples.
+      # @param max_iter [Integer] The maximum number of iterations. If solver = 'evd', this parameter is ignored.
+      # @param tol [Float] The tolerance of termination criterion. If solver = 'evd', this parameter is ignored.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(n_components: 2, max_iter: 100, tol: 1.0e-4, random_seed: nil)
+      def initialize(n_components: 2, solver: 'fpt', max_iter: 100, tol: 1.0e-4, random_seed: nil)
         check_params_integer(n_components: n_components, max_iter: max_iter)
+        check_params_string(solver: solver)
         check_params_float(tol: tol)
         check_params_type_or_nil(Integer, random_seed: random_seed)
         check_params_positive(n_components: n_components, max_iter: max_iter, tol: tol)
         @params = {}
+        @params[:solver] = solver != 'evd' ? 'fpt' : 'evd'
         @params[:n_components] = n_components
         @params[:max_iter] = max_iter
         @params[:tol] = tol
@@ -69,14 +78,19 @@ module Rumale
         centered_x = x - @mean
         # optimization.
         covariance_mat = centered_x.transpose.dot(centered_x) / (n_samples - 1)
-        @params[:n_components].times do
-          comp_vec = Rumale::Utils.rand_uniform(n_features, sub_rng)
-          @params[:max_iter].times do
-            updated = orthogonalize(covariance_mat.dot(comp_vec))
-            break if (updated.dot(comp_vec) - 1).abs < @params[:tol]
-            comp_vec = updated
+        if @params[:solver] == 'evd' && enable_linalg?
+          _, evecs = Numo::Linalg.eigh(covariance_mat, vals_range: (n_features - @params[:n_components])...n_features)
+          @components = evecs.reverse(1).transpose.dup
+        else
+          @params[:n_components].times do
+            comp_vec = Rumale::Utils.rand_uniform(n_features, sub_rng)
+            @params[:max_iter].times do
+              updated = orthogonalize(covariance_mat.dot(comp_vec))
+              break if (updated.dot(comp_vec) - 1).abs < @params[:tol]
+              comp_vec = updated
+            end
+            @components = @components.nil? ? comp_vec : Numo::NArray.vstack([@components, comp_vec])
           end
-          @components = @components.nil? ? comp_vec : Numo::NArray.vstack([@components, comp_vec])
         end
         self
       end
