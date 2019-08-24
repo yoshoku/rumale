@@ -459,14 +459,13 @@ iter_find_split_params_grad_reg(na_loop_t const* lp)
  * Find for split point with maximum information gain.
  *
  * @overload find_split_params(order, features, gradients, hessians, sum_gradient, sum_hessian, reg_lambda) -> Array<Float>
- *
- * @param order [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
- * @param features [Numo::DFloat] (shape: [n_elements]) The feature values.
- * @param gradients [Numo::DFloat] (shape: [n_elements]) The gradient values.
- * @param hessians [Numo::DFloat] (shape: [n_elements]) The hessian values.
- * @param sum_gradient [Float] The sum of gradient values.
- * @param sum_hessian [Float] The sum of hessian values.
- * @param reg_lambda [Float] The L2 regularization term on weight.
+ *   @param order [Numo::Int32] (shape: [n_elements]) The element indices sorted according to feature values.
+ *   @param features [Numo::DFloat] (shape: [n_elements]) The feature values.
+ *   @param gradients [Numo::DFloat] (shape: [n_elements]) The gradient values.
+ *   @param hessians [Numo::DFloat] (shape: [n_elements]) The hessian values.
+ *   @param sum_gradient [Float] The sum of gradient values.
+ *   @param sum_hessian [Float] The sum of hessian values.
+ *   @param reg_lambda [Float] The L2 regularization term on weight.
  * @return [Array<Float>] The array consists of optimal parameters including threshold and gain.
  */
 static VALUE
