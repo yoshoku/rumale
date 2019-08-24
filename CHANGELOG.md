@@ -1,3 +1,17 @@
+# 0.13.0
+- Introduce [Numo::Linalg](https://github.com/ruby-numo/numo-linalg) to use linear algebra algorithms on the optimization.
+- Add the solver parameter that specifies the optimization algorithm to Rumale::Decomposition::PCA.
+
+```ruby
+require 'rumale'
+
+# Loading Numo::Linalg enables features based on linear algebra algorithms.
+require 'numo/linalg/autoloader'
+
+decomposer = Rumale::Decomposition::PCA.new(n_components: 2, solver: 'evd')
+low_dimensional_samples = decomposer.fit_transform(samples)
+```
+
 # 0.12.9
 - Add class for K-Medoids clustering.
 - Fix extension codes of decision tree regressor for using Numo::NArray.
