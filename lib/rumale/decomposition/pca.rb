@@ -80,7 +80,8 @@ module Rumale
         covariance_mat = centered_x.transpose.dot(centered_x) / (n_samples - 1)
         if @params[:solver] == 'evd' && enable_linalg?
           _, evecs = Numo::Linalg.eigh(covariance_mat, vals_range: (n_features - @params[:n_components])...n_features)
-          @components = evecs.reverse(1).transpose.dup
+          comps = evecs.reverse(1).transpose
+          @components = @params[:n_components] == 1 ? comps[0, true].dup : comps.dup
         else
           @params[:n_components].times do
             comp_vec = Rumale::Utils.rand_uniform(n_features, sub_rng)
