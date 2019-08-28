@@ -45,11 +45,6 @@ module Rumale
         y = x if y.nil?
         Rumale::Validation.check_sample_array(x)
         Rumale::Validation.check_sample_array(y)
-        # sum_x_vec = (x**2).sum(1)
-        # sum_y_vec = (y**2).sum(1)
-        # dot_xy_mat = x.dot(y.transpose)
-        # dot_xy_mat * -2.0 + sum_x_vec.tile(y.shape[0], 1).transpose + sum_y_vec.tile(x.shape[0], 1)
-        #
         n_features = x.shape[1]
         one_vec = Numo::DFloat.ones(n_features).expand_dims(1)
         sum_x_vec = (x**2).dot(one_vec)
