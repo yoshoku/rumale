@@ -29,8 +29,8 @@ module Rumale
       # Create a new cluster analyzer with K-Medoids method.
       #
       # @param n_clusters [Integer] The number of clusters.
-      # @param metric [String] The metric to calculate the distances in original space.
-      #   If metric is 'euclidean', Euclidean distance is calculated for distance in original space.
+      # @param metric [String] The metric to calculate the distances.
+      #   If metric is 'euclidean', Euclidean distance is calculated for distance between points.
       #   If metric is 'precomputed', the fit and fit_transform methods expect to be given a distance matrix.
       # @param init [String] The initialization method for centroids ('random' or 'k-means++').
       # @param max_iter [Integer] The maximum number of iterations.
