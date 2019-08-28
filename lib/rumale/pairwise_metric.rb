@@ -18,6 +18,24 @@ module Rumale
         Numo::NMath.sqrt(squared_error(x, y).abs)
       end
 
+      # Calculate the pairwise manhattan distances between x and y.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples_x, n_features])
+      # @param y [Numo::DFloat] (shape: [n_samples_y, n_features])
+      # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
+      def manhattan_distance(x, y = nil)
+        y = x if y.nil?
+        Rumale::Validation.check_sample_array(x)
+        Rumale::Validation.check_sample_array(y)
+        n_samples_x = x.shape[0]
+        n_samples_y = y.shape[0]
+        distance_mat = Numo::DFloat.zeros(n_samples_x, n_samples_y)
+        n_samples_x.times do |n|
+          distance_mat[n, true] = (y - x[n, true]).abs.sum(axis: 1)
+        end
+        distance_mat
+      end
+
       # Calculate the pairwise squared errors between x and y.
       #
       # @param x [Numo::DFloat] (shape: [n_samples_x, n_features])

@@ -54,6 +54,34 @@ RSpec.describe Rumale::PairwiseMetric do
     expect(dist_mat).to be_within(1.0e-5).of(dist_mat_bf)
   end
 
+  it 'calculates the manhattan distance matrix between different datasets.' do
+    dist_mat_bf = Numo::DFloat.zeros(n_samples_a, n_samples_b)
+    n_samples_a.times do |m|
+      n_samples_b.times do |n|
+        dist_mat_bf[m, n] = (samples_a[m, true] - samples_b[n, true]).abs.sum
+      end
+    end
+    dist_mat = described_class.manhattan_distance(samples_a, samples_b)
+    expect(dist_mat.class).to eq(Numo::DFloat)
+    expect(dist_mat.shape[0]).to eq(n_samples_a)
+    expect(dist_mat.shape[1]).to eq(n_samples_b)
+    expect(dist_mat).to be_within(1.0e-5).of(dist_mat_bf)
+  end
+
+  it 'calculates the manhattan distance matrix of dataset.' do
+    dist_mat_bf = Numo::DFloat.zeros(n_samples_a, n_samples_a)
+    n_samples_a.times do |m|
+      n_samples_a.times do |n|
+        dist_mat_bf[m, n] = (samples_a[m, true] - samples_a[n, true]).abs.sum
+      end
+    end
+    dist_mat = described_class.manhattan_distance(samples_a)
+    expect(dist_mat.class).to eq(Numo::DFloat)
+    expect(dist_mat.shape[0]).to eq(n_samples_a)
+    expect(dist_mat.shape[1]).to eq(n_samples_a)
+    expect(dist_mat).to be_within(1.0e-5).of(dist_mat_bf)
+  end
+
   it 'calculates the RBF kernel matrix of dataset.' do
     kernel_mat_bf = Numo::DFloat.asarray(
       [*0...n_samples_a].product([*0...n_samples_a]).map do |m, n|
