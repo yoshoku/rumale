@@ -7,7 +7,6 @@ require 'rumale/pairwise_metric'
 module Rumale
   module Clustering
     # DBSCAN is a class that implements DBSCAN cluster analysis.
-    # The current implementation uses the Euclidean distance for analyzing the clusters.
     #
     # @example
     #   analyzer = Rumale::Clustering::DBSCAN.new(eps: 0.5, min_samples: 5)
@@ -31,12 +30,17 @@ module Rumale
       #
       # @param eps [Float] The radius of neighborhood.
       # @param min_samples [Integer] The number of neighbor samples to be used for the criterion whether a point is a core point.
-      def initialize(eps: 0.5, min_samples: 5)
+      # @param metric [String] The metric to calculate the distances.
+      #   If metric is 'euclidean', Euclidean distance is calculated for distance between points.
+      #   If metric is 'precomputed', the fit and fit_transform methods expect to be given a distance matrix.
+      def initialize(eps: 0.5, min_samples: 5, metric: 'euclidean')
         check_params_float(eps: eps)
         check_params_integer(min_samples: min_samples)
+        check_params_string(metric: metric)
         @params = {}
         @params[:eps] = eps
         @params[:min_samples] = min_samples
+        @params[:metric] = metric == 'precomputed' ? 'precomputed' : 'euclidean'
         @core_sample_ids = nil
         @labels = nil
       end
@@ -46,19 +50,23 @@ module Rumale
       # @overload fit(x) -> DBSCAN
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [DBSCAN] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         check_sample_array(x)
+        raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
         partial_fit(x)
         self
       end
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
+      #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         check_sample_array(x)
+        raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
         partial_fit(x)
         labels
       end
@@ -84,19 +92,20 @@ module Rumale
 
       def partial_fit(x)
         cluster_id = 0
-        n_samples  = x.shape[0]
+        distance_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x)
+        n_samples = distance_mat.shape[0]
         @core_sample_ids = []
         @labels = Numo::Int32.zeros(n_samples) - 2
-        n_samples.times do |q|
-          next if @labels[q] >= -1
-          cluster_id += 1 if expand_cluster(x, q, cluster_id)
+        n_samples.times do |query_id|
+          next if @labels[query_id] >= -1
+          cluster_id += 1 if expand_cluster(distance_mat, query_id, cluster_id)
         end
         @core_sample_ids = Numo::Int32[*@core_sample_ids.flatten]
         nil
       end
 
-      def expand_cluster(x, query_id, cluster_id)
-        target_ids = region_query(x[query_id, true], x)
+      def expand_cluster(distance_mat, query_id, cluster_id)
+        target_ids = region_query(distance_mat[query_id, true])
         if target_ids.size < @params[:min_samples]
           @labels[query_id] = -1
           false
@@ -105,7 +114,7 @@ module Rumale
           @core_sample_ids.push(target_ids.dup)
           target_ids.delete(query_id)
           while (m = target_ids.shift)
-            neighbor_ids = region_query(x[m, true], x)
+            neighbor_ids = region_query(distance_mat[m, true])
             next if neighbor_ids.size < @params[:min_samples]
             neighbor_ids.each do |n|
               target_ids.push(n) if @labels[n] < -1
@@ -116,8 +125,7 @@ module Rumale
         end
       end
 
-      def region_query(query, targets)
-        distance_arr = PairwiseMetric.euclidean_distance(query.expand_dims(0), targets)[0, true]
+      def region_query(distance_arr)
         distance_arr.lt(@params[:eps]).where.to_a
       end
     end
