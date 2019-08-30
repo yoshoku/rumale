@@ -92,20 +92,24 @@ module Rumale
 
       def partial_fit(x)
         cluster_id = 0
-        distance_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x)
-        n_samples = distance_mat.shape[0]
+        metric_mat = calc_pairwise_metrics(x)
+        n_samples = metric_mat.shape[0]
         @core_sample_ids = []
         @labels = Numo::Int32.zeros(n_samples) - 2
         n_samples.times do |query_id|
           next if @labels[query_id] >= -1
-          cluster_id += 1 if expand_cluster(distance_mat, query_id, cluster_id)
+          cluster_id += 1 if expand_cluster(metric_mat, query_id, cluster_id)
         end
         @core_sample_ids = Numo::Int32[*@core_sample_ids.flatten]
         nil
       end
 
-      def expand_cluster(distance_mat, query_id, cluster_id)
-        target_ids = region_query(distance_mat[query_id, true])
+      def calc_pairwise_metrics(x)
+        @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x)
+      end
+
+      def expand_cluster(metric_mat, query_id, cluster_id)
+        target_ids = region_query(metric_mat[query_id, true])
         if target_ids.size < @params[:min_samples]
           @labels[query_id] = -1
           false
@@ -114,7 +118,7 @@ module Rumale
           @core_sample_ids.push(target_ids.dup)
           target_ids.delete(query_id)
           while (m = target_ids.shift)
-            neighbor_ids = region_query(distance_mat[m, true])
+            neighbor_ids = region_query(metric_mat[m, true])
             next if neighbor_ids.size < @params[:min_samples]
             neighbor_ids.each do |n|
               target_ids.push(n) if @labels[n] < -1
@@ -125,8 +129,8 @@ module Rumale
         end
       end
 
-      def region_query(distance_arr)
-        distance_arr.lt(@params[:eps]).where.to_a
+      def region_query(metric_arr)
+        metric_arr.lt(@params[:eps]).where.to_a
       end
     end
   end
