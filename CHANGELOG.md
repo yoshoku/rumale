@@ -1,3 +1,11 @@
+# 0.13.1
+- Add class for Shared Neareset Neighbor clustering.
+- Add function for calculation of manhattan distance to Rumale::PairwiseMetric.
+- Add metric parameter that specifies distance metric to Rumale::Clustering::DBSCAN.
+- Add the solver parameter that specifies the optimization algorithm to Rumale::LinearModel::LinearRegression.
+- Add the solver parameter that specifies the optimization algorithm to Rumale::LinearModel::Ridge.
+- Fix bug that the ndim of NArray of 1-dimensional principal components is not 1.
+
 # 0.13.0
 - Introduce [Numo::Linalg](https://github.com/ruby-numo/numo-linalg) to use linear algebra algorithms on the optimization.
 - Add the solver parameter that specifies the optimization algorithm to Rumale::Decomposition::PCA.
