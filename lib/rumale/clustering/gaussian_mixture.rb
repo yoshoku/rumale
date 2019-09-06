@@ -2,6 +2,7 @@
 
 require 'rumale/base/base_estimator'
 require 'rumale/base/cluster_analyzer'
+require 'rumale/preprocessing/label_binarizer'
 require 'rumale/pairwise_metric'
 
 module Rumale
@@ -136,8 +137,8 @@ module Rumale
           n_clusters: @params[:n_clusters], init: @params[:init], max_iter: 0, random_seed: @params[:random_seed]
         )
         cluster_ids = kmeans.fit_predict(x)
-        encoder = Rumale::Preprocessing::OneHotEncoder.new
-        encoder.fit_transform(cluster_ids)
+        encoder = Rumale::Preprocessing::LabelBinarizer.new
+        Numo::DFloat.cast(encoder.fit_transform(cluster_ids))
       end
 
       def calc_memberships(x, weights, means, diag_cov)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rumale/base/evaluator'
-require 'rumale/preprocessing/one_hot_encoder'
+require 'rumale/preprocessing/label_binarizer'
 
 module Rumale
   module EvaluationMeasure
@@ -33,8 +33,8 @@ module Rumale
                      bin_y_true = Numo::DFloat.cast(y_true.ne(negative_label))
                      -(bin_y_true * Numo::NMath.log(clipped_p) + (1 - bin_y_true) * Numo::NMath.log(1 - clipped_p))
                    else
-                     encoder = Rumale::Preprocessing::OneHotEncoder.new
-                     encoded_y_true = encoder.fit_transform(y_true)
+                     encoder = Rumale::Preprocessing::LabelBinarizer.new
+                     encoded_y_true = Numo::DFloat.cast(encoder.fit_transform(y_true))
                      clipped_p /= clipped_p.sum(1).expand_dims(1)
                      -(encoded_y_true * Numo::NMath.log(clipped_p)).sum(1)
                    end

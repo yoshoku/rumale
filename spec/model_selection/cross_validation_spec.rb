@@ -83,8 +83,8 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
-    expect(mean_test_score).to be_within(5.0e-5).of(0.8479)
-    expect(mean_train_score).to be_within(5.0e-5).of(0.8541)
+    expect(mean_test_score).to be_within(5.0e-4).of(0.2571)
+    expect(mean_train_score).to be_within(5.0e-4).of(0.2532)
   end
 
   describe 'private method' do
