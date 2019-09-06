@@ -27,6 +27,10 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_features])
       attr_reader :n_values
 
+      # Return the indices for feature values that actually occur in the training set.
+      # @return [Nimo::Int32]
+      attr_reader :active_features
+
       # Return the indices to feature ranges.
       # @return [Numo::Int32] (shape: [n_features + 1])
       attr_reader :feature_indices
@@ -35,19 +39,21 @@ module Rumale
       def initialize
         @params = {}
         @n_values = nil
+        @active_features = nil
         @feature_indices = nil
       end
 
       # Fit one-hot-encoder to samples.
       #
       # @overload fit(x) -> OneHotEncoder
-      #
-      # @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to fit one-hot-encoder.
+      #   @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to fit one-hot-encoder.
       # @return [OneHotEncoder]
       def fit(x, _y = nil)
         check_params_type(Numo::Int32, x: x)
+        raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
         @n_values = x.max(0) + 1
         @feature_indices = Numo::Int32.hstack([[0], @n_values]).cumsum
+        @active_features = encode(x, @feature_indices).sum(0).ne(0).where
         self
       end
 
@@ -59,6 +65,7 @@ module Rumale
       # @return [Numo::DFloat] The one-hot-vectors.
       def fit_transform(x, _y = nil)
         check_params_type(Numo::Int32, x: x)
+        raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
         fit(x).transform(x)
       end
 
@@ -68,13 +75,9 @@ module Rumale
       # @return [Numo::DFloat] The one-hot-vectors.
       def transform(x)
         check_params_type(Numo::Int32, x: x)
-        n_samples, n_features = x.shape
-        n_features = 1 if n_features.nil?
-        column_indices = (x + @feature_indices[0...-1]).flatten.to_a
-        row_indices = Numo::Int32.new(n_samples).seq.repeat(n_features).to_a
-        codes = Numo::DFloat.zeros(n_samples, @feature_indices[-1])
-        row_indices.zip(column_indices).each { |r, c| codes[r, c] = 1.0 }
-        codes
+        raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
+        codes = encode(x, @feature_indices)
+        codes[true, @active_features].dup
       end
 
       # Dump marshal data.
@@ -82,6 +85,7 @@ module Rumale
       def marshal_dump
         { params: @params,
           n_values: @n_values,
+          active_features: @active_features,
           feature_indices: @feature_indices }
       end
 
@@ -90,8 +94,21 @@ module Rumale
       def marshal_load(obj)
         @params = obj[:params]
         @n_values = obj[:n_values]
+        @active_features = obj[:active_features]
         @feature_indices = obj[:feature_indices]
         nil
+      end
+
+      private
+
+      def encode(x, indices)
+        n_samples, n_features = x.shape
+        n_features = 1 if n_features.nil?
+        col_indices = (x + indices[0...-1]).flatten.to_a
+        row_indices = Numo::Int32.new(n_samples).seq.repeat(n_features).to_a
+        codes = Numo::DFloat.zeros(n_samples, indices[-1])
+        row_indices.zip(col_indices).each { |r, c| codes[r, c] = 1.0 }
+        codes
       end
     end
   end
