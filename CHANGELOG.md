@@ -1,3 +1,8 @@
+# 0.13.2
+- Add preprocessing class for label binarization.
+- Fix to use LabelBinarizer instead of OneHotEncoder.
+- Fix bug that OneHotEncoder leaves elements related to values that do not occur in training data.
+
 # 0.13.1
 - Add class for Shared Neareset Neighbor clustering.
 - Add function for calculation of manhattan distance to Rumale::PairwiseMetric.

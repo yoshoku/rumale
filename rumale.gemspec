@@ -33,6 +33,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.extensions    = ['ext/rumale/extconf.rb']
 
+  spec.metadata      = {
+    'homepage_uri' => 'https://github.com/yoshoku/rumale',
+    'changelog_uri' => 'https://github.com/yoshoku/rumale/blob/master/CHANGELOG.md',
+    'source_code_uri' => 'https://github.com/yoshoku/rumale',
+    'documentation_uri' => 'https://yoshoku.github.io/rumale/doc/',
+    'bug_tracker_uri' => 'https://github.com/yoshoku/rumale/issues'
+  }
+
   spec.required_ruby_version = '>= 2.3'
 
   spec.add_runtime_dependency 'numo-narray', '>= 0.9.1'
