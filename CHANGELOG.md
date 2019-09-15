@@ -1,3 +1,7 @@
+# 0.13.3
+- Add transformer class for [Kernel PCA](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelPCA.html).
+- Add regressor class for [Kernel Ridge](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelRidge.html).
+
 # 0.13.2
 - Add preprocessing class for label binarization.
 - Fix to use LabelBinarizer instead of OneHotEncoder.
