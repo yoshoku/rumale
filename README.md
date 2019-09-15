@@ -11,10 +11,10 @@
 Rumale (**Ru**by **ma**chine **le**arning) is a machine learning library in Ruby.
 Rumale provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
 Rumale supports Linear / Kernel Support Vector Machine,
-Logistic Regression, Linear Regression, Ridge, Lasso, Factorization Machine,
+Logistic Regression, Linear Regression, Ridge, Lasso, Kernel Ridge, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Gradient Tree Boosting, Random Forest, Extra-Trees, K-nearest neighbor classifier,
 K-Means, K-Medoids, Gaussian Mixture Model, DBSCAN, SNN, Power Iteration Clustering,
-Mutidimensional Scaling, t-SNE, Principal Component Analysis, and Non-negative Matrix Factorization.
+Mutidimensional Scaling, t-SNE, Principal Component Analysis, Kernel PCA and Non-negative Matrix Factorization.
 
 This project was formerly known as "SVMKit".
 If you are using SVMKit, please install Rumale and replace `SVMKit` constants with `Rumale`.
