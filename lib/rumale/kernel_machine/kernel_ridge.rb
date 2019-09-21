@@ -8,6 +8,8 @@ module Rumale
     # KernelRidge is a class that implements kernel ridge regression.
     #
     # @example
+    #   require 'numo/linalg/autoloader'
+    #
     #   kernel_mat_train = Rumale::PairwiseMetric::rbf_kernel(training_samples)
     #   kridge = Rumale::KernelMachine::KernelRidge.new(reg_param: 1.0)
     #   kridge.fit(kernel_mat_train, traininig_values)

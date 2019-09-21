@@ -8,6 +8,8 @@ module Rumale
     # KernelPCA is a class that implements Kernel Principal Component Analysis.
     #
     # @example
+    #   require 'numo/linalg/autoloader'
+    #
     #   kernel_mat_train = Rumale::PairwiseMetric::rbf_kernel(training_samples)
     #   kpca = Rumale::KernelMachine::KernelPCA(n_components: 2)
     #   mapped_traininig_samples = kpca.fit_transform(kernel_mat_train)
