@@ -24,6 +24,9 @@ RSpec.describe Rumale::Clustering::PowerIteration do
       expect(analyzer.embedding.class).to eq(Numo::DFloat)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
       expect(analyzer.embedding.shape[1]).to be_nil
+      expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
+      expect(analyzer.labels.eq(1).count).to eq(n_cluster_samples)
+      expect(analyzer.labels.eq(2).count).to eq(n_cluster_samples)
       expect(analyzer.n_iter).to be > 1
       expect(analyzer.score(x, y)).to eq(1)
     end
@@ -32,6 +35,7 @@ RSpec.describe Rumale::Clustering::PowerIteration do
       expect(analyzer.class).to eq(copied.class)
       expect(analyzer.params).to eq(copied.params)
       expect(analyzer.embedding).to eq(copied.embedding)
+      expect(analyzer.labels).to eq(copied.labels)
       expect(analyzer.n_iter).to eq(copied.n_iter)
       expect(analyzer.score(x, y)).to eq(copied.score(x, y))
     end
@@ -52,6 +56,11 @@ RSpec.describe Rumale::Clustering::PowerIteration do
       expect(analyzer.embedding.class).to eq(Numo::DFloat)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
       expect(analyzer.embedding.shape[1]).to be_nil
+      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels.shape[0]).to eq(n_samples)
+      expect(analyzer.labels.shape[1]).to be_nil
+      expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
+      expect(analyzer.labels.eq(1).count).to eq(n_cluster_samples)
       expect(analyzer.n_iter).to be > 1
       expect(analyzer.score(x, y)).to eq(1)
     end
@@ -72,6 +81,11 @@ RSpec.describe Rumale::Clustering::PowerIteration do
       expect(analyzer.embedding.class).to eq(Numo::DFloat)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
       expect(analyzer.embedding.shape[1]).to be_nil
+      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels.shape[0]).to eq(n_samples)
+      expect(analyzer.labels.shape[1]).to be_nil
+      expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
+      expect(analyzer.labels.eq(1).count).to eq(n_cluster_samples)
       expect(analyzer.n_iter).to be > 1
       expect(analyzer.score(x, y)).to eq(1)
     end

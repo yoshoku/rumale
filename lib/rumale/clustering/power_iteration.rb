@@ -22,6 +22,10 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples])
       attr_reader :embedding
 
+      # Return the cluster labels.
+      # @return [Numo::Int32] (shape: [n_samples])
+      attr_reader :labels
+
       # Return the number of iterations run for optimization
       # @return [Integer]
       attr_reader :n_iter
@@ -55,12 +59,13 @@ module Rumale
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @embedding = nil
+        @labels = nil
         @n_iter = nil
       end
 
       # Analysis clusters with given training data.
       #
-      # @overload fit(x) -> PowerClustering
+      # @overload fit(x) -> PowerIteration
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
@@ -68,28 +73,7 @@ module Rumale
       def fit(x, _y = nil)
         check_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
-        # initialize some variables.
-        affinity_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.rbf_kernel(x, nil, @params[:gamma])
-        affinity_mat[affinity_mat.diag_indices] = 0.0
-        n_samples = affinity_mat.shape[0]
-        tol = @params[:tol].fdiv(n_samples)
-        # calculate normalized affinity matrix.
-        degrees = affinity_mat.sum(axis: 1)
-        normalized_affinity_mat = (1.0 / degrees).diag.dot(affinity_mat)
-        # initialize embedding space.
-        @embedding = degrees / degrees.sum
-        # optimization
-        @n_iter = 0
-        error = Numo::DFloat.ones(n_samples)
-        @params[:max_iter].times do |t|
-          @n_iter = t + 1
-          new_embedding = normalized_affinity_mat.dot(@embedding)
-          new_embedding /= new_embedding.abs.sum
-          new_error = (new_embedding - @embedding).abs
-          break if (new_error - error).abs.max <= tol
-          @embedding = new_embedding
-          error = new_error
-        end
+        fit_predict(x)
         self
       end
 
@@ -100,12 +84,11 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         check_sample_array(x)
-        fit(x)
-        kmeans = Rumale::Clustering::KMeans.new(
-          n_clusters: @params[:n_clusters], init: @params[:init],
-          max_iter: @params[:max_iter], tol: @params[:tol], random_seed: @params[:random_seed]
-        )
-        kmeans.fit_predict(@embedding.expand_dims(1))
+        raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
+
+        affinity_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.rbf_kernel(x, nil, @params[:gamma])
+        @embedding, @n_iter = embedded_space(affinity_mat, @params[:max_iter], @params[:tol].fdiv(affinity_mat.shape[0]))
+        @labels = line_kmeans_clustering(@embedding)
       end
 
       # Dump marshal data.
@@ -113,6 +96,7 @@ module Rumale
       def marshal_dump
         { params: @params,
           embedding: @embedding,
+          labels: @labels,
           n_iter: @n_iter }
       end
 
@@ -121,8 +105,41 @@ module Rumale
       def marshal_load(obj)
         @params = obj[:params]
         @embedding = obj[:embedding]
+        @labels = obj[:labels]
         @n_iter = obj[:n_iter]
         nil
+      end
+
+      private
+
+      def embedded_space(affinity_mat, max_iter, tol)
+        affinity_mat[affinity_mat.diag_indices] = 0.0
+
+        degrees = affinity_mat.sum(axis: 1)
+        normalized_affinity_mat = (1.0 / degrees).diag.dot(affinity_mat)
+
+        iters = 0
+        embedded_line = degrees / degrees.sum
+        n_samples = embedded_line.shape[0]
+        error = Numo::DFloat.ones(n_samples)
+        max_iter.times do |t|
+          iters = t + 1
+          new_embedded_line = normalized_affinity_mat.dot(embedded_line)
+          new_embedded_line /= new_embedded_line.abs.sum
+          new_error = (new_embedded_line - embedded_line).abs
+          break if (new_error - error).abs.max <= tol
+          embedded_line = new_embedded_line
+          error = new_error
+        end
+
+        [embedded_line, iters]
+      end
+
+      def line_kmeans_clustering(vec)
+        Rumale::Clustering::KMeans.new(
+          n_clusters: @params[:n_clusters], init: @params[:init],
+          max_iter: @params[:max_iter], tol: @params[:tol], random_seed: @params[:random_seed]
+        ).fit_predict(vec.expand_dims(1))
       end
     end
   end
