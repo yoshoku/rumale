@@ -1,3 +1,9 @@
+# 0.13.4
+- Add cluster analysis class for [HDBSCAN](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/HDBSCAN.html).
+- Add cluster analysis class for [spectral clustering](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/SpectralClustering.html).
+- Refactor power iteration clustering.
+- Several documentation improvements.
+
 # 0.13.3
 - Add transformer class for [Kernel PCA](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelPCA.html).
 - Add regressor class for [Kernel Ridge](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelRidge.html).
