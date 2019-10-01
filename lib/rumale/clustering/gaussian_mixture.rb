@@ -3,17 +3,20 @@
 require 'rumale/base/base_estimator'
 require 'rumale/base/cluster_analyzer'
 require 'rumale/preprocessing/label_binarizer'
-require 'rumale/pairwise_metric'
 
 module Rumale
   module Clustering
     # GaussianMixture is a class that implements cluster analysis with gaussian mixture model.
-    # The current implementation uses only the diagonal elements of covariance matrices to represent mixture parameters
-    # without using full elements.
     #
     # @example
     #   analyzer = Rumale::Clustering::GaussianMixture.new(n_clusters: 10, max_iter: 50)
     #   cluster_labels = analyzer.fit_predict(samples)
+    #
+    #   # If Numo::Linalg is installed, you can specify 'full' for the tyep of covariance option.
+    #   require 'numo/linalg/autoloader'
+    #   analyzer = Rumale::Clustering::GaussianMixture.new(n_clusters: 10, max_iter: 50, covariance_type: 'full')
+    #   cluster_labels = analyzer.fit_predict(samples)
+    #
     class GaussianMixture
       include Base::BaseEstimator
       include Base::ClusterAnalyzer
@@ -31,18 +34,19 @@ module Rumale
       attr_reader :means
 
       # Return the diagonal elements of covariance matrix of each cluster.
-      # @return [Numo::DFloat] (shape: [n_clusters, n_features])
+      # @return [Numo::DFloat] (shape: [n_clusters, n_features] if 'diag', [n_clusters, n_features, n_features] if 'full')
       attr_reader :covariances
 
       # Create a new cluster analyzer with gaussian mixture model.
       #
       # @param n_clusters [Integer] The number of clusters.
       # @param init [String] The initialization method for centroids ('random' or 'k-means++').
+      # @param covariance_type [String] The type of covariance parameter to be used ('diag' or 'full').
       # @param max_iter [Integer] The maximum number of iterations.
       # @param tol [Float] The tolerance of termination criterion.
       # @param reg_covar [Float] The non-negative regularization to the diagonal of covariance.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(n_clusters: 8, init: 'k-means++', max_iter: 50, tol: 1.0e-4, reg_covar: 1.0e-6, random_seed: nil)
+      def initialize(n_clusters: 8, init: 'k-means++', covariance_type: 'diag', max_iter: 50, tol: 1.0e-4, reg_covar: 1.0e-6, random_seed: nil)
         check_params_integer(n_clusters: n_clusters, max_iter: max_iter)
         check_params_float(tol: tol)
         check_params_string(init: init)
@@ -51,6 +55,7 @@ module Rumale
         @params = {}
         @params[:n_clusters] = n_clusters
         @params[:init] = init == 'random' ? 'random' : 'k-means++'
+        @params[:covariance_type] = covariance_type == 'full' ? 'full' : 'diag'
         @params[:max_iter] = max_iter
         @params[:tol] = tol
         @params[:reg_covar] = reg_covar
@@ -70,14 +75,16 @@ module Rumale
       # @return [GaussianMixture] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         check_sample_array(x)
+        check_enable_linalg('fit')
+
         n_samples = x.shape[0]
         memberships = init_memberships(x)
         @params[:max_iter].times do |t|
           @n_iter = t
           @weights = calc_weights(n_samples, memberships)
           @means = calc_means(x, memberships)
-          @covariances = calc_diag_covariances(x, @means, memberships) + @params[:reg_covar]
-          new_memberships = calc_memberships(x, @weights, @means, @covariances)
+          @covariances = calc_covariances(x, @means, memberships, @params[:reg_covar], @params[:covariance_type])
+          new_memberships = calc_memberships(x, @weights, @means, @covariances, @params[:covariance_type])
           error = (memberships - new_memberships).abs.max
           break if error <= @params[:tol]
           memberships = new_memberships.dup
@@ -91,7 +98,9 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def predict(x)
         check_sample_array(x)
-        memberships = calc_memberships(x, @weights, @means, @covariances)
+        check_enable_linalg('predict')
+
+        memberships = calc_memberships(x, @weights, @means, @covariances, @params[:covariance_type])
         assign_cluster(memberships)
       end
 
@@ -101,6 +110,8 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         check_sample_array(x)
+        check_enable_linalg('fit_predict')
+
         fit(x).predict(x)
       end
 
@@ -141,15 +152,14 @@ module Rumale
         Numo::DFloat.cast(encoder.fit_transform(cluster_ids))
       end
 
-      def calc_memberships(x, weights, means, diag_cov)
+      def calc_memberships(x, weights, means, covars, covar_type)
         n_samples = x.shape[0]
         n_clusters = means.shape[0]
         memberships = Numo::DFloat.zeros(n_samples, n_clusters)
         n_clusters.times do |n|
           centered = x - means[n, true]
-          inv_cov = 1.0 / diag_cov[n, true]
-          sqrt_det_cov = 1.0 / Math.sqrt(diag_cov[n, true].prod)
-          memberships[true, n] = weights[n] * sqrt_det_cov * Numo::NMath.exp(-0.5 * (centered * inv_cov * centered).sum(1))
+          covar = covar_type == 'full' ? covars[n, true, true] : covars[n, true]
+          memberships[true, n] = calc_unnormalized_membership(centered, weights[n], covar, covar_type)
         end
         memberships / memberships.sum(1).expand_dims(1)
       end
@@ -162,13 +172,67 @@ module Rumale
         memberships.transpose.dot(x) / memberships.sum(0).expand_dims(1)
       end
 
-      def calc_diag_covariances(x, means, memberships)
+      def calc_covariances(x, means, memberships, reg_cover, covar_type)
+        if covar_type == 'full'
+          calc_full_covariances(x, means, reg_cover, memberships)
+        else
+          calc_diag_covariances(x, means, reg_cover, memberships)
+        end
+      end
+
+      def calc_diag_covariances(x, means, reg_cover, memberships)
         n_clusters = means.shape[0]
         diag_cov = Array.new(n_clusters) do |n|
           centered = x - means[n, true]
           memberships[true, n].dot(centered**2) / memberships[true, n].sum
         end
-        Numo::DFloat.asarray(diag_cov)
+        Numo::DFloat.asarray(diag_cov) + reg_cover
+      end
+
+      def calc_full_covariances(x, means, reg_cover, memberships)
+        n_features = x.shape[1]
+        n_clusters = means.shape[0]
+        cov_mats = Numo::DFloat.zeros(n_clusters, n_features, n_features)
+        reg_mat = Numo::DFloat.eye(n_features) * reg_cover
+        n_clusters.times do |n|
+          centered = x - means[n, true]
+          members = memberships[true, n]
+          cov_mats[n, true, true] = reg_mat + (centered.transpose * members).dot(centered) / members.sum
+        end
+        cov_mats
+      end
+
+      def calc_unnormalized_membership(centered, weight, covar, covar_type)
+        inv_covar = calc_inv_covariance(covar, covar_type)
+        inv_sqrt_det_covar = calc_inv_sqrt_det_covariance(covar, covar_type)
+        distances = if covar_type == 'full'
+                      (centered.dot(inv_covar) * centered).sum(1)
+                    else
+                      (centered * inv_covar * centered).sum(1)
+                    end
+        weight * inv_sqrt_det_covar * Numo::NMath.exp(-0.5 * distances)
+      end
+
+      def calc_inv_covariance(covar, covar_type)
+        if covar_type == 'full'
+          Numo::Linalg.inv(covar)
+        else
+          1.0 / covar
+        end
+      end
+
+      def calc_inv_sqrt_det_covariance(covar, covar_type)
+        if covar_type == 'full'
+          1.0 / Math.sqrt(Numo::Linalg.det(covar))
+        else
+          1.0 / Math.sqrt(covar.prod)
+        end
+      end
+
+      def check_enable_linalg(method_name)
+        if (@params[:covariance_type] == 'full') && !enable_linalg?
+          raise "GaussianMixture##{method_name} requires Numo::Linalg when covariance_type is 'full' but that is not loaded."
+        end
       end
     end
   end
