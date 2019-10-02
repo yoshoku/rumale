@@ -1,3 +1,7 @@
+# 0.13.5
+- Add transformer class for [Factor Analysis](https://yoshoku.github.io/rumale/doc/Rumale/Decomposition/FactorAnalysis.html).
+- Add covariance_type parameter to [Rumale::Clustering::GaussianMixture](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/GaussianMixture.html).
+
 # 0.13.4
 - Add cluster analysis class for [HDBSCAN](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/HDBSCAN.html).
 - Add cluster analysis class for [spectral clustering](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/SpectralClustering.html).
