@@ -13,7 +13,7 @@ Rumale provides machine learning algorithms with interfaces similar to Scikit-Le
 Rumale supports Linear / Kernel Support Vector Machine,
 Logistic Regression, Linear Regression, Ridge, Lasso, Kernel Ridge, Factorization Machine,
 Naive Bayes, Decision Tree, AdaBoost, Gradient Tree Boosting, Random Forest, Extra-Trees, K-nearest neighbor classifier,
-K-Means, K-Medoids, Gaussian Mixture Model, DBSCAN, HDSCAN, SNN, Spectral Clustering, Power Iteration Clustering,
+K-Means, K-Medoids, Gaussian Mixture Model, DBSCAN, HDBSCAN, SNN, Spectral Clustering, Power Iteration Clustering,
 Mutidimensional Scaling, t-SNE, Principal Component Analysis, Kernel PCA and Non-negative Matrix Factorization.
 
 This project was formerly known as "SVMKit".
