@@ -14,7 +14,7 @@ RSpec.describe Rumale::Manifold::TSNE do
   let(:tsne_metric) { described_class.new(n_components: n_components, metric: 'precomputed', max_iter: 50, random_seed: 1) }
   let(:tsne_tol) { described_class.new(n_components: n_components, max_iter: 50, tol: 1.0, random_seed: 1) }
   let(:tsne_params) do
-    described_class.new(n_components: n_components, perplexity: 200.0, max_iter: 50,
+    described_class.new(n_components: n_components, perplexity: 200.0, max_iter: 200,
                         init: 'pca', verbose: true, random_seed: 1)
   end
 
