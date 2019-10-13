@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::LinearModel::LogisticRegression do
-  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
-  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
+  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../../test_labels.dat')) }
+  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
+  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
   let(:estimator) { described_class.new(reg_param: 1.0, random_seed: 1) }
   let(:estimator_bias) { described_class.new(reg_param: 1.0, fit_bias: true, random_seed: 1) }
   let(:estimator_parallel) { described_class.new(reg_param: 1.0, fit_bias: true, n_jobs: -1, random_seed: 1) }

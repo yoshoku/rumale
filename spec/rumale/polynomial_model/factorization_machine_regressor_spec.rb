@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::PolynomialModel::FactorizationMachineRegressor do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[0.8, 0.2]) }
   let(:y_mult) { x.dot(Numo::DFloat[[0.8, 0.82], [0.2, 0.18]]) }
   let(:n_factors) { 2 }

@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::ProbabilisticOutput do
-  let(:x_bin) { Marshal.load(File.read(__dir__ + '/test_samples.dat')) }
-  let(:y_bin) { Marshal.load(File.read(__dir__ + '/test_labels.dat')) }
+  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
   let(:estimator) { Rumale::LinearModel::SVC.new(random_seed: 1) }
 
   it 'calculates class probability with svc' do

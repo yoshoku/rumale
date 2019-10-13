@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Optimizer::YellowFin do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:optimizer) { described_class.new(learning_rate: 0.05, momentum: 0.8, decay: 0.995, window_width: 2) }

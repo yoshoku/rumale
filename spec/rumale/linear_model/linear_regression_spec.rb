@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::LinearModel::LinearRegression do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
   let(:single_target) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:multi_target) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:n_samples) { x.shape[0] }

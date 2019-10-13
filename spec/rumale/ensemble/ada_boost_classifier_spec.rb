@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Ensemble::AdaBoostClassifier do
-  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
-  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
+  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../../test_labels.dat')) }
+  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
+  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
   let(:estimator) { described_class.new(n_estimators: 10, max_features: 1, random_seed: 1) }
 
   it 'classifies two clusters data.' do

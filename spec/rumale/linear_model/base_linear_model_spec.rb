@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::LinearModel::BaseLinearModel do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:estimator) { described_class.new(random_seed: 1) }
 

@@ -30,7 +30,7 @@ RSpec.describe Rumale::Dataset do
   end
 
   it 'loads libsvm .t file containing double features for regression task.' do
-    m, t = described_class.load_libsvm_file(__dir__ + '/test_dbl.t')
+    m, t = described_class.load_libsvm_file(__dir__ + '/../test_dbl.t')
     expect(m).to eq(matrix_dbl)
     expect(m.class).to eq(Numo::DFloat)
     expect(t).to eq(target_variables)
@@ -38,7 +38,7 @@ RSpec.describe Rumale::Dataset do
   end
 
   it 'loads libsvm .t file containing integer features for classification task.' do
-    m, l = described_class.load_libsvm_file(__dir__ + '/test_int.t', dtype: Numo::Int32)
+    m, l = described_class.load_libsvm_file(__dir__ + '/../test_int.t', dtype: Numo::Int32)
     expect(m).to eq(matrix_int)
     expect(m.class).to eq(Numo::Int32)
     expect(l).to eq(labels)
@@ -46,8 +46,8 @@ RSpec.describe Rumale::Dataset do
   end
 
   it 'dumps and loads double features wit multi-target variables.' do
-    described_class.dump_libsvm_file(matrix_dbl, mult_target_vals, __dir__ + '/dump_mult_dbl.t')
-    m, t = described_class.load_libsvm_file(__dir__ + '/dump_mult_dbl.t')
+    described_class.dump_libsvm_file(matrix_dbl, mult_target_vals, __dir__ + '/../dump_mult_dbl.t')
+    m, t = described_class.load_libsvm_file(__dir__ + '/../dump_mult_dbl.t')
     expect(m).to eq(matrix_dbl)
     expect(m.class).to eq(Numo::DFloat)
     expect(t).to eq(mult_target_vals)
@@ -55,27 +55,27 @@ RSpec.describe Rumale::Dataset do
   end
 
   it 'loads libsvm .t file with zero-based indexing.' do
-    m, = described_class.load_libsvm_file(__dir__ + '/test_zb.t', zero_based: true)
+    m, = described_class.load_libsvm_file(__dir__ + '/../test_zb.t', zero_based: true)
     expect(m).to eq(matrix_dbl)
   end
 
   it 'dumps double features with target variables.' do
-    described_class.dump_libsvm_file(matrix_dbl, target_variables, __dir__ + '/dump_dbl.t')
-    m, t = described_class.load_libsvm_file(__dir__ + '/dump_dbl.t')
+    described_class.dump_libsvm_file(matrix_dbl, target_variables, __dir__ + '/../dump_dbl.t')
+    m, t = described_class.load_libsvm_file(__dir__ + '/../dump_dbl.t')
     expect(m).to eq(matrix_dbl)
     expect(t).to eq(target_variables)
   end
 
   it 'dumps integer features with labels.' do
-    described_class.dump_libsvm_file(matrix_int, labels, __dir__ + '/dump_int.t')
-    m, l = described_class.load_libsvm_file(__dir__ + '/dump_int.t')
+    described_class.dump_libsvm_file(matrix_int, labels, __dir__ + '/../dump_int.t')
+    m, l = described_class.load_libsvm_file(__dir__ + '/../dump_int.t')
     expect(m).to eq(matrix_int)
     expect(l).to eq(labels)
   end
 
   it 'dumps features with zero-based indexing.' do
-    described_class.dump_libsvm_file(matrix_dbl, labels, __dir__ + '/dump_zb.t', zero_based: true)
-    m, l = described_class.load_libsvm_file(__dir__ + '/dump_zb.t', zero_based: true)
+    described_class.dump_libsvm_file(matrix_dbl, labels, __dir__ + '/../dump_zb.t', zero_based: true)
+    m, l = described_class.load_libsvm_file(__dir__ + '/../dump_zb.t', zero_based: true)
     expect(m).to eq(matrix_dbl)
     expect(l).to eq(labels)
   end

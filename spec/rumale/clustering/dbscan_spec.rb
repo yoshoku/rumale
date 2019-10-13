@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Clustering::DBSCAN do
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) - 1 }
+  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
+  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) - 1 }
   let(:n_samples) { x_mlt.shape[0] }
   let(:analyzer) { described_class.new(eps: 1.0) }
   let(:cluster_labels) { analyzer.fit_predict(x) }

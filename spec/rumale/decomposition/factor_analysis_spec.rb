@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Decomposition::FactorAnalysis do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
   let(:n_samples) { x.shape[0] }
   let(:n_components) { x.shape[1] }
   let(:n_features) { 8 }

@@ -9,8 +9,8 @@ RSpec.describe Rumale::Clustering::PowerIteration do
   let(:cluster_labels) { analyzer.fit_predict(x) }
 
   describe 'three clusters dataset' do
-    let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
-    let(:y) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) - 1 }
+    let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
+    let(:y) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) - 1 }
     let(:n_clusters) { 3 }
     let(:copied) { Marshal.load(Marshal.dump(analyzer.fit(x))) }
 

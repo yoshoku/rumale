@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::ModelSelection::CrossValidation do
-  let(:samples) { Marshal.load(File.read(__dir__ + '/../test_samples_xor.dat')) }
-  let(:labels) { Marshal.load(File.read(__dir__ + '/../test_labels_xor.dat')) }
+  let(:samples) { Marshal.load(File.read(__dir__ + '/../../test_samples_xor.dat')) }
+  let(:labels) { Marshal.load(File.read(__dir__ + '/../../test_labels_xor.dat')) }
   let(:values) { samples.dot(Numo::DFloat[1.0, 2.0]) }
   let(:kernel_mat) { Rumale::PairwiseMetric.rbf_kernel(samples, nil, 1.0) }
   let(:kernel_svc) { Rumale::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }

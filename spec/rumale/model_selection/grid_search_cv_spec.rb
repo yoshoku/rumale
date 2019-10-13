@@ -3,11 +3,11 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::ModelSelection::GridSearchCV do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
-  let(:y) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
-  let(:x_xor) { Marshal.load(File.read(__dir__ + '/../test_samples_xor.dat')) }
-  let(:y_xor) { Marshal.load(File.read(__dir__ + '/../test_labels_xor.dat')) }
-  let(:x_reg) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
+  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
+  let(:y) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
+  let(:x_xor) { Marshal.load(File.read(__dir__ + '/../../test_samples_xor.dat')) }
+  let(:y_xor) { Marshal.load(File.read(__dir__ + '/../../test_labels_xor.dat')) }
+  let(:x_reg) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
   let(:y_reg) { x_reg[true, 0] + x_reg[true, 1]**2 }
   let(:kfold) { Rumale::ModelSelection::KFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
   let(:skfold) { Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1) }

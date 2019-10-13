@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Tree::GradientTreeRegressor do
-  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
-  let(:y_bin) { Numo::DFloat.cast(Marshal.load(File.read(__dir__ + '/../test_labels.dat'))) }
+  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:y_bin) { Numo::DFloat.cast(Marshal.load(File.read(__dir__ + '/../../test_labels.dat'))) }
   let(:n_samples) { x_bin.shape[0] }
   let(:n_features) { x_bin.shape[1] }
   let(:y_pred) { 2.0 * Numo::DFloat.new(n_samples).rand - 1.0 }

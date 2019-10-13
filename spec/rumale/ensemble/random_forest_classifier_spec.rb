@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Ensemble::RandomForestClassifier do
-  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../test_samples.dat')) }
-  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../test_labels.dat')) }
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) }
+  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../../test_labels.dat')) }
+  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
+  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
   let(:n_estimators) { 10 }
   let(:estimator) { described_class.new(n_estimators: n_estimators, max_depth: 2, max_features: 2, random_seed: 1) }
   let(:estimator_parallel) do

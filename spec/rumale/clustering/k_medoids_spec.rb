@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Clustering::KMedoids do
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../test_labels_three_clusters.dat')) - 1 }
+  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
+  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) - 1 }
   let(:dist_mat) { Rumale::PairwiseMetric.euclidean_distance(x_mlt) }
   let(:analyzer) { described_class.new(n_clusters: 3, max_iter: 100, random_seed: 1) }
   let(:analyzer_precomputed) { described_class.new(n_clusters: 3, metric: 'precomputed', max_iter: 100, random_seed: 1) }
