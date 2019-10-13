@@ -1,3 +1,7 @@
+# 0.13.6
+- Add transformer class for [FastICA](https://yoshoku.github.io/rumale/doc/Rumale/Decomposition/FastICA.html).
+- Fix a typo on README ([#13](https://github.com/yoshoku/rumale/pull/13)).
+
 # 0.13.5
 - Add transformer class for [Factor Analysis](https://yoshoku.github.io/rumale/doc/Rumale/Decomposition/FactorAnalysis.html).
 - Add covariance_type parameter to [Rumale::Clustering::GaussianMixture](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/GaussianMixture.html).
