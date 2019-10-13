@@ -1,4 +1,6 @@
-require: rubocop-performance
+require:
+  - rubocop-performance
+  - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 2.3
@@ -10,7 +12,7 @@ AllCops:
     - 'Rakefile'
     - 'Gemfile'
 
-Documentation:
+Style/Documentation:
   Enabled: false
 
 Metrics/LineLength:
@@ -40,13 +42,16 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
 
-ParameterLists:
+Metrics/ParameterLists:
   Max: 10
 
 Security/MarshalLoad:
   Enabled: false
 
 Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+Naming/ConstantName:
   Enabled: false
 
 Style/FormatStringToken:
@@ -56,4 +61,16 @@ Style/NumericLiterals:
   Enabled: false
 
 Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 40
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/LeakyConstantDeclaration:
   Enabled: false

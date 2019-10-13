@@ -24,13 +24,13 @@ RSpec.describe Rumale::Base::BaseEstimator do
   end
 
   describe '#enable_linalg?' do
-    context 'If Numo::Linalg is loaded' do
+    context 'when Numo::Linalg is loaded' do
       it 'returns true' do
-        expect(dummy.linalg?).to be_truthy
+        expect(dummy).to be_linalg
       end
     end
 
-    context 'If Numo::Linalg is not loaded' do
+    context 'when Numo::Linalg is not loaded' do
       before do
         @backup = Numo::Linalg
         Numo.class_eval { remove_const(:Linalg) }
@@ -40,11 +40,11 @@ RSpec.describe Rumale::Base::BaseEstimator do
 
       it 'returns false' do
         expect { dummy.linalg? }.to output(/you should install and load Numo::Linalg in advance./).to_stderr
-        expect(dummy.linalg?).to be_falsy
+        expect(dummy).not_to be_linalg
       end
     end
 
-    context 'When the version of Numo::Linalg is 0.1.3 or lower' do
+    context 'when the version of Numo::Linalg is 0.1.3 or lower' do
       before do
         @backup = Numo::Linalg::VERSION
         Numo::Linalg.class_eval { remove_const(:VERSION) }
@@ -58,19 +58,19 @@ RSpec.describe Rumale::Base::BaseEstimator do
 
       it 'returns false' do
         expect { dummy.linalg? }.to output(/Please load Numo::Linalg version 0.1.4 or later./).to_stderr
-        expect(dummy.linalg?).to be_falsy
+        expect(dummy).not_to be_linalg
       end
     end
   end
 
   describe '#enable_parallel?' do
-    context 'If Parallel is loaded' do
+    context 'when Parallel is loaded' do
       it 'returns true' do
-        expect(dummy.parallel?).to be_truthy
+        expect(dummy).to be_parallel
       end
     end
 
-    context 'If Numo::Linalg is not loaded' do
+    context 'when Numo::Linalg is not loaded' do
       before do
         @backup = Parallel
         Object.class_eval { remove_const(:Parallel) }
@@ -80,7 +80,7 @@ RSpec.describe Rumale::Base::BaseEstimator do
 
       it 'returns false' do
         expect { dummy.parallel? }.to output(/you should install and load Parallel in advance./).to_stderr
-        expect(dummy.parallel?).to be_falsy
+        expect(dummy).not_to be_parallel
       end
     end
   end

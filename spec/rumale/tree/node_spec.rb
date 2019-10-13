@@ -14,10 +14,10 @@ RSpec.describe Rumale::Tree::Node do
     expect(root.probs).to eq(1.0)
     expect(root.leaf).to be_falsy
     expect(root.leaf_id).to eq(0)
-    expect(root.left).to_not be_nil
-    expect(root.right).to_not be_nil
-    expect(root.left.class).to be(Rumale::Tree::Node)
-    expect(root.right.class).to be(Rumale::Tree::Node)
+    expect(root.left).not_to be_nil
+    expect(root.right).not_to be_nil
+    expect(root.left.class).to be(described_class)
+    expect(root.right.class).to be(described_class)
     expect(root.feature_id).to eq(2)
     expect(root.threshold).to eq(0.5)
   end

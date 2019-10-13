@@ -12,7 +12,7 @@ RSpec.describe Rumale::Clustering::DBSCAN do
     max_vec = x_mlt.max(0) * 2.0
     min_vec = x_mlt.min(0) * 2.0
     x = Numo::NArray.vstack([x_mlt, max_vec])
-    x = Numo::NArray.vstack([x, min_vec])
+    Numo::NArray.vstack([x, min_vec])
   end
 
   shared_examples 'cluster analysis' do

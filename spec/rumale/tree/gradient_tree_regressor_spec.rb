@@ -45,6 +45,7 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
 
   context 'when max_depth parameter is given' do
     let(:max_depth) { 1 }
+
     it 'learns model with given parameters.' do
       estimator.fit(x_bin, y_bin, grad, hess)
       expect(estimator.params[:max_depth]).to eq(max_depth)
@@ -57,6 +58,7 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
 
   context 'when max_leaf_nodes parameter is given' do
     let(:max_leaf_nodes) { 2 }
+
     it 'learns model with given parameters.' do
       estimator.fit(x_bin, y_bin, grad, hess)
       expect(estimator.params[:max_leaf_nodes]).to eq(max_leaf_nodes)

@@ -58,7 +58,7 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
       expect(analyzer.score(x_mlt, y_mlt)).to eq(1)
     end
 
-    context 'When Numo::Linalg is not loaded' do
+    context 'when Numo::Linalg is not loaded' do
       before do
         @backup = Numo::Linalg
         Numo.class_eval { remove_const(:Linalg) }

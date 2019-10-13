@@ -32,7 +32,7 @@ RSpec.describe Rumale::LinearModel::SVR do
     expect(estimator_bias.weight_vec.size).to eq(n_features)
     expect(estimator_bias.weight_vec.shape[0]).to eq(n_features)
     expect(estimator_bias.weight_vec.shape[1]).to be_nil
-    expect(estimator_bias.bias_term).to_not be_zero
+    expect(estimator_bias.bias_term).not_to be_zero
     expect(estimator_bias.score(x, y)).to be_within(0.01).of(1.0)
   end
 
