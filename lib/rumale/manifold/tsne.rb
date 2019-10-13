@@ -106,7 +106,9 @@ module Rumale
           y = (b.dot(one_vec) * y + (a - b).dot(y)) / a.dot(one_vec)
           lo_prob_mat = t_distributed_probability_matrix(y)
           @n_iter = t + 1
-          puts "[t-SNE] KL divergence after #{@n_iter} iterations: #{cost(hi_prob_mat, lo_prob_mat)}" if @params[:verbose] && (@n_iter % 100).zero?
+          if @params[:verbose] && (@n_iter % 100).zero?
+            puts "[t-SNE] KL divergence after #{@n_iter} iterations: #{cost(hi_prob_mat, lo_prob_mat)}"
+          end
         end
         # store results.
         @embedding = y
