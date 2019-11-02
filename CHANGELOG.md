@@ -1,3 +1,9 @@
+# 0.13.7
+- Add some evaluator classes for clustering.
+  - SilhouetteScore
+  - CalinskiHarabaszScore
+  - DaviesBouldinScore
+
 # 0.13.6
 - Add transformer class for [FastICA](https://yoshoku.github.io/rumale/doc/Rumale/Decomposition/FastICA.html).
 - Fix a typo on README ([#13](https://github.com/yoshoku/rumale/pull/13)).
