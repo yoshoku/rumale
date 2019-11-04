@@ -3,8 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Clustering::KMeans do
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) - 1 }
+  let(:three_clusters) { three_clusters_dataset }
+  let(:x_mlt) { three_clusters[0] }
+  let(:y_mlt) { three_clusters[1] }
   let(:analyzer) { described_class.new(n_clusters: 3, max_iter: 50, random_seed: 1) }
   let(:non_learn_analyzer) { described_class.new(n_clusters: 3, init: 'k-means++', max_iter: 0, random_seed: 1) }
 

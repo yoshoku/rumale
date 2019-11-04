@@ -3,11 +3,13 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::ModelSelection::GridSearchCV do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-  let(:y) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
-  let(:x_xor) { Marshal.load(File.read(__dir__ + '/../../test_samples_xor.dat')) }
-  let(:y_xor) { Marshal.load(File.read(__dir__ + '/../../test_labels_xor.dat')) }
-  let(:x_reg) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:three_clusters) { three_clusters_dataset }
+  let(:x) { three_clusters[0] }
+  let(:y) { three_clusters[1] }
+  let(:xor) { xor_dataset }
+  let(:x_xor) { xor[0] }
+  let(:y_xor) { xor[1] }
+  let(:x_reg) { two_clusters_dataset[0] }
   let(:y_reg) { x_reg[true, 0] + x_reg[true, 1]**2 }
   let(:kfold) { Rumale::ModelSelection::KFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
   let(:skfold) { Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1) }

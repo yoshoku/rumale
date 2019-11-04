@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:x) { two_clusters_dataset[0] }
   let(:y) { x[true, 0] + x[true, 1]**2 }
   let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:estimator) { described_class.new(n_neighbors: 5) }

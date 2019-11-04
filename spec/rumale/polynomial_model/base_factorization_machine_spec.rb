@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::PolynomialModel::BaseFactorizationMachine do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:x) { two_clusters_dataset[0] }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:estimator) { described_class.new(random_seed: 1) }
 

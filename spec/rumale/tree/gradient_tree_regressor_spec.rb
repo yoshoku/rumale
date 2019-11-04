@@ -3,8 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Tree::GradientTreeRegressor do
-  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
-  let(:y_bin) { Numo::DFloat.cast(Marshal.load(File.read(__dir__ + '/../../test_labels.dat'))) }
+  let(:two_clusters) { two_clusters_dataset }
+  let(:x_bin) { two_clusters[0] }
+  let(:y_bin) { Numo::DFloat.cast(two_clusters[1]) }
   let(:n_samples) { x_bin.shape[0] }
   let(:n_features) { x_bin.shape[1] }
   let(:y_pred) { 2.0 * Numo::DFloat.new(n_samples).rand - 1.0 }
@@ -29,7 +30,7 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
     expect(estimator.feature_importances.class).to eq(Numo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
-    expect(estimator.score(x_bin, Numo::DFloat.cast(y_bin))).to be_within(0.02).of(1.0)
+    expect(estimator.score(x_bin, Numo::DFloat.cast(y_bin))).to be > 0.95
   end
 
   it 'dumps and restores itself using Marshal module.' do

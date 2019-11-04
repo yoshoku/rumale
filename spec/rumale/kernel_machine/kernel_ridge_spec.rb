@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::KernelMachine::KernelRidge do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:x) { two_clusters_dataset[0] }
   let(:n_samples) { x.shape[0] }
   let(:kernel_mat) { Rumale::PairwiseMetric.rbf_kernel(x, nil, 1.0) }
   let(:reg_param) { 1.0 }

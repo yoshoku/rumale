@@ -3,8 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::ModelSelection::CrossValidation do
-  let(:samples) { Marshal.load(File.read(__dir__ + '/../../test_samples_xor.dat')) }
-  let(:labels) { Marshal.load(File.read(__dir__ + '/../../test_labels_xor.dat')) }
+  let(:xor) { xor_dataset }
+  let(:samples) { xor[0] }
+  let(:labels) { xor[1] }
   let(:values) { samples.dot(Numo::DFloat[1.0, 2.0]) }
   let(:kernel_mat) { Rumale::PairwiseMetric.rbf_kernel(samples, nil, 1.0) }
   let(:kernel_svc) { Rumale::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
@@ -83,8 +84,8 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
-    expect(mean_test_score).to be_within(5.0e-4).of(0.2571)
-    expect(mean_train_score).to be_within(5.0e-4).of(0.2532)
+    expect(mean_test_score).to be_within(0.01).of(0.31)
+    expect(mean_train_score).to be_within(0.01).of(0.31)
   end
 
   describe 'private method' do

@@ -3,10 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::KernelMachine::KernelSVC do
-  let(:x_xor) { Marshal.load(File.read(__dir__ + '/../../test_samples_xor.dat')) }
-  let(:y_xor) { Marshal.load(File.read(__dir__ + '/../../test_labels_xor.dat')) }
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
+  let(:xor) { xor_dataset }
+  let(:x_xor) { xor[0] }
+  let(:y_xor) { xor[1] }
+  let(:three_clusters) { three_clusters_dataset }
+  let(:x_mlt) { three_clusters[0] }
+  let(:y_mlt) { three_clusters[1] }
   let(:kernel_mat_xor) { Rumale::PairwiseMetric.rbf_kernel(x_xor, nil, 1.0) }
   let(:kernel_mat_mlt) { Rumale::PairwiseMetric.rbf_kernel(x_mlt, nil, 1.0) }
   let(:estimator) { described_class.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }

@@ -9,8 +9,9 @@ RSpec.describe Rumale::Clustering::SpectralClustering do
   let(:cluster_labels) { analyzer.fit_predict(x) }
 
   describe 'three clusters dataset' do
-    let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-    let(:y) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) - 1 }
+    let(:three_clusters) { three_clusters_dataset }
+    let(:x) { three_clusters[0] }
+    let(:y) { three_clusters[1] }
     let(:n_clusters) { 3 }
     let(:copied) { Marshal.load(Marshal.dump(analyzer.fit(x))) }
 

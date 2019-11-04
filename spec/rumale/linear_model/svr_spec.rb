@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::LinearModel::SVR do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:x) { two_clusters_dataset[0] }
   let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
   let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:n_samples) { x.shape[0] }

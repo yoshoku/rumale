@@ -3,10 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Tree::ExtraTreeClassifier do
-  let(:x_bin) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
-  let(:y_bin) { Marshal.load(File.read(__dir__ + '/../../test_labels.dat')) }
-  let(:x_mlt) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-  let(:y_mlt) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
+  let(:two_clusters) { two_clusters_dataset }
+  let(:x_bin) { two_clusters[0] }
+  let(:y_bin) { two_clusters[1] }
+  let(:three_clusters) { three_clusters_dataset }
+  let(:x_mlt) { three_clusters[0] }
+  let(:y_mlt) { three_clusters[1] }
   let(:estimator_entropy) { described_class.new(criterion: 'entropy', random_seed: 1) }
   let(:max_depth) { nil }
   let(:max_leaf_nodes) { nil }
@@ -90,7 +92,7 @@ RSpec.describe Rumale::Tree::ExtraTreeClassifier do
   end
 
   context 'when min_samples_leaf parameter is given' do
-    let(:min_samples_leaf) { 290 }
+    let(:min_samples_leaf) { 280 }
 
     it 'learns model with given parameters.' do
       estimator.fit(x_mlt, y_mlt)

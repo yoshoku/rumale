@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Decomposition::PCA do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:x) { two_clusters_dataset[0] }
   let(:n_components) { 16 }
   let(:solver) { 'fpt' }
   let(:decomposer) { described_class.new(n_components: n_components, solver: solver, tol: 1.0e-8, random_seed: 1) }

@@ -3,11 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Multiclass::OneVsRestClassifier do
-  let(:samples) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-  let(:labels) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
-  let(:base_estimator) do
-    Rumale::LinearModel::SVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1)
-  end
+  let(:three_clusters) { three_clusters_dataset }
+  let(:samples) { three_clusters[0] }
+  let(:labels) { three_clusters[1] }
+  let(:base_estimator) { Rumale::LinearModel::SVC.new(reg_param: 1.0, max_iter: 100, batch_size: 20, random_seed: 1) }
   let(:estimator) { described_class.new(estimator: base_estimator) }
 
   it 'classifies three clusters.' do

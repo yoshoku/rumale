@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Ensemble::ExtraTreesRegressor do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:x) { two_clusters_dataset[0] }
   let(:y) { x[true, 0] + x[true, 1]**2 }
   let(:y_mult) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.0, 0.1]]) }
   let(:n_samples) { x.shape[0] }

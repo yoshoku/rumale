@@ -17,8 +17,9 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
   let(:n_test_samples) { x_test.shape[0] }
 
   describe 'basic examples' do
-    let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
-    let(:y) { Marshal.load(File.read(__dir__ + '/../../test_labels.dat')) }
+    let(:two_clusters) { two_clusters_dataset }
+    let(:x) { two_clusters[0] }
+    let(:y) { two_clusters[1] }
     let(:kernel_mat_train) { Rumale::PairwiseMetric.linear_kernel(x_train, nil) }
     let(:kernel_mat_test) { Rumale::PairwiseMetric.linear_kernel(x_test, x_train) }
     let(:z_train) { transformer.fit_transform(kernel_mat_train) }
@@ -73,8 +74,9 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
   end
 
   describe 'using with linear classifier' do
-    let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples_xor.dat')) }
-    let(:y) { Marshal.load(File.read(__dir__ + '/../../test_labels_xor.dat')) }
+    let(:xor) { xor_dataset }
+    let(:x) { xor[0] }
+    let(:y) { xor[1] }
     let(:kernel_mat_train) { Rumale::PairwiseMetric.rbf_kernel(x_train, nil, 1.0) }
     let(:kernel_mat_test) { Rumale::PairwiseMetric.rbf_kernel(x_test, x_train, 1.0) }
     let(:z_train) { transformer.fit_transform(kernel_mat_train) }

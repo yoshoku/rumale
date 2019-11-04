@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Manifold::TSNE do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples.dat')) }
+  let(:x) { two_clusters_dataset[0] }
   let(:n_samples) { x.shape[0] }
   let(:n_features) { 32 }
   let(:n_components) { 2 }

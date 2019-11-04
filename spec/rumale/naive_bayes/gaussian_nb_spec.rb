@@ -3,8 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::NaiveBayes::GaussianNB do
-  let(:samples) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-  let(:labels) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
+  let(:three_clusters) { three_clusters_dataset }
+  let(:samples) { three_clusters[0] }
+  let(:labels) { three_clusters[1] }
   let(:estimator) { described_class.new }
 
   it 'classifies three clusters data.' do

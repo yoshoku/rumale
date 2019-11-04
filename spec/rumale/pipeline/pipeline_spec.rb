@@ -3,10 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Pipeline::Pipeline do
-  let(:x) { Marshal.load(File.read(__dir__ + '/../../test_samples_xor.dat')) }
-  let(:y) { Marshal.load(File.read(__dir__ + '/../../test_labels_xor.dat')) }
-  let(:xc) { Marshal.load(File.read(__dir__ + '/../../test_samples_three_clusters.dat')) }
-  let(:yc) { Marshal.load(File.read(__dir__ + '/../../test_labels_three_clusters.dat')) }
+  let(:xor) { xor_dataset }
+  let(:x) { xor[0] }
+  let(:y) { xor[1] }
+  let(:three_clusters) { three_clusters_dataset }
+  let(:xc) { three_clusters[0] }
+  let(:yc) { three_clusters[1] }
   let(:n_rbf_comps) { 64 }
   let(:n_nmf_comps) { 8 }
   let(:n_pca_comps) { 4 }
