@@ -2,6 +2,8 @@
 
 require 'csv'
 require 'rumale/validation'
+require 'rumale/utils'
+require 'rumale/preprocessing/min_max_scaler'
 
 module Rumale
   # Module for loading and saving a dataset file.
@@ -123,6 +125,60 @@ module Rumale
         end
         # add gaussian noise.
         x += Rumale::Utils.rand_normal(x.shape, rng.dup, 0.0, noise) unless noise.nil?
+        [x, y]
+      end
+
+      # Generate Gaussian blobs.
+      #
+      # @param n_samples [Integer] The total number of samples.
+      # @param n_features [Integer] The number of features.
+      #   If "centers" parameter is given as a Numo::DFloat array, this parameter is ignored.
+      # @param centers [Integer/Numo::DFloat/Nil] The number of cluster centroids or the fixed cluster centroids.
+      #   If nil is given, the number of cluster centroids is set to 3.
+      # @param cluster_std [Float] The standard deviation of the clusters.
+      # @param center_box [Array] The bounding box for each cluster centroids.
+      #   If "centers" parameter is given as a Numo::DFloat array, this parameter is ignored.
+      # @param shuffle [Boolean] The flag indicating whether to shuffle the dataset
+      # @param random_seed [Integer] The seed value using to initialize the random generator.
+      def make_blobs(n_samples = 1000, n_features = 2,
+                     centers: nil, cluster_std: 1.0, center_box: [-10, 10], shuffle: true, random_seed: nil)
+        Rumale::Validation.check_params_integer(n_samples: n_samples, n_features: n_features)
+        Rumale::Validation.check_params_float(cluster_std: cluster_std)
+        Rumale::Validation.check_params_type(Array, center_box: center_box)
+        Rumale::Validation.check_params_boolean(shuffle: shuffle)
+        Rumale::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+        # initialize rng.
+        rs = random_seed
+        rs ||= srand
+        rng = Random.new(rs)
+        # initialize centers.
+        if centers.is_a?(Numo::DFloat)
+          n_centers = centers.shape[0]
+          n_features = centers.shape[1]
+        else
+          n_centers = centers.is_a?(Integer) ? centers : 3
+          center_min = center_box.first
+          center_max = center_box.last
+          centers = Rumale::Utils.rand_uniform([n_centers, n_features], rng)
+          normalizer = Rumale::Preprocessing::MinMaxScaler.new(feature_range: [center_min, center_max])
+          centers = normalizer.fit_transform(centers)
+        end
+        # generate blobs.
+        sz_cluster = [n_samples / n_centers] * n_centers
+        (n_samples % n_centers).times { |n| sz_cluster[n] += 1 }
+        x = Rumale::Utils.rand_normal([sz_cluster[0], n_features], rng, 0.0, cluster_std) + centers[0, true]
+        y = Numo::Int32.zeros(sz_cluster[0])
+        (1...n_centers).each do |n|
+          c = Rumale::Utils.rand_normal([sz_cluster[n], n_features], rng, 0.0, cluster_std) + centers[n, true]
+          x = Numo::DFloat.vstack([x, c])
+          y = y.concatenate(Numo::Int32.zeros(sz_cluster[n]) + n)
+        end
+        # shuffle data.
+        if shuffle
+          rand_ids = [*0...n_samples].shuffle(random: rng.dup)
+          x = x[rand_ids, true].dup
+          y = y[rand_ids].dup
+        end
         [x, y]
       end
 
