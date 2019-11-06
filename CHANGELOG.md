@@ -1,8 +1,13 @@
+# 0.13.8
+- Add [module function](https://yoshoku.github.io/rumale/doc/Rumale/Dataset.html#make_blobs-class_method) for generating artificial dataset with gaussian blobs.
+- Add documents about Rumale::SVM.
+- Refactor specs.
+
 # 0.13.7
 - Add some evaluator classes for clustering.
-  - SilhouetteScore
-  - CalinskiHarabaszScore
-  - DaviesBouldinScore
+  - [SilhouetteScore](https://yoshoku.github.io/rumale/doc/Rumale/EvaluationMeasure/SilhouetteScore.html)
+  - [CalinskiHarabaszScore](https://yoshoku.github.io/rumale/doc/Rumale/EvaluationMeasure/CalinskiHarabaszScore.html)
+  - [DaviesBouldinScore](https://yoshoku.github.io/rumale/doc/Rumale/EvaluationMeasure/DaviesBouldinScore.html)
 
 # 0.13.6
 - Add transformer class for [FastICA](https://yoshoku.github.io/rumale/doc/Rumale/Decomposition/FastICA.html).
