@@ -97,6 +97,7 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineClassifier do
   end
 
   it 'estimates class probabilities with two clusters dataset.' do
+    classes = y_bin.to_a.uniq.sort
     n_samples, _n_features = x_bin.shape
     estimator_logit.fit(x_bin, y_bin)
     probs = estimator_logit.predict_proba(x_bin)
@@ -104,7 +105,7 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineClassifier do
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(2)
     expect(probs.sum(1).eq(1).count).to eq(n_samples)
-    predicted = Numo::Int32.cast(probs[true, 0] < probs[true, 1]) * 2 - 1
+    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
     expect(predicted).to eq(y_bin)
   end
 

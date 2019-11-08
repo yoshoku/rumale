@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Rumale::Tree::GradientTreeRegressor do
   let(:two_clusters) { two_clusters_dataset }
   let(:x_bin) { two_clusters[0] }
-  let(:y_bin) { Numo::DFloat.cast(two_clusters[1]) }
+  let(:y_bin) { Numo::DFloat.cast(two_clusters[1]) * 2 - 1 }
   let(:n_samples) { x_bin.shape[0] }
   let(:n_features) { x_bin.shape[1] }
   let(:y_pred) { 2.0 * Numo::DFloat.new(n_samples).rand - 1.0 }

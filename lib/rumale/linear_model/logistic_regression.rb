@@ -77,10 +77,10 @@ module Rumale
         check_sample_label_size(x, y)
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
-        n_classes = @classes.size
-        n_features = x.shape[1]
 
-        if n_classes > 2
+        if multiclass_problem?
+          n_classes = @classes.size
+          n_features = x.shape[1]
           @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
           @bias_term = Numo::DFloat.zeros(n_classes)
           if enable_parallel?
@@ -98,7 +98,7 @@ module Rumale
             end
           end
         else
-          negative_label = y.to_a.uniq.min
+          negative_label = @classes[0]
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
           @weight_vec, @bias_term = partial_fit(x, bin_y)
         end
@@ -122,8 +122,6 @@ module Rumale
       def predict(x)
         check_sample_array(x)
 
-        return Numo::Int32.cast(predict_proba(x)[true, 1].ge(0.5)) * 2 - 1 if @classes.size <= 2
-
         n_samples, = x.shape
         decision_values = predict_proba(x)
         predicted = if enable_parallel?
@@ -142,7 +140,7 @@ module Rumale
         check_sample_array(x)
 
         proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
-        return (proba.transpose / proba.sum(axis: 1)).transpose if @classes.size > 2
+        return (proba.transpose / proba.sum(axis: 1)).transpose.dup if multiclass_problem?
 
         n_samples, = x.shape
         probs = Numo::DFloat.zeros(n_samples, 2)
@@ -176,6 +174,10 @@ module Rumale
 
       def calc_loss_gradient(x, y, weight)
         y / (Numo::NMath.exp(-y * x.dot(weight)) + 1.0) - y
+      end
+
+      def multiclass_problem?
+        @classes.size > 2
       end
     end
   end

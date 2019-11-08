@@ -18,9 +18,9 @@ require 'parallel'
 def two_clusters_dataset
   rng = Random.new(8)
   x_a = (2 * Rumale::Utils.rand_uniform([100, 2], rng) - 1) + Numo::DFloat[-2, 0]
-  y_a = Numo::Int32.ones(100) * -1
+  y_a = Numo::Int32.zeros(100)
   x_b = (2 * Rumale::Utils.rand_uniform([100, 2], rng) - 1) + Numo::DFloat[2, 0]
-  y_b = Numo::Int32.ones(100)
+  y_b = Numo::Int32.zeros(100) + 1
   x = Numo::DFloat.vstack([x_a, x_b])
   y = y_a.concatenate(y_b)
   [x, y]
