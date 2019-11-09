@@ -39,7 +39,6 @@ Or install it yourself as:
 
 ### Example 1. XOR data
 First, let's classify simple xor data.
-In Rumale, feature vectors and labels are represented by [Numo::NArray](https://github.com/ruby-numo/numo-narray).
 
 ```ruby
 require 'rumale'
@@ -47,10 +46,6 @@ require 'rumale'
 # Prepare XOR data.
 features = [[0, 0], [0, 1], [1, 0], [1, 1]]
 labels = [0, 1, 1, 0]
-
-# Convert Ruby Array into Numo::NArray.
-x = Numo::DFloat.asarray(features)
-y = Numo::Int32.asarray(labels)
 
 # Train classifier with nearest neighbor rule.
 estimator = Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 1)
@@ -72,6 +67,8 @@ Numo::Int32#shape=[4]
 
 The basic usage of Rumale is to first train the model with the fit method
 and then estimate with the predict method.
+In addition, Rumale recommends using arrays such as feature vectors and labels with
+[Numo::NArray](https://github.com/ruby-numo/numo-narray).
 
 ### Example 2. Pendigits dataset classification
 
