@@ -34,9 +34,8 @@ module Rumale
       # @param eps [Float] A small value close to zero to avoid zero division error.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_components: 2, max_iter: 500, tol: 1.0e-4, eps: 1.0e-16, random_seed: nil)
-        check_params_integer(n_components: n_components, max_iter: max_iter)
-        check_params_float(tol: tol, eps: eps)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_numeric(n_components: n_components, max_iter: max_iter, tol: tol, eps: eps)
+        check_params_numeric_or_nil(random_seed: random_seed)
         check_params_positive(n_components: n_components, max_iter: max_iter, tol: tol, eps: eps)
         @params = {}
         @params[:n_components] = n_components

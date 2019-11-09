@@ -44,10 +44,9 @@ module Rumale
       # @param tol [Float] The tolerance of termination criterion. If solver = 'evd', this parameter is ignored.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_components: 2, solver: 'fpt', max_iter: 100, tol: 1.0e-4, random_seed: nil)
-        check_params_integer(n_components: n_components, max_iter: max_iter)
+        check_params_numeric(n_components: n_components, max_iter: max_iter, tol: tol)
         check_params_string(solver: solver)
-        check_params_float(tol: tol)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_numeric_or_nil(random_seed: random_seed)
         check_params_positive(n_components: n_components, max_iter: max_iter, tol: tol)
         @params = {}
         @params[:solver] = solver != 'evd' ? 'fpt' : 'evd'

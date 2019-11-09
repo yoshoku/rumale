@@ -35,7 +35,7 @@ module Rumale
       #   If metric is 'euclidean', Euclidean distance is calculated for distance between points.
       #   If metric is 'precomputed', the fit and fit_transform methods expect to be given a distance matrix.
       def initialize(n_clusters: 2, metric: 'euclidean')
-        check_params_integer(n_clusters: n_clusters)
+        check_params_numeric(n_clusters: n_clusters)
         check_params_string(metric: metric)
         @params = {}
         @params[:n_clusters] = n_clusters

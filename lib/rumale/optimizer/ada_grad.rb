@@ -22,7 +22,7 @@ module Rumale
       #
       # @param learning_rate [Float] The initial value of learning rate.
       def initialize(learning_rate: 0.01)
-        check_params_float(learning_rate: learning_rate)
+        check_params_numeric(learning_rate: learning_rate)
         check_params_positive(learning_rate: learning_rate)
         @params = {}
         @params[:learning_rate] = learning_rate

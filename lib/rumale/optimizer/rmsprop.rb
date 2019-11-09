@@ -25,7 +25,7 @@ module Rumale
       # @param momentum [Float] The initial value of momentum.
       # @param decay [Float] The smooting parameter.
       def initialize(learning_rate: 0.01, momentum: 0.9, decay: 0.9)
-        check_params_float(learning_rate: learning_rate, momentum: momentum, decay: decay)
+        check_params_numeric(learning_rate: learning_rate, momentum: momentum, decay: decay)
         check_params_positive(learning_rate: learning_rate, momentum: momentum, decay: decay)
         @params = {}
         @params[:learning_rate] = learning_rate

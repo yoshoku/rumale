@@ -70,6 +70,16 @@ module Rumale
     end
 
     # @!visibility private
+    def check_params_numeric(params = {})
+      check_params_type(Numeric, params)
+    end
+
+    # @!visibility private
+    def check_params_numeric_or_nil(params = {})
+      check_params_type_or_nil(Numeric, params)
+    end
+
+    # @!visibility private
     def check_params_float(params = {})
       check_params_type(Float, params)
     end

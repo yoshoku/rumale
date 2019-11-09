@@ -58,12 +58,10 @@ module Rumale
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_components: 2, perplexity: 30.0, metric: 'euclidean', init: 'random',
                      max_iter: 500, tol: nil, verbose: false, random_seed: nil)
-        check_params_integer(n_components: n_components, max_iter: max_iter)
-        check_params_float(perplexity: perplexity)
+        check_params_numeric(n_components: n_components, max_iter: max_iter, perplexity: perplexity)
         check_params_string(metric: metric, init: init)
         check_params_boolean(verbose: verbose)
-        check_params_type_or_nil(Float, tol: tol)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_numeric_or_nil(tol: tol, random_seed: random_seed)
         check_params_positive(n_components: n_components, perplexity: perplexity, max_iter: max_iter)
         @params = {}
         @params[:n_components] = n_components

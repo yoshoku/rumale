@@ -47,10 +47,9 @@ module Rumale
       # @param reg_covar [Float] The non-negative regularization to the diagonal of covariance.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_clusters: 8, init: 'k-means++', covariance_type: 'diag', max_iter: 50, tol: 1.0e-4, reg_covar: 1.0e-6, random_seed: nil)
-        check_params_integer(n_clusters: n_clusters, max_iter: max_iter)
-        check_params_float(tol: tol)
+        check_params_numeric(n_clusters: n_clusters, max_iter: max_iter, tol: tol)
         check_params_string(init: init)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_numeric_or_nil(random_seed: random_seed)
         check_params_positive(n_clusters: n_clusters, max_iter: max_iter)
         @params = {}
         @params[:n_clusters] = n_clusters

@@ -24,7 +24,7 @@ module Rumale
       # @param decay1 [Float] The smoothing parameter for the first moment.
       # @param decay2 [Float] The smoothing parameter for the second moment.
       def initialize(learning_rate: 0.001, decay1: 0.9, decay2: 0.999)
-        check_params_float(learning_rate: learning_rate, decay1: decay1, decay2: decay2)
+        check_params_numeric(learning_rate: learning_rate, decay1: decay1, decay2: decay2)
         check_params_positive(learning_rate: learning_rate, decay1: decay1, decay2: decay2)
         @params = {}
         @params[:learning_rate] = learning_rate

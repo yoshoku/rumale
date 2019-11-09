@@ -61,10 +61,10 @@ module Rumale
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: 'hinge', reg_param_linear: 1.0, reg_param_factor: 1.0,
                      max_iter: 1000, batch_size: 10, optimizer: nil, n_jobs: nil, random_seed: nil)
-        check_params_float(reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor)
-        check_params_integer(n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
+        check_params_numeric(reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
+                             n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
         check_params_string(loss: loss)
-        check_params_type_or_nil(Integer, n_jobs: n_jobs, random_seed: random_seed)
+        check_params_numeric_or_nil(n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(n_factors: n_factors,
                               reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
                               max_iter: max_iter, batch_size: batch_size)

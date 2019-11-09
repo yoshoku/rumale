@@ -52,10 +52,9 @@ module Rumale
       #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, max_iter: 1000, probability: false, n_jobs: nil, random_seed: nil)
-        check_params_float(reg_param: reg_param)
-        check_params_integer(max_iter: max_iter)
+        check_params_numeric(reg_param: reg_param, max_iter: max_iter)
         check_params_boolean(probability: probability)
-        check_params_type_or_nil(Integer, n_jobs: n_jobs, random_seed: random_seed)
+        check_params_numeric_or_nil(n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(reg_param: reg_param, max_iter: max_iter)
         @params = {}
         @params[:reg_param] = reg_param

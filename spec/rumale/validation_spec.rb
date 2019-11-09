@@ -36,9 +36,16 @@ RSpec.describe Rumale::Validation do
     expect(described_class.check_params_type(Integer, foo: 10)).to be_nil
     expect { described_class.check_params_type_or_nil(Integer, foo: 1.0) }.to raise_error(TypeError)
     expect(described_class.check_params_type_or_nil(Integer, foo: nil)).to be_nil
+    expect { described_class.check_params_numeric_or_nil(foo: '1.0') }.to raise_error(TypeError)
+    expect(described_class.check_params_numeric_or_nil(foo: 1.0)).to be_nil
+    expect(described_class.check_params_numeric_or_nil(foo: nil)).to be_nil
     expect { described_class.check_params_boolean(foo: nil) }.to raise_error(TypeError)
     expect(described_class.check_params_boolean(foo: true)).to be_nil
     expect(described_class.check_params_boolean(foo: false)).to be_nil
+    expect { described_class.check_params_integer(foo: 0.5) }.to raise_error(TypeError)
+    expect(described_class.check_params_integer(foo: 10)).to be_nil
+    expect { described_class.check_params_float(foo: 10) }.to raise_error(TypeError)
+    expect(described_class.check_params_float(foo: 0.5)).to be_nil
   end
 
   it 'detects negative value given.' do

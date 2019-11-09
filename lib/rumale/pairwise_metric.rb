@@ -64,7 +64,7 @@ module Rumale
         gamma ||= 1.0 / x.shape[1]
         x = Rumale::Validation.check_convert_sample_array(x)
         y = Rumale::Validation.check_convert_sample_array(y)
-        Rumale::Validation.check_params_float(gamma: gamma)
+        Rumale::Validation.check_params_numeric(gamma: gamma)
         Numo::NMath.exp(-gamma * squared_error(x, y).abs)
       end
 
@@ -93,8 +93,7 @@ module Rumale
         gamma ||= 1.0 / x.shape[1]
         x = Rumale::Validation.check_convert_sample_array(x)
         y = Rumale::Validation.check_convert_sample_array(y)
-        Rumale::Validation.check_params_float(gamma: gamma)
-        Rumale::Validation.check_params_integer(degree: degree, coef: coef)
+        Rumale::Validation.check_params_numeric(gamma: gamma, degree: degree, coef: coef)
         (x.dot(y.transpose) * gamma + coef)**degree
       end
 
@@ -110,8 +109,7 @@ module Rumale
         gamma ||= 1.0 / x.shape[1]
         x = Rumale::Validation.check_convert_sample_array(x)
         y = Rumale::Validation.check_convert_sample_array(y)
-        Rumale::Validation.check_params_float(gamma: gamma)
-        Rumale::Validation.check_params_integer(coef: coef)
+        Rumale::Validation.check_params_numeric(gamma: gamma, coef: coef)
         Numo::NMath.tanh(x.dot(y.transpose) * gamma + coef)
       end
     end

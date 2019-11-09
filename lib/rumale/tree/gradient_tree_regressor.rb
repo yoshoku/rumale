@@ -52,10 +52,9 @@ module Rumale
       #   It is used to randomly determine the order of features when deciding spliting point.
       def initialize(reg_lambda: 0.0, shrinkage_rate: 1.0,
                      max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1, max_features: nil, random_seed: nil)
-        check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                                          max_features: max_features, random_seed: random_seed)
-        check_params_float(reg_lambda: reg_lambda, shrinkage_rate: shrinkage_rate)
-        check_params_integer(min_samples_leaf: min_samples_leaf)
+        check_params_numeric_or_nil(max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                                    max_features: max_features, random_seed: random_seed)
+        check_params_numeric(reg_lambda: reg_lambda, shrinkage_rate: shrinkage_rate, min_samples_leaf: min_samples_leaf)
         check_params_positive(reg_lambda: reg_lambda, shrinkage_rate: shrinkage_rate,
                               max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
                               min_samples_leaf: min_samples_leaf, max_features: max_features)

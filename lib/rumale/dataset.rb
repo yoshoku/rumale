@@ -60,11 +60,9 @@ module Rumale
       # @param factor [Float] The scale factor between inner and outer circles. The interval of factor is (0, 1).
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def make_circles(n_samples, shuffle: true, noise: nil, factor: 0.8, random_seed: nil)
-        Rumale::Validation.check_params_integer(n_samples: n_samples)
+        Rumale::Validation.check_params_numeric(n_samples: n_samples, factor: factor)
         Rumale::Validation.check_params_boolean(shuffle: shuffle)
-        Rumale::Validation.check_params_type_or_nil(Float, noise: noise)
-        Rumale::Validation.check_params_float(factor: factor)
-        Rumale::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+        Rumale::Validation.check_params_numeric_or_nil(noise: noise, random_seed: random_seed)
         raise ArgumentError, 'The number of samples must be more than 2.' if n_samples <= 1
         raise RangeError, 'The interval of factor is (0, 1).' if factor <= 0 || factor >= 1
         # initialize some variables.
@@ -99,10 +97,9 @@ module Rumale
       #   If nil is given, no noise is added.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def make_moons(n_samples, shuffle: true, noise: nil, random_seed: nil)
-        Rumale::Validation.check_params_integer(n_samples: n_samples)
+        Rumale::Validation.check_params_numeric(n_samples: n_samples)
         Rumale::Validation.check_params_boolean(shuffle: shuffle)
-        Rumale::Validation.check_params_type_or_nil(Float, noise: noise)
-        Rumale::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+        Rumale::Validation.check_params_numeric_or_nil(noise: noise, random_seed: random_seed)
         raise ArgumentError, 'The number of samples must be more than 2.' if n_samples <= 1
         # initialize some variables.
         rs = random_seed
@@ -142,11 +139,10 @@ module Rumale
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def make_blobs(n_samples = 1000, n_features = 2,
                      centers: nil, cluster_std: 1.0, center_box: [-10, 10], shuffle: true, random_seed: nil)
-        Rumale::Validation.check_params_integer(n_samples: n_samples, n_features: n_features)
-        Rumale::Validation.check_params_float(cluster_std: cluster_std)
+        Rumale::Validation.check_params_numeric(n_samples: n_samples, n_features: n_features, cluster_std: cluster_std)
         Rumale::Validation.check_params_type(Array, center_box: center_box)
         Rumale::Validation.check_params_boolean(shuffle: shuffle)
-        Rumale::Validation.check_params_type_or_nil(Integer, random_seed: random_seed)
+        Rumale::Validation.check_params_numeric_or_nil(random_seed: random_seed)
         # initialize rng.
         rs = random_seed
         rs ||= srand

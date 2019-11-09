@@ -36,9 +36,9 @@ module Rumale
       # @param shuffle [Boolean] The flag indicating whether to shuffle the dataset.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_splits: 3, shuffle: false, random_seed: nil)
-        check_params_integer(n_splits: n_splits)
+        check_params_numeric(n_splits: n_splits)
         check_params_boolean(shuffle: shuffle)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_numeric_or_nil(random_seed: random_seed)
         check_params_positive(n_splits: n_splits)
         @n_splits = n_splits
         @shuffle = shuffle

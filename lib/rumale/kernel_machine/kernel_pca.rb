@@ -35,7 +35,7 @@ module Rumale
       #
       # @param n_components [Integer] The number of components.
       def initialize(n_components: 2)
-        check_params_integer(n_components: n_components)
+        check_params_numeric(n_components: n_components)
         @params = {}
         @params[:n_components] = n_components
         @alphas = nil

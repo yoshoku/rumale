@@ -59,10 +59,9 @@ module Rumale
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
                      max_iter: 1000, batch_size: 20, probability: false, optimizer: nil, n_jobs: nil, random_seed: nil)
-        check_params_float(reg_param: reg_param, bias_scale: bias_scale)
-        check_params_integer(max_iter: max_iter, batch_size: batch_size)
+        check_params_numeric(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
         check_params_boolean(fit_bias: fit_bias, probability: probability)
-        check_params_type_or_nil(Integer, n_jobs: n_jobs, random_seed: random_seed)
+        check_params_numeric_or_nil(n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
         keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h
         keywd_args.delete(:probability)

@@ -60,10 +60,10 @@ module Rumale
       def initialize(n_estimators: 100, learning_rate: 0.1, reg_lambda: 0.0, subsample: 1.0,
                      max_depth: nil, max_leaf_nodes: nil, min_samples_leaf: 1,
                      max_features: nil, n_jobs: nil, random_seed: nil)
-        check_params_type_or_nil(Integer, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
-                                          max_features: max_features, n_jobs: n_jobs, random_seed: random_seed)
-        check_params_integer(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf)
-        check_params_float(learning_rate: learning_rate, reg_lambda: reg_lambda, subsample: subsample)
+        check_params_numeric_or_nil(max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
+                                    max_features: max_features, n_jobs: n_jobs, random_seed: random_seed)
+        check_params_numeric(n_estimators: n_estimators, min_samples_leaf: min_samples_leaf,
+                             learning_rate: learning_rate, reg_lambda: reg_lambda, subsample: subsample)
         check_params_positive(n_estimators: n_estimators, learning_rate: learning_rate, reg_lambda: reg_lambda,
                               subsample: subsample, max_depth: max_depth, max_leaf_nodes: max_leaf_nodes,
                               min_samples_leaf: min_samples_leaf, max_features: max_features)

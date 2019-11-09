@@ -32,10 +32,8 @@ module Rumale
       # @param train_size [Float] The ratio of number of samples for train data.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_splits: 3, test_size: 0.1, train_size: nil, random_seed: nil)
-        check_params_integer(n_splits: n_splits)
-        check_params_float(test_size: test_size)
-        check_params_type_or_nil(Float, train_size: train_size)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_numeric(n_splits: n_splits, test_size: test_size)
+        check_params_numeric_or_nil(train_size: train_size, random_seed: random_seed)
         check_params_positive(n_splits: n_splits)
         check_params_positive(test_size: test_size)
         check_params_positive(train_size: train_size) unless train_size.nil?

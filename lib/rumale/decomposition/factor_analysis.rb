@@ -46,8 +46,8 @@ module Rumale
       # @param tol [Float/Nil] The tolerance of termination criterion for EM algorithm.
       #   If nil is given, iterate EM steps up to the maximum number of iterations.
       def initialize(n_components: 2, max_iter: 100, tol: 1e-8)
-        check_params_integer(n_components: n_components, max_iter: max_iter)
-        check_params_type_or_nil(Float, tol: tol)
+        check_params_numeric(n_components: n_components, max_iter: max_iter)
+        check_params_numeric_or_nil(tol: tol)
         check_params_positive(n_components: n_components, max_iter: max_iter)
         @params = {}
         @params[:n_components] = n_components

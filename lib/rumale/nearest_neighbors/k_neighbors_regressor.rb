@@ -30,7 +30,7 @@ module Rumale
       #
       # @param n_neighbors [Integer] The number of neighbors.
       def initialize(n_neighbors: 5)
-        check_params_integer(n_neighbors: n_neighbors)
+        check_params_numeric(n_neighbors: n_neighbors)
         check_params_positive(n_neighbors: n_neighbors)
         @params = {}
         @params[:n_neighbors] = n_neighbors

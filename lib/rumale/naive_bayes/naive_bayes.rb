@@ -154,7 +154,7 @@ module Rumale
       #
       # @param smoothing_param [Float] The Laplace smoothing parameter.
       def initialize(smoothing_param: 1.0)
-        check_params_float(smoothing_param: smoothing_param)
+        check_params_numeric(smoothing_param: smoothing_param)
         check_params_positive(smoothing_param: smoothing_param)
         @params = {}
         @params[:smoothing_param] = smoothing_param
@@ -243,7 +243,7 @@ module Rumale
       # @param smoothing_param [Float] The Laplace smoothing parameter.
       # @param bin_threshold [Float] The threshold for binarizing of features.
       def initialize(smoothing_param: 1.0, bin_threshold: 0.0)
-        check_params_float(smoothing_param: smoothing_param, bin_threshold: bin_threshold)
+        check_params_numeric(smoothing_param: smoothing_param, bin_threshold: bin_threshold)
         check_params_positive(smoothing_param: smoothing_param)
         @params = {}
         @params[:smoothing_param] = smoothing_param

@@ -31,7 +31,7 @@ module Rumale
       # @param neg_label [Integer] The value represents negative label.
       # @param pos_label [Integer] The value represents positive label.
       def initialize(neg_label: 0, pos_label: 1)
-        check_params_integer(neg_label: neg_label, pos_label: pos_label)
+        check_params_numeric(neg_label: neg_label, pos_label: pos_label)
         @params = {}
         @params[:neg_label] = neg_label
         @params[:pos_label] = pos_label

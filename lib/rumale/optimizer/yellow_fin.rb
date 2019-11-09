@@ -25,8 +25,7 @@ module Rumale
       # @param decay [Float] The smooting parameter.
       # @param window_width [Integer] The sliding window width for searching curvature range.
       def initialize(learning_rate: 0.01, momentum: 0.9, decay: 0.999, window_width: 20)
-        check_params_float(learning_rate: learning_rate, momentum: momentum, decay: decay)
-        check_params_integer(window_width: window_width)
+        check_params_numeric(learning_rate: learning_rate, momentum: momentum, decay: decay, window_width: window_width)
         check_params_positive(learning_rate: learning_rate, momentum: momentum, decay: decay, window_width: window_width)
         @params = {}
         @params[:learning_rate] = learning_rate

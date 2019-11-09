@@ -42,11 +42,9 @@ module Rumale
       # @param eps [Float] A small value close to zero to avoid zero division error.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_clusters: 8, affinity: 'rbf', gamma: nil, init: 'k-means++', max_iter: 1000, tol: 1.0e-8, eps: 1.0e-5, random_seed: nil)
-        check_params_integer(n_clusters: n_clusters, max_iter: max_iter)
-        check_params_float(tol: tol, eps: eps)
+        check_params_numeric(n_clusters: n_clusters, max_iter: max_iter, tol: tol, eps: eps)
+        check_params_numeric_or_nil(gamma: gamma, random_seed: random_seed)
         check_params_string(affinity: affinity, init: init)
-        check_params_type_or_nil(Float, gamma: gamma)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
         check_params_positive(n_clusters: n_clusters, max_iter: max_iter, tol: tol, eps: eps)
         @params = {}
         @params[:n_clusters] = n_clusters

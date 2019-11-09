@@ -38,9 +38,8 @@ module Rumale
       # @param n_components [Integer] The number of dimensions of the RBF kernel feature space.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(gamma: 1.0, n_components: 128, random_seed: nil)
-        check_params_float(gamma: gamma)
-        check_params_integer(n_components: n_components)
-        check_params_type_or_nil(Integer, random_seed: random_seed)
+        check_params_numeric(gamma: gamma, n_components: n_components)
+        check_params_numeric_or_nil(random_seed: random_seed)
         check_params_positive(gamma: gamma, n_components: n_components)
         @params = {}
         @params[:gamma] = gamma

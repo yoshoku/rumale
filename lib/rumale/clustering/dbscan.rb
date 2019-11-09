@@ -34,8 +34,7 @@ module Rumale
       #   If metric is 'euclidean', Euclidean distance is calculated for distance between points.
       #   If metric is 'precomputed', the fit and fit_transform methods expect to be given a distance matrix.
       def initialize(eps: 0.5, min_samples: 5, metric: 'euclidean')
-        check_params_float(eps: eps)
-        check_params_integer(min_samples: min_samples)
+        check_params_numeric(eps: eps, min_samples: min_samples)
         check_params_string(metric: metric)
         @params = {}
         @params[:eps] = eps
