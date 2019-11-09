@@ -4,84 +4,93 @@ require 'spec_helper'
 
 RSpec.describe Rumale::LinearModel::SVR do
   let(:x) { two_clusters_dataset[0] }
-  let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
-  let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
+  let(:single_target) { x.dot(Numo::DFloat[1.0, 2.0]) }
+  let(:multi_target) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:n_samples) { x.shape[0] }
   let(:n_features) { x.shape[1] }
-  let(:n_outputs) { y_mult.shape[1] }
-  let(:estimator) { described_class.new(reg_param: 0.01, epsilon: 0.1, random_seed: 1) }
-  let(:estimator_bias) { described_class.new(reg_param: 0.01, epsilon: 0.1, fit_bias: true, random_seed: 1) }
-  let(:estimator_parallel) { described_class.new(reg_param: 0.01, epsilon: 0.1, fit_bias: true, n_jobs: -1, random_seed: 1) }
+  let(:n_outputs) { multi_target.shape[1] }
+  let(:fit_bias) { false }
+  let(:n_jobs) { nil }
+  let(:estimator) { described_class.new(reg_param: 0.01, epsilon: 0.1, fit_bias: fit_bias, n_jobs: n_jobs, random_seed: 1).fit(x, y) }
+  let(:predicted) { estimator.predict(x) }
+  let(:score) { estimator.score(x, y) }
+  let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
-  it 'learns the linear model.' do
-    estimator.fit(x, y)
-    predicted = estimator.predict(x)
-    expect(estimator.weight_vec.class).to eq(Numo::DFloat)
-    expect(estimator.weight_vec.size).to eq(n_features)
-    expect(estimator.weight_vec.shape[0]).to eq(n_features)
-    expect(estimator.weight_vec.shape[1]).to be_nil
-    expect(estimator.bias_term).to be_zero
-    expect(predicted.class).to eq(Numo::DFloat)
-    expect(predicted.shape[0]).to eq(n_samples)
-    expect(predicted.shape[1]).to be_nil
-    expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
+  context 'when single target problem' do
+    let(:y) { single_target }
+
+    it 'learns the linear model.', :aggregate_failures do
+      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.ndim).to eq(1)
+      expect(estimator.weight_vec.shape[0]).to eq(n_features)
+      expect(estimator.bias_term).to be_zero
+      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.ndim).to eq(1)
+      expect(predicted.shape[0]).to eq(n_samples)
+      expect(score).to be_within(0.01).of(1.0)
+    end
+
+    context 'when fit_bias parameter is true' do
+      let(:fit_bias) { true }
+
+      it 'learns the linear model with bias term.', :aggregate_failures do
+        expect(estimator.weight_vec.ndim).to eq(1)
+        expect(estimator.weight_vec.shape[0]).to eq(n_features)
+        expect(estimator.bias_term).not_to be_zero
+        expect(score).to be_within(0.01).of(1.0)
+      end
+    end
+
+    it 'dumps and restores itself using Marshal module.', :aggregate_failures do
+      expect(estimator.class).to eq(copied.class)
+      expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])
+      expect(estimator.params[:fit_bias]).to eq(copied.params[:fit_bias])
+      expect(estimator.params[:bias_scale]).to eq(copied.params[:bias_scale])
+      expect(estimator.params[:epsilon]).to eq(copied.params[:epsilon])
+      expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
+      expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
+      expect(estimator.params[:optimizer].class).to eq(copied.params[:optimizer].class)
+      expect(estimator.params[:n_jobs]).to eq(copied.params[:n_jobs])
+      expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
+      expect(estimator.weight_vec).to eq(copied.weight_vec)
+      expect(estimator.bias_term).to eq(copied.bias_term)
+      expect(estimator.rng).to eq(copied.rng)
+      expect(score).to eq(copied.score(x, y))
+    end
   end
 
-  it 'learns the linear model with bias term.' do
-    estimator_bias.fit(x, y)
-    expect(estimator_bias.weight_vec.size).to eq(n_features)
-    expect(estimator_bias.weight_vec.shape[0]).to eq(n_features)
-    expect(estimator_bias.weight_vec.shape[1]).to be_nil
-    expect(estimator_bias.bias_term).not_to be_zero
-    expect(estimator_bias.score(x, y)).to be_within(0.01).of(1.0)
-  end
+  context 'when multi-target problem' do
+    let(:y) { multi_target }
 
-  it 'learns the model for multiple-regression problems.' do
-    estimator.fit(x, y_mult)
-    predicted = estimator.predict(x)
-    expect(estimator.weight_vec.class).to eq(Numo::DFloat)
-    expect(estimator.weight_vec.size).to eq(n_features * n_outputs)
-    expect(estimator.weight_vec.shape[0]).to eq(n_features)
-    expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-    expect(predicted.class).to eq(Numo::DFloat)
-    expect(predicted.shape[0]).to eq(n_samples)
-    expect(predicted.shape[1]).to eq(n_outputs)
-    expect(estimator.score(x, y_mult)).to be_within(0.01).of(1.0)
-  end
+    it 'learns the model for multi-target problem.', :aggregate_failures do
+      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.ndim).to eq(2)
+      expect(estimator.weight_vec.shape[0]).to eq(n_features)
+      expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
+      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.ndim).to eq(2)
+      expect(predicted.shape[0]).to eq(n_samples)
+      expect(predicted.shape[1]).to eq(n_outputs)
+      expect(score).to be_within(0.01).of(1.0)
+    end
 
-  it 'learns the model for multiple-regression problems in parallel.' do
-    estimator_parallel.fit(x, y_mult)
-    predicted = estimator_parallel.predict(x)
-    expect(estimator_parallel.weight_vec.class).to eq(Numo::DFloat)
-    expect(estimator_parallel.weight_vec.size).to eq(n_features * n_outputs)
-    expect(estimator_parallel.weight_vec.shape[0]).to eq(n_features)
-    expect(estimator_parallel.weight_vec.shape[1]).to eq(n_outputs)
-    expect(estimator_parallel.bias_term.class).to eq(Numo::DFloat)
-    expect(estimator_parallel.bias_term.size).to eq(n_outputs)
-    expect(estimator_parallel.bias_term.shape[0]).to eq(n_outputs)
-    expect(estimator_parallel.bias_term.shape[1]).to be_nil
-    expect(predicted.class).to eq(Numo::DFloat)
-    expect(predicted.shape[0]).to eq(n_samples)
-    expect(predicted.shape[1]).to eq(n_outputs)
-    expect(estimator_parallel.score(x, y_mult)).to be_within(0.01).of(1.0)
-  end
+    context 'when n_jobs parameter is not nil' do
+      let(:n_jobs) { -1 }
 
-  it 'dumps and restores itself using Marshal module.' do
-    estimator.fit(x, y)
-    copied = Marshal.load(Marshal.dump(estimator))
-    expect(estimator.class).to eq(copied.class)
-    expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])
-    expect(estimator.params[:fit_bias]).to eq(copied.params[:fit_bias])
-    expect(estimator.params[:bias_scale]).to eq(copied.params[:bias_scale])
-    expect(estimator.params[:epsilon]).to eq(copied.params[:epsilon])
-    expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
-    expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
-    expect(estimator.params[:optimizer].class).to eq(copied.params[:optimizer].class)
-    expect(estimator.params[:n_jobs]).to eq(copied.params[:n_jobs])
-    expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
-    expect(estimator.weight_vec).to eq(copied.weight_vec)
-    expect(estimator.bias_term).to eq(copied.bias_term)
-    expect(estimator.rng).to eq(copied.rng)
-    expect(estimator.score(x, y)).to eq(copied.score(x, y))
+      it 'learns the model for multiple-regression problems in parallel.', :aggregate_failures do
+        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec.ndim).to eq(2)
+        expect(estimator.weight_vec.shape[0]).to eq(n_features)
+        expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
+        expect(estimator.bias_term.class).to eq(Numo::DFloat)
+        expect(estimator.bias_term.ndim).to eq(1)
+        expect(estimator.bias_term.shape[0]).to eq(n_outputs)
+        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted.ndim).to eq(2)
+        expect(predicted.shape[0]).to eq(n_samples)
+        expect(predicted.shape[1]).to eq(n_outputs)
+        expect(score).to be_within(0.01).of(1.0)
+      end
+    end
   end
 end

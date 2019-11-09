@@ -14,24 +14,24 @@ RSpec.describe Rumale::LinearModel::LinearRegression do
   let(:n_jobs) { nil }
   let(:estimator) { described_class.new(fit_bias: fit_bias, solver: solver, n_jobs: n_jobs, random_seed: 1).fit(x, y) }
   let(:predicted) { estimator.predict(x) }
+  let(:score) { estimator.score(x, y) }
+  let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
   shared_examples 'single regression' do
     let(:y) { single_target }
 
-    it 'learns the model for single regression problem.', aggregate_failures: true do
+    it 'learns the model for single regression problem.', :aggregate_failures do
       expect(estimator.weight_vec.class).to eq(Numo::DFloat)
-      expect(estimator.weight_vec.size).to eq(n_features)
+      expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
-      expect(estimator.weight_vec.shape[1]).to be_nil
       expect(estimator.bias_term).to be_zero
       expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
-      expect(predicted.shape[1]).to be_nil
-      expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
+      expect(score).to be_within(0.01).of(1.0)
     end
 
-    it 'dumps and restores itself using Marshal module.', aggregate_failures: true do
-      copied = Marshal.load(Marshal.dump(estimator))
+    it 'dumps and restores itself using Marshal module.', :aggregate_failures do
       expect(estimator.class).to eq(copied.class)
       expect(estimator.params[:fit_bias]).to eq(copied.params[:fit_bias])
       expect(estimator.params[:bias_scale]).to eq(copied.params[:bias_scale])
@@ -44,7 +44,7 @@ RSpec.describe Rumale::LinearModel::LinearRegression do
       expect(estimator.weight_vec).to eq(copied.weight_vec)
       expect(estimator.bias_term).to eq(copied.bias_term)
       expect(estimator.rng).to eq(copied.rng)
-      expect(estimator.score(x, y)).to eq(copied.score(x, y))
+      expect(score).to eq(copied.score(x, y))
     end
   end
 
@@ -52,27 +52,27 @@ RSpec.describe Rumale::LinearModel::LinearRegression do
     let(:y) { single_target }
     let(:fit_bias) { true }
 
-    it 'learns the model for single regression problem with bias term.', aggregate_failures: true do
-      expect(estimator.weight_vec.size).to eq(n_features)
+    it 'learns the model for single regression problem with bias term.', :aggregate_failures do
+      expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
-      expect(estimator.weight_vec.shape[1]).to be_nil
       expect(estimator.bias_term).not_to be_zero
-      expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
+      expect(score).to be_within(0.01).of(1.0)
     end
   end
 
   shared_examples 'multiple regression' do
     let(:y) { multi_target }
 
-    it 'learns the model for multiple-regression problems.', aggregate_failures: true do
+    it 'learns the model for multiple-regression problems.', :aggregate_failures do
       expect(estimator.weight_vec.class).to eq(Numo::DFloat)
-      expect(estimator.weight_vec.size).to eq(n_features * n_outputs)
+      expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
       expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
-      expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
+      expect(score).to be_within(0.01).of(1.0)
     end
   end
 
@@ -80,17 +80,16 @@ RSpec.describe Rumale::LinearModel::LinearRegression do
     let(:y) { multi_target }
     let(:fit_bias) { true }
 
-    it 'learns the model for single regression problem with bias term.', aggregate_failures: true do
+    it 'learns the model for single regression problem with bias term.', :aggregate_failures do
       expect(estimator.weight_vec.class).to eq(Numo::DFloat)
-      expect(estimator.weight_vec.size).to eq(n_features * n_outputs)
+      expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
       expect(estimator.bias_term.class).to eq(Numo::DFloat)
-      expect(estimator.bias_term.size).to eq(n_outputs)
+      expect(estimator.bias_term.ndim).to eq(1)
       expect(estimator.bias_term.shape[0]).to eq(n_outputs)
-      expect(estimator.bias_term.shape[1]).to eq(nil)
       expect(Math.sqrt((estimator.bias_term**2).sum)).not_to be_zero
-      expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
+      expect(score).to be_within(0.01).of(1.0)
     end
   end
 
@@ -98,15 +97,16 @@ RSpec.describe Rumale::LinearModel::LinearRegression do
     let(:y) { multi_target }
     let(:n_jobs) { -1 }
 
-    it 'learns the model for multiple-regression problems.', aggregate_failures: true do
+    it 'learns the model for multiple-regression problems.', :aggregate_failures do
       expect(estimator.weight_vec.class).to eq(Numo::DFloat)
-      expect(estimator.weight_vec.size).to eq(n_features * n_outputs)
+      expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
       expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
-      expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
+      expect(score).to be_within(0.01).of(1.0)
     end
   end
 
