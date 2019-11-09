@@ -56,8 +56,8 @@ module Rumale
       #   The labels to be used to generate data indices for stratified K-fold cross validation.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
       def split(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         # Check the number of samples in each class.
         unless valid_n_splits?(y)

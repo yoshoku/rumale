@@ -42,8 +42,8 @@ module Rumale
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
       # @return [KernelRidge] The learned regressor itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_tvalue_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
         raise ArgumentError, 'Expect the kernel matrix of training data to be square.' unless x.shape[0] == x.shape[1]
         raise 'KernelRidge#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?
@@ -72,7 +72,7 @@ module Rumale
       #     The kernel matrix between testing samples and training samples to predict values.
       # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         x.dot(@weight_vec)
       end
 

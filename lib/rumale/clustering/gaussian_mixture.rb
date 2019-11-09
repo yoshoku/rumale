@@ -74,7 +74,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       # @return [GaussianMixture] The learned cluster analyzer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         check_enable_linalg('fit')
 
         n_samples = x.shape[0]
@@ -97,7 +97,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         check_enable_linalg('predict')
 
         memberships = calc_memberships(x, @weights, @means, @covariances, @params[:covariance_type])
@@ -109,7 +109,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         check_enable_linalg('fit_predict')
 
         fit(x).predict(x)

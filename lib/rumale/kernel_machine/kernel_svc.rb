@@ -77,8 +77,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_training_samples]) The labels to be used for fitting the model.
       # @return [KernelSVC] The learned classifier itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
@@ -117,7 +117,7 @@ module Rumale
       #     The kernel matrix between testing samples and training samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_testing_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         x.dot(@weight_vec.transpose)
       end
@@ -128,7 +128,7 @@ module Rumale
       #     The kernel matrix between testing samples and training samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_testing_samples]) Predicted class label per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
 
@@ -148,7 +148,7 @@ module Rumale
       #     The kernel matrix between testing samples and training samples to predict the labels.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         if @classes.size > 2
           probs = 1.0 / (Numo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)

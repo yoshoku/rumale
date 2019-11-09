@@ -91,8 +91,8 @@ module Rumale
       # @param y [Numo::DFloat] (shape: [n_samples]) The target values to be used for fitting the model.
       # @return [GradientBoostingRegressor] The learned regressor itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_tvalue_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
         # initialize some variables.
         n_features = x.shape[1]
@@ -120,7 +120,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::DFloat] (shape: [n_samples]) Predicted values per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_outputs = @estimators.first.is_a?(Array) ? @estimators.size : 1
         if n_outputs > 1
           multivar_predict(x)
@@ -138,7 +138,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_outputs = @estimators.first.is_a?(Array) ? @estimators.size : 1
         leaf_ids = if n_outputs > 1
                      Array.new(n_outputs) { |n| @estimators[n].map { |tree| tree.apply(x) } }

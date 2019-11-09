@@ -32,7 +32,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
       # @return [L2Normalizer]
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @norm_vec = Numo::NMath.sqrt((x**2).sum(1))
         self
       end
@@ -44,7 +44,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
       # @return [Numo::DFloat] The normalized samples.
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         fit(x)
         x / @norm_vec.tile(x.shape[1], 1).transpose
       end

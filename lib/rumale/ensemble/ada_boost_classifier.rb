@@ -84,8 +84,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [AdaBoostClassifier] The learned classifier itself.
       def fit(x, y) # rubocop:disable Metrics/AbcSize
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         ## Initialize some variables.
         n_samples, n_features = x.shape
@@ -137,7 +137,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, = x.shape
         n_classes = @classes.size
         sum_probs = Numo::DFloat.zeros(n_samples, n_classes)
@@ -153,7 +153,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, = x.shape
         probs = decision_function(x)
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[probs[n, true].max_index] })
@@ -164,7 +164,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_classes = @classes.size
         probs = Numo::NMath.exp(1.fdiv(n_classes - 1) * decision_function(x))
         sum_probs = probs.sum(1)

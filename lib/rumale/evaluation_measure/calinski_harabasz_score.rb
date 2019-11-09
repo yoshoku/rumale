@@ -21,8 +21,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples]) The predicted labels for each sample.
       # @return [Float] The Calinski and Harabasz score.
       def score(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
 
         labels = y.to_a.uniq.sort

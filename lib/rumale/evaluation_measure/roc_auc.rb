@@ -33,7 +33,8 @@ module Rumale
       #   Predicted class probabilities or confidence scores.
       # @return [Float] (macro-averaged) ROC AUC.
       def score(y_true, y_score)
-        check_params_type(Numo::NArray, y_true: y_true, y_score: y_score)
+        y_true = Numo::Int32.cast(y_true) unless y_true.is_a?(Numo::Int32)
+        y_score = Numo::DFloat.cast(y_score) unless y_score.is_a?(Numo::DFloat)
         raise ArgumentError, 'Expect to have the same shape for y_true and y_score.' unless y_true.shape == y_score.shape
 
         n_classes = y_score.shape[1]
@@ -59,7 +60,8 @@ module Rumale
       # @return [Array] fpr (Numo::DFloat): false positive rates. tpr (Numo::DFloat): true positive rates.
       #   thresholds (Numo::DFloat): thresholds on the decision function used to calculate fpr and tpr.
       def roc_curve(y_true, y_score, pos_label = nil)
-        check_params_type(Numo::NArray, y_true: y_true, y_score: y_score)
+        y_true = Numo::Int32.cast(y_true) unless y_true.is_a?(Numo::Int32)
+        y_score = Numo::DFloat.cast(y_score) unless y_score.is_a?(Numo::DFloat)
         raise ArgumentError, 'Expect y_true to be 1-D arrray.' unless y_true.shape[1].nil?
         raise ArgumentError, 'Expect y_score to be 1-D arrray.' unless y_score.shape[1].nil?
         labels = y_true.to_a.uniq
@@ -90,7 +92,8 @@ module Rumale
       # @param y [Numo::Int32/Numo::DFloat] (shape: [n_elements]) y coordinates.
       # @return [Float] area under the curve.
       def auc(x, y)
-        check_params_type(Numo::NArray, x: x, y: y)
+        x = Numo::NArray.asarray(x) unless x.is_a?(Numo::NArray)
+        y = Numo::NArray.asarray(y) unless y.is_a?(Numo::NArray)
         raise ArgumentError, 'Expect x to be 1-D arrray.' unless x.shape[1].nil?
         raise ArgumentError, 'Expect y to be 1-D arrray.' unless y.shape[1].nil?
         n_samples = [x.shape[0], y.shape[0]].min

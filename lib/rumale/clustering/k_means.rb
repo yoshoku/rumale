@@ -59,7 +59,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       # @return [KMeans] The learned cluster analyzer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         init_cluster_centers(x)
         @params[:max_iter].times do |_t|
           cluster_labels = assign_cluster(x)
@@ -79,7 +79,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         assign_cluster(x)
       end
 
@@ -88,7 +88,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         fit(x)
         predict(x)
       end

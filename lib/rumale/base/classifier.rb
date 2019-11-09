@@ -25,8 +25,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
       # @return [Float] Mean accuracy
       def score(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         evaluator = Rumale::EvaluationMeasure::Accuracy.new
         evaluator.score(y, predict(x))

@@ -22,8 +22,8 @@ module Rumale
       # @param eps [Float] A small value close to zero to avoid outputting infinity in logarithmic calcuation.
       # @return [Float] mean logarithmic loss
       def score(y_true, y_pred, eps = 1e-15)
-        check_params_type(Numo::Int32, y_true: y_true)
-        check_params_type(Numo::DFloat, y_pred: y_pred)
+        y_true = check_convert_label_array(y_true)
+        y_pred = check_convert_tvalue_array(y_pred)
 
         n_samples, n_classes = y_pred.shape
         clipped_p = y_pred.clip(eps, 1 - eps)

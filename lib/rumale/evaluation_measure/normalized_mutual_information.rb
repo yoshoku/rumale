@@ -23,8 +23,8 @@ module Rumale
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted cluster labels.
       # @return [Float] Normalized mutual information
       def score(y_true, y_pred)
-        check_label_array(y_true)
-        check_label_array(y_pred)
+        y_true = check_convert_label_array(y_true)
+        y_pred = check_convert_label_array(y_pred)
         # calculate entropies.
         class_entropy = entropy(y_true)
         return 0.0 if class_entropy.zero?

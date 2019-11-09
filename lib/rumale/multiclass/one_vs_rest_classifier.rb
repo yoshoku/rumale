@@ -46,8 +46,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [OneVsRestClassifier] The learned classifier itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         y_arr = y.to_a
         @classes = Numo::Int32.asarray(y_arr.uniq.sort)
@@ -63,7 +63,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_classes = @classes.size
         Numo::DFloat.asarray(Array.new(n_classes) { |m| @estimators[m].decision_function(x).to_a }).transpose
       end
@@ -73,7 +73,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, = x.shape
         decision_values = decision_function(x)
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })

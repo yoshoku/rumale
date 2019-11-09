@@ -52,7 +52,7 @@ module Rumale
       #     The kernel matrix of the training data to be used for fitting the model.
       # @return [KernelPCA] The learned transformer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the kernel matrix of training data to be square.' unless x.shape[0] == x.shape[1]
         raise 'KernelPCA#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?
 
@@ -74,7 +74,7 @@ module Rumale
       #     The kernel matrix of the training data to be used for fitting the model and transformed.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         fit(x).transform(x)
       end
 
@@ -84,7 +84,7 @@ module Rumale
       #   The kernel matrix between testing samples and training samples to be transformed.
       # @return [Numo::DFloat] (shape: [n_testing_samples, n_components]) The transformed data.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         col_mean = x.sum(1) / @row_mean.shape[0]
         centered_kernel_mat = x - col_mean.expand_dims(1) - @row_mean + @all_mean
         transform_mat = @alphas.dot((1.0 / Numo::NMath.sqrt(@lambdas)).diag)

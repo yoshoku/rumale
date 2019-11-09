@@ -83,10 +83,11 @@ module Rumale
       # @param h [Numo::DFloat] (shape: [n_samples]) The hessian of loss function.
       # @return [GradientTreeRegressor] The learned regressor itself.
       def fit(x, y, g, h)
-        check_sample_array(x)
-        check_tvalue_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_tvalue_array(y)
+        g = check_convert_tvalue_array(g)
+        h = check_convert_tvalue_array(h)
         check_sample_tvalue_size(x, y)
-        check_params_type(Numo::DFloat, g: g, h: g)
         # Initialize some variables.
         n_features = x.shape[1]
         @params[:max_features] ||= n_features
@@ -105,7 +106,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::DFloat] (size: n_samples) Predicted values per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @leaf_weights[apply(x)].dup
       end
 
@@ -114,7 +115,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Leaf index for sample.
       def apply(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
       end
 

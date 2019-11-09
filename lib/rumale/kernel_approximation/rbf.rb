@@ -60,7 +60,7 @@ module Rumale
       #   This method uses only the number of features of the data.
       # @return [RBF] The learned transformer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         n_features = x.shape[1]
         sub_rng = @rng.dup
@@ -80,7 +80,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         fit(x).transform(x)
       end
@@ -92,7 +92,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         n_samples, = x.shape
         projection = x.dot(@random_mat) + @random_vec.tile(n_samples, 1)

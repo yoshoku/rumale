@@ -13,8 +13,8 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
       def euclidean_distance(x, y = nil)
         y = x if y.nil?
-        Rumale::Validation.check_sample_array(x)
-        Rumale::Validation.check_sample_array(y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y)
         Numo::NMath.sqrt(squared_error(x, y).abs)
       end
 
@@ -25,8 +25,8 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
       def manhattan_distance(x, y = nil)
         y = x if y.nil?
-        Rumale::Validation.check_sample_array(x)
-        Rumale::Validation.check_sample_array(y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y)
         n_samples_x = x.shape[0]
         n_samples_y = y.shape[0]
         distance_mat = Numo::DFloat.zeros(n_samples_x, n_samples_y)
@@ -43,8 +43,8 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
       def squared_error(x, y = nil)
         y = x if y.nil?
-        Rumale::Validation.check_sample_array(x)
-        Rumale::Validation.check_sample_array(y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y)
         n_features = x.shape[1]
         one_vec = Numo::DFloat.ones(n_features).expand_dims(1)
         sum_x_vec = (x**2).dot(one_vec)
@@ -62,8 +62,8 @@ module Rumale
       def rbf_kernel(x, y = nil, gamma = nil)
         y = x if y.nil?
         gamma ||= 1.0 / x.shape[1]
-        Rumale::Validation.check_sample_array(x)
-        Rumale::Validation.check_sample_array(y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y)
         Rumale::Validation.check_params_float(gamma: gamma)
         Numo::NMath.exp(-gamma * squared_error(x, y).abs)
       end
@@ -75,8 +75,8 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
       def linear_kernel(x, y = nil)
         y = x if y.nil?
-        Rumale::Validation.check_sample_array(x)
-        Rumale::Validation.check_sample_array(y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y)
         x.dot(y.transpose)
       end
 
@@ -91,8 +91,8 @@ module Rumale
       def polynomial_kernel(x, y = nil, degree = 3, gamma = nil, coef = 1)
         y = x if y.nil?
         gamma ||= 1.0 / x.shape[1]
-        Rumale::Validation.check_sample_array(x)
-        Rumale::Validation.check_sample_array(y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y)
         Rumale::Validation.check_params_float(gamma: gamma)
         Rumale::Validation.check_params_integer(degree: degree, coef: coef)
         (x.dot(y.transpose) * gamma + coef)**degree
@@ -108,8 +108,8 @@ module Rumale
       def sigmoid_kernel(x, y = nil, gamma = nil, coef = 1)
         y = x if y.nil?
         gamma ||= 1.0 / x.shape[1]
-        Rumale::Validation.check_sample_array(x)
-        Rumale::Validation.check_sample_array(y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y)
         Rumale::Validation.check_params_float(gamma: gamma)
         Rumale::Validation.check_params_integer(coef: coef)
         Numo::NMath.tanh(x.dot(y.transpose) * gamma + coef)

@@ -78,8 +78,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [FactorizationMachineClassifier] The learned classifier itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
@@ -118,7 +118,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         linear_term = @bias_term + x.dot(@weight_vec.transpose)
         factor_term = if multiclass_problem?
                         0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum(1).transpose
@@ -133,22 +133,21 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         n_samples = x.shape[0]
-        if multiclass_problem?
-          decision_values = decision_function(x)
-          predicted = if enable_parallel?
+        predicted = if multiclass_problem?
+                      decision_values = decision_function(x)
+                      if enable_parallel?
                         parallel_map(n_samples) { |n| @classes[decision_values[n, true].max_index] }
                       else
                         Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] }
                       end
-          Numo::Int32.asarray(predicted)
-        else
-          decision_values = decision_function(x).ge(0.0).to_a
-          predicted = Array.new(n_samples) { |n| @classes[decision_values[n]] }
-          Numo::Int32.asarray(predicted)
-        end
+                    else
+                      decision_values = decision_function(x).ge(0.0).to_a
+                      Array.new(n_samples) { |n| @classes[decision_values[n]] }
+                    end
+        Numo::Int32.asarray(predicted)
       end
 
       # Predict probability for samples.
@@ -156,7 +155,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
         return (proba.transpose / proba.sum(axis: 1)).transpose.dup if multiclass_problem?
 

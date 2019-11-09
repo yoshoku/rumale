@@ -71,7 +71,7 @@ module Rumale
       #   If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
       # @return [PowerIteration] The learned cluster analyzer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
         fit_predict(x)
         self
@@ -83,7 +83,7 @@ module Rumale
       #   If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
 
         affinity_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.rbf_kernel(x, nil, @params[:gamma])

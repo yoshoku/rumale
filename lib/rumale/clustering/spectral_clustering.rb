@@ -69,7 +69,7 @@ module Rumale
       #     If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
       # @return [SpectralClustering] The learned cluster analyzer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
         raise 'SpectralClustering#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?
 
@@ -84,7 +84,7 @@ module Rumale
       #   If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
         raise 'SpectralClustering#fit_predict requires Numo::Linalg but that is not loaded.' unless enable_linalg?
 

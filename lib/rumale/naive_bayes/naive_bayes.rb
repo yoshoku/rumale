@@ -16,7 +16,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples = x.shape.first
         decision_values = decision_function(x)
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
@@ -27,7 +27,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the log-probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted log-probability of each class per sample.
       def predict_log_proba(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, = x.shape
         log_likelihoods = decision_function(x)
         log_likelihoods - Numo::NMath.log(Numo::NMath.exp(log_likelihoods).sum(1)).reshape(n_samples, 1)
@@ -38,7 +38,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         Numo::NMath.exp(predict_log_proba(x)).abs
       end
     end
@@ -78,8 +78,8 @@ module Rumale
       #   to be used for fitting the model.
       # @return [GaussianNB] The learned classifier itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         n_samples, = x.shape
         @classes = Numo::Int32[*y.to_a.uniq.sort]
@@ -94,7 +94,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_classes = @classes.size
         log_likelihoods = Array.new(n_classes) do |l|
           Math.log(@class_priors[l]) - 0.5 * (
@@ -167,8 +167,8 @@ module Rumale
       #   to be used for fitting the model.
       # @return [MultinomialNB] The learned classifier itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         n_samples, = x.shape
         @classes = Numo::Int32[*y.to_a.uniq.sort]
@@ -185,7 +185,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_classes = @classes.size
         bin_x = x.gt(0)
         log_likelihoods = Array.new(n_classes) do |l|
@@ -257,8 +257,8 @@ module Rumale
       #   to be used for fitting the model.
       # @return [BernoulliNB] The learned classifier itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         n_samples, = x.shape
         bin_x = Numo::DFloat[*x.gt(@params[:bin_threshold])]
@@ -278,7 +278,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_classes = @classes.size
         bin_x = Numo::DFloat[*x.gt(@params[:bin_threshold])]
         not_bin_x = Numo::DFloat[*x.le(@params[:bin_threshold])]

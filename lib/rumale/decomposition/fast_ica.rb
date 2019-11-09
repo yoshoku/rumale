@@ -75,7 +75,7 @@ module Rumale
       #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [FastICA] The learned transformer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise 'FastICA#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?
 
         @mean, whiten_mat = whitening(x, @params[:n_components]) if @params[:whiten]
@@ -96,7 +96,7 @@ module Rumale
       #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise 'FastICA#fit_transform requires Numo::Linalg but that is not loaded.' unless enable_linalg?
 
         fit(x).transform(x)
@@ -107,7 +107,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         cx = @params[:whiten] ? (x - @mean) : x
         cx.dot(@components.transpose)
       end
@@ -117,7 +117,7 @@ module Rumale
       # @param z [Numo::DFloat] (shape: [n_samples, n_components]) The source data reconstructed to the mixed data.
       # @return [Numo::DFloat] (shape: [n_samples, n_featuress]) The mixed data.
       def inverse_transform(z)
-        check_sample_array(z)
+        z = check_convert_sample_array(z)
         m = @mixing.shape[1].nil? ? @mixing.expand_dims(0).transpose : @mixing
         x = z.dot(m.transpose)
         x += @mean if @params[:whiten]

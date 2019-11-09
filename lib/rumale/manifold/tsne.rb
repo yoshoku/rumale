@@ -89,7 +89,7 @@ module Rumale
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [TSNE] The learned transformer itself.
       def fit(x, _not_used = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
         # initialize some varibales.
         @n_iter = 0

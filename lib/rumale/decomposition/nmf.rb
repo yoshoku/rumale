@@ -56,7 +56,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [NMF] The learned transformer itself.
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         partial_fit(x)
         self
       end
@@ -68,7 +68,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         partial_fit(x)
       end
 
@@ -77,7 +77,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         partial_fit(x, false)
       end
 
@@ -86,7 +86,7 @@ module Rumale
       # @param z [Numo::DFloat] (shape: [n_samples, n_components]) The data to be restored into original space with the learned model.
       # @return [Numo::DFloat] (shape: [n_samples, n_featuress]) The restored data.
       def inverse_transform(z)
-        check_sample_array(z)
+        z = check_convert_sample_array(z)
         z.dot(@components)
       end
 

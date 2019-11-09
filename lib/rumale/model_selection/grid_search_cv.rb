@@ -88,7 +88,7 @@ module Rumale
       # @param y [Numo::NArray] (shape: [n_samples, n_outputs]) The target values or labels to be used for fitting the model.
       # @return [GridSearchCV] The learned estimator with grid search.
       def fit(x, y)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         init_attrs
 
@@ -111,7 +111,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @best_estimator.decision_function(x)
       end
 
@@ -120,7 +120,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to obtain prediction result.
       # @return [Numo::NArray] Predicted results.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @best_estimator.predict(x)
       end
 
@@ -129,7 +129,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the log-probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted log-probability of each class per sample.
       def predict_log_proba(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @best_estimator.predict_log_proba(x)
       end
 
@@ -138,7 +138,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @best_estimator.predict_proba(x)
       end
 
@@ -148,7 +148,7 @@ module Rumale
       # @param y [Numo::NArray] (shape: [n_samples, n_outputs]) True target values or labels for testing data.
       # @return [Float] The score of estimator.
       def score(x, y)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @best_estimator.score(x, y)
       end
 

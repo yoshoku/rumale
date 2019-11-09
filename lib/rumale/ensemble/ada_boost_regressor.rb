@@ -89,8 +89,8 @@ module Rumale
       # @param y [Numo::DFloat] (shape: [n_samples]) The target values to be used for fitting the model.
       # @return [AdaBoostRegressor] The learned regressor itself.
       def fit(x, y) # rubocop:disable Metrics/AbcSize
-        check_sample_array(x)
-        check_tvalue_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
         # Check target values
         raise ArgumentError, 'Expect target value vector to be 1-D arrray' unless y.shape.size == 1
@@ -144,7 +144,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted value per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, = x.shape
         predictions = Numo::DFloat.zeros(n_samples)
         @estimators.size.times do |t|

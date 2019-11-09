@@ -107,7 +107,7 @@ module Rumale
       #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise 'FactorAnalysis#fit_transform requires Numo::Linalg but that is not loaded.' unless enable_linalg?
 
         fit(x).transform(x)
@@ -118,7 +118,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         raise 'FactorAnalysis#transform requires Numo::Linalg but that is not loaded.' unless enable_linalg?
 
         factors = @params[:n_components] == 1 ? @components.expand_dims(0) : @components

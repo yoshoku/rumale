@@ -20,8 +20,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
       # @return [Float] Purity
       def score(x, y)
-        check_sample_array(x)
-        check_label_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         evaluator = Rumale::EvaluationMeasure::Purity.new
         evaluator.score(y, fit_predict(x))

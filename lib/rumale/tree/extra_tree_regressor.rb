@@ -61,8 +61,8 @@ module Rumale
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
       # @return [ExtraTreeRegressor] The learned regressor itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_tvalue_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
         super
       end
@@ -72,7 +72,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         super
       end
 

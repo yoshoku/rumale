@@ -42,7 +42,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
       # @return [MinMaxScaler]
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @min_vec = x.min(0)
         @max_vec = x.max(0)
         self
@@ -55,7 +55,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
       # @return [Numo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         fit(x).transform(x)
       end
 
@@ -64,7 +64,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
       # @return [Numo::DFloat] The scaled samples.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, = x.shape
         dif_vec = @max_vec - @min_vec
         dif_vec[dif_vec.eq(0)] = 1.0

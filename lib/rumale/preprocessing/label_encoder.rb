@@ -71,7 +71,7 @@ module Rumale
       # @param x [Numo::Int32] (shape: [n_samples]) The labels to be decoded.
       # @return [Array] The decoded labels.
       def inverse_transform(x)
-        check_label_array(x)
+        x = check_convert_label_array(x)
         x.to_a.map { |n| @classes[n] }
       end
 

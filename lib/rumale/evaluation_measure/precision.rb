@@ -33,8 +33,8 @@ module Rumale
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted labels.
       # @return [Float] Average precision
       def score(y_true, y_pred)
-        check_label_array(y_true)
-        check_label_array(y_pred)
+        y_true = check_convert_label_array(y_true)
+        y_pred = check_convert_label_array(y_pred)
 
         case @average
         when 'binary'

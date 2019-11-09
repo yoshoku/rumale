@@ -32,7 +32,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate maximum absolute value for each feature.
       # @return [MaxAbsScaler]
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @max_abs_vec = x.abs.max(0)
         self
       end
@@ -44,7 +44,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate maximum absolute value for each feature.
       # @return [Numo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         fit(x).transform(x)
       end
 
@@ -53,7 +53,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
       # @return [Numo::DFloat] The scaled samples.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         x / @max_abs_vec
       end
 

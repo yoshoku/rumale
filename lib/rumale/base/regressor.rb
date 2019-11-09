@@ -25,8 +25,8 @@ module Rumale
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) Target values for testing data.
       # @return [Float] Coefficient of determination
       def score(x, y)
-        check_sample_array(x)
-        check_tvalue_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
         evaluator = Rumale::EvaluationMeasure::R2Score.new
         evaluator.score(y, predict(x))

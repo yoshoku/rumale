@@ -91,7 +91,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples consisting of values transformed from categorical features.
       # @return [Numo::NArray] The decoded features.
       def inverse_transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
 
         n_features = x.shape[1]
         raise ArgumentError, 'Expect the number of features and the number of categories to be equal' if n_features != @categories.size

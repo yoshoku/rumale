@@ -68,14 +68,15 @@ module Rumale
       #   * :train_score (Array<Float>) The scores of training dataset for each split. This option is nil if
       #     the return_train_score is false.
       def perform(x, y)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         if @estimator.is_a?(Rumale::Base::Classifier)
-          check_label_array(y)
+          y = check_convert_label_array(y)
           check_sample_label_size(x, y)
-        end
-        if @estimator.is_a?(Rumale::Base::Regressor)
-          check_tvalue_array(y)
+        elsif @estimator.is_a?(Rumale::Base::Regressor)
+          y = check_convert_tvalue_array(y)
           check_sample_tvalue_size(x, y)
+        else
+          y = Numo::NArray.asarray(y)
         end
         # Initialize the report of cross validation.
         report = { test_score: [], train_score: nil, fit_time: [] }

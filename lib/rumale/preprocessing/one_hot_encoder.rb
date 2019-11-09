@@ -49,7 +49,7 @@ module Rumale
       #   @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to fit one-hot-encoder.
       # @return [OneHotEncoder]
       def fit(x, _y = nil)
-        check_params_type(Numo::Int32, x: x)
+        x = Numo::Int32.cast(x) unless x.is_a?(Numo::Int32)
         raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
         @n_values = x.max(0) + 1
         @feature_indices = Numo::Int32.hstack([[0], @n_values]).cumsum
@@ -64,7 +64,8 @@ module Rumale
       # @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to encode into one-hot-vectors.
       # @return [Numo::DFloat] The one-hot-vectors.
       def fit_transform(x, _y = nil)
-        check_params_type(Numo::Int32, x: x)
+        x = Numo::Int32.cast(x) unless x.is_a?(Numo::Int32)
+        raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
         raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
         fit(x).transform(x)
       end
@@ -74,7 +75,7 @@ module Rumale
       # @param x [Numo::Int32] (shape: [n_samples, n_features]) The samples to encode into one-hot-vectors.
       # @return [Numo::DFloat] The one-hot-vectors.
       def transform(x)
-        check_params_type(Numo::Int32, x: x)
+        x = Numo::Int32.cast(x) unless x.is_a?(Numo::Int32)
         raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
         codes = encode(x, @feature_indices)
         codes[true, @active_features].dup

@@ -75,12 +75,6 @@ RSpec.describe Rumale::EvaluationMeasure::ROCAUC do
     expect { roc_auc.roc_curve(Numo::Int32[0, 1, 2], Numo::DFloat[0.1, 0.2, 0.8]) }.to raise_error(ArgumentError)
   end
 
-  it 'raises TypeError given an object not NArray to the auc method.' do
-    expect { roc_auc.auc(Numo::Int32[0, 1, 2], [1, 2, 3]) }.to raise_error(TypeError)
-    expect { roc_auc.auc([0, 1, 2], Numo::Int32[1, 2, 3]) }.to raise_error(TypeError)
-    expect { roc_auc.auc([0, 1, 2], [1, 2, 3]) }.to raise_error(TypeError)
-  end
-
   it 'raises ArgumentError given 2-D arrays to the auc method.' do
     expect { roc_auc.auc(Numo::Int32[[0, 1, 2], [2, 3, 4]], Numo::Int32[1, 2, 3]) }.to raise_error(ArgumentError)
     expect { roc_auc.auc(Numo::Int32[0, 1, 2], Numo::Int32[[1, 2, 3], [4, 5, 6]]) }.to raise_error(ArgumentError)

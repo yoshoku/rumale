@@ -21,8 +21,8 @@ module Rumale
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted cluster labels.
       # @return [Float] Mutual information.
       def score(y_true, y_pred)
-        check_label_array(y_true)
-        check_label_array(y_pred)
+        y_true = check_convert_label_array(y_true)
+        y_pred = check_convert_label_array(y_pred)
         # initiazlie some variables.
         mutual_information = 0.0
         n_samples = y_pred.size

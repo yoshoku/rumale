@@ -50,7 +50,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the feature ranges.
       # @return [BinDiscretizer]
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_features = x.shape[1]
         max_vals = x.max(0)
         min_vals = x.min(0)
@@ -67,7 +67,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be discretized.
       # @return [Numo::DFloat] The discretized samples.
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         fit(x).transform(x)
       end
 
@@ -76,7 +76,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be discretized.
       # @return [Numo::DFloat] The discretized samples.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, n_features = x.shape
         transformed = Numo::DFloat.zeros(n_samples, n_features)
         n_features.times do |n|

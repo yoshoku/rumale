@@ -6,16 +6,36 @@ module Rumale
     module_function
 
     # @!visibility private
+    def check_convert_sample_array(x)
+      x = Numo::DFloat.cast(x) unless x.is_a?(Numo::DFloat)
+      raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.ndim == 2
+      x
+    end
+
+    # @!visibility private
+    def check_convert_label_array(y)
+      y = Numo::Int32.cast(y) unless y.is_a?(Numo::Int32)
+      raise ArgumentError, 'Expect label vector to be 1-D arrray' unless y.ndim == 1
+      y
+    end
+
+    # @!visibility private
+    def check_convert_tvalue_array(y)
+      y = Numo::DFloat.cast(y) unless y.is_a?(Numo::DFloat)
+      y
+    end
+
+    # @!visibility private
     def check_sample_array(x)
       raise TypeError, 'Expect class of sample matrix to be Numo::DFloat' unless x.is_a?(Numo::DFloat)
-      raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.shape.size == 2
+      raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.ndim == 2
       nil
     end
 
     # @!visibility private
     def check_label_array(y)
       raise TypeError, 'Expect class of label vector to be Numo::Int32' unless y.is_a?(Numo::Int32)
-      raise ArgumentError, 'Expect label vector to be 1-D arrray' unless y.shape.size == 1
+      raise ArgumentError, 'Expect label vector to be 1-D arrray' unless y.ndim == 1
       nil
     end
 

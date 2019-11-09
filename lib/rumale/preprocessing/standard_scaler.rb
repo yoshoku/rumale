@@ -39,7 +39,7 @@ module Rumale
       #   The samples to calculate the mean values and standard deviations.
       # @return [StandardScaler]
       def fit(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         @mean_vec = x.mean(0)
         @std_vec = x.stddev(0)
         self
@@ -53,7 +53,7 @@ module Rumale
       #   The samples to calculate the mean values and standard deviations.
       # @return [Numo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         fit(x).transform(x)
       end
 
@@ -62,7 +62,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
       # @return [Numo::DFloat] The scaled samples.
       def transform(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         n_samples, = x.shape
         (x - @mean_vec.tile(n_samples, 1)) / @std_vec.tile(n_samples, 1)
       end

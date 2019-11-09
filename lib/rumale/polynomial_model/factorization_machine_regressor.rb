@@ -69,8 +69,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [FactorizationMachineRegressor] The learned regressor itself.
       def fit(x, y)
-        check_sample_array(x)
-        check_tvalue_array(y)
+        x = check_convert_sample_array(x)
+        y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
 
         n_outputs = y.shape[1].nil? ? 1 : y.shape[1]
@@ -98,7 +98,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         linear_term = @bias_term + x.dot(@weight_vec.transpose)
         factor_term = if @weight_vec.shape[1].nil?
                         0.5 * (@factor_mat.dot(x.transpose)**2 - (@factor_mat**2).dot(x.transpose**2)).sum(0)

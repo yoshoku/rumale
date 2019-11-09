@@ -43,7 +43,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
       # @return [Numo::Int32] (shape: [n_samples]) Leaf index for sample.
       def apply(x)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
       end
 

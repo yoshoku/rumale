@@ -53,7 +53,7 @@ module Rumale
       #   The dataset to be used to generate data indices for K-fold cross validation.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
       def split(x, _y = nil)
-        check_sample_array(x)
+        x = check_convert_sample_array(x)
         # Initialize and check some variables.
         n_samples, = x.shape
         unless @n_splits.between?(2, n_samples)
