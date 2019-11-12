@@ -41,8 +41,8 @@ module Rumale
       # @param gradient [Numo::DFloat] (shape: [n_features]) The gradient for updating the weight.
       # @return [Numo::DFloat] (shape: [n_feautres]) The updated weight.
       def call(weight, gradient)
-        @fst_moment ||= Numo::DFloat.zeros(weight.shape[0])
-        @sec_moment ||= Numo::DFloat.zeros(weight.shape[0])
+        @fst_moment ||= Numo::DFloat.zeros(weight.shape)
+        @sec_moment ||= Numo::DFloat.zeros(weight.shape)
 
         @iter += 1
 
