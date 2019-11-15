@@ -1,4 +1,3 @@
-
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rumale/version'
@@ -13,14 +12,15 @@ Gem::Specification.new do |spec|
     Rumale is a machine learning library in Ruby.
     Rumale provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
   MSG
-  spec.description   = <<~MSG
+  spec.description = <<~MSG
     Rumale is a machine learning library in Ruby.
     Rumale provides machine learning algorithms with interfaces similar to Scikit-Learn in Python.
-    Rumale currently supports Linear / Kernel Support Vector Machine,
-    Logistic Regression, Linear Regression, Ridge, Lasso, Kernel Ridge, Factorization Machine,
-    Naive Bayes, Decision Tree, AdaBoost, Gradient Tree Boosting, Random Forest, Extra-Trees, K-nearest neighbor algorithm,
-    K-Means, K-Medoids, Gaussian Mixture Model, DBSCAN, HDBSCAN, SNN, Spectral Clustering, Power Iteration Clustering,
-    Multidimensional Scaling, t-SNE, Principal Component Analysis, Kernel PCA, and Non-negative Matrix Factorization.
+    Rumale supports Support Vector Machine,
+    Logistic Regression, Ridge, Lasso, Factorization Machine,
+    Multi-layer Perceptron,
+    Naive Bayes, Decision Tree, Gradient Tree Boosting, Random Forest,
+    K-Means, Gaussian Mixture Model, DBSCAN, Spectral Clustering,
+    Mutidimensional Scaling, t-SNE, Principal Component Analysis, and Non-negative Matrix Factorization.
   MSG
   spec.homepage      = 'https://github.com/yoshoku/rumale'
   spec.license       = 'BSD-2-Clause'
