@@ -1,3 +1,27 @@
+# 0.14.0
+- Add classifier and regressor class with multi-layer perceptron.
+  - [MLPClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPClassifier.html)
+  - [MLPRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPRegressor.html)
+- Refactor specs.
+
+## Breaking changes
+- Change predict method of SVC, LogisticRegression, and FactorizationMachineClassifier classes to return the original label instead of -1 or 1 labels when binary classification problem.
+- Fix hyperparameter validation to check if the type of given value is Numeric type.
+- Fix array validation for samples, labels, and target values to accept Ruby Array.
+
+```ruby
+require 'rumale'
+
+samples = [[-1, 1], [1, 1], [1, -1], [-1, -1]]
+labels = [0, 1, 1, 0]
+
+svc = Rumale::LinearModel::SVC.new(reg_param: 1, batch_size: 1, random_seed: 1)
+svc.fit(samples, labels)
+svc.predict([[-1, 0], [1, 0]])
+# => Numo::Int32#shape=[2]
+# [0, 1]
+```
+
 # 0.13.8
 - Add [module function](https://yoshoku.github.io/rumale/doc/Rumale/Dataset.html#make_blobs-class_method) for generating artificial dataset with gaussian blobs.
 - Add documents about Rumale::SVM.
