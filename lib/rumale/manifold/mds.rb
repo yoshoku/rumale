@@ -99,6 +99,7 @@ module Rumale
           tmp_mat = -ratio
           tmp_mat[tmp_mat.diag_indices] += ratio.sum(axis: 1)
           @embedding = 1.fdiv(n_samples) * tmp_mat.dot(@embedding)
+          lo_distance_mat = Rumale::PairwiseMetric.euclidean_distance(@embedding)
           # check convergence.
           new_stress = calc_stress(hi_distance_mat, lo_distance_mat)
           if terminate?(@stress, new_stress)
@@ -108,7 +109,6 @@ module Rumale
           # next step.
           @n_iter = t + 1
           @stress = new_stress
-          lo_distance_mat = Rumale::PairwiseMetric.euclidean_distance(@embedding)
           puts "[MDS] stress function after #{@n_iter} iterations: #{@stress}" if @params[:verbose] && (@n_iter % 100).zero?
         end
         self
