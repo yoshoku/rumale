@@ -3,47 +3,42 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::KernelApproximation::RBF do
-  let(:n_samples) { 10 }
-  let(:n_features) { 4 }
-  let(:n_components) { 4096 }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
-  let(:kernel_matrix) do
-    kernel_matrix = Numo::DFloat.zeros(n_samples, n_samples)
+  let(:x) { three_clusters_dataset[0] }
+  let(:n_samples) { x.shape[0] }
+  let(:n_features) { x.shape[1] }
+  let(:n_components) { 1024 }
+  let(:transformer) { described_class.new(gamma: 1.0, n_components: n_components, random_seed: 1) }
+  let(:mapped_x) { transformer.fit_transform(x) }
+  let(:inner_mat) { mapped_x.dot(mapped_x.transpose) }
+  let(:kernel_mat) do
+    res = Numo::DFloat.zeros(n_samples, n_samples)
     n_samples.times do |m|
       n_samples.times do |n|
-        distance = Math.sqrt(((samples[m, true] - samples[n, true])**2).sum)
-        kernel_matrix[m, n] = Math.exp(-distance**2)
+        distance = Math.sqrt(((x[m, true] - x[n, true])**2).sum)
+        res[m, n] = Math.exp(-distance**2)
       end
     end
-    kernel_matrix
+    res
   end
+  let(:mse) { ((kernel_mat - inner_mat)**2).sum.fdiv(n_samples * n_samples) }
+  let(:copied) { Marshal.load(Marshal.dump(transformer.fit(x))) }
 
-  it 'has a small approximation error for the RBF kernel function.' do
-    # calculate approximate RBF kernel matrix.
-    transformer = described_class.new(gamma: 1.0, n_components: n_components, random_seed: 1)
-    new_samples = transformer.fit_transform(samples)
-    inner_matrix = new_samples.dot(new_samples.transpose)
-    # evalute mean error.
-    mean_error = 0.0
-    n_samples.times do |m|
-      n_samples.times do |n|
-        mean_error += ((kernel_matrix[m, n] - inner_matrix[m, n])**2)**0.5
-      end
-    end
-    mean_error /= n_samples * n_samples
-    expect(mean_error).to be < 0.01
+  it 'has a small approximation error for the RBF kernel function.', :aggregate_failures do
+    expect(mse).to be < 0.01
+    expect(mapped_x.class).to eq(Numo::DFloat)
+    expect(mapped_x.ndim).to eq(2)
+    expect(mapped_x.shape[0]).to eq(n_samples)
+    expect(mapped_x.shape[1]).to eq(n_components)
     expect(transformer.random_mat.class).to eq(Numo::DFloat)
+    expect(transformer.random_mat.ndim).to eq(2)
     expect(transformer.random_mat.shape[0]).to eq(n_features)
     expect(transformer.random_mat.shape[1]).to eq(n_components)
     expect(transformer.random_vec.class).to eq(Numo::DFloat)
+    expect(transformer.random_vec.ndim).to eq(1)
     expect(transformer.random_vec.shape[0]).to eq(n_components)
-    expect(transformer.random_vec.shape[1]).to be_nil
   end
 
-  it 'dumps and restores itself using Marshal module.' do
-    transformer = described_class.new(gamma: 1.0, n_components: 128, random_seed: 1)
-    transformer.fit(samples)
-    copied = Marshal.load(Marshal.dump(transformer))
+  it 'dumps and restores itself using Marshal module.', :aggregate_failures do
     expect(transformer.class).to eq(copied.class)
     expect(transformer.params[:gamma]).to eq(copied.params[:gamma])
     expect(transformer.params[:n_components]).to eq(copied.params[:n_components])
