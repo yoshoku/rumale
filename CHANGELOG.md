@@ -1,3 +1,7 @@
+# 0.14.1
+- Fix bug where MDS optimization is not performed when tol paremeter is given.
+- Refactor specs.
+
 # 0.14.0
 - Add classifier and regressor class with multi-layer perceptron.
   - [MLPClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPClassifier.html)
