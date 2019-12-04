@@ -1,11 +1,8 @@
 #ifndef RUMALE_H
 #define RUMALE_H 1
 
-#include <math.h>
-#include <string.h>
+#include <ruby.h>
 
-#include "ruby.h"
-#include "numo/narray.h"
-#include "numo/template.h"
+#include "tree.h"
 
 #endif /* RUMALE_H */
