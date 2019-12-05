@@ -2,6 +2,15 @@
 
 RUBY_EXTERN VALUE mRumale;
 
+double*
+alloc_dbl_array(const long n_dimensions)
+{
+  long i;
+  double* arr = ALLOC_N(double, n_dimensions);
+  for (i = 0; i < n_dimensions; i++) { arr[i] = 0.0; }
+  return arr;
+}
+
 VALUE
 create_zero_vector(const long n_dimensions)
 {
@@ -48,14 +57,13 @@ calc_entropy(VALUE histogram, const long n_elements)
 }
 
 VALUE
-calc_mean_vec(VALUE sum_vec, const long n_elements)
+calc_mean_vec(double* sum_vec, const long n_dimensions, const long n_elements)
 {
   long i;
-  const long n_dimensions = RARRAY_LEN(sum_vec);
   VALUE mean_vec = rb_ary_new2(n_dimensions);
 
   for (i = 0; i < n_dimensions; i++) {
-    rb_ary_store(mean_vec, i, DBL2NUM(NUM2DBL(rb_ary_entry(sum_vec, i)) / n_elements));
+    rb_ary_store(mean_vec, i, DBL2NUM(sum_vec[i] / n_elements));
   }
 
   return mean_vec;
@@ -94,12 +102,11 @@ calc_vec_mse(VALUE vec_a, VALUE vec_b)
 }
 
 double
-calc_mae(VALUE target_vecs, VALUE sum_vec)
+calc_mae(VALUE target_vecs, VALUE mean_vec)
 {
   long i;
   const long n_elements = RARRAY_LEN(target_vecs);
   double sum = 0.0;
-  VALUE mean_vec = calc_mean_vec(sum_vec, n_elements);
 
   for (i = 0; i < n_elements; i++) {
     sum += calc_vec_mae(rb_ary_entry(target_vecs, i), mean_vec);
@@ -109,12 +116,11 @@ calc_mae(VALUE target_vecs, VALUE sum_vec)
 }
 
 double
-calc_mse(VALUE target_vecs, VALUE sum_vec)
+calc_mse(VALUE target_vecs, VALUE mean_vec)
 {
   long i;
   const long n_elements = RARRAY_LEN(target_vecs);
   double sum = 0.0;
-  VALUE mean_vec = calc_mean_vec(sum_vec, n_elements);
 
   for (i = 0; i < n_elements; i++) {
     sum += calc_vec_mse(rb_ary_entry(target_vecs, i), mean_vec);
@@ -133,12 +139,16 @@ calc_impurity_cls(const char* criterion, VALUE histogram, const long n_elements)
 }
 
 double
-calc_impurity_reg(const char* criterion, VALUE target_vecs, VALUE sum_vec)
+calc_impurity_reg(const char* criterion, VALUE target_vecs, double* sum_vec)
 {
+  const long n_elements = RARRAY_LEN(target_vecs);
+  const long n_dimensions = RARRAY_LEN(rb_ary_entry(target_vecs, 0));
+  VALUE mean_vec = calc_mean_vec(sum_vec, n_dimensions, n_elements);
+
   if (strcmp(criterion, "mae") == 0) {
-    return calc_mae(target_vecs, sum_vec);
+    return calc_mae(target_vecs, mean_vec);
   }
-  return calc_mse(target_vecs, sum_vec);
+  return calc_mse(target_vecs, mean_vec);
 }
 
 void
@@ -156,28 +166,24 @@ decrement_histogram(VALUE histogram, const long bin_id)
 }
 
 void
-add_sum_vec(VALUE sum_vec, VALUE target)
+add_sum_vec(double* sum_vec, VALUE target)
 {
   long i;
-  const long n_dimensions = RARRAY_LEN(sum_vec);
-  double el;
+  const long n_dimensions = RARRAY_LEN(target);
 
   for (i = 0; i < n_dimensions; i++) {
-    el = NUM2DBL(rb_ary_entry(sum_vec, i)) + NUM2DBL(rb_ary_entry(target, i));
-    rb_ary_store(sum_vec, i, DBL2NUM(el));
+    sum_vec[i] += NUM2DBL(rb_ary_entry(target, i));
   }
 }
 
 void
-sub_sum_vec(VALUE sum_vec, VALUE target)
+sub_sum_vec(double* sum_vec, VALUE target)
 {
   long i;
-  const long n_dimensions = RARRAY_LEN(sum_vec);
-  double el;
+  const long n_dimensions = RARRAY_LEN(target);
 
   for (i = 0; i < n_dimensions; i++) {
-    el = NUM2DBL(rb_ary_entry(sum_vec, i)) - NUM2DBL(rb_ary_entry(target, i));
-    rb_ary_store(sum_vec, i, DBL2NUM(el));
+    sum_vec[i] -= NUM2DBL(rb_ary_entry(target, i));
   }
 }
 
@@ -318,8 +324,9 @@ iter_find_split_params_reg(na_loop_t const* lp)
   double l_impurity;
   double r_impurity;
   double gain;
-  VALUE l_sum_vec = create_zero_vector(n_outputs);
-  VALUE r_sum_vec = create_zero_vector(n_outputs);
+  double* l_sum_vec = alloc_dbl_array(n_outputs);
+  double* r_sum_vec = alloc_dbl_array(n_outputs);
+  double target_var;
   VALUE l_target_vecs = rb_ary_new();
   VALUE r_target_vecs = rb_ary_new();
   VALUE target;
@@ -334,9 +341,10 @@ iter_find_split_params_reg(na_loop_t const* lp)
   for (i = 0; i < n_elements; i++) {
     target = rb_ary_new2(n_outputs);
     for (j = 0; j < n_outputs; j++) {
-      rb_ary_store(target, j, DBL2NUM(y[o[i] * n_outputs + j]));
+      target_var = y[o[i] * n_outputs + j];
+      rb_ary_store(target, j, DBL2NUM(target_var));
+      r_sum_vec[j] += target_var;
     }
-    add_sum_vec(r_sum_vec, target);
     rb_ary_push(r_target_vecs, target);
   }
 
@@ -368,6 +376,9 @@ iter_find_split_params_reg(na_loop_t const* lp)
     curr_pos = next_pos;
     curr_el = f[o[curr_pos]];
   }
+
+  xfree(l_sum_vec);
+  xfree(r_sum_vec);
 }
 /**
  * @!visibility private
@@ -529,9 +540,10 @@ node_impurity_reg(VALUE self, VALUE criterion, VALUE y)
   long i;
   const long n_elements = RARRAY_LEN(y);
   const long n_outputs = RARRAY_LEN(rb_ary_entry(y, 0));
-  VALUE sum_vec = create_zero_vector(n_outputs);
+  double* sum_vec = alloc_dbl_array(n_outputs);
   VALUE target_vecs = rb_ary_new();
   VALUE target;
+  VALUE ret;
 
   for (i = 0; i < n_elements; i++) {
     target = rb_ary_entry(y, i);
@@ -539,7 +551,11 @@ node_impurity_reg(VALUE self, VALUE criterion, VALUE y)
     rb_ary_push(target_vecs, target);
   }
 
-  return DBL2NUM(calc_impurity_reg(StringValuePtr(criterion), target_vecs, sum_vec));
+  ret = DBL2NUM(calc_impurity_reg(StringValuePtr(criterion), target_vecs, sum_vec));
+
+  xfree(sum_vec);
+
+  return ret;
 }
 
 void init_tree_module()
