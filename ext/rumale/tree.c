@@ -11,29 +11,15 @@ alloc_dbl_array(const long n_dimensions)
   return arr;
 }
 
-VALUE
-create_zero_vector(const long n_dimensions)
-{
-  long i;
-  VALUE vec = rb_ary_new2(n_dimensions);
-
-  for (i = 0; i < n_dimensions; i++) {
-    rb_ary_store(vec, i, DBL2NUM(0));
-  }
-
-  return vec;
-}
-
 double
-calc_gini_coef(VALUE histogram, const long n_elements)
+calc_gini_coef(double* histogram, const long n_elements, const long n_classes)
 {
   long i;
   double el;
   double gini = 0.0;
-  const long n_classes = RARRAY_LEN(histogram);
 
   for (i = 0; i < n_classes; i++) {
-    el = NUM2DBL(rb_ary_entry(histogram, i)) / n_elements;
+    el = histogram[i] / n_elements;
     gini += el * el;
   }
 
@@ -41,15 +27,14 @@ calc_gini_coef(VALUE histogram, const long n_elements)
 }
 
 double
-calc_entropy(VALUE histogram, const long n_elements)
+calc_entropy(double* histogram, const long n_elements, const long n_classes)
 {
   long i;
   double el;
   double entropy = 0.0;
-  const long n_classes = RARRAY_LEN(histogram);
 
   for (i = 0; i < n_classes; i++) {
-    el = NUM2DBL(rb_ary_entry(histogram, i)) / n_elements;
+    el = histogram[i] / n_elements;
     entropy += el * log(el + 1.0);
   }
 
@@ -130,12 +115,12 @@ calc_mse(VALUE target_vecs, VALUE mean_vec)
 }
 
 double
-calc_impurity_cls(const char* criterion, VALUE histogram, const long n_elements)
+calc_impurity_cls(const char* criterion, double* histogram, const long n_elements, const long n_classes)
 {
   if (strcmp(criterion, "entropy") == 0) {
-    return calc_entropy(histogram, n_elements);
+    return calc_entropy(histogram, n_elements, n_classes);
   }
-  return calc_gini_coef(histogram, n_elements);
+  return calc_gini_coef(histogram, n_elements, n_classes);
 }
 
 double
@@ -149,20 +134,6 @@ calc_impurity_reg(const char* criterion, VALUE target_vecs, double* sum_vec)
     return calc_mae(target_vecs, mean_vec);
   }
   return calc_mse(target_vecs, mean_vec);
-}
-
-void
-increment_histogram(VALUE histogram, const long bin_id)
-{
-  const double updated = NUM2DBL(rb_ary_entry(histogram, bin_id)) + 1;
-  rb_ary_store(histogram, bin_id, DBL2NUM(updated));
-}
-
-void
-decrement_histogram(VALUE histogram, const long bin_id)
-{
-  const double updated = NUM2DBL(rb_ary_entry(histogram, bin_id)) - 1;
-  rb_ary_store(histogram, bin_id, DBL2NUM(updated));
 }
 
 void
@@ -220,8 +191,8 @@ iter_find_split_params_cls(na_loop_t const* lp)
   double l_impurity;
   double r_impurity;
   double gain;
-  VALUE l_histogram = create_zero_vector(n_classes);
-  VALUE r_histogram = create_zero_vector(n_classes);
+  double* l_histogram = alloc_dbl_array(n_classes);
+  double* r_histogram = alloc_dbl_array(n_classes);
 
   /* Initialize optimal parameters. */
   params[0] = 0.0;        /* left impurity */
@@ -230,24 +201,22 @@ iter_find_split_params_cls(na_loop_t const* lp)
   params[3] = 0.0;        /* gain */
 
   /* Initialize child node variables. */
-  for (i = 0; i < n_elements; i++) {
-    increment_histogram(r_histogram, y[o[i]]);
-  }
+  for (i = 0; i < n_elements; i++) { r_histogram[y[o[i]]] += 1.0; }
 
   /* Find optimal parameters. */
   while (curr_pos < n_elements && curr_el != last_el) {
     next_el = f[o[next_pos]];
     while (next_pos < n_elements && next_el == curr_el) {
-      increment_histogram(l_histogram, y[o[next_pos]]);
+      l_histogram[y[o[next_pos]]] += 1;
       n_l_elements++;
-      decrement_histogram(r_histogram, y[o[next_pos]]);
+      r_histogram[y[o[next_pos]]] -= 1;
       n_r_elements--;
       next_pos++;
       next_el = f[o[next_pos]];
     }
     /* Calculate gain of new split. */
-    l_impurity = calc_impurity_cls(criterion, l_histogram, n_l_elements);
-    r_impurity = calc_impurity_cls(criterion, r_histogram, n_r_elements);
+    l_impurity = calc_impurity_cls(criterion, l_histogram, n_l_elements, n_classes);
+    r_impurity = calc_impurity_cls(criterion, r_histogram, n_r_elements, n_classes);
     gain = w_impurity - (n_l_elements * l_impurity + n_r_elements * r_impurity) / n_elements;
     /* Update optimal parameters. */
     if (gain > params[3]) {
@@ -260,6 +229,9 @@ iter_find_split_params_cls(na_loop_t const* lp)
     curr_pos = next_pos;
     curr_el = f[o[curr_pos]];
   }
+
+  xfree(l_histogram);
+  xfree(r_histogram);
 }
 /**
  * @!visibility private
@@ -506,22 +478,26 @@ find_split_params_grad_reg
  * @param criterion [String] The function to calculate impurity. Supported criteria are 'gini' and 'entropy'.
  * @param y_nary [Numo::Int32] (shape: [n_samples]) The labels.
  * @param n_elements_ [Integer] The number of elements.
- * @param n_classes [Integer] The number of classes.
+ * @param n_classes_ [Integer] The number of classes.
  * @return [Float] impurity
  */
 static VALUE
-node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, VALUE n_classes)
+node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, VALUE n_classes_)
 {
   long i;
+  const long n_classes = NUM2LONG(n_classes_);
   const long n_elements = NUM2LONG(n_elements_);
   const int32_t* y = (int32_t*)na_get_pointer_for_read(y_nary);
-  VALUE histogram = create_zero_vector(NUM2LONG(n_classes));
+  double* histogram = alloc_dbl_array(n_classes);
+  VALUE ret;
 
-  for (i = 0; i < n_elements; i++) {
-    increment_histogram(histogram, y[i]);
-  }
+  for (i = 0; i < n_elements; i++) { histogram[y[i]] += 1; }
 
-  return DBL2NUM(calc_impurity_cls(StringValuePtr(criterion), histogram, n_elements));
+  ret = DBL2NUM(calc_impurity_cls(StringValuePtr(criterion), histogram, n_elements, n_classes));
+
+  xfree(histogram);
+
+  return ret;
 }
 
 /**
