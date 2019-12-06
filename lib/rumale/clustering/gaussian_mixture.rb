@@ -229,9 +229,8 @@ module Rumale
       end
 
       def check_enable_linalg(method_name)
-        if (@params[:covariance_type] == 'full') && !enable_linalg?
-          raise "GaussianMixture##{method_name} requires Numo::Linalg when covariance_type is 'full' but that is not loaded."
-        end
+        return unless @params[:covariance_type] == 'full' && !enable_linalg?
+        raise "GaussianMixture##{method_name} requires Numo::Linalg when covariance_type is 'full' but that is not loaded."
       end
     end
   end

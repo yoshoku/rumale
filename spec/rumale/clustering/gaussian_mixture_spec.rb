@@ -4,18 +4,18 @@ require 'spec_helper'
 
 RSpec.describe Rumale::Clustering::GaussianMixture do
   let(:three_clusters) { three_clusters_dataset }
-  let(:x_mlt) { three_clusters[0] }
-  let(:y_mlt) { three_clusters[1] }
+  let(:x) { three_clusters[0] }
+  let(:y) { three_clusters[1] }
   let(:covariance_type) { 'diag' }
   let(:analyzer) { described_class.new(n_clusters: 3, covariance_type: covariance_type, max_iter: 50, tol: 0.0, random_seed: 1) }
-  let(:cluster_labels) { analyzer.fit_predict(x_mlt) }
-  let(:copied) { Marshal.load(Marshal.dump(analyzer.fit(x_mlt))) }
+  let(:cluster_labels) { analyzer.fit_predict(x) }
+  let(:copied) { Marshal.load(Marshal.dump(analyzer.fit(x))) }
 
   context 'when covariance matrix is diagonal matrix' do
     it 'analyze cluster.', aggregate_failures: true do
       expect(cluster_labels.class).to eq(Numo::Int32)
-      expect(cluster_labels.size).to eq(x_mlt.shape[0])
-      expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
+      expect(cluster_labels.size).to eq(x.shape[0])
+      expect(cluster_labels.shape[0]).to eq(x.shape[0])
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
@@ -30,7 +30,7 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
       expect(analyzer.covariances.ndim).to eq(2)
       expect(analyzer.covariances.shape[0]).to eq(3)
       expect(analyzer.covariances.shape[1]).to eq(2)
-      expect(analyzer.score(x_mlt, y_mlt)).to eq(1)
+      expect(analyzer.score(x, y)).to eq(1)
     end
   end
 
@@ -39,8 +39,8 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
 
     it 'analyze cluster.', aggregate_failures: true do
       expect(cluster_labels.class).to eq(Numo::Int32)
-      expect(cluster_labels.size).to eq(x_mlt.shape[0])
-      expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
+      expect(cluster_labels.size).to eq(x.shape[0])
+      expect(cluster_labels.shape[0]).to eq(x.shape[0])
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
@@ -56,7 +56,7 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
       expect(analyzer.covariances.shape[0]).to eq(3)
       expect(analyzer.covariances.shape[1]).to eq(2)
       expect(analyzer.covariances.shape[2]).to eq(2)
-      expect(analyzer.score(x_mlt, y_mlt)).to eq(1)
+      expect(analyzer.score(x, y)).to eq(1)
     end
 
     context 'when Numo::Linalg is not loaded' do
@@ -68,7 +68,7 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
       after { Numo::Linalg = @backup }
 
       it 'raises Runtime error' do
-        expect { analyzer.fit(x_mlt) }.to raise_error(RuntimeError)
+        expect { analyzer.fit(x) }.to raise_error(RuntimeError)
       end
     end
   end
@@ -86,6 +86,6 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
     expect(analyzer.weights).to eq(copied.weights)
     expect(analyzer.means).to eq(copied.means)
     expect(analyzer.covariances).to eq(copied.covariances)
-    expect(analyzer.score(x_mlt, y_mlt)).to eq(copied.score(x_mlt, y_mlt))
+    expect(analyzer.score(x, y)).to eq(copied.score(x, y))
   end
 end
