@@ -48,7 +48,7 @@ Metrics/ParameterLists:
 Security/MarshalLoad:
   Enabled: false
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
 
 Naming/ConstantName:
@@ -65,6 +65,9 @@ Layout/EmptyLineAfterGuardClause:
 
 RSpec/MultipleExpectations:
   Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4
 
 RSpec/ExampleLength:
   Max: 40
