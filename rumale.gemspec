@@ -20,7 +20,8 @@ Gem::Specification.new do |spec|
     Multi-layer Perceptron,
     Naive Bayes, Decision Tree, Gradient Tree Boosting, Random Forest,
     K-Means, Gaussian Mixture Model, DBSCAN, Spectral Clustering,
-    Mutidimensional Scaling, t-SNE, Principal Component Analysis, and Non-negative Matrix Factorization.
+    Mutidimensional Scaling, t-SNE, Principal Component Analysis, Non-negative Matrix Factorization,
+    and many other algorithms.
   MSG
   spec.homepage      = 'https://github.com/yoshoku/rumale'
   spec.license       = 'BSD-2-Clause'
