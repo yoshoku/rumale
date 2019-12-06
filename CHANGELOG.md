@@ -1,3 +1,7 @@
+# 0.14.2
+- Refactor extension codes of decision tree estimators.
+- Refactor specs.
+
 # 0.14.1
 - Fix bug where MDS optimization is not performed when tol paremeter is given.
 - Refactor specs.
