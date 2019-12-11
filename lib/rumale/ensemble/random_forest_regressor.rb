@@ -42,7 +42,7 @@ module Rumale
       #   If nil is given, number of leaves is not limited.
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
       # @param max_features [Integer] The number of features to consider when searching optimal split point.
-      #   If nil is given, split process considers all features.
+      #   If nil is given, split process considers 'Math.sqrt(n_features)' features.
       # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
       #   If nil is given, the methods do not execute in parallel.
       #   If zero or less is given, it becomes equal to the number of processors.
@@ -85,7 +85,7 @@ module Rumale
         check_sample_tvalue_size(x, y)
         # Initialize some variables.
         n_samples, n_features = x.shape
-        @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
+        @params[:max_features] = Math.sqrt(n_features).to_i if @params[:max_features].nil?
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
         single_target = y.shape[1].nil?
         sub_rng = @rng.dup
