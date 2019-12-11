@@ -49,6 +49,7 @@ module Rumale
       # @param n_estimators [Integer] The numeber of trees for contructing classifier.
       # @param learning_rate [Float] The boosting learining rate
       # @param reg_lambda [Float] The L2 regularization term on weight.
+      # @param subsample [Float] The subsampling ratio of the training samples.
       # @param max_depth [Integer] The maximum depth of the tree.
       #   If nil is given, decision tree grows without concern for depth.
       # @param max_leaf_nodes [Integer] The maximum number of leaves on decision tree.
