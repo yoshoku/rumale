@@ -1,3 +1,8 @@
+# 0.14.3
+- Fix documents of GradientBoosting, RandomForest, and ExtraTrees.
+- Refactor gaussian mixture clustering with Rubocop.
+- Refactor specs.
+
 # 0.14.2
 - Refactor extension codes of decision tree estimators.
 - Refactor specs.
