@@ -20,11 +20,12 @@ module Rumale
       include Base::Classifier
 
       # Return the prototypes for the nearest neighbor classifier.
-      # @return [Numo::DFloat] (shape: [n_samples, n_features])
+      # If the metric is 'precomputed', that returns nil.
+      # @return [Numo::DFloat] (shape: [n_training_samples, n_features])
       attr_reader :prototypes
 
       # Return the labels of the prototypes
-      # @return [Numo::Int32] (size: n_samples)
+      # @return [Numo::Int32] (size: n_training_samples)
       attr_reader :labels
 
       # Return the class labels.
@@ -34,11 +35,15 @@ module Rumale
       # Create a new classifier with the nearest neighbor rule.
       #
       # @param n_neighbors [Integer] The number of neighbors.
-      def initialize(n_neighbors: 5)
+      # @param metric [String] The metric to calculate the distances.
+      #   If metric is 'euclidean', Euclidean distance is calculated for distance between points.
+      #   If metric is 'precomputed', the fit and predict methods expect to be given a distance matrix.
+      def initialize(n_neighbors: 5, metric: 'euclidean')
         check_params_numeric(n_neighbors: n_neighbors)
         check_params_positive(n_neighbors: n_neighbors)
         @params = {}
         @params[:n_neighbors] = n_neighbors
+        @params[:metric] = metric == 'precomputed' ? 'precomputed' : 'euclidean'
         @prototypes = nil
         @labels = nil
         @classes = nil
@@ -46,14 +51,16 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @param x [Numo::DFloat] (shape: [n_training_samples, n_features]) The training data to be used for fitting the model.
+      #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_training_samples, n_training_samples]).
+      # @param y [Numo::Int32] (shape: [n_training_samples]) The labels to be used for fitting the model.
       # @return [KNeighborsClassifier] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
-        @prototypes = Numo::DFloat.asarray(x.to_a)
+        raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+        @prototypes = Numo::DFloat.asarray(x.to_a) unless @params[:metric] == 'precomputed'
         @labels = Numo::Int32.asarray(y.to_a)
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         self
@@ -61,11 +68,16 @@ module Rumale
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
+      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_features]) The samples to compute the scores.
+      #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_testing_samples, n_training_samples]).
+      # @return [Numo::DFloat] (shape: [n_testing_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
         x = check_convert_sample_array(x)
-        distance_matrix = PairwiseMetric.euclidean_distance(x, @prototypes)
+        if @params[:metric] == 'precomputed' && x.shape[1] != @labels.size
+          raise ArgumentError, 'Expect the size input matrix to be n_testing_samples-by-n_training_samples.'
+        end
+
+        distance_matrix = @params[:metrix] == 'precomputed' ? x : PairwiseMetric.euclidean_distance(x, @prototypes)
         n_samples, n_prototypes = distance_matrix.shape
         n_classes = @classes.size
         n_neighbors = [@params[:n_neighbors], n_prototypes].min
@@ -79,12 +91,17 @@ module Rumale
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_features]) The samples to predict the labels.
+      #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_testing_samples, n_training_samples]).
+      # @return [Numo::Int32] (shape: [n_testing_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
-        n_samples = x.shape.first
+        if @params[:metric] == 'precomputed' && x.shape[1] != @labels.size
+          raise ArgumentError, 'Expect the size input matrix to be n_samples-by-n_training_samples.'
+        end
+
         decision_values = decision_function(x)
+        n_samples = x.shape[0]
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
 
