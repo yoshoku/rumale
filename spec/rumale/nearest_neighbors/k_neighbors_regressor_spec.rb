@@ -8,7 +8,8 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
   let(:multi_target) { dataset[0].dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:n_samples) { x.shape[0] }
   let(:n_outputs) { y.shape[1] }
-  let(:estimator) { described_class.new(n_neighbors: 5, metric: metric).fit(x, y) }
+  let(:algorithm) { 'brute' }
+  let(:estimator) { described_class.new(n_neighbors: 5, algorithm: algorithm, metric: metric).fit(x, y) }
   let(:predicted) { estimator.predict(x) }
   let(:score) { estimator.score(x, y) }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
@@ -42,6 +43,21 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
         expect(estimator.values).to eq(copied.values)
         expect(score).to eq(copied.score(x, y))
       end
+
+      context 'when algorithm is "vptree"' do
+        let(:algorithm) { 'vptree' }
+
+        it 'learns the model for single regression problem.', :aggregate_failures do
+          expect(estimator.prototypes.class).to eq(Rumale::NearestNeighbors::VPTree)
+          expect(estimator.values.class).to eq(Numo::DFloat)
+          expect(estimator.values.ndim).to eq(1)
+          expect(estimator.values.shape[0]).to eq(n_samples)
+          expect(predicted.class).to eq(Numo::DFloat)
+          expect(predicted.ndim).to eq(1)
+          expect(predicted.shape[0]).to eq(n_samples)
+          expect(score).to be_within(0.05).of(1.0)
+        end
+      end
     end
 
     context 'when multi-target problem' do
@@ -61,6 +77,23 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)
         expect(score).to be_within(0.01).of(1.0)
+      end
+
+      context 'when algorithm is "vptree"' do
+        let(:algorithm) { 'vptree' }
+
+        it 'learns the model for multiple regression problem.', :aggregate_failures do
+          expect(estimator.prototypes.class).to eq(Rumale::NearestNeighbors::VPTree)
+          expect(estimator.values.class).to eq(Numo::DFloat)
+          expect(estimator.values.ndim).to eq(2)
+          expect(estimator.values.shape[0]).to eq(n_samples)
+          expect(estimator.values.shape[1]).to eq(n_outputs)
+          expect(predicted.class).to eq(Numo::DFloat)
+          expect(predicted.ndim).to eq(2)
+          expect(predicted.shape[0]).to eq(n_samples)
+          expect(predicted.shape[1]).to eq(n_outputs)
+          expect(score).to be_within(0.05).of(1.0)
+        end
       end
     end
   end

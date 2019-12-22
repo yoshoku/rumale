@@ -20,6 +20,7 @@ module Rumale
 
       # Return the prototypes for the nearest neighbor regressor.
       # If the metric is 'precomputed', that returns nil.
+      # If the algorithm is 'vptree', that returns Rumale::NearestNeighbors::VPTree.
       # @return [Numo::DFloat] (shape: [n_testing_samples, n_features])
       attr_reader :prototypes
 
@@ -30,14 +31,20 @@ module Rumale
       # Create a new regressor with the nearest neighbor rule.
       #
       # @param n_neighbors [Integer] The number of neighbors.
+      # @param algorithm [String] The algorithm is used for finding the nearest neighbors.
+      #   If algorithm is 'brute', brute-force search will be used.
+      #   If algorithm is 'vptree', vantage point tree will be used.
+      #   This parameter is ignored when metric parameter is 'precomputed'.
       # @param metric [String] The metric to calculate the distances.
       #   If metric is 'euclidean', Euclidean distance is calculated for distance between points.
       #   If metric is 'precomputed', the fit and predict methods expect to be given a distance matrix.
-      def initialize(n_neighbors: 5, metric: 'euclidean')
+      def initialize(n_neighbors: 5, algorithm: 'brute', metric: 'euclidean')
         check_params_numeric(n_neighbors: n_neighbors)
         check_params_positive(n_neighbors: n_neighbors)
+        check_params_string(algorith: algorithm, metric: metric)
         @params = {}
         @params[:n_neighbors] = n_neighbors
+        @params[:algorithm] = algorithm == 'vptree' ? 'vptree' : 'brute'
         @params[:metric] = metric == 'precomputed' ? 'precomputed' : 'euclidean'
         @prototypes = nil
         @values = nil
@@ -54,7 +61,13 @@ module Rumale
         y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
-        @prototypes = x.dup unless @params[:metric] == 'precomputed'
+        @prototypes = if @params[:metric] == 'euclidean'
+                        if @params[:algorithm] == 'vptree'
+                          VPTree.new(x)
+                        else
+                          x.dup
+                        end
+                      end
         @values = y.dup
         self
       end
@@ -73,12 +86,18 @@ module Rumale
         n_samples = x.shape[0]
         n_prototypes, n_outputs = @values.shape
         n_neighbors = [@params[:n_neighbors], n_prototypes].min
-        # Calculate distance matrix.
-        distance_matrix = @params[:metrix] == 'precomputed' ? x : PairwiseMetric.euclidean_distance(x, @prototypes)
         # Predict values for the given samples.
-        predicted_values = Array.new(n_samples) do |n|
-          neighbor_ids = distance_matrix[n, true].to_a.each_with_index.sort.map(&:last)[0...n_neighbors]
-          n_outputs.nil? ? @values[neighbor_ids].mean : @values[neighbor_ids, true].mean(0).to_a
+        if @params[:metric] == 'euclidean' && @params[:algorithm] == 'vptree'
+          neighbor_ids, = @prototypes.query(x, n_neighbors)
+          predicted_values = Array.new(n_samples) do |n|
+            n_outputs.nil? ? @values[neighbor_ids[n, true]].mean : @values[neighbor_ids[n, true], true].mean(0).to_a
+          end
+        else
+          distance_matrix = @params[:metric] == 'precomputed' ? x : PairwiseMetric.euclidean_distance(x, @prototypes)
+          predicted_values = Array.new(n_samples) do |n|
+            neighbor_ids = distance_matrix[n, true].to_a.each_with_index.sort.map(&:last)[0...n_neighbors]
+            n_outputs.nil? ? @values[neighbor_ids].mean : @values[neighbor_ids, true].mean(0).to_a
+          end
         end
         Numo::DFloat[*predicted_values]
       end
