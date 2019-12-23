@@ -1,3 +1,12 @@
+# 0.14.4
+- Add metric parameter that specifies distance metric to
+[KNeighborsClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsClassifier.html) and
+[KNeighborsRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsRegressor.html).
+- Add algorithm parameter that specifies nearest neighbor search algorithm to
+[KNeighborsClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsClassifier.html) and
+[KNeighborsRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsRegressor.html).
+- Add nearest neighbor search class with [vantage point tree](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/VPTree.html).
+
 # 0.14.3
 - Fix documents of GradientBoosting, RandomForest, and ExtraTrees.
 - Refactor gaussian mixture clustering with Rubocop.
