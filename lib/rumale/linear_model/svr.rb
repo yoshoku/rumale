@@ -59,7 +59,7 @@ module Rumale
                               max_iter: max_iter, batch_size: batch_size)
         keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h
         keywd_args.delete(:epsilon)
-        super(keywd_args)
+        super(**keywd_args)
         @params[:epsilon] = epsilon
       end
 

@@ -62,7 +62,7 @@ module Rumale
         check_params_positive(max_iter: max_iter, batch_size: batch_size)
         keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h.merge(reg_param: 0.0)
         keywd_args.delete(:solver)
-        super(keywd_args)
+        super(**keywd_args)
         @params[:solver] = solver != 'svd' ? 'sgd' : 'svd'
       end
 

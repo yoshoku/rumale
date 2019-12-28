@@ -60,7 +60,7 @@ module Rumale
         check_params_positive(n_factors: n_factors, reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
                               max_iter: max_iter, batch_size: batch_size)
         keywd_args = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h.merge(loss: nil)
-        super(keywd_args)
+        super(**keywd_args)
       end
 
       # Fit the model with given training data.
