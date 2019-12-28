@@ -1,3 +1,6 @@
+# 0.14.5
+- Fix to suppress deprecation warning about keyword argument in Ruby 2.7.
+
 # 0.14.4
 - Add metric parameter that specifies distance metric to
 [KNeighborsClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsClassifier.html) and
