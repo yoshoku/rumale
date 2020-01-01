@@ -1,3 +1,8 @@
+# 0.15.0
+- Add feature extractor classes:
+  - [HashVectorizer](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/HashVectorizer.html)
+  - [FeatureHasher](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/FeatureHasher.html)
+
 # 0.14.5
 - Fix to suppress deprecation warning about keyword argument in Ruby 2.7.
 
