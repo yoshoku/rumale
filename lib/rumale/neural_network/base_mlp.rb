@@ -177,13 +177,14 @@ module Rumale
       # @param learning_rate [Float] The initial value of learning rate in Adam optimizer.
       # @param decay1 [Float] The smoothing parameter for the first moment in Adam optimizer.
       # @param decay2 [Float] The smoothing parameter for the second moment in Adam optimizer.
-      # @param max_iter [Integer] The maximum number of iterations.
+      # @param max_iter [Integer] The maximum number of epochs that indicates
+      #   how many times the whole data is given to the training process.
       # @param batch_size [Intger] The size of the mini batches.
       # @param tol [Float] The tolerance of loss for terminating optimization.
       # @param verbose [Boolean] The flag indicating whether to output loss during iteration.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(hidden_units: [128, 128], dropout_rate: 0.4, learning_rate: 0.001, decay1: 0.9, decay2: 0.999,
-                     max_iter: 10000, batch_size: 50, tol: 1e-4, verbose: false, random_seed: nil)
+                     max_iter: 200, batch_size: 50, tol: 1e-4, verbose: false, random_seed: nil)
         @params = {}
         @params[:hidden_units] = hidden_units
         @params[:dropout_rate] = dropout_rate
@@ -203,7 +204,9 @@ module Rumale
       private
 
       def buld_network(n_inputs, n_outputs, srng = nil)
-        adam = Rumale::Optimizer::Adam.new(learning_rate: @params[:learning_rate], decay1: @params[:decay1], decay2: @params[:decay2])
+        adam = Rumale::NeuralNetwork::Optimizer::Adam.new(
+          learning_rate: @params[:learning_rate], decay1: @params[:decay1], decay2: @params[:decay2]
+        )
         model = Model::Sequential.new
         n_units = [n_inputs, *@params[:hidden_units]]
         n_units.each_cons(2) do |n_in, n_out|
@@ -216,25 +219,25 @@ module Rumale
 
       def train(x, y, network, loss_func, srng = nil)
         class_name = self.class.to_s.split('::').last
-
         n_samples = x.shape[0]
-        rand_ids = [*0...n_samples].shuffle(random: srng)
 
         @params[:max_iter].times do |t|
-          # random sampling
-          subset_ids = rand_ids.shift(@params[:batch_size])
-          rand_ids.concat(subset_ids)
-          sub_x = x[subset_ids, true].dup
-          sub_y = y[subset_ids, true].dup
-          # forward
-          out, backward = network.forward(sub_x)
-          # calc loss function
-          loss, dout = loss_func.call(out, sub_y)
+          sample_ids = [*0...n_samples]
+          sample_ids.shuffle!(random: srng)
+          until (subset_ids = sample_ids.shift(@params[:batch_size])).empty?
+            # random sampling
+            sub_x = x[subset_ids, true].dup
+            sub_y = y[subset_ids, true].dup
+            # forward
+            out, backward = network.forward(sub_x)
+            # calc loss function
+            loss, dout = loss_func.call(out, sub_y)
+            break if loss < @params[:tol]
+            # backward
+            backward.call(dout)
+          end
           @n_iter = t + 1
-          puts "[#{class_name}] Loss after #{@n_iter} iterations: #{loss}" if @params[:verbose] && (@n_iter % 10).zero?
-          break if loss < @params[:tol]
-          # backward
-          backward.call(dout)
+          puts "[#{class_name}] Loss after #{@n_iter} epochs: #{loss}" if @params[:verbose]
         end
 
         network

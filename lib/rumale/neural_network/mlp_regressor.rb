@@ -35,13 +35,14 @@ module Rumale
       # @param learning_rate [Float] The initial value of learning rate in Adam optimizer.
       # @param decay1 [Float] The smoothing parameter for the first moment in Adam optimizer.
       # @param decay2 [Float] The smoothing parameter for the second moment in Adam optimizer.
-      # @param max_iter [Integer] The maximum number of iterations.
+      # @param max_iter [Integer] The maximum number of epochs that indicates
+      #   how many times the whole data is given to the training process.
       # @param batch_size [Intger] The size of the mini batches.
       # @param tol [Float] The tolerance of loss for terminating optimization.
       # @param verbose [Boolean] The flag indicating whether to output loss during iteration.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(hidden_units: [128, 128], dropout_rate: 0.4, learning_rate: 0.001, decay1: 0.9, decay2: 0.999,
-                     max_iter: 10000, batch_size: 50, tol: 1e-4, verbose: false, random_seed: nil)
+                     max_iter: 200, batch_size: 50, tol: 1e-4, verbose: false, random_seed: nil)
         check_params_type(Array, hidden_units: hidden_units)
         check_params_numeric(dropout_rate: dropout_rate, learning_rate: learning_rate, decay1: decay1, decay2: decay2,
                              max_iter: max_iter, batch_size: batch_size, tol: tol)

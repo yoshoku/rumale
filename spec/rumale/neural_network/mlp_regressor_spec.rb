@@ -9,7 +9,7 @@ RSpec.describe Rumale::NeuralNetwork::MLPRegressor do
   let(:n_samples) { x.shape[0] }
   let(:n_features) { x.shape[1] }
   let(:n_outputs) { y.shape[1] }
-  let(:estimator) { described_class.new(hidden_units: [128, 128], max_iter: 200, verbose: false, random_seed: 1).fit(x, y) }
+  let(:estimator) { described_class.new(hidden_units: [128, 128], max_iter: 100, verbose: false, random_seed: 1).fit(x, y) }
   let(:predicted) { estimator.predict(x) }
   let(:score) { estimator.score(x, y) }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
