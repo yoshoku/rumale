@@ -1,3 +1,12 @@
+# 0.16.0
+## Breaking changes
+- The meaning of the `max_iter` parameter of the multi-layer perceptron estimators
+has been changed from the maximum number of iterations to the number of epochs.
+The number of epochs is how many times the whole data is given to the training process.
+As a future plan, similar changes will be applied to other estimators used stochastic gradient descent such as SVC and Lasso.
+  - [MLPClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPClassifier.html)
+  - [MLPRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPRegressor.html)
+
 # 0.15.0
 - Add feature extractor classes:
   - [HashVectorizer](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/HashVectorizer.html)
