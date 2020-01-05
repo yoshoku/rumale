@@ -33,7 +33,7 @@ module Rumale
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
         @params[:optimizer] = optimizer
-        @params[:optimizer] ||= Optimizer::Nadam.new
+        @params[:optimizer] ||= Rumale::Optimizer::Nadam.new
         @params[:n_jobs] = n_jobs
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
