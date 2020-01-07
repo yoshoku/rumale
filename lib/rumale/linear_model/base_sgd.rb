@@ -113,7 +113,7 @@ module Rumale
         @params[:decay] = nil
         @params[:momentum] = 0.0
         @params[:bias_scale] = 1.0
-        @params[:fit_bias] = false
+        @params[:fit_bias] = true
         @params[:reg_param] = 0.0
         @params[:l1_ratio] = 0.0
         @params[:max_iter] = 200
