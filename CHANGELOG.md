@@ -1,3 +1,12 @@
+# 0.16.1
+- Add regressor class for [ElasticNet](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/ElasticNet.html).
+- Add new linear model abstract class.
+  - In version 0.17.0, all LinearModel estimators will be changed to use this new abstract class.
+  The major differences from the existing abstract class are that
+  the optimizer of LinearModel estimators is fixed to mini-batch SGD with momentum term,
+  the max_iter parameter indicates the number of epochs instead of the maximum number of iterations,
+  the fit_bias parameter is true by default, and elastic-net style regularization can be used.
+
 # 0.16.0
 ## Breaking changes
 - The meaning of the `max_iter` parameter of the multi-layer perceptron estimators
