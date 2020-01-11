@@ -32,18 +32,14 @@ RSpec.describe Rumale::LinearModel::Lasso do
     end
 
     it 'dumps and restores itself using Marshal module.', :aggregate_failures do
-      expect(estimator.class).to eq(copied.class)
-      expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])
-      expect(estimator.params[:fit_bias]).to eq(copied.params[:fit_bias])
-      expect(estimator.params[:bias_scale]).to eq(copied.params[:bias_scale])
-      expect(estimator.params[:max_iter]).to eq(copied.params[:max_iter])
-      expect(estimator.params[:batch_size]).to eq(copied.params[:batch_size])
-      expect(estimator.params[:optimizer].class).to eq(copied.params[:optimizer].class)
-      expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
-      expect(estimator.weight_vec).to eq(copied.weight_vec)
-      expect(estimator.bias_term).to eq(copied.bias_term)
-      expect(estimator.rng).to eq(copied.rng)
-      expect(score).to eq(copied.score(x, y))
+      expect(copied.class).to eq(estimator.class)
+      expect(copied.params).to eq(estimator.params)
+      expect(copied.weight_vec).to eq(estimator.weight_vec)
+      expect(copied.bias_term).to eq(estimator.bias_term)
+      expect(copied.rng).to eq(estimator.rng)
+      expect(copied.score(x, y)).to eq(score)
+      expect(copied.instance_variable_get(:@penalty_type)).to eq('l1')
+      expect(copied.instance_variable_get(:@loss_func).class).to eq(Rumale::LinearModel::Loss::MeanSquaredError)
     end
 
     context 'when add bias to target values' do
