@@ -65,7 +65,7 @@ module Rumale
                              reg_param: reg_param, l1_ratio: l1_ratio, bias_scale: bias_scale,
                              max_iter: max_iter, batch_size: batch_size, tol: tol)
         check_params_boolean(fit_bias: fit_bias, verbose: verbose)
-        check_params_numeric_or_nil(decay: nil, n_jobs: n_jobs, random_seed: random_seed)
+        check_params_numeric_or_nil(decay: decay, n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(learning_rate: learning_rate, reg_param: reg_param, max_iter: max_iter, batch_size: batch_size)
         super()
         @params.merge!(method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h)
