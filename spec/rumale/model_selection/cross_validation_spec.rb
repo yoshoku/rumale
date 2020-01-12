@@ -75,17 +75,17 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
     expect(mean_train_score).to eq(1.0)
   end
 
-  it 'performs k-fold cross validation with logistic regression to evaluate the results using Log-loss.' do
+  it 'performs k-fold cross validation with logistic regression to evaluate the results using Log-loss.', :aggregate_failures do
     cv = described_class.new(estimator: logit_reg, splitter: kfold, evaluator: log_loss, return_train_score: true)
-    report = cv.perform(kernel_mat, labels)
+    report = cv.perform(samples, labels)
     mean_test_score = report[:test_score].inject(:+) / n_splits
     mean_train_score = report[:train_score].inject(:+) / n_splits
     expect(cv.evaluator.class).to eq(Rumale::EvaluationMeasure::LogLoss)
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
-    expect(mean_test_score).to be_within(0.01).of(0.31)
-    expect(mean_train_score).to be_within(0.01).of(0.31)
+    expect(mean_test_score).to be_within(0.01).of(0.71)
+    expect(mean_train_score).to be_within(0.01).of(0.71)
   end
 
   describe 'private method' do

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'rumale/linear_model/base_linear_model'
+require 'rumale/linear_model/base_sgd'
 require 'rumale/base/classifier'
 
 module Rumale
   module LinearModel
     # LogisticRegression is a class that implements Logistic Regression
-    # with mini-batch stochastic gradient descent optimization.
+    # with stochastic gradient descent optimization.
     # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
     # Rumale::SVM provides Logistic Regression based on LIBLINEAR.
@@ -15,13 +15,15 @@ module Rumale
     #
     # @example
     #   estimator =
-    #     Rumale::LinearModel::LogisticRegression.new(reg_param: 1.0, max_iter: 1000, batch_size: 20, random_seed: 1)
+    #     Rumale::LinearModel::LogisticRegression.new(reg_param: 1.0, max_iter: 200, batch_size: 50, random_seed: 1)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
     # - S. Shalev-Shwartz, Y. Singer, N. Srebro, and A. Cotter, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Mathematical Programming, vol. 127 (1), pp. 3--30, 2011.
-    class LogisticRegression < BaseLinearModel
+    # - Y. Tsuruoka, J. Tsujii, and S. Ananiadou, "Stochastic Gradient Descent Training for L1-regularized Log-linear Models with Cumulative Penalty," Proc. ACL'09, pp. 477--485, 2009.
+    # - L. Bottou, "Large-Scale Machine Learning with Stochastic Gradient Descent," Proc. COMPSTAT'10, pp. 177--186, 2010.
+    class LogisticRegression < BaseSGD
       include Base::Classifier
 
       # Return the weight vector for Logistic Regression.
@@ -42,26 +44,53 @@ module Rumale
 
       # Create a new classifier with Logisitc Regression by the SGD optimization.
       #
+      # @param learning_rate [Float] The initial value of learning rate.
+      #   The learning rate decreases as the iteration proceeds according to the equation: learning_rate / (1 + decay * t).
+      # @param decay [Float] The smoothing parameter for decreasing learning rate as the iteration proceeds.
+      #   If nil is given, the decay sets to 'reg_param * learning_rate'.
+      # @param momentum [Float] The momentum factor.
+      # @param penalty [String] The regularization type to be used ('l1', 'l2', and 'elasticnet').
+      # @param l1_ratio [Float] The elastic-net type regularization mixing parameter.
+      #   If penalty set to 'l2' or 'l1', this parameter is ignored.
+      #   If l1_ratio = 1, the regularization is similar to Lasso.
+      #   If l1_ratio = 0, the regularization is similar to Ridge.
+      #   If 0 < l1_ratio < 1, the regularization is a combination of L1 and L2.
       # @param reg_param [Float] The regularization parameter.
       # @param fit_bias [Boolean] The flag indicating whether to fit the bias term.
       # @param bias_scale [Float] The scale of the bias term.
       #   If fit_bias is true, the feature vector v becoms [v; bias_scale].
-      # @param max_iter [Integer] The maximum number of iterations.
+      # @param max_iter [Integer] The maximum number of epochs that indicates
+      #   how many times the whole data is given to the training process.
       # @param batch_size [Integer] The size of the mini batches.
-      # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
-      #   If nil is given, Nadam is used.
+      # @param tol [Float] The tolerance of loss for terminating optimization.
       # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
       #   If nil is given, the methods do not execute in parallel.
       #   If zero or less is given, it becomes equal to the number of processors.
       #   This parameter is ignored if the Parallel gem is not loaded.
+      # @param verbose [Boolean] The flag indicating whether to output loss during iteration.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
-                     max_iter: 1000, batch_size: 20, optimizer: nil, n_jobs: nil, random_seed: nil)
-        check_params_numeric(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
-        check_params_boolean(fit_bias: fit_bias)
-        check_params_numeric_or_nil(n_jobs: n_jobs, random_seed: random_seed)
-        check_params_positive(reg_param: reg_param, bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
-        super
+      def initialize(learning_rate: 0.01, decay: nil, momentum: 0.9,
+                     penalty: 'l2', reg_param: 1.0, l1_ratio: 0.5,
+                     fit_bias: true, bias_scale: 1.0,
+                     max_iter: 100, batch_size: 50, tol: 1e-4,
+                     n_jobs: nil, verbose: false, random_seed: nil)
+        check_params_numeric(learning_rate: learning_rate, momentum: momentum,
+                             reg_param: reg_param, l1_ratio: l1_ratio, bias_scale: bias_scale,
+                             max_iter: max_iter, batch_size: batch_size, tol: tol)
+        check_params_boolean(fit_bias: fit_bias, verbose: verbose)
+        check_params_string(penalty: penalty)
+        check_params_numeric_or_nil(decay: decay, n_jobs: n_jobs, random_seed: random_seed)
+        check_params_positive(learning_rate: learning_rate, reg_param: reg_param,
+                              bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
+        super()
+        @params.merge!(method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h)
+        @params[:decay] ||= @params[:reg_param] * @params[:learning_rate]
+        @params[:random_seed] ||= srand
+        @rng = Random.new(@params[:random_seed])
+        @penalty_type = @params[:penalty]
+        @loss_func = LinearModel::Loss::LogLoss.new
+        @weight_vec = nil
+        @bias_term = nil
         @classes = nil
       end
 
@@ -148,32 +177,7 @@ module Rumale
         probs
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about LogisticRegression.
-      def marshal_dump
-        { params: @params,
-          weight_vec: @weight_vec,
-          bias_term: @bias_term,
-          classes: @classes,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @weight_vec = obj[:weight_vec]
-        @bias_term = obj[:bias_term]
-        @classes = obj[:classes]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
-
-      def calc_loss_gradient(x, y, weight)
-        y / (Numo::NMath.exp(-y * x.dot(weight)) + 1.0) - y
-      end
 
       def multiclass_problem?
         @classes.size > 2

@@ -99,6 +99,20 @@ module Rumale
           2.fdiv(y.shape[0]) * (out - y)
         end
       end
+
+      # @!visibility private
+      # LogLoss is a class that calculates logistic loss for logistic regression.
+      class LogLoss
+        # @!visibility private
+        def loss(out, y)
+          Numo::NMath.log(1 + Numo::NMath.exp(-y * out)).sum.fdiv(y.shape[0])
+        end
+
+        # @!visibility private
+        def dloss(out, y)
+          y / (1 + Numo::NMath.exp(-y * out)) - y
+        end
+      end
     end
 
     # BaseSGD is an abstract class for implementation of linear model with mini-batch stochastic gradient descent (SGD) optimization.
