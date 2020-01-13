@@ -81,7 +81,7 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
     let(:kernel_mat_test) { Rumale::PairwiseMetric.rbf_kernel(x_test, x_train, 1.0) }
     let(:z_train) { transformer.fit_transform(kernel_mat_train) }
     let(:z_test) { transformer.transform(kernel_mat_test) }
-    let(:classifier) { Rumale::LinearModel::SVC.new(reg_param: 0.01, fit_bias: true, random_seed: 1) }
+    let(:classifier) { Rumale::LinearModel::SVC.new(reg_param: 0.01, fit_bias: false, random_seed: 1) }
 
     before { classifier.fit(z_train, y_train) }
 

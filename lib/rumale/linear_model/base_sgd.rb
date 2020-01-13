@@ -113,6 +113,23 @@ module Rumale
           y / (1 + Numo::NMath.exp(-y * out)) - y
         end
       end
+
+      # @!visibility private
+      # HingeLoss is a class that calculates hinge loss for support vector classifier.
+      class HingeLoss
+        # @!visibility private
+        def loss(out, y)
+          out.class.maximum(0.0, 1 - y * out).sum.fdiv(y.shape[0])
+        end
+
+        # @!visibility private
+        def dloss(out, y)
+          tids = (y * out).lt(1)
+          d = Numo::DFloat.zeros(y.shape[0])
+          d[tids] = -y[tids] if tids.count > 0
+          d
+        end
+      end
     end
 
     # BaseSGD is an abstract class for implementation of linear model with mini-batch stochastic gradient descent (SGD) optimization.
