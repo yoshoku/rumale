@@ -5,10 +5,15 @@ require 'rumale/optimizer/nadam'
 
 module Rumale
   module LinearModel
+    # @note
+    #   In version 0.17.0, a new linear model abstract class called BaseSGD is introduced.
+    #   BaseLienarModel is deprecated and will be removed in the future.
+    #
     # BaseLinearModel is an abstract class for implementation of linear estimator
     # with mini-batch stochastic gradient descent optimization.
     # This class is used for internal process.
     class BaseLinearModel
+      # :nocov:
       include Base::BaseEstimator
 
       # Initialize a linear estimator.
@@ -26,6 +31,7 @@ module Rumale
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, fit_bias: false, bias_scale: 1.0,
                      max_iter: 1000, batch_size: 10, optimizer: nil, n_jobs: nil, random_seed: nil)
+        warn 'warning: BaseLinearModel is deprecated. Use BaseSGD instead.'
         @params = {}
         @params[:reg_param] = reg_param
         @params[:fit_bias] = fit_bias
@@ -88,6 +94,7 @@ module Rumale
           [weight, 0.0]
         end
       end
+      # :nocov:
     end
   end
 end
