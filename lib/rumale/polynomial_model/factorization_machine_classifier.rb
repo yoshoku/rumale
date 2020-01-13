@@ -14,7 +14,7 @@ module Rumale
     #   estimator =
     #     Rumale::PolynomialModel::FactorizationMachineClassifier.new(
     #      n_factors: 10, loss: 'hinge', reg_param_linear: 0.001, reg_param_factor: 0.001,
-    #      max_iter: 5000, batch_size: 50, random_seed: 1)
+    #      max_iter: 500, batch_size: 50, random_seed: 1)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
@@ -50,7 +50,8 @@ module Rumale
       # @param loss [String] The loss function ('hinge' or 'logistic').
       # @param reg_param_linear [Float] The regularization parameter for linear model.
       # @param reg_param_factor [Float] The regularization parameter for factor matrix.
-      # @param max_iter [Integer] The maximum number of iterations.
+      # @param max_iter [Integer] The maximum number of epochs that indicates
+      #   how many times the whole data is given to the training process.
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
@@ -60,7 +61,7 @@ module Rumale
       #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: 'hinge', reg_param_linear: 1.0, reg_param_factor: 1.0,
-                     max_iter: 1000, batch_size: 10, optimizer: nil, n_jobs: nil, random_seed: nil)
+                     max_iter: 200, batch_size: 50, optimizer: nil, n_jobs: nil, random_seed: nil)
         check_params_numeric(reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
                              n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
         check_params_string(loss: loss)

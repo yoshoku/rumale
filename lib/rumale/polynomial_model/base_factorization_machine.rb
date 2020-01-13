@@ -17,7 +17,8 @@ module Rumale
       # @param loss [String] The loss function ('hinge' or 'logistic' or nil).
       # @param reg_param_linear [Float] The regularization parameter for linear model.
       # @param reg_param_factor [Float] The regularization parameter for factor matrix.
-      # @param max_iter [Integer] The maximum number of iterations.
+      # @param max_iter [Integer] The maximum number of epochs that indicates
+      #   how many times the whole data is given to the training process.
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
@@ -27,7 +28,7 @@ module Rumale
       #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: nil, reg_param_linear: 1.0, reg_param_factor: 1.0,
-                     max_iter: 1000, batch_size: 10, optimizer: nil, n_jobs: nil, random_seed: nil)
+                     max_iter: 200, batch_size: 50, optimizer: nil, n_jobs: nil, random_seed: nil)
         @params = {}
         @params[:n_factors] = n_factors
         @params[:loss] = loss unless loss.nil?
@@ -51,27 +52,29 @@ module Rumale
       def partial_fit(x, y)
         # Initialize some variables.
         n_samples, n_features = x.shape
-        rand_ids = [*0...n_samples].shuffle(random: @rng.dup)
+        sub_rng = @rng.dup
         weight_vec = Numo::DFloat.zeros(n_features + 1)
         factor_mat = Numo::DFloat.zeros(@params[:n_factors], n_features)
         weight_optimizer = @params[:optimizer].dup
         factor_optimizers = Array.new(@params[:n_factors]) { @params[:optimizer].dup }
         # Start optimization.
         @params[:max_iter].times do |_t|
-          # Random sampling.
-          subset_ids = rand_ids.shift(@params[:batch_size])
-          rand_ids.concat(subset_ids)
-          data = x[subset_ids, true]
-          ex_data = expand_feature(data)
-          targets = y[subset_ids]
-          # Calculate gradients for loss function.
-          loss_grad = loss_gradient(data, ex_data, targets, factor_mat, weight_vec)
-          next if loss_grad.ne(0.0).count.zero?
-          # Update each parameter.
-          weight_vec = weight_optimizer.call(weight_vec, weight_gradient(loss_grad, ex_data, weight_vec))
-          @params[:n_factors].times do |n|
-            factor_mat[n, true] = factor_optimizers[n].call(factor_mat[n, true],
-                                                            factor_gradient(loss_grad, data, factor_mat[n, true]))
+          sample_ids = [*0...n_samples]
+          sample_ids.shuffle!(random: sub_rng)
+          until (subset_ids = sample_ids.shift(@params[:batch_size])).empty?
+            # Sampling.
+            sub_x = x[subset_ids, true]
+            sub_y = y[subset_ids]
+            ex_sub_x = expand_feature(sub_x)
+            # Calculate gradients for loss function.
+            loss_grad = loss_gradient(sub_x, ex_sub_x, sub_y, factor_mat, weight_vec)
+            next if loss_grad.ne(0.0).count.zero?
+            # Update each parameter.
+            weight_vec = weight_optimizer.call(weight_vec, weight_gradient(loss_grad, ex_sub_x, weight_vec))
+            @params[:n_factors].times do |n|
+              factor_mat[n, true] = factor_optimizers[n].call(factor_mat[n, true],
+                                                              factor_gradient(loss_grad, sub_x, factor_mat[n, true]))
+            end
           end
         end
         [factor_mat, *split_weight_vec_bias(weight_vec)]

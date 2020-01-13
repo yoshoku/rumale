@@ -16,8 +16,8 @@ RSpec.describe Rumale::PolynomialModel::BaseFactorizationMachine do
     expect(estimator.params[:loss]).to be_nil
     expect(estimator.params[:reg_param_linear]).to eq(1.0)
     expect(estimator.params[:reg_param_factor]).to eq(1.0)
-    expect(estimator.params[:max_iter]).to eq(1000)
-    expect(estimator.params[:batch_size]).to eq(10)
+    expect(estimator.params[:max_iter]).to eq(200)
+    expect(estimator.params[:batch_size]).to eq(50)
     expect(estimator.params[:optimizer]).to be_a(Rumale::Optimizer::Nadam)
     expect(estimator.params[:n_jobs]).to be_nil
     expect(estimator.params[:random_seed]).to eq(1)
