@@ -130,6 +130,30 @@ module Rumale
           d
         end
       end
+
+      # @!visibility private
+      # EpsilonInsensitive is a class that calculates epsilon insensitive for support vector regressor.
+      class EpsilonInsensitive
+        # @!visibility private
+        def initialize(epsilon: 0.1)
+          @epsilon = epsilon
+        end
+
+        # @!visibility private
+        def loss(out, y)
+          out.class.maximum(0.0, (y - out).abs - @epsilon).sum.fdiv(y.shape[0])
+        end
+
+        # @!visibility private
+        def dloss(out, y)
+          d = Numo::DFloat.zeros(y.shape[0])
+          tids = (out - y).gt(@epsilon)
+          d[tids] = 1 if tids.count > 0
+          tids = (y - out).gt(@epsilon)
+          d[tids] = -1 if tids.count > 0
+          d
+        end
+      end
     end
 
     # BaseSGD is an abstract class for implementation of linear model with mini-batch stochastic gradient descent (SGD) optimization.
