@@ -126,7 +126,7 @@ module Rumale
         def dloss(out, y)
           tids = (y * out).lt(1)
           d = Numo::DFloat.zeros(y.shape[0])
-          d[tids] = -y[tids] if tids.count > 0
+          d[tids] = -y[tids] if tids.count.positive?
           d
         end
       end
@@ -148,9 +148,9 @@ module Rumale
         def dloss(out, y)
           d = Numo::DFloat.zeros(y.shape[0])
           tids = (out - y).gt(@epsilon)
-          d[tids] = 1 if tids.count > 0
+          d[tids] = 1 if tids.count.positive?
           tids = (y - out).gt(@epsilon)
-          d[tids] = -1 if tids.count > 0
+          d[tids] = -1 if tids.count.positive?
           d
         end
       end
