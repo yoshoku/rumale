@@ -123,4 +123,27 @@ RSpec.describe Rumale::LinearModel::LinearRegression do
     it_behaves_like 'multiple regression with bias'
     it_behaves_like 'multiple regression'
   end
+
+  context 'when solver is automatic' do
+    let(:estimator) { described_class.new(solver: 'auto') }
+
+    context 'with Numo::Linalg is loaded' do
+      it 'chooses "svd" solver' do
+        expect(estimator.params[:solver]).to eq('svd')
+      end
+    end
+
+    context 'with Numo::Linalg is not loaded' do
+      before do
+        @backup = Numo::Linalg
+        Numo.class_eval { remove_const(:Linalg) }
+      end
+
+      after { Numo::Linalg = @backup }
+
+      it 'chooses "sgd" solver' do
+        expect(estimator.params[:solver]).to eq('sgd')
+      end
+    end
+  end
 end

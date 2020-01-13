@@ -56,7 +56,8 @@ module Rumale
       #   If solver = 'svd', this parameter is ignored.
       # @param tol [Float] The tolerance of loss for terminating optimization.
       #   If solver = 'svd', this parameter is ignored.
-      # @param solver [String] The algorithm to calculate weights. ('sgd' or 'svd').
+      # @param solver [String] The algorithm to calculate weights. ('auto', 'sgd' or 'svd').
+      #   'auto' chooses the 'svd' solver if Numo::Linalg is loaded. Otherwise, it chooses the 'sgd' solver.
       #   'sgd' uses the stochastic gradient descent optimization.
       #   'svd' performs singular value decomposition of samples.
       # @param n_jobs [Integer] The number of jobs for running the fit method in parallel.
@@ -68,7 +69,7 @@ module Rumale
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(learning_rate: 0.01, decay: nil, momentum: 0.9,
                      fit_bias: true, bias_scale: 1.0, max_iter: 100, batch_size: 50, tol: 1e-4,
-                     solver: 'sgd',
+                     solver: 'auto',
                      n_jobs: nil, verbose: false, random_seed: nil)
         check_params_numeric(learning_rate: learning_rate, momentum: momentum,
                              bias_scale: bias_scale, max_iter: max_iter, batch_size: batch_size)
@@ -78,7 +79,11 @@ module Rumale
         check_params_positive(learning_rate: learning_rate, max_iter: max_iter, batch_size: batch_size)
         super()
         @params.merge!(method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h)
-        @params[:solver] = solver != 'svd' ? 'sgd' : 'svd'
+        @params[:solver] = if solver == 'auto'
+                             load_linalg? ? 'svd' : 'sgd'
+                           else
+                             solver != 'svd' ? 'sgd' : 'svd'
+                           end
         @params[:decay] ||= @params[:learning_rate]
         @params[:random_seed] ||= srand
         @rng = Random.new(@params[:random_seed])
@@ -150,6 +155,12 @@ module Rumale
         else
           @weight_vec, @bias_term = partial_fit(x, y)
         end
+      end
+
+      def load_linalg?
+        return false if defined?(Numo::Linalg).nil?
+        return false if Numo::Linalg::VERSION < '0.1.4'
+        true
       end
     end
   end
