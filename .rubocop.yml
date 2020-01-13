@@ -15,7 +15,7 @@ AllCops:
 Style/Documentation:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 145
   IgnoredPatterns: ['(\A|\s)#']
 
@@ -43,7 +43,7 @@ Metrics/BlockLength:
     - 'spec/**/*'
 
 Metrics/ParameterLists:
-  Max: 10
+  Max: 15
 
 Security/MarshalLoad:
   Enabled: false
