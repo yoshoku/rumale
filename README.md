@@ -99,7 +99,7 @@ transformer = Rumale::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 
 transformed = transformer.fit_transform(samples)
 
 # Train linear SVM classifier.
-classifier = Rumale::LinearModel::SVC.new(reg_param: 0.0001, max_iter: 1000, batch_size: 50, random_seed: 1)
+classifier = Rumale::LinearModel::SVC.new(reg_param: 0.0001, random_seed: 1)
 classifier.fit(transformed, labels)
 
 # Save the model.
@@ -136,7 +136,7 @@ Execution of the above scripts result in the following.
 ```bash
 $ ruby train.rb
 $ ruby test.rb
-Accuracy: 98.4%
+Accuracy: 98.7%
 ```
 
 ### Example 3. Cross-validation
@@ -148,7 +148,7 @@ require 'rumale'
 samples, labels = Rumale::Dataset.load_libsvm_file('pendigits')
 
 # Define the estimator to be evaluated.
-lr = Rumale::LinearModel::LogisticRegression.new(reg_param: 0.0001, random_seed: 1)
+lr = Rumale::LinearModel::LogisticRegression.new(learning_rate: 0.00001, reg_param: 0.0001, random_seed: 1)
 
 # Define the evaluation measure, splitting strategy, and cross validation.
 ev = Rumale::EvaluationMeasure::LogLoss.new
@@ -167,7 +167,7 @@ Execution of the above scripts result in the following.
 
 ```bash
 $ ruby cross_validation.rb
-5-CV mean log-loss: 0.476
+5-CV mean log-loss: 0.355
 ```
 
 ### Example 4. Pipeline
@@ -180,7 +180,7 @@ samples, labels = Rumale::Dataset.load_libsvm_file('pendigits')
 
 # Construct pipeline with kernel approximation and SVC.
 rbf = Rumale::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 800, random_seed: 1)
-svc = Rumale::LinearModel::SVC.new(reg_param: 0.0001, max_iter: 1000, random_seed: 1)
+svc = Rumale::LinearModel::SVC.new(reg_param: 0.0001, random_seed: 1)
 pipeline = Rumale::Pipeline::Pipeline.new(steps: { trns: rbf, clsf: svc })
 
 # Define the splitting strategy and cross validation.
@@ -199,7 +199,7 @@ Execution of the above scripts result in the following.
 
 ```bash
 $ ruby pipeline.rb
-5-CV mean accuracy: 99.2 %
+5-CV mean accuracy: 99.6 %
 ```
 
 ## Speeding up

@@ -1,3 +1,25 @@
+# 0.17.0
+## Breaking changes
+- Fix all linear model estimators to use the new abstract class ([BaseSGD](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/BaseSGD.html)) introduced in version 0.16.1.
+  The major differences from the old abstract class are that
+  the optimizer of LinearModel estimators is fixed to mini-batch SGD with momentum term,
+  the max_iter parameter indicates the number of epochs instead of the maximum number of iterations,
+  the fit_bias parameter is true by default, and elastic-net style regularization can be used.
+  Note that there are additions and changes to hyperparameters.
+  Existing trained linear models may need to re-train the model and adjust the hyperparameters.
+  - [LogisticRegression](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/LogisticRegression.html)
+  - [SVC](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/SVC.html)
+  - [LinearRegression](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/LinearRegression.html)
+  - [Rdige](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/Ridge.html)
+  - [Lasso](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/Lasso.html)
+  - [SVR](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/SVR.html)
+- Change the default value of solver parameter on LinearRegression and Ridge to 'auto'.
+If Numo::Linalg is loaded, 'svd' is selected for the solver, otherwise 'sgd' is selected.
+- The meaning of the `max_iter` parameter of the factorization machine estimators
+has been changed from the maximum number of iterations to the number of epochs.
+  - [FactorizationMachineClassifier](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel/FactorizationMachineClassifier.html)
+  - [FactorizationMachineRegressor](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel/FactorizationMachineRegressor.html)
+
 # 0.16.1
 - Add regressor class for [ElasticNet](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/ElasticNet.html).
 - Add new linear model abstract class.
