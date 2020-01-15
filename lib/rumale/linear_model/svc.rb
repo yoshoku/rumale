@@ -74,7 +74,7 @@ module Rumale
       def initialize(learning_rate: 0.01, decay: nil, momentum: 0.9,
                      penalty: 'l2', reg_param: 1.0, l1_ratio: 0.5,
                      fit_bias: true, bias_scale: 1.0,
-                     max_iter: 100, batch_size: 50, tol: 1e-4,
+                     max_iter: 200, batch_size: 50, tol: 1e-4,
                      probability: false,
                      n_jobs: nil, verbose: false, random_seed: nil)
         check_params_numeric(learning_rate: learning_rate, momentum: momentum,

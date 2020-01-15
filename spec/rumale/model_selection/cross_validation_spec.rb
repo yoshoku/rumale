@@ -84,7 +84,7 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
     expect(report[:test_score].size).to eq(n_splits)
     expect(report[:train_score].size).to eq(n_splits)
     expect(report[:fit_time].size).to eq(n_splits)
-    expect(mean_test_score).to be_within(0.01).of(0.71)
+    expect(mean_test_score).to be_within(0.01).of(0.72)
     expect(mean_train_score).to be_within(0.01).of(0.71)
   end
 
