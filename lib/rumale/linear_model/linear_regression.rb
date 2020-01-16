@@ -123,11 +123,9 @@ module Rumale
       private
 
       def fit_svd(x, y)
-        samples = @params[:fit_bias] ? expand_feature(x) : x
+        x = expand_feature(x) if fit_bias?
 
-        s, u, vt = Numo::Linalg.svd(samples, driver: 'sdd', job: 'S')
-        d = (s / s**2).diag
-        w = vt.transpose.dot(d).dot(u.transpose).dot(y)
+        w = Numo::Linalg.pinv(x, driver: 'svd').dot(y)
 
         is_single_target_vals = y.shape[1].nil?
         if @params[:fit_bias]
@@ -155,6 +153,10 @@ module Rumale
         else
           @weight_vec, @bias_term = partial_fit(x, y)
         end
+      end
+
+      def fit_bias?
+        @params[:fit_bias] == true
       end
 
       def load_linalg?
