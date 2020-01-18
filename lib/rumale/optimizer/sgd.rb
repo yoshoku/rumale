@@ -6,11 +6,6 @@ require 'rumale/base/base_estimator'
 module Rumale
   module Optimizer
     # SGD is a class that implements SGD optimizer.
-    #
-    # @example
-    #   optimizer = Rumale::Optimizer::SGD.new(learning_rate: 0.01, momentum: 0.9, decay: 0.9)
-    #   estimator = Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, random_seed: 1)
-    #   estimator.fit(samples, values)
     class SGD
       include Base::BaseEstimator
       include Validation

@@ -7,11 +7,6 @@ module Rumale
   module Optimizer
     # AdaGrad is a class that implements AdaGrad optimizer.
     #
-    # @example
-    #   optimizer = Rumale::Optimizer::AdaGrad.new(learning_rate: 0.01, momentum: 0.9)
-    #   estimator = Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, random_seed: 1)
-    #   estimator.fit(samples, values)
-    #
     # *Reference*
     # - J. Duchi, E Hazan, and Y. Singer, "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization," J. Machine Learning Research, vol. 12, pp. 2121--2159, 2011.
     class AdaGrad

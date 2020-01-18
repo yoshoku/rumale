@@ -8,11 +8,6 @@ module Rumale
   module Optimizer
     # Nadam is a class that implements Nadam optimizer.
     #
-    # @example
-    #   optimizer = Rumale::Optimizer::Nadam.new(learning_rate: 0.01, decay1: 0.9, decay2: 0.999)
-    #   estimator = Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, random_seed: 1)
-    #   estimator.fit(samples, values)
-    #
     # *Reference*
     # - T. Dozat, "Incorporating Nesterov Momentum into Adam," Tech. Repo. Stanford University, 2015.
     class Nadam

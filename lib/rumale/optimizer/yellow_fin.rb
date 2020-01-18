@@ -7,11 +7,6 @@ module Rumale
   module Optimizer
     # YellowFin is a class that implements YellowFin optimizer.
     #
-    # @example
-    #   optimizer = Rumale::Optimizer::YellowFin.new(learning_rate: 0.01, momentum: 0.9, decay: 0.999, window_width: 20)
-    #   estimator = Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, random_seed: 1)
-    #   estimator.fit(samples, values)
-    #
     # *Reference*
     # - J. Zhang and I. Mitliagkas, "YellowFin and the Art of Momentum Tuning," CoRR abs/1706.03471, 2017.
     class YellowFin

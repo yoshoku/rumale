@@ -7,11 +7,6 @@ module Rumale
   module Optimizer
     # RMSProp is a class that implements RMSProp optimizer.
     #
-    # @example
-    #   optimizer = Rumale::Optimizer::RMSProp.new(learning_rate: 0.01, momentum: 0.9, decay: 0.9)
-    #   estimator = Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, random_seed: 1)
-    #   estimator.fit(samples, values)
-    #
     # *Reference*
     # - I. Sutskever, J. Martens, G. Dahl, and G. Hinton, "On the importance of initialization and momentum in deep learning," Proc. ICML' 13, pp. 1139--1147, 2013.
     # - G. Hinton, N. Srivastava, and K. Swersky, "Lecture 6e rmsprop," Neural Networks for Machine Learning, 2012.

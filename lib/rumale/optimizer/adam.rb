@@ -7,11 +7,6 @@ module Rumale
   module Optimizer
     # Adam is a class that implements Adam optimizer.
     #
-    # @example
-    #   optimizer = Rumale::Optimizer::Adam.new(learning_rate: 0.01, momentum: 0.9, decay1: 0.9, decay2: 0.999)
-    #   estimator = Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, random_seed: 1)
-    #   estimator.fit(samples, values)
-    #
     # *Reference*
     # - D P. Kingma and J. Ba, "Adam: A Method for Stochastic Optimization," Proc. ICLR'15, 2015.
     class Adam
