@@ -55,6 +55,14 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineRegressor do
       expect(estimator.params[:random_seed]).to eq(copied.params[:random_seed])
       expect(score).to eq(copied.score(x, y))
     end
+
+    context 'when verbose is "true"' do
+      let(:estimator) { described_class.new(verbose: true, max_iter: 5, random_seed: 1) }
+
+      it 'outputs debug messages.', :aggregate_failures do
+        expect { estimator.fit(x, y) }.to output(/FactorizationMachineRegressor/).to_stdout
+      end
+    end
   end
 
   context 'when multi-target problem' do

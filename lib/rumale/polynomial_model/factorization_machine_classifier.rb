@@ -53,18 +53,22 @@ module Rumale
       # @param max_iter [Integer] The maximum number of epochs that indicates
       #   how many times the whole data is given to the training process.
       # @param batch_size [Integer] The size of the mini batches.
+      # @param tol [Float] The tolerance of loss for terminating optimization.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
       # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
       #   If nil is given, the methods do not execute in parallel.
       #   If zero or less is given, it becomes equal to the number of processors.
       #   This parameter is ignored if the Parallel gem is not loaded.
+      # @param verbose [Boolean] The flag indicating whether to output loss during iteration.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: 'hinge', reg_param_linear: 1.0, reg_param_factor: 1.0,
-                     max_iter: 200, batch_size: 50, optimizer: nil, n_jobs: nil, random_seed: nil)
+                     max_iter: 200, batch_size: 50, tol: 1e-4,
+                     optimizer: nil, n_jobs: nil, verbose: false, random_seed: nil)
         check_params_numeric(reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
-                             n_factors: n_factors, max_iter: max_iter, batch_size: batch_size)
+                             n_factors: n_factors, max_iter: max_iter, batch_size: batch_size, tol: tol)
         check_params_string(loss: loss)
+        check_params_boolean(verbose: verbose)
         check_params_numeric_or_nil(n_jobs: n_jobs, random_seed: random_seed)
         check_params_positive(n_factors: n_factors,
                               reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
@@ -194,6 +198,15 @@ module Rumale
 
       def bin_decision_function(x, ex_x, factor, weight)
         ex_x.dot(weight) + 0.5 * (factor.dot(x.transpose)**2 - (factor**2).dot(x.transpose**2)).sum(0)
+      end
+
+      def loss_func(x, ex_x, y, factor, weight)
+        z = bin_decision_function(x, ex_x, factor, weight)
+        if @params[:loss] == 'hinge'
+          z.class.maximum(0.0, 1 - y * z).sum.fdiv(y.shape[0])
+        else
+          Numo::NMath.log(1 + Numo::NMath.exp(-y * z)).sum.fdiv(y.shape[0])
+        end
       end
 
       def hinge_loss_gradient(x, ex_x, y, factor, weight)

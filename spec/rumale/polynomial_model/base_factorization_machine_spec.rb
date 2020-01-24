@@ -11,6 +11,10 @@ RSpec.describe Rumale::PolynomialModel::BaseFactorizationMachine do
     expect { estimator.send(:loss_gradient, x, nil, y, nil, nil) }.to raise_error(NotImplementedError)
   end
 
+  it 'raises NotImplementedError when calls loss_func method.' do
+    expect { estimator.send(:loss_func, x, nil, y, nil, nil) }.to raise_error(NotImplementedError)
+  end
+
   it 'initializes some parameters.', :aggregate_failures do
     expect(estimator.params[:n_factors]).to eq(2)
     expect(estimator.params[:loss]).to be_nil

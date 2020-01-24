@@ -82,6 +82,14 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineClassifier do
         expect(predicted_by_probs).to eq(y)
       end
     end
+
+    context 'when verbose is "true"' do
+      let(:estimator) { described_class.new(verbose: true, max_iter: 5, random_seed: 1) }
+
+      it 'outputs debug messages.', :aggregate_failures do
+        expect { estimator.fit(x, y) }.to output(/FactorizationMachineClassifier/).to_stdout
+      end
+    end
   end
 
   context 'when multiclass classification problem' do

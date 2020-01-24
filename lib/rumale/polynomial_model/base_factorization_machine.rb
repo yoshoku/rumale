@@ -20,15 +20,18 @@ module Rumale
       # @param max_iter [Integer] The maximum number of epochs that indicates
       #   how many times the whole data is given to the training process.
       # @param batch_size [Integer] The size of the mini batches.
+      # @param tol [Float] The tolerance of loss for terminating optimization.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
       # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
       #   If nil is given, the methods do not execute in parallel.
       #   If zero or less is given, it becomes equal to the number of processors.
       #   This parameter is ignored if the Parallel gem is not loaded.
+      # @param verbose [Boolean] The flag indicating whether to output loss during iteration.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: nil, reg_param_linear: 1.0, reg_param_factor: 1.0,
-                     max_iter: 200, batch_size: 50, optimizer: nil, n_jobs: nil, random_seed: nil)
+                     max_iter: 200, batch_size: 50, tol: 1e-4,
+                     optimizer: nil, n_jobs: nil, verbose: false, random_seed: nil)
         @params = {}
         @params[:n_factors] = n_factors
         @params[:loss] = loss unless loss.nil?
@@ -36,9 +39,11 @@ module Rumale
         @params[:reg_param_factor] = reg_param_factor
         @params[:max_iter] = max_iter
         @params[:batch_size] = batch_size
+        @params[:tol] = tol
         @params[:optimizer] = optimizer
         @params[:optimizer] ||= Optimizer::Nadam.new
         @params[:n_jobs] = n_jobs
+        @params[:verbose] = verbose
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @factor_mat = nil
@@ -51,6 +56,7 @@ module Rumale
 
       def partial_fit(x, y)
         # Initialize some variables.
+        class_name = self.class.to_s.split('::').last if @params[:verbose]
         n_samples, n_features = x.shape
         sub_rng = @rng.dup
         weight_vec = Numo::DFloat.zeros(n_features + 1)
@@ -58,7 +64,7 @@ module Rumale
         weight_optimizer = @params[:optimizer].dup
         factor_optimizers = Array.new(@params[:n_factors]) { @params[:optimizer].dup }
         # Start optimization.
-        @params[:max_iter].times do |_t|
+        @params[:max_iter].times do |t|
           sample_ids = [*0...n_samples]
           sample_ids.shuffle!(random: sub_rng)
           until (subset_ids = sample_ids.shift(@params[:batch_size])).empty?
@@ -76,8 +82,15 @@ module Rumale
                                                               factor_gradient(loss_grad, sub_x, factor_mat[n, true]))
             end
           end
+          loss = loss_func(x, expand_feature(x), y, factor_mat, weight_vec)
+          puts "[#{class_name}] Loss after #{t + 1} epochs: #{loss}" if @params[:verbose]
+          break if loss < @params[:tol]
         end
         [factor_mat, *split_weight_vec_bias(weight_vec)]
+      end
+
+      def loss_func(_x, _expanded_x, _y, _factor, _weight)
+        raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
       end
 
       def loss_gradient(_x, _expanded_x, _y, _factor, _weight)
