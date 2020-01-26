@@ -1,3 +1,9 @@
+# 0.17.1
+- Add transformer class for [PolynomialFeatures](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/PolynomialFeatures.html)
+- Add verbose and tol parameter to [FactorizationMachineClassifier](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel/FactorizationMachineClassifier.html)
+  and [FactorizationMachineRegressor](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel/FactorizationMachineRegressor.html)
+- Fix bug that factor elements of Factorization Machines estimators are not learned caused by initializing factors to zero.
+
 # 0.17.0
 ## Breaking changes
 - Fix all linear model estimators to use the new abstract class ([BaseSGD](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/BaseSGD.html)) introduced in version 0.16.1.
