@@ -60,7 +60,7 @@ module Rumale
         n_samples, n_features = x.shape
         sub_rng = @rng.dup
         weight_vec = Numo::DFloat.zeros(n_features + 1)
-        factor_mat = Numo::DFloat.zeros(@params[:n_factors], n_features)
+        factor_mat = Rumale::Utils.rand_normal([@params[:n_factors], n_features], sub_rng)
         weight_optimizer = @params[:optimizer].dup
         factor_optimizers = Array.new(@params[:n_factors]) { @params[:optimizer].dup }
         # Start optimization.
