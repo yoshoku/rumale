@@ -50,22 +50,21 @@ First, let's classify simple xor data.
 require 'rumale'
 
 # Prepare XOR data.
-features = [[0, 0], [0, 1], [1, 0], [1, 1]]
+samples = [[0, 0], [0, 1], [1, 0], [1, 1]]
 labels = [0, 1, 1, 0]
 
 # Train classifier with nearest neighbor rule.
 estimator = Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 1)
-estimator.fit(x, y)
+estimator.fit(samples, labels)
 
 # Predict labels.
-p y
-p estimator.predict(x)
+p labels
+p estimator.predict(samples)
 ```
 
 Execution of the above script result in the following.
 
 ```ruby
-Numo::Int32#shape=[4]
 [0, 1, 1, 0]
 Numo::Int32#shape=[4]
 [0, 1, 1, 0]
