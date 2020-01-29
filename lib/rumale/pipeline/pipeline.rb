@@ -40,7 +40,6 @@ module Rumale
       # @param y [Numo::NArray] (shape: [n_samples, n_outputs]) The target values or labels to be used for fitting the model.
       # @return [Pipeline] The learned pipeline itself.
       def fit(x, y)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x, y, fit: true)
         last_estimator&.fit(trans_x, y)
         self
@@ -52,7 +51,6 @@ module Rumale
       # @param y [Numo::NArray] (shape: [n_samples, n_outputs], default: nil) The target values or labels to be used for fitting the model.
       # @return [Numo::NArray] The predicted results by last estimator.
       def fit_predict(x, y = nil)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x, y, fit: true)
         last_estimator.fit_predict(trans_x)
       end
@@ -63,7 +61,6 @@ module Rumale
       # @param y [Numo::NArray] (shape: [n_samples, n_outputs], default: nil) The target values or labels to be used for fitting the model.
       # @return [Numo::NArray] The predicted results by last estimator.
       def fit_transform(x, y = nil)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x, y, fit: true)
         last_estimator.fit_transform(trans_x, y)
       end
@@ -73,7 +70,6 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
       # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x)
         last_estimator.decision_function(trans_x)
       end
@@ -83,7 +79,6 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to obtain prediction result.
       # @return [Numo::NArray] The predicted results by last estimator.
       def predict(x)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x)
         last_estimator.predict(trans_x)
       end
@@ -93,7 +88,6 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the log-probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted log-probability of each class per sample.
       def predict_log_proba(x)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x)
         last_estimator.predict_log_proba(trans_x)
       end
@@ -103,7 +97,6 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x)
         last_estimator.predict_proba(trans_x)
       end
@@ -113,7 +106,6 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be transformed.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed samples.
       def transform(x)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x)
         last_estimator.nil? ? trans_x : last_estimator.transform(trans_x)
       end
@@ -123,7 +115,6 @@ module Rumale
       # @param z [Numo::DFloat] (shape: [n_samples, n_components]) The transformed samples to be restored into original space.
       # @return [Numo::DFloat] (shape: [n_samples, n_featuress]) The restored samples.
       def inverse_transform(z)
-        z = check_convert_sample_array(z)
         itrans_z = z
         @steps.keys.reverse_each do |name|
           transformer = @steps[name]
@@ -139,24 +130,8 @@ module Rumale
       # @param y [Numo::NArray] (shape: [n_samples, n_outputs]) True target values or labels for testing data.
       # @return [Float] The score of last estimator
       def score(x, y)
-        x = check_convert_sample_array(x)
         trans_x = apply_transforms(x)
         last_estimator.score(trans_x, y)
-      end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about Pipeline.
-      def marshal_dump
-        { params: @params,
-          steps: @steps }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @steps = obj[:steps]
-        nil
       end
 
       private
