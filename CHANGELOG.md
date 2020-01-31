@@ -1,3 +1,7 @@
+# 0.17.2
+- Add transformer class for kernel approximation with [Nystroem](https://yoshoku.github.io/rumale/doc/Rumale/KernelApproximation/Nystroem.html) method.
+- Delete array validation on [Pipeline](https://yoshoku.github.io/rumale/doc/Rumale/Pipeline/Pipeline.html) class considering that array of hash is given to HashVectorizer.
+
 # 0.17.1
 - Add transformer class for [PolynomialFeatures](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/PolynomialFeatures.html)
 - Add verbose and tol parameter to [FactorizationMachineClassifier](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel/FactorizationMachineClassifier.html)
