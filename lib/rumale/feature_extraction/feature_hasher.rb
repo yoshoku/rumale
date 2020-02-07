@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'mmh3'
 require 'rumale/base/base_estimator'
 require 'rumale/base/transformer'
 
@@ -72,7 +73,7 @@ module Rumale
             val = v.is_a?(String) ? 1 : v
             next if val.zero?
 
-            h = murmur_hash(k.to_s)
+            h = Mmh3.hash32(k)
             fid = h.abs % n_features
             val *= h >= 0 ? 1 : -1 if alternate_sign?
             z[i, fid] = val
@@ -90,59 +91,6 @@ module Rumale
 
       def alternate_sign?
         @params[:alternate_sign]
-      end
-
-      # MurmurHash3_32
-      # References:
-      # - https://en.wikipedia.org/wiki/MurmurHash
-      # - https://github.com/aappleby/smhasher
-      def murmur_hash(key_str, seed = 0)
-        keyb = key_str.bytes
-        key_len = keyb.size
-        n_blocks = key_len / 4
-
-        h = seed
-        (0...n_blocks * 4).step(4) do |bstart|
-          k = keyb[bstart + 3] << 24 | keyb[bstart + 2] << 16 | keyb[bstart + 1] << 8 | keyb[bstart + 0]
-          h ^= murmur_scramble(k)
-          h = murmur_rotl(h, 13)
-          h = (h * 5 + 0xe6546b64) & 0xFFFFFFFF
-        end
-
-        tail_id = n_blocks * 4
-        tail_sz = key_len & 3
-
-        k = 0
-        k ^= keyb[tail_id + 2] << 16 if tail_sz >= 3
-        k ^= keyb[tail_id + 1] << 8 if tail_sz >= 2
-        k ^= keyb[tail_id + 0] if tail_sz >= 1
-        h ^= murmur_scramble(k) if tail_sz.positive?
-
-        h = murmur_fmix(h ^ key_len)
-
-        if (h & 0x80000000).zero?
-          h
-        else
-          -((h ^ 0xFFFFFFFF) + 1)
-        end
-      end
-
-      def murmur_rotl(x, r)
-        (x << r | x >> (32 - r)) & 0xFFFFFFFF
-      end
-
-      def murmur_scramble(k)
-        k = (k * 0xcc9e2d51) & 0xFFFFFFFF
-        k = murmur_rotl(k, 15)
-        (k * 0x1b873593) & 0xFFFFFFFF
-      end
-
-      def murmur_fmix(h)
-        h ^= h >> 16
-        h = (h * 0x85ebca6b) & 0xFFFFFFFF
-        h ^= h >> 13
-        h = (h * 0xc2b2ae35) & 0xFFFFFFFF
-        h ^ (h >> 16)
       end
     end
   end
