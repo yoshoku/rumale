@@ -1,3 +1,7 @@
+# 0.17.3
+- Add pipeline class for [FeatureUnion](https://yoshoku.github.io/rumale/doc/Rumale/Pipeline/FeatureUnion.html).
+- Fix to use mmh3 gem for generating hash value on [FeatureHasher](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/FeatureHasher.html).
+
 # 0.17.2
 - Add transformer class for kernel approximation with [Nystroem](https://yoshoku.github.io/rumale/doc/Rumale/KernelApproximation/Nystroem.html) method.
 - Delete array validation on [Pipeline](https://yoshoku.github.io/rumale/doc/Rumale/Pipeline/Pipeline.html) class considering that array of hash is given to HashVectorizer.
