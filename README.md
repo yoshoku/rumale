@@ -18,9 +18,6 @@ K-Means, Gaussian Mixture Model, DBSCAN, Spectral Clustering,
 Mutidimensional Scaling, t-SNE, Principal Component Analysis, Non-negative Matrix Factorization,
 and many other algorithms.
 
-This project was formerly known as "SVMKit".
-If you are using SVMKit, please install Rumale and replace `SVMKit` constants with `Rumale`.
-
 ## Installation
 
 Add this line to your application's Gemfile:
