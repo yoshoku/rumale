@@ -20,7 +20,7 @@ module Rumale
       include Base::BaseEstimator
       include Base::Transformer
 
-      # Returns the principal components.
+      # Returns the transform matrix.
       # @return [Numo::DFloat] (shape: [n_components, n_features])
       attr_reader :components
 
@@ -92,9 +92,11 @@ module Rumale
       # Fit the model with training data, and then transform them with the learned model.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, y)
         x = check_convert_sample_array(x)
+        y = check_convert_label_array(y)
         fit(x, y).transform(x)
       end
 
