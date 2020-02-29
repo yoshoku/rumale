@@ -15,7 +15,9 @@ Logistic Regression, Ridge, Lasso, Factorization Machine,
 Multi-layer Perceptron,
 Naive Bayes, Decision Tree, Gradient Tree Boosting, Random Forest,
 K-Means, Gaussian Mixture Model, DBSCAN, Spectral Clustering,
-Mutidimensional Scaling, t-SNE, Principal Component Analysis, Non-negative Matrix Factorization,
+Mutidimensional Scaling, t-SNE,
+Fisher Discriminant Analysis, Neighbourhood Component Analysis,
+Principal Component Analysis, Non-negative Matrix Factorization,
 and many other algorithms.
 
 ## Installation
