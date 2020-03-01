@@ -1,3 +1,8 @@
+# 0.18.0
+- Add transformer class for [FisherDiscriminantAnalysis](https://yoshoku.github.io/rumale/doc/Rumale/MetricLearning/FisherDiscriminantAnalysis.html).
+- Add transformer class for [NeighbourhoodComponentAnalysis](https://yoshoku.github.io/rumale/doc/Rumale/MetricLearning/NeighbourhoodComponentAnalysis.html).
+- Add [module function](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection.html#train_test_split-class_method) for hold-out validation.
+
 # 0.17.3
 - Add pipeline class for [FeatureUnion](https://yoshoku.github.io/rumale/doc/Rumale/Pipeline/FeatureUnion.html).
 - Fix to use mmh3 gem for generating hash value on [FeatureHasher](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/FeatureHasher.html).
