@@ -54,7 +54,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'coveralls', '~> 0.8'
   spec.add_development_dependency 'numo-linalg', '>= 0.1.4'
   spec.add_development_dependency 'parallel', '>= 1.17.0'
-  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rake-compiler', '~> 1.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
 end
