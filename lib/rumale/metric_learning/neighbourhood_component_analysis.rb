@@ -120,7 +120,7 @@ module Rumale
         dold = 0.0
         optimizer.each do |prm|
           res = prm
-          puts "[NeighbourhoodComponentAnalysis] Loss after #{res[:n_iter]} epochs: #{n_samples - res[:fnc]}" if @params[:verbose]
+          puts "[NeighbourhoodComponentAnalysis] The value of objective function after #{res[:n_iter]} epochs: #{x.shape[0] - res[:fnc]}" if @params[:verbose]
           break if (fold - res[:fnc]).abs <= @params[:tol] && (dold - res[:jcb]).abs <= @params[:tol]
           fold = res[:fnc]
           dold = res[:jcb]
