@@ -126,27 +126,6 @@ module Rumale
         @embedding.dup
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          embedding: @embedding,
-          stress: @stress,
-          n_iter: @n_iter,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @embedding = obj[:embedding]
-        @stress = obj[:stress]
-        @n_iter = obj[:n_iter]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def init_embedding(x)
