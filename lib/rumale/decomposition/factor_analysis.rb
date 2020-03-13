@@ -128,28 +128,6 @@ module Rumale
         @params[:n_components] == 1 ? z[true, 0].dup : z
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          mean: @mean,
-          noise_variance: @noise_variance,
-          components: @components,
-          loglike: @loglike,
-          n_iter: @n_iter }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @mean = obj[:mean]
-        @noise_variance = obj[:noise_variance]
-        @components = obj[:components]
-        @loglike = obj[:loglike]
-        @n_iter = obj[:n_iter]
-      end
-
       private
 
       def log_likelihood(cov_mat, factors, noise_vars)

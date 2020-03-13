@@ -125,25 +125,6 @@ module Rumale
         z.dot(c) + @mean
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          components: @components,
-          mean: @mean,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @components = obj[:components]
-        @mean = obj[:mean]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def orthogonalize(pcvec)

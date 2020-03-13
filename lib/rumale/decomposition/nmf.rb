@@ -89,23 +89,6 @@ module Rumale
         z.dot(@components)
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          components: @components,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @components = obj[:components]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def partial_fit(x, update_comps = true)

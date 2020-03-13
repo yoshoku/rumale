@@ -123,29 +123,6 @@ module Rumale
         x
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          components: @components,
-          mixing: @mixing,
-          n_iter: @n_iter,
-          mean: @mean,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @components = obj[:components]
-        @mixing = obj[:mixing]
-        @n_iter = obj[:n_iter]
-        @mean = obj[:mean]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def whitening(x, n_components)
