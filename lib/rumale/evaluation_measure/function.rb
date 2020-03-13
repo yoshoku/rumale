@@ -10,6 +10,21 @@ module Rumale
 
     # Output a summary of classification performance for each class.
     #
+    # @example
+    #   y_true = Numo::Int32[0, 1, 1, 2, 2, 2, 0]
+    #   y_pred = Numo::Int32[1, 1, 1, 0, 0, 2, 0]
+    #   puts Rumale::EvaluationMeasure.classification_report(y_true, y_pred)
+    #
+    #   #               precision    recall  f1-score   support
+    #   #
+    #   #            0       0.33      0.50      0.40         2
+    #   #            1       0.67      1.00      0.80         2
+    #   #            2       1.00      0.33      0.50         3
+    #   #
+    #   #     accuracy                           0.57         7
+    #   #    macro avg       0.67      0.61      0.57         7
+    #   # weighted avg       0.71      0.57      0.56         7
+    #
     # @param y_true [Numo::Int32] (shape: [n_samples]) The ground truth labels.
     # @param y_pred [Numo::Int32] (shape: [n_samples]) The predicted labels.
     # @param target_name [Nil/Array] The label names.
