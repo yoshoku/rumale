@@ -113,27 +113,6 @@ module Rumale
         linear_term + factor_term
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about FactorizationMachineRegressor.
-      def marshal_dump
-        { params: @params,
-          factor_mat: @factor_mat,
-          weight_vec: @weight_vec,
-          bias_term: @bias_term,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @factor_mat = obj[:factor_mat]
-        @weight_vec = obj[:weight_vec]
-        @bias_term = obj[:bias_term]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def loss_func(x, ex_x, y, factor, weight)

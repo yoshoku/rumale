@@ -171,29 +171,6 @@ module Rumale
         probs
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about FactorizationMachineClassifier.
-      def marshal_dump
-        { params: @params,
-          factor_mat: @factor_mat,
-          weight_vec: @weight_vec,
-          bias_term: @bias_term,
-          classes: @classes,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @factor_mat = obj[:factor_mat]
-        @weight_vec = obj[:weight_vec]
-        @bias_term = obj[:bias_term]
-        @classes = obj[:classes]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def bin_decision_function(x, ex_x, factor, weight)
