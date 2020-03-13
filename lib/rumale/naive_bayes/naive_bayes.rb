@@ -103,29 +103,6 @@ module Rumale
         end
         Numo::DFloat[*log_likelihoods].transpose
       end
-
-      # Dump marshal data.
-      #
-      # @return [Hash] The marshal data about GaussianNB.
-      def marshal_dump
-        { params: @params,
-          classes: @classes,
-          class_priors: @class_priors,
-          means: @means,
-          variances: @variances }
-      end
-
-      # Load marshal data.
-      #
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @classes = obj[:classes]
-        @class_priors = obj[:class_priors]
-        @means = obj[:means]
-        @variances = obj[:variances]
-        nil
-      end
     end
 
     # MultinomialNB is a class that implements Multinomial Naive Bayes classifier.
@@ -192,27 +169,6 @@ module Rumale
           Math.log(@class_priors[l]) + (Numo::DFloat[*bin_x] * Numo::NMath.log(@feature_probs[l, true])).sum(1)
         end
         Numo::DFloat[*log_likelihoods].transpose
-      end
-
-      # Dump marshal data.
-      #
-      # @return [Hash] The marshal data about MultinomialNB.
-      def marshal_dump
-        { params: @params,
-          classes: @classes,
-          class_priors: @class_priors,
-          feature_probs: @feature_probs }
-      end
-
-      # Load marshal data.
-      #
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @classes = obj[:classes]
-        @class_priors = obj[:class_priors]
-        @feature_probs = obj[:feature_probs]
-        nil
       end
     end
 
@@ -288,27 +244,6 @@ module Rumale
             (Numo::DFloat[*not_bin_x] * Numo::NMath.log(1.0 - @feature_probs[l, true])).sum(1))
         end
         Numo::DFloat[*log_likelihoods].transpose
-      end
-
-      # Dump marshal data.
-      #
-      # @return [Hash] The marshal data about BernoulliNB.
-      def marshal_dump
-        { params: @params,
-          classes: @classes,
-          class_priors: @class_priors,
-          feature_probs: @feature_probs }
-      end
-
-      # Load marshal data.
-      #
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @classes = obj[:classes]
-        @class_priors = obj[:class_priors]
-        @feature_probs = obj[:feature_probs]
-        nil
       end
     end
   end
