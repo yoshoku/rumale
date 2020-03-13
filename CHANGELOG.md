@@ -1,3 +1,13 @@
+# 0.18.1
+- Add [module function](https://yoshoku.github.io/rumale/doc/Rumale/EvaluationMeasure.html#classification_report-class_method) for generating summary of classification performance.
+- Delete marshal dump and load methods for documentation.
+  The marshal methods are written in estimator classes for indicating on API documentation that the learned model can be saved with Marshal.
+  Even without these methods, Marshal can save the learned model, so they are deleted sequentially.
+  - [Manifold](https://yoshoku.github.io/rumale/doc/Rumale/Manifold.html)
+  - [NaiveBayes](https://yoshoku.github.io/rumale/doc/Rumale/NaiveBayes.html)
+  - [PolynomialModel](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel.html)
+  - [Decomposition](https://yoshoku.github.io/doc/Rumale/Decomposition.html)
+
 # 0.18.0
 - Add transformer class for [FisherDiscriminantAnalysis](https://yoshoku.github.io/rumale/doc/Rumale/MetricLearning/FisherDiscriminantAnalysis.html).
 - Add transformer class for [NeighbourhoodComponentAnalysis](https://yoshoku.github.io/rumale/doc/Rumale/MetricLearning/NeighbourhoodComponentAnalysis.html).
