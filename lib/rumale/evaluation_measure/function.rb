@@ -8,6 +8,40 @@ module Rumale
   module EvaluationMeasure
     module_function
 
+    # Calculate confusion matrix for evaluating classification performance.
+    #
+    # @example
+    #   y_true = Numo::Int32[2, 0, 2, 2, 0, 1]
+    #   y_pred = Numo::Int32[0, 0, 2, 2, 0, 2]
+    #   p confusion_matrix(y_true, y_pred)
+    #
+    #   # Numo::Int32#shape=[3,3]
+    #   # [[2, 0, 0],
+    #   #  [0, 0, 1],
+    #   #  [1, 0, 2]]
+    #
+    # @param y_true [Numo::Int32] (shape: [n_samples]) The ground truth labels.
+    # @param y_pred [Numo::Int32] (shape: [n_samples]) The predicted labels.
+    # @return [Numo::Int32] (shape: [n_classes, n_classes]) The confusion matrix.
+    def confusion_matrix(y_true, y_pred)
+      y_true = Rumale::Validation.check_convert_label_array(y_true)
+      y_pred = Rumale::Validation.check_convert_label_array(y_pred)
+
+      labels = y_true.to_a.uniq.sort
+      n_labels = labels.size
+
+      conf_mat = Numo::Int32.zeros(n_labels, n_labels)
+
+      labels.each_with_index do |lbl_a, i|
+        y_p = y_pred[y_true.eq(lbl_a)]
+        labels.each_with_index do |lbl_b, j|
+          conf_mat[i, j] = y_p.eq(lbl_b).count
+        end
+      end
+
+      conf_mat
+    end
+
     # Output a summary of classification performance for each class.
     #
     # @example

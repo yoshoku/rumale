@@ -3,6 +3,16 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::EvaluationMeasure do
+  describe '#confusion_matrix' do
+    let(:y_true) { Numo::Int32[0, 1, 2, 2, 2, 0, 1, 2, 0] }
+    let(:y_pred) { Numo::Int32[0, 0, 2, 0, 2, 0, 0, 2, 1] }
+    let(:res) { described_class.confusion_matrix(y_true, y_pred) }
+
+    it 'calculates confusion matrix' do
+      expect(res).to eq(Numo::Int32[[2, 1, 0], [2, 0, 0], [1, 0, 3]])
+    end
+  end
+
   describe '#classification_report' do
     let(:y_true) { Numo::Int32[0, 1, 2, 2, 2, 0, 1, 2] }
     let(:y_pred) { Numo::Int32[0, 0, 2, 0, 2, 0, 0, 2] }
