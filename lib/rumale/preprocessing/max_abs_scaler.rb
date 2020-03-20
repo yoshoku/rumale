@@ -56,21 +56,6 @@ module Rumale
         x = check_convert_sample_array(x)
         x / @max_abs_vec
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about MaxAbsScaler.
-      def marshal_dump
-        { params: @params,
-          max_abs_vec: @max_abs_vec }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @max_abs_vec = obj[:max_abs_vec]
-        nil
-      end
     end
   end
 end

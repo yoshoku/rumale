@@ -66,21 +66,6 @@ module Rumale
         n_samples, = x.shape
         (x - @mean_vec.tile(n_samples, 1)) / @std_vec.tile(n_samples, 1)
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about StandardScaler.
-      def marshal_dump
-        { mean_vec: @mean_vec,
-          std_vec: @std_vec }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @mean_vec = obj[:mean_vec]
-        @std_vec = obj[:std_vec]
-        nil
-      end
     end
   end
 end

@@ -81,25 +81,6 @@ module Rumale
         codes[true, @active_features].dup
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about OneHotEncoder.
-      def marshal_dump
-        { params: @params,
-          n_values: @n_values,
-          active_features: @active_features,
-          feature_indices: @feature_indices }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @n_values = obj[:n_values]
-        @active_features = obj[:active_features]
-        @feature_indices = obj[:feature_indices]
-        nil
-      end
-
       private
 
       def encode(x, indices)

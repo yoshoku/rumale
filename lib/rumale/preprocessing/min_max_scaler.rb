@@ -71,23 +71,6 @@ module Rumale
         nx = (x - @min_vec.tile(n_samples, 1)) / dif_vec.tile(n_samples, 1)
         nx * (@params[:feature_range][1] - @params[:feature_range][0]) + @params[:feature_range][0]
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about MinMaxScaler.
-      def marshal_dump
-        { params: @params,
-          min_vec: @min_vec,
-          max_vec: @max_vec }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @min_vec = obj[:min_vec]
-        @max_vec = obj[:max_vec]
-        nil
-      end
     end
   end
 end

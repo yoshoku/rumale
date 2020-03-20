@@ -74,21 +74,6 @@ module Rumale
         x = check_convert_label_array(x)
         x.to_a.map { |n| @classes[n] }
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about LabelEncoder
-      def marshal_dump
-        { params: @params,
-          classes: @classes }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @classes = obj[:classes]
-        nil
-      end
     end
   end
 end

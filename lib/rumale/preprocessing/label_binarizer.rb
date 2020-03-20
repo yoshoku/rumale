@@ -84,21 +84,6 @@ module Rumale
         n_samples = x.shape[0]
         Array.new(n_samples) { |n| @classes[x[n, true].ne(@params[:neg_label]).where[0]] }
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about LabelBinarizer.
-      def marshal_dump
-        { params: @params,
-          classes: @classes }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @classes = obj[:classes]
-        nil
-      end
     end
   end
 end

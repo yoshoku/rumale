@@ -102,19 +102,6 @@ module Rumale
 
         Numo::NArray.asarray(inv_transformed.transpose)
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about OrdinalEncoder.
-      def marshal_dump
-        { categories: @categories }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @categories = obj[:categories]
-        nil
-      end
     end
   end
 end

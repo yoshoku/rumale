@@ -88,21 +88,6 @@ module Rumale
         end
         transformed
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about BinDiscretizer
-      def marshal_dump
-        { params: @params,
-          feature_steps: @feature_steps }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @feature_steps = obj[:feature_steps]
-        nil
-      end
     end
   end
 end
