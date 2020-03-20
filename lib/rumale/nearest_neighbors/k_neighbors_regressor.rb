@@ -101,23 +101,6 @@ module Rumale
         end
         Numo::DFloat[*predicted_values]
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about KNeighborsRegressor.
-      def marshal_dump
-        { params: @params,
-          prototypes: @prototypes,
-          values: @values }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @prototypes = obj[:prototypes]
-        @values = obj[:values]
-        nil
-      end
     end
   end
 end

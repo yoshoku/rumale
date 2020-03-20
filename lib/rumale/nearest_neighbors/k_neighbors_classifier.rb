@@ -127,25 +127,6 @@ module Rumale
         n_samples = x.shape[0]
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about KNeighborsClassifier.
-      def marshal_dump
-        { params: @params,
-          prototypes: @prototypes,
-          labels: @labels,
-          classes: @classes }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @prototypes = obj[:prototypes]
-        @labels = obj[:labels]
-        @classes = obj[:classes]
-        nil
-      end
     end
   end
 end
