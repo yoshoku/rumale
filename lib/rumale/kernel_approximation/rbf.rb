@@ -97,25 +97,6 @@ module Rumale
         projection = x.dot(@random_mat) + @random_vec.tile(n_samples, 1)
         Numo::NMath.sin(projection) * ((2.0 / @params[:n_components])**0.5)
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about RBF.
-      def marshal_dump
-        { params: @params,
-          random_mat: @random_mat,
-          random_vec: @random_vec,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @random_mat = obj[:random_mat]
-        @random_vec = obj[:random_vec]
-        @rng = obj[:rng]
-        nil
-      end
     end
   end
 end

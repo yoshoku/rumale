@@ -91,27 +91,6 @@ module Rumale
         transformed = centered_kernel_mat.dot(transform_mat)
         @params[:n_components] == 1 ? transformed[true, 0].dup : transformed
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          row_mean: @row_mean,
-          all_mean: @all_mean,
-          alphas: @alphas,
-          lambdas: @lambdas }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @row_mean = obj[:row_mean]
-        @all_mean = obj[:all_mean]
-        @alphas = obj[:alphas]
-        @lambdas = obj[:lambdas]
-        nil
-      end
     end
   end
 end

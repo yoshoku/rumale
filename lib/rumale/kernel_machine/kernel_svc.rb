@@ -161,27 +161,6 @@ module Rumale
         probs
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about KernelSVC.
-      def marshal_dump
-        { params: @params,
-          weight_vec: @weight_vec,
-          prob_param: @prob_param,
-          classes: @classes,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @weight_vec = obj[:weight_vec]
-        @prob_param = obj[:prob_param]
-        @classes = obj[:classes]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def partial_fit(x, bin_y)

@@ -75,21 +75,6 @@ module Rumale
         x = check_convert_sample_array(x)
         x.dot(@weight_vec)
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          weight_vec: @weight_vec }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @weight_vec = obj[:weight_vec]
-        nil
-      end
     end
   end
 end
