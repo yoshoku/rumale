@@ -114,27 +114,6 @@ module Rumale
         fit(x).predict(x)
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          n_iter: @n_iter,
-          weights: @weights,
-          means: @means,
-          covariances: @covariances }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @n_iter = obj[:n_iter]
-        @weights = obj[:weights]
-        @means = obj[:means]
-        @covariances = obj[:covariances]
-        nil
-      end
-
       private
 
       def assign_cluster(memberships)

@@ -70,23 +70,6 @@ module Rumale
         labels
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          core_sample_ids: @core_sample_ids,
-          labels: @labels }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @core_sample_ids = obj[:core_sample_ids]
-        @labels = obj[:labels]
-        nil
-      end
-
       private
 
       def partial_fit(x)

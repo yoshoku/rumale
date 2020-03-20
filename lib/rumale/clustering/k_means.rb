@@ -92,23 +92,6 @@ module Rumale
         predict(x)
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          cluster_centers: @cluster_centers,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @cluster_centers = obj[:cluster_centers]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def assign_cluster(x)

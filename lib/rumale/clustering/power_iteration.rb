@@ -89,25 +89,6 @@ module Rumale
         @labels = line_kmeans_clustering(@embedding)
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          embedding: @embedding,
-          labels: @labels,
-          n_iter: @n_iter }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @embedding = obj[:embedding]
-        @labels = obj[:labels]
-        @n_iter = obj[:n_iter]
-        nil
-      end
-
       private
 
       def embedded_space(affinity_mat, max_iter, tol)

@@ -111,25 +111,6 @@ module Rumale
         end
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          medoid_ids: @medoid_ids,
-          cluster_centers: @cluster_centers,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @medoid_ids = obj[:medoid_ids]
-        @cluster_centers = obj[:cluster_centers]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def assign_cluster(distances_to_medoids)

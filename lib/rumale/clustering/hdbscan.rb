@@ -71,21 +71,6 @@ module Rumale
         @labels = partial_fit(distance_mat)
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          labels: @labels }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @labels = obj[:labels]
-        nil
-      end
-
       private
 
       # @!visibility private
