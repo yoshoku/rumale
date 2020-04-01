@@ -21,11 +21,11 @@ module Rumale
       # Return the prototypes for the nearest neighbor regressor.
       # If the metric is 'precomputed', that returns nil.
       # If the algorithm is 'vptree', that returns Rumale::NearestNeighbors::VPTree.
-      # @return [Numo::DFloat] (shape: [n_testing_samples, n_features])
+      # @return [Numo::DFloat] (shape: [n_training_samples, n_features])
       attr_reader :prototypes
 
       # Return the values of the prototypes
-      # @return [Numo::DFloat] (shape: [n_testing_samples, n_outputs])
+      # @return [Numo::DFloat] (shape: [n_training_samples, n_outputs])
       attr_reader :values
 
       # Create a new regressor with the nearest neighbor rule.
@@ -74,9 +74,9 @@ module Rumale
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_training_samples, n_features]) The samples to predict the values.
+      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_features]) The samples to predict the values.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_testing_samples, n_training_samples]).
-      # @return [Numo::DFloat] (shape: [n_training_samples, n_outputs]) Predicted values per sample.
+      # @return [Numo::DFloat] (shape: [n_testing_samples, n_outputs]) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         if @params[:metric] == 'precomputed' && x.shape[1] != @values.shape[0]
