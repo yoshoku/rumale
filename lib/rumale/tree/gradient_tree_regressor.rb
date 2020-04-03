@@ -118,27 +118,6 @@ module Rumale
         Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about DecisionTreeRegressor
-      def marshal_dump
-        { params: @params,
-          tree: @tree,
-          feature_importances: @feature_importances,
-          leaf_weights: @leaf_weights,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @tree = obj[:tree]
-        @feature_importances = obj[:feature_importances]
-        @leaf_weights = obj[:leaf_weights]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def apply_at_node(node, sample)

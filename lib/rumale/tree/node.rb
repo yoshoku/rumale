@@ -34,37 +34,6 @@ module Rumale
         @feature_id = feature_id
         @threshold = threshold
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about Node
-      def marshal_dump
-        { depth: @depth,
-          impurity: @impurity,
-          n_samples: @n_samples,
-          probs: @probs,
-          leaf: @leaf,
-          leaf_id: @leaf_id,
-          left: @left,
-          right: @right,
-          feature_id: @feature_id,
-          threshold: @threshold }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @depth = obj[:depth]
-        @impurity = obj[:impurity]
-        @n_samples = obj[:n_samples]
-        @probs = obj[:probs]
-        @leaf = obj[:leaf]
-        @leaf_id = obj[:leaf_id]
-        @left = obj[:left]
-        @right = obj[:right]
-        @feature_id = obj[:feature_id]
-        @threshold = obj[:threshold]
-        nil
-      end
     end
   end
 end

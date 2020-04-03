@@ -90,27 +90,6 @@ module Rumale
         @leaf_values.shape[1].nil? ? @leaf_values[apply(x)].dup : @leaf_values[apply(x), true].dup
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about DecisionTreeRegressor
-      def marshal_dump
-        { params: @params,
-          tree: @tree,
-          feature_importances: @feature_importances,
-          leaf_values: @leaf_values,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @tree = obj[:tree]
-        @feature_importances = obj[:feature_importances]
-        @leaf_values = obj[:leaf_values]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def stop_growing?(y)

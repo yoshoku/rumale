@@ -104,29 +104,6 @@ module Rumale
         Numo::DFloat[*(Array.new(x.shape[0]) { |n| predict_proba_at_node(@tree, x[n, true]) })]
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about DecisionTreeClassifier
-      def marshal_dump
-        { params: @params,
-          classes: @classes,
-          tree: @tree,
-          feature_importances: @feature_importances,
-          leaf_labels: @leaf_labels,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @classes = obj[:classes]
-        @tree = obj[:tree]
-        @feature_importances = obj[:feature_importances]
-        @leaf_labels = obj[:leaf_labels]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def predict_proba_at_node(node, sample)

@@ -89,18 +89,6 @@ module Rumale
         super
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about ExtraTreeClassifier
-      def marshal_dump
-        super
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        super
-      end
-
       private
 
       def best_split(features, y, whole_impurity)
