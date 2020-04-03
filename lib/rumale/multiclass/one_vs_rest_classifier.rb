@@ -78,23 +78,6 @@ module Rumale
         decision_values = decision_function(x)
         Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about OneVsRestClassifier.
-      def marshal_dump
-        { params: @params,
-          classes: @classes,
-          estimators: @estimators.map { |e| Marshal.dump(e) } }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @classes = obj[:classes]
-        @estimators = obj[:estimators].map { |e| Marshal.load(e) }
-        nil
-      end
     end
   end
 end
