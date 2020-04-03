@@ -139,25 +139,6 @@ module Rumale
         Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about RandomForestRegressor.
-      def marshal_dump
-        { params: @params,
-          estimators: @estimators,
-          feature_importances: @feature_importances,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @estimators = obj[:estimators]
-        @feature_importances = obj[:feature_importances]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def plant_tree(rnd_seed)

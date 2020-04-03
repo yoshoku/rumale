@@ -125,18 +125,6 @@ module Rumale
         super
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about ExtraTreesClassifier.
-      def marshal_dump
-        super
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        super
-      end
-
       private
 
       def plant_tree(rnd_seed)

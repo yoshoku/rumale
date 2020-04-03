@@ -149,27 +149,6 @@ module Rumale
         Numo::Int32[*leaf_ids].transpose
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about GradientBoostingRegressor.
-      def marshal_dump
-        { params: @params,
-          estimators: @estimators,
-          base_predictions: @base_predictions,
-          feature_importances: @feature_importances,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @estimators = obj[:estimators]
-        @base_predictions = obj[:base_predictions]
-        @feature_importances = obj[:feature_importances]
-        @rng = obj[:rng]
-        nil
-      end
-
       private
 
       def partial_fit(x, y, init_pred)

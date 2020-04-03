@@ -171,27 +171,6 @@ module Rumale
         probs /= Numo::DFloat[sum_probs].transpose
         probs
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about AdaBoostClassifier.
-      def marshal_dump
-        { params: @params,
-          estimators: @estimators,
-          classes: @classes,
-          feature_importances: @feature_importances,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @estimators = obj[:estimators]
-        @classes = obj[:classes]
-        @feature_importances = obj[:feature_importances]
-        @rng = obj[:rng]
-        nil
-      end
     end
   end
 end

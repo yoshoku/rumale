@@ -153,27 +153,6 @@ module Rumale
         sum_weight = @estimator_weights.sum
         predictions / sum_weight
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data about AdaBoostRegressor.
-      def marshal_dump
-        { params: @params,
-          estimators: @estimators,
-          estimator_weights: @estimator_weights,
-          feature_importances: @feature_importances,
-          rng: @rng }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @estimators = obj[:estimators]
-        @estimator_weights = obj[:estimator_weights]
-        @feature_importances = obj[:feature_importances]
-        @rng = obj[:rng]
-        nil
-      end
     end
   end
 end
