@@ -96,43 +96,6 @@ module Rumale
         @curve_mean = @params[:decay] * @curve_mean + (1 - @params[:decay]) * grad_sqr
         @distance_mean = @params[:decay] * @distance_mean + (1 - @params[:decay]) * (@grad_norm_mean / @curve_mean)
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          smth_learning_rate: @smth_learning_rate,
-          smth_momentum: @smth_momentum,
-          grad_norms: @grad_norms,
-          grad_norm_min: @grad_norm_min,
-          grad_norm_max: @grad_norm_max,
-          grad_mean_sqr: @grad_mean_sqr,
-          grad_mean: @grad_mean,
-          grad_var: @grad_var,
-          grad_norm_mean: @grad_norm_mean,
-          curve_mean: @curve_mean,
-          distance_mean: @distance_mean,
-          update: @update }
-      end
-
-      # Load marshal data.
-      # @return [nis]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @smth_learning_rate = obj[:smth_learning_rate]
-        @smth_momentum = obj[:smth_momentum]
-        @grad_norms = obj[:grad_norms]
-        @grad_norm_min = obj[:grad_norm_min]
-        @grad_norm_max = obj[:grad_norm_max]
-        @grad_mean_sqr = obj[:grad_mean_sqr]
-        @grad_mean = obj[:grad_mean]
-        @grad_var = obj[:grad_var]
-        @grad_norm_mean = obj[:grad_norm_mean]
-        @curve_mean = obj[:curve_mean]
-        @distance_mean = obj[:distance_mean]
-        @update = obj[:update]
-        nil
-      end
     end
   end
 end

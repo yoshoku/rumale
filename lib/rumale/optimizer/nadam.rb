@@ -57,27 +57,6 @@ module Rumale
 
         weight - (@params[:learning_rate] / (nm_sec_moment**0.5 + 1e-8)) * ((1 - decay1_curr) * nm_gradient + decay1_next * nm_fst_moment)
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          fst_moment: @fst_moment,
-          sec_moment: @sec_moment,
-          decay1_prod: @decay1_prod,
-          iter: @iter }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @fst_moment = obj[:fst_moment]
-        @sec_moment = obj[:sec_moment]
-        @decay1_prod = obj[:decay1_prod]
-        @iter = obj[:iter]
-        nil
-      end
     end
   end
 end

@@ -38,23 +38,6 @@ module Rumale
         @update = @params[:momentum] * @update - current_learning_rate * gradient
         weight + @update
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          iter: @iter,
-          update: @update }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @iter = obj[:iter]
-        @update = obj[:update]
-        nil
-      end
     end
   end
 end

@@ -34,21 +34,6 @@ module Rumale
         @moment += gradient**2
         weight - (@params[:learning_rate] / (@moment**0.5 + 1.0e-8)) * gradient
       end
-
-      # Dump marshal data.
-      # @return [Hash] The marshal data.
-      def marshal_dump
-        { params: @params,
-          moment: @moment }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @moment = obj[:moment]
-        nil
-      end
     end
   end
 end
