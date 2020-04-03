@@ -152,29 +152,6 @@ module Rumale
         @best_estimator.score(x, y)
       end
 
-      # Dump marshal data.
-      # @return [Hash] The marshal data about GridSearchCV.
-      def marshal_dump
-        { params: @params,
-          cv_results: @cv_results,
-          best_score: @best_score,
-          best_params: @best_params,
-          best_index: @best_index,
-          best_estimator: @best_estimator }
-      end
-
-      # Load marshal data.
-      # @return [nil]
-      def marshal_load(obj)
-        @params = obj[:params]
-        @cv_results = obj[:cv_results]
-        @best_score = obj[:best_score]
-        @best_params = obj[:best_params]
-        @best_index = obj[:best_index]
-        @best_estimator = obj[:best_estimator]
-        nil
-      end
-
       private
 
       def valid_param_grid(grid)
