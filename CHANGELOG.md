@@ -1,3 +1,13 @@
+# 0.18.3
+- Fix API documentation on [KNeighborsRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsRegressor.html)
+- Refector [rbf_kernel](https://yoshoku.github.io/rumale/doc/Rumale/PairwiseMetric.html#rbf_kernel-class_method) method.
+- Delete unneeded marshal dump and load methods. The deletion work is complete.
+  - [Tree](https://yoshoku.github.io/rumale/doc/Rumale/Tree.html),
+  [Ensemble](https://yoshoku.github.io/rumale/doc/Rumale/Ensemble.html),
+  [Optimizer](https://yoshoku.github.io/rumale/doc/Rumale/Optimizer.html),
+  [OneVsRestClassifier](https://yoshoku.github.io/rumale/doc/Rumale/Multiclass/OneVsRestClassifier.html),
+  [GridSearchCV](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/GridSearchCV.html).
+
 # 0.18.2
 - Change file composition of naive bayes classifiers.
 - Add classifier class for [ComplementNaiveBayes](https://yoshoku.github.io/rumale/doc/Rumale/NaiveBayes/ComplementNB.html).
