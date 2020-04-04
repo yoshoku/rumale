@@ -67,8 +67,8 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
       end
 
       it 'has small error from PCA in the case of a linear kernel.', :aggregate_failures do
-        expect(Numo::NMath.sqrt(((z_train - z_train_pca)**2).sum)).to be < 1e-8
-        expect(Numo::NMath.sqrt(((z_test - z_test_pca)**2).sum)).to be < 1e-8
+        expect(Math.sqrt(((z_train - z_train_pca)**2).sum)).to be < 1e-8
+        expect(Math.sqrt(((z_test - z_test_pca)**2).sum)).to be < 1e-8
       end
     end
   end
