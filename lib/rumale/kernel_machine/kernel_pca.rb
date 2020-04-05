@@ -11,7 +11,7 @@ module Rumale
     #   require 'numo/linalg/autoloader'
     #
     #   kernel_mat_train = Rumale::PairwiseMetric::rbf_kernel(training_samples)
-    #   kpca = Rumale::KernelMachine::KernelPCA(n_components: 2)
+    #   kpca = Rumale::KernelMachine::KernelPCA.new(n_components: 2)
     #   mapped_traininig_samples = kpca.fit_transform(kernel_mat_train)
     #
     #   kernel_mat_test = Rumale::PairwiseMetric::rbf_kernel(test_samples, training_samples)
@@ -27,7 +27,7 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_components])
       attr_reader :lambdas
 
-      # Returns the eigenvectros of the centered kernel matrix.
+      # Returns the eigenvectors of the centered kernel matrix.
       # @return [Numo::DFloat] (shape: [n_training_sampes, n_components])
       attr_reader :alphas
 
