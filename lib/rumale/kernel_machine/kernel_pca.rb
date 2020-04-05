@@ -40,6 +40,7 @@ module Rumale
         @params[:n_components] = n_components
         @alphas = nil
         @lambdas = nil
+        @transform_mat = nil
         @row_mean = nil
         @all_mean = nil
       end
@@ -63,6 +64,7 @@ module Rumale
         eig_vals, eig_vecs = Numo::Linalg.eigh(centered_kernel_mat, vals_range: (n_samples - @params[:n_components])...n_samples)
         @alphas = eig_vecs.reverse(1).dup
         @lambdas = eig_vals.reverse.dup
+        @transform_mat = @alphas.dot((1.0 / Numo::NMath.sqrt(@lambdas)).diag)
         self
       end
 
@@ -87,8 +89,7 @@ module Rumale
         x = check_convert_sample_array(x)
         col_mean = x.sum(1) / @row_mean.shape[0]
         centered_kernel_mat = x - col_mean.expand_dims(1) - @row_mean + @all_mean
-        transform_mat = @alphas.dot((1.0 / Numo::NMath.sqrt(@lambdas)).diag)
-        transformed = centered_kernel_mat.dot(transform_mat)
+        transformed = centered_kernel_mat.dot(@transform_mat)
         @params[:n_components] == 1 ? transformed[true, 0].dup : transformed
       end
     end

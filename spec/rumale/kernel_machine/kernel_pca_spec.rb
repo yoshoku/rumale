@@ -48,6 +48,7 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
       expect(transformer.lambdas).to eq(copied.lambdas)
       expect(transformer.instance_variable_get(:@row_mean)).to eq(copied.instance_variable_get(:@row_mean))
       expect(transformer.instance_variable_get(:@all_mean)).to eq(copied.instance_variable_get(:@all_mean))
+      expect(transformer.instance_variable_get(:@transform_mat)).to eq(copied.instance_variable_get(:@transform_mat))
       expect(((z_test - copied.transform(kernel_mat_test))**2).sum).to be < 1.0e-8
     end
 
