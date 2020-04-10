@@ -1,3 +1,8 @@
+# 0.18.4
+- Add transformer class for [KernelFDA](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelFDA.html).
+- Refactor [KernelPCA](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelPCA.html).
+- Fix API documentation.
+
 # 0.18.3
 - Fix API documentation on [KNeighborsRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsRegressor.html)
 - Refector [rbf_kernel](https://yoshoku.github.io/rumale/doc/Rumale/PairwiseMetric.html#rbf_kernel-class_method) method.
