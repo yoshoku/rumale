@@ -13,7 +13,7 @@ module Rumale
     # @example
     #   y_true = Numo::Int32[2, 0, 2, 2, 0, 1]
     #   y_pred = Numo::Int32[0, 0, 2, 2, 0, 2]
-    #   p confusion_matrix(y_true, y_pred)
+    #   p Rumale::EvaluationMeasure.confusion_matrix(y_true, y_pred)
     #
     #   # Numo::Int32#shape=[3,3]
     #   # [[2, 0, 0],
