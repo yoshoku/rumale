@@ -81,7 +81,7 @@ module Rumale
         within_mat = centered_kernel_mat.dot(centered_kernel_mat.transpose) + @params[:reg_param] * Numo::DFloat.eye(n_samples)
 
         # calculate projection matrix.
-        eig_vals, eig_vecs = Numo::Linalg.eigh(
+        _, eig_vecs = Numo::Linalg.eigh(
           between_mat, within_mat,
           vals_range: (n_samples - n_components)...n_samples
         )
