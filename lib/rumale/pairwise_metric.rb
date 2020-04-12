@@ -54,6 +54,28 @@ module Rumale
         err_mat.class.maximum(err_mat, 0)
       end
 
+      # Calculate the pairwise cosine simlarities between x and y.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples_x, n_features])
+      # @param y [Numo::DFloat] (shape: [n_samples_y, n_features])
+      # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
+      def cosine_similarity(x, y = nil)
+        y_not_given = y.nil?
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_sample_array(y) unless y_not_given
+        x_norm = Numo::NMath.sqrt((x**2).sum(1))
+        x_norm[x_norm.eq(0)] = 1
+        x /= x_norm.expand_dims(1)
+        if y_not_given
+          x.dot(x.transpose)
+        else
+          y_norm = Numo::NMath.sqrt((y**2).sum(1))
+          y_norm[y_norm.eq(0)] = 1
+          y /= y_norm.expand_dims(1)
+          x.dot(y.transpose)
+        end
+      end
+
       # Calculate the rbf kernel between x and y.
       #
       # @param x [Numo::DFloat] (shape: [n_samples_x, n_features])
