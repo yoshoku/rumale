@@ -125,12 +125,10 @@ module Rumale
         n_outputs = @estimators.first.is_a?(Array) ? @estimators.size : 1
         if n_outputs > 1
           multivar_predict(x)
+        elsif enable_parallel?
+          parallel_map(@params[:n_estimators]) { |n| @estimators[n].predict(x) }.reduce(&:+) + @base_predictions
         else
-          if enable_parallel?
-            parallel_map(@params[:n_estimators]) { |n| @estimators[n].predict(x) }.reduce(&:+) + @base_predictions
-          else
-            @estimators.map { |tree| tree.predict(x) }.reduce(&:+) + @base_predictions
-          end
+          @estimators.map { |tree| tree.predict(x) }.reduce(&:+) + @base_predictions
         end
       end
 
