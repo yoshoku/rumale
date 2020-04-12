@@ -84,14 +84,12 @@ module Rumale
           else
             node
           end
+        elsif dist + tau >= node.threshold
+          node.right.n_samples < k ? node : search(q, node.right, k, tau)
+        elsif dist - tau <= node.threshold
+          node.left.n_samples < k ? node : search(q, node.left, k, tau)
         else
-          if dist + tau >= node.threshold
-            node.right.n_samples < k ? node : search(q, node.right, k, tau)
-          elsif dist - tau <= node.threshold
-            node.left.n_samples < k ? node : search(q, node.left, k, tau)
-          else
-            node
-          end
+          node
         end
         # :nocov:
       end
