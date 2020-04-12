@@ -42,6 +42,8 @@ module Rumale
       conf_mat
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+
     # Output a summary of classification performance for each class.
     #
     # @example
@@ -69,7 +71,8 @@ module Rumale
       y_true = Rumale::Validation.check_convert_label_array(y_true)
       y_pred = Rumale::Validation.check_convert_label_array(y_pred)
       # calculate each evaluation measure.
-      supports = y_true.bincount
+      classes = y_true.to_a.uniq.sort
+      supports = Numo::Int32.asarray(classes.map { |label| y_true.eq(label).count })
       precisions = Rumale::EvaluationMeasure::PrecisionRecall.precision_each_class(y_true, y_pred)
       recalls = Rumale::EvaluationMeasure::PrecisionRecall.recall_each_class(y_true, y_pred)
       fscores = Rumale::EvaluationMeasure::PrecisionRecall.f_score_each_class(y_true, y_pred)
@@ -83,7 +86,7 @@ module Rumale
       weighted_recall = (Numo::DFloat.cast(recalls) * weights).sum
       weighted_fscore = (Numo::DFloat.cast(fscores) * weights).sum
       # output reults.
-      target_name ||= y_true.to_a.uniq.sort.map(&:to_s)
+      target_name ||= classes.map(&:to_s)
       if output_hash
         res = {}
         target_name.each_with_index do |label, n|
@@ -107,9 +110,8 @@ module Rumale
           fscore: weighted_fscore,
           support: sum_supports
         }
-        res
       else
-        width = ['weighted avg'.size, target_name.map(&:size).max].max
+        width = [12, target_name.map(&:size).max].max # 12 is 'weighted avg'.size
         res = +''
         res << "#{' ' * width}  precision    recall  f1-score   support\n"
         res << "\n"
@@ -136,8 +138,9 @@ module Rumale
         fscore_str = format('%#10s', format('%.2f', weighted_fscore))
         res << format("%##{width}s ", 'weighted avg')
         res << "#{precision_str}#{recall_str}#{fscore_str}#{supports_str}\n"
-        res
       end
+      res
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
 end
