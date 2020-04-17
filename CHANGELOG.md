@@ -1,3 +1,7 @@
+# 0.18.5
+- Add functions for calculation of cosine similarity and distance to [Rumale::PairwiseMetric](https://yoshoku.github.io/rumale/doc/Rumale/PairwiseMetric.html).
+- Refactor some codes with Rubocop.
+
 # 0.18.4
 - Add transformer class for [KernelFDA](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelFDA.html).
 - Refactor [KernelPCA](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelPCA.html).
