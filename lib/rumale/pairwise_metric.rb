@@ -76,6 +76,17 @@ module Rumale
         end
       end
 
+      # Calculate the pairwise cosine distances between x and y.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples_x, n_features])
+      # @param y [Numo::DFloat] (shape: [n_samples_y, n_features])
+      # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
+      def cosine_distance(x, y = nil)
+        dist_mat = 1 - cosine_similarity(x, y)
+        dist_mat[dist_mat.diag_indices] = 0 if y.nil?
+        dist_mat.clip(0, 2)
+      end
+
       # Calculate the rbf kernel between x and y.
       #
       # @param x [Numo::DFloat] (shape: [n_samples_x, n_features])
