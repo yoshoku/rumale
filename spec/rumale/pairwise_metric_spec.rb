@@ -97,7 +97,7 @@ RSpec.describe Rumale::PairwiseMetric do
         n_samples_b.times do |n|
           norm_b = Math.sqrt((samples_b[n, true]**2).sum)
           norm_b = 1.0 if norm_b == 0.0
-          sim_mat_bf[m, n] = (samples_a[m, true].dot(samples_b[n, true])) / (norm_a * norm_b)
+          sim_mat_bf[m, n] = samples_a[m, true].dot(samples_b[n, true]) / (norm_a * norm_b)
         end
       end
       sim_mat = described_class.cosine_similarity(samples_a, samples_b)
@@ -115,7 +115,7 @@ RSpec.describe Rumale::PairwiseMetric do
         n_samples_a.times do |n|
           norm_an = Math.sqrt((samples_a[n, true]**2).sum)
           norm_an = 1.0 if norm_an == 0.0
-          sim_mat_bf[m, n] = (samples_a[m, true].dot(samples_a[n, true])) / (norm_am * norm_an)
+          sim_mat_bf[m, n] = samples_a[m, true].dot(samples_a[n, true]) / (norm_am * norm_an)
         end
       end
       sim_mat = described_class.cosine_similarity(samples_a)
@@ -135,7 +135,7 @@ RSpec.describe Rumale::PairwiseMetric do
         n_samples_b.times do |n|
           norm_b = Math.sqrt((samples_b[n, true]**2).sum)
           norm_b = 1.0 if norm_b == 0.0
-          dist_mat_bf[m, n] = 1 - (samples_a[m, true].dot(samples_b[n, true])) / (norm_a * norm_b)
+          dist_mat_bf[m, n] = 1 - samples_a[m, true].dot(samples_b[n, true]) / (norm_a * norm_b)
         end
       end
       dist_mat = described_class.cosine_distance(samples_a, samples_b)
@@ -153,7 +153,7 @@ RSpec.describe Rumale::PairwiseMetric do
         n_samples_a.times do |n|
           norm_an = Math.sqrt((samples_a[n, true]**2).sum)
           norm_an = 1.0 if norm_an == 0.0
-          dist_mat_bf[m, n] = 1 - (samples_a[m, true].dot(samples_a[n, true])) / (norm_am * norm_an)
+          dist_mat_bf[m, n] = 1 - samples_a[m, true].dot(samples_a[n, true]) / (norm_am * norm_an)
         end
       end
       dist_mat = described_class.cosine_similarity(samples_a)
