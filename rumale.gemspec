@@ -44,9 +44,7 @@ Gem::Specification.new do |spec|
     'bug_tracker_uri' => 'https://github.com/yoshoku/rumale/issues'
   }
 
-  spec.required_ruby_version = '>= 2.3'
-
   spec.add_runtime_dependency 'numo-narray', '>= 0.9.1'
-  spec.add_runtime_dependency 'mopti', '~> 0.1'
-  spec.add_runtime_dependency 'mmh3', '~> 0.1'
+  spec.add_runtime_dependency 'mopti', '>= 0.1.0'
+  spec.add_runtime_dependency 'mmh3', '>= 0.1.0'
 end
