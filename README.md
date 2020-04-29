@@ -200,7 +200,7 @@ $ ruby pipeline.rb
 5-CV mean accuracy: 99.6 %
 ```
 
-## Speeding up
+## Speed up
 
 ### Numo::Linalg
 Loading the [Numo::Linalg](https://github.com/ruby-numo/numo-linalg) allows to perform matrix product of Numo::NArray using BLAS libraries.
@@ -258,13 +258,6 @@ When -1 is given to n_jobs parameter, all processors are used.
 ```ruby
 estimator = Rumale::Ensemble::RandomForestClassifier.new(n_jobs: -1, random_seed: 1)
 ```
-
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
