@@ -1,3 +1,7 @@
+# 0.18.6
+- Fix some configuration files.
+- Update API documentation.
+
 # 0.18.5
 - Add functions for calculation of cosine similarity and distance to [Rumale::PairwiseMetric](https://yoshoku.github.io/rumale/doc/Rumale/PairwiseMetric.html).
 - Refactor some codes with Rubocop.
