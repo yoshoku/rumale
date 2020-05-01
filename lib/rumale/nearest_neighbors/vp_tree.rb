@@ -11,7 +11,7 @@ module Rumale
     # This class is used internally for k-nearest neighbor estimators.
     #
     # *Reference*
-    # P N. Yianilos, "Data Structures and Algorithms for Nearest Neighbor Search in General Metric Spaces," Proc. SODA'93, pp. 311--321, 1993.
+    # - Yianilos, P N., "Data Structures and Algorithms for Nearest Neighbor Search in General Metric Spaces," Proc. SODA'93, pp. 311--321, 1993.
     class VPTree
       include Validation
       include Base::BaseEstimator

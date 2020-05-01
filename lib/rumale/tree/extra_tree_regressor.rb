@@ -14,7 +14,7 @@ module Rumale
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # - P. Geurts, D. Ernst, and L. Wehenkel, "Extremely randomized trees," Machine Learning, vol. 63 (1), pp. 3--42, 2006.
+    # - Geurts, P., Ernst, D., and Wehenkel, L., "Extremely randomized trees," Machine Learning, vol. 63 (1), pp. 3--42, 2006.
     class ExtraTreeRegressor < DecisionTreeRegressor
       # Return the importance for each feature.
       # @return [Numo::DFloat] (size: n_features)

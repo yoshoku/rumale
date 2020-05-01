@@ -12,7 +12,7 @@ module Rumale
     #   puts evaluator.score(x, predicted)
     #
     # *Reference*
-    # - D L. Davies and D W. Bouldin, "A Cluster Separation Measure," IEEE Trans. Pattern Analysis and Machine Intelligence, Vol. PAMI-1, No. 2, pp. 224--227, 1979.
+    # - Davies, D L., and Bouldin, D W., "A Cluster Separation Measure," IEEE Trans. Pattern Analysis and Machine Intelligence, Vol. PAMI-1, No. 2, pp. 224--227, 1979.
     class DaviesBouldinScore
       include Base::Evaluator
 

@@ -12,7 +12,7 @@ module Rumale
     #   puts evaluator.score(x, predicted)
     #
     # *Reference*
-    # - P J. Rousseuw, "Silhouettes: A graphical aid to the interpretation and validation of cluster analysis," Journal of Computational and Applied Mathematics, Vol. 20, pp. 53--65, 1987.
+    # - Rousseuw, P J., "Silhouettes: A graphical aid to the interpretation and validation of cluster analysis," Journal of Computational and Applied Mathematics, Vol. 20, pp. 53--65, 1987.
     class SilhouetteScore
       include Base::Evaluator
 

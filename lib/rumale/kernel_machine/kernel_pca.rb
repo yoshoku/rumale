@@ -18,7 +18,7 @@ module Rumale
     #   mapped_test_samples = kpca.transform(kernel_mat_test)
     #
     # *Reference*
-    # - B. Scholkopf, A. Smola, and K-R. Muller, "Nonlinear Component Analysis as a Kernel Eigenvalue Problem," Neural Computation, Vol. 10 (5), pp. 1299--1319, 1998.
+    # - Scholkopf, B., Smola, A., and Muller, K-R., "Nonlinear Component Analysis as a Kernel Eigenvalue Problem," Neural Computation, Vol. 10 (5), pp. 1299--1319, 1998.
     class KernelPCA
       include Base::BaseEstimator
       include Base::Transformer

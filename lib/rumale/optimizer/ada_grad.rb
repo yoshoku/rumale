@@ -8,7 +8,7 @@ module Rumale
     # AdaGrad is a class that implements AdaGrad optimizer.
     #
     # *Reference*
-    # - J. Duchi, E Hazan, and Y. Singer, "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization," J. Machine Learning Research, vol. 12, pp. 2121--2159, 2011.
+    # - Duchi, J., Hazan, E., and Singer, Y., "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization," J. Machine Learning Research, vol. 12, pp. 2121--2159, 2011.
     class AdaGrad
       include Base::BaseEstimator
       include Validation

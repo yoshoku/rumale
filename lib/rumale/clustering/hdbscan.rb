@@ -15,9 +15,9 @@ module Rumale
     #   cluster_labels = analyzer.fit_predict(samples)
     #
     # *Reference*
-    # - R J. G. B. Campello, D. Moulavi, A. Zimek, and J. Sander, "Hierarchical Density Estimates for Data Clustering, Visualization, and Outlier Detection," TKDD, Vol. 10 (1), pp. 5:1--5:51, 2015.
-    # - R J. G. B. Campello, D. Moulavi, and J Sander, "Density-Based Clustering Based on Hierarchical Density Estimates," Proc. PAKDD'13, pp. 160--172, 2013.
-    # - L. Lelis and J. Sander, "Semi-Supervised Density-Based Clustering," Proc. ICDM'09, pp. 842--847, 2009.
+    # - Campello, R J. G. B., Moulavi, D., Zimek, A., and Sander, J., "Hierarchical Density Estimates for Data Clustering, Visualization, and Outlier Detection," TKDD, Vol. 10 (1), pp. 5:1--5:51, 2015.
+    # - Campello, R J. G. B., Moulavi, D., and Sander, J., "Density-Based Clustering Based on Hierarchical Density Estimates," Proc. PAKDD'13, pp. 160--172, 2013.
+    # - Lelis, L., and Sander, J., "Semi-Supervised Density-Based Clustering," Proc. ICDM'09, pp. 842--847, 2009.
     class HDBSCAN
       include Base::BaseEstimator
       include Base::ClusterAnalyzer

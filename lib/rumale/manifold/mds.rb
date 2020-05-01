@@ -16,7 +16,7 @@ module Rumale
     #   representations = mds.fit_transform(samples)
     #
     # *Reference*
-    # - P J. F. Groenen and M. van de Velden, "Multidimensional Scaling by Majorization: A Review," J. of Statistical Software, Vol. 73 (8), 2016.
+    # - Groenen, P J. F.  and van de Velden, M., "Multidimensional Scaling by Majorization: A Review," J. of Statistical Software, Vol. 73 (8), 2016.
     class MDS
       include Base::BaseEstimator
       include Base::Transformer

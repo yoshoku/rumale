@@ -9,7 +9,7 @@ module Rumale
     # Nadam is a class that implements Nadam optimizer.
     #
     # *Reference*
-    # - T. Dozat, "Incorporating Nesterov Momentum into Adam," Tech. Repo. Stanford University, 2015.
+    # - Dozat, T., "Incorporating Nesterov Momentum into Adam," Tech. Repo. Stanford University, 2015.
     class Nadam
       include Base::BaseEstimator
       include Validation

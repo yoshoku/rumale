@@ -13,8 +13,8 @@ module Rumale
     #   cluster_labels = analyzer.fit_predict(samples)
     #
     # *Reference*
-    # - L. Ertoz, M. Steinbach, and V. Kumar, "Finding Clusters of Different Sizes, Shapes, and Densities in Noisy, High Dimensional Data," Proc. SDM'03, pp. 47--58, 2003.
-    # - M E. Houle, H-P. Kriegel, P. Kroger, E. Schubert, and A. Zimek, "Can Shared-Neighbor Distances Defeat the Curse of Dimensionality?," Proc. SSDBM'10, pp. 482--500, 2010.
+    # - Ertoz, L., Steinbach, M., and Kumar, V., "Finding Clusters of Different Sizes, Shapes, and Densities in Noisy, High Dimensional Data," Proc. SDM'03, pp. 47--58, 2003.
+    # - Houle, M E., Kriegel, H-P., Kroger, P., Schubert, E., and Zimek, A., "Can Shared-Neighbor Distances Defeat the Curse of Dimensionality?," Proc. SSDBM'10, pp. 482--500, 2010.
     class SNN < DBSCAN
       # Create a new cluster analyzer with Shared Neareset Neighbor method.
       #

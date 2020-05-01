@@ -13,7 +13,7 @@ module Rumale
     #   representaion = decomposer.fit_transform(samples)
     #
     # *Reference*
-    # - W. Xu, X. Liu, and Y.Gong, "Document Clustering Based On Non-negative Matrix Factorization," Proc. SIGIR' 03 , pp. 267--273, 2003.
+    # - Xu, W., Liu, X., and Gong, Y., "Document Clustering Based On Non-negative Matrix Factorization," Proc. SIGIR' 03 , pp. 267--273, 2003.
     class NMF
       include Base::BaseEstimator
       include Base::Transformer

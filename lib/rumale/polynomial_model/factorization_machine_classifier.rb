@@ -19,8 +19,8 @@ module Rumale
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # - S. Rendle, "Factorization Machines with libFM," ACM TIST, vol. 3 (3), pp. 57:1--57:22, 2012.
-    # - S. Rendle, "Factorization Machines," Proc. ICDM'10, pp. 995--1000, 2010.
+    # - Rendle, S., "Factorization Machines with libFM," ACM TIST, vol. 3 (3), pp. 57:1--57:22, 2012.
+    # - Rendle, S., "Factorization Machines," Proc. ICDM'10, pp. 995--1000, 2010.
     class FactorizationMachineClassifier < BaseFactorizationMachine
       include Base::Classifier
 

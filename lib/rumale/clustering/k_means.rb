@@ -15,7 +15,7 @@ module Rumale
     #   cluster_labels = analyzer.fit_predict(samples)
     #
     # *Reference*
-    # - D. Arthur and S. Vassilvitskii, "k-means++: the advantages of careful seeding," Proc. SODA'07, pp. 1027--1035, 2007.
+    # - Arthur, D., and Vassilvitskii, S., "k-means++: the advantages of careful seeding," Proc. SODA'07, pp. 1027--1035, 2007.
     class KMeans
       include Base::BaseEstimator
       include Base::ClusterAnalyzer

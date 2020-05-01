@@ -14,7 +14,7 @@ module Rumale
     #   representaion = decomposer.fit_transform(samples)
     #
     # *Reference*
-    # - D. Barber, "Bayesian Reasoning and Machine Learning," Cambridge University Press, 2012.
+    # - Barber, D., "Bayesian Reasoning and Machine Learning," Cambridge University Press, 2012.
     class FactorAnalysis
       include Base::BaseEstimator
       include Base::Transformer

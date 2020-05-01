@@ -18,7 +18,7 @@ module Rumale
     #   representaion = decomposer.fit_transform(samples)
     #
     # *Reference*
-    # - A. Sharma and K K. Paliwal, "Fast principal component analysis using fixed-point algorithm," Pattern Recognition Letters, 28, pp. 1151--1155, 2007.
+    # - Sharma, A., and Paliwal, K K., "Fast principal component analysis using fixed-point algorithm," Pattern Recognition Letters, 28, pp. 1151--1155, 2007.
     class PCA
       include Base::BaseEstimator
       include Base::Transformer

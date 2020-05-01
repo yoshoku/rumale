@@ -16,7 +16,7 @@ module Rumale
     #   new_testing_samples = transformer.transform(testing_samples)
     #
     # *Reference*
-    # 1. T. Yang, Y. Li, M. Mahdavi, R. Jin, and Z-H. Zhou, "Nystrom Method vs Random Fourier Features: A Theoretical and Empirical Comparison," Advances in NIPS'12, Vol. 1, pp. 476--484, 2012.
+    # - Yang, T., Li, Y., Mahdavi, M., Jin, R., and Zhou, Z-H., "Nystrom Method vs Random Fourier Features: A Theoretical and Empirical Comparison," Advances in NIPS'12, Vol. 1, pp. 476--484, 2012.
     class Nystroem
       include Base::BaseEstimator
       include Base::Transformer

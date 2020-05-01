@@ -19,8 +19,8 @@ module Rumale
     #   representations = tsne.fit_transform(samples)
     #
     # *Reference*
-    # - L. van der Maaten and G. Hinton, "Visualizing data using t-SNE," J. of Machine Learning Research, vol. 9, pp. 2579--2605, 2008.
-    # - Z. Yang, I. King, Z. Xu, and E. Oja, "Heavy-Tailed Symmetric Stochastic Neighbor Embedding," Proc. NIPS'09, pp. 2169--2177, 2009.
+    # - van der Maaten, L., and Hinton, G., "Visualizing data using t-SNE," J. of Machine Learning Research, vol. 9, pp. 2579--2605, 2008.
+    # - Yang, Z., King, I., Xu, Z., and Oja, E., "Heavy-Tailed Symmetric Stochastic Neighbor Embedding," Proc. NIPS'09, pp. 2169--2177, 2009.
     class TSNE
       include Base::BaseEstimator
       include Base::Transformer

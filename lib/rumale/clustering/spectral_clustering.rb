@@ -16,8 +16,8 @@ module Rumale
     #   cluster_labels = analyzer.fit_predict(samples)
     #
     # *Reference*
-    # - A Y. Ng, M I. Jordan, and Y. Weiss, "On Spectral Clustering: Analyssi and an algorithm," Proc. NIPS'01, pp. 849--856, 2001.
-    # - U von Luxburg, "A tutorial on spectral clustering," Statistics and Computing, Vol. 17 (4), pp. 395--416, 2007.
+    # - Ng, A Y., Jordan, M I., and Weiss, Y., "On Spectral Clustering: Analyssi and an algorithm," Proc. NIPS'01, pp. 849--856, 2001.
+    # - von Luxburg, U., "A tutorial on spectral clustering," Statistics and Computing, Vol. 17 (4), pp. 395--416, 2007.
     class SpectralClustering
       include Base::BaseEstimator
       include Base::ClusterAnalyzer

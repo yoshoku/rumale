@@ -21,7 +21,7 @@ module Rumale
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # - L. Bottou, "Large-Scale Machine Learning with Stochastic Gradient Descent," Proc. COMPSTAT'10, pp. 177--186, 2010.
+    # - Bottou, L., "Large-Scale Machine Learning with Stochastic Gradient Descent," Proc. COMPSTAT'10, pp. 177--186, 2010.
     class LinearRegression < BaseSGD
       include Base::Regressor
 

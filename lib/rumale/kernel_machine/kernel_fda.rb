@@ -18,7 +18,7 @@ module Rumale
     #   mapped_test_samples = kfda.transform(kernel_mat_test)
     #
     # *Reference*
-    # - Baudat, G. and Anouar, F., "Generalized Discriminant Analysis using a Kernel Approach," Neural Computation, vol. 12, pp. 2385--2404, 2000.
+    # - Baudat, G., and Anouar, F., "Generalized Discriminant Analysis using a Kernel Approach," Neural Computation, vol. 12, pp. 2385--2404, 2000.
     class KernelFDA
       include Base::BaseEstimator
       include Base::Transformer

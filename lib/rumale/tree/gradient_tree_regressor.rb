@@ -10,11 +10,10 @@ module Rumale
     # GradientTreeRegressor is a class that implements decision tree for regression with exact gredy algorithm.
     # This class is used internally for estimators with gradient tree boosting.
     #
-    # *reference*
-    # - J H. Friedman, "Greedy Function Approximation: A Gradient Boosting Machine," Annals of Statistics, 29 (5), pp. 1189--1232, 2001.
-    # - J H. Friedman, "Stochastic Gradient Boosting," Computational Statistics and Data Analysis, 38 (4), pp. 367--378, 2002.
-    # - T. Chen and C. Guestrin, "XGBoost: A Scalable Tree Boosting System,"  Proc. KDD'16, pp. 785--794, 2016.
-    #
+    # *Reference*
+    # - Friedman, J H., "Greedy Function Approximation: A Gradient Boosting Machine," Annals of Statistics, 29 (5), pp. 1189--1232, 2001.
+    # - Friedman, J H., "Stochastic Gradient Boosting," Computational Statistics and Data Analysis, 38 (4), pp. 367--378, 2002.
+    # - Chen, T., and Guestrin, C., "XGBoost: A Scalable Tree Boosting System,"  Proc. KDD'16, pp. 785--794, 2016.
     class GradientTreeRegressor
       include Base::BaseEstimator
       include Base::Regressor

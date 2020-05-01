@@ -8,7 +8,7 @@ module Rumale
     # YellowFin is a class that implements YellowFin optimizer.
     #
     # *Reference*
-    # - J. Zhang and I. Mitliagkas, "YellowFin and the Art of Momentum Tuning," CoRR abs/1706.03471, 2017.
+    # - Zhang, J., and Mitliagkas, I., "YellowFin and the Art of Momentum Tuning," CoRR abs/1706.03471, 2017.
     class YellowFin
       include Base::BaseEstimator
       include Validation

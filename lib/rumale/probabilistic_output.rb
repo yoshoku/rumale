@@ -12,8 +12,8 @@ module Rumale
   #   probs = 1 / (Numo::NMath.exp(params[0] * df + params[1]) + 1)
   #
   # *Reference*
-  # 1. J C. Platt, "Probabilistic Outputs for Support Vector Machines and Comparisons to Regularized Likelihood Methods," Adv. Large Margin Classifiers, pp. 61--74, 2000.
-  # 1. H-T Lin, C-J Lin, and R C.Weng, "A Note on Platt's Probabilistic Outputs for Support Vector Machines," J. Machine Learning, Vol. 63 (3), pp. 267--276, 2007.
+  # - Platt, J C., "Probabilistic Outputs for Support Vector Machines and Comparisons to Regularized Likelihood Methods," Adv. Large Margin Classifiers, pp. 61--74, 2000.
+  # - Lin, H-T., Lin, C-J., and Weng, R C., "A Note on Platt's Probabilistic Outputs for Support Vector Machines," J. Machine Learning, Vol. 63 (3), pp. 267--276, 2007.
   module ProbabilisticOutput
     class << self
       # Fit the probabilistic model for binary SVM outputs.

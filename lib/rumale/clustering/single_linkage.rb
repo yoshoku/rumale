@@ -15,7 +15,7 @@ module Rumale
     #   cluster_labels = analyzer.fit_predict(samples)
     #
     # *Reference*
-    # - D. Mullner, "Modern hierarchical, agglomerative clustering algorithms," arXiv:1109.2378, 2011.
+    # - Mullner, D., "Modern hierarchical, agglomerative clustering algorithms," arXiv:1109.2378, 2011.
     class SingleLinkage
       include Base::BaseEstimator
       include Base::ClusterAnalyzer

@@ -24,7 +24,7 @@ module Rumale
     #   results = estimator.predict(testing_kernel_matrix)
     #
     # *Reference*
-    # 1. S. Shalev-Shwartz, Y. Singer, N. Srebro, and A. Cotter, "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Mathematical Programming, vol. 127 (1), pp. 3--30, 2011.
+    # - Shalev-Shwartz, S., Singer, Y., Srebro, N., and Cotter, A., "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Mathematical Programming, vol. 127 (1), pp. 3--30, 2011.
     class KernelSVC
       include Base::BaseEstimator
       include Base::Classifier

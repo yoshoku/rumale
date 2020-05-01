@@ -13,7 +13,7 @@ module Rumale
     #   cluster_labels = analyzer.fit_predict(samples)
     #
     # *Reference*
-    # - F. Lin and W W. Cohen, "Power Iteration Clustering," Proc. ICML'10, pp. 655--662, 2010.
+    # - Lin, F., and Cohen, W W., "Power Iteration Clustering," Proc. ICML'10, pp. 655--662, 2010.
     class PowerIteration
       include Base::BaseEstimator
       include Base::ClusterAnalyzer

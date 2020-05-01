@@ -15,7 +15,7 @@ module Rumale
     #   new_testing_samples = transformer.transform(testing_samples)
     #
     # *Refernce*:
-    # 1. A. Rahimi and B. Recht, "Random Features for Large-Scale Kernel Machines," Proc. NIPS'07, pp.1177--1184, 2007.
+    # - Rahimi, A., and Recht, B., "Random Features for Large-Scale Kernel Machines," Proc. NIPS'07, pp.1177--1184, 2007.
     class RBF
       include Base::BaseEstimator
       include Base::Transformer

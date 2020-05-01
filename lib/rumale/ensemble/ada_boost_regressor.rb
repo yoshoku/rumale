@@ -18,8 +18,7 @@ module Rumale
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # - D. L. Shrestha and D. P. Solomatine, "Experiments with AdaBoost.RT, an Improved Boosting Scheme for Regression," Neural Computation 18 (7), pp. 1678--1710, 2006.
-    #
+    # - Shrestha, D. L., and Solomatine, D. P., "Experiments with AdaBoost.RT, an Improved Boosting Scheme for Regression," Neural Computation 18 (7), pp. 1678--1710, 2006.
     class AdaBoostRegressor
       include Base::BaseEstimator
       include Base::Regressor

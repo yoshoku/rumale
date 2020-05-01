@@ -19,7 +19,7 @@ module Rumale
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # - J. Zhu, S. Rosset, H. Zou, and T.Hashie, "Multi-class AdaBoost," Technical Report No. 430, Department of Statistics, University of Michigan, 2005.
+    # - Zhu, J., Rosset, S., Zou, H., and Hashie, T., "Multi-class AdaBoost," Technical Report No. 430, Department of Statistics, University of Michigan, 2005.
     class AdaBoostClassifier
       include Base::BaseEstimator
       include Base::Classifier

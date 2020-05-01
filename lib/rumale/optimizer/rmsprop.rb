@@ -8,8 +8,8 @@ module Rumale
     # RMSProp is a class that implements RMSProp optimizer.
     #
     # *Reference*
-    # - I. Sutskever, J. Martens, G. Dahl, and G. Hinton, "On the importance of initialization and momentum in deep learning," Proc. ICML' 13, pp. 1139--1147, 2013.
-    # - G. Hinton, N. Srivastava, and K. Swersky, "Lecture 6e rmsprop," Neural Networks for Machine Learning, 2012.
+    # - Sutskever, I., Martens, J., Dahl, G., and Hinton, G., "On the importance of initialization and momentum in deep learning," Proc. ICML' 13, pp. 1139--1147, 2013.
+    # - Hinton, G., Srivastava, N., and Swersky, K., "Lecture 6e rmsprop," Neural Networks for Machine Learning, 2012.
     class RMSProp
       include Base::BaseEstimator
       include Validation

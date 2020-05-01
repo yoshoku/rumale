@@ -14,8 +14,8 @@ module Rumale
     #   source_data = transformer.fit_transform(observed_data)
     #
     # *Reference*
-    # - A. Hyvarinen "Fast and Robust Fixed-Point Algorithms for Independent Component Analysis," IEEE Trans. Neural Networks, Vol. 10 (3), pp. 626--634, 1999.
-    # - A. Hyvarinen and E. Oja, "Independent Component Analysis: Algorithms and Applications," Neural Networks, Vol. 13 (4-5), pp. 411--430, 2000.
+    # - Hyvarinen, A., "Fast and Robust Fixed-Point Algorithms for Independent Component Analysis," IEEE Trans. Neural Networks, Vol. 10 (3), pp. 626--634, 1999.
+    # - Hyvarinen, A., and Oja, E., "Independent Component Analysis: Algorithms and Applications," Neural Networks, Vol. 13 (4-5), pp. 411--430, 2000.
     class FastICA
       include Base::BaseEstimator
       include Base::Transformer

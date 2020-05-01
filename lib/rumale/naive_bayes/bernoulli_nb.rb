@@ -12,7 +12,7 @@ module Rumale
     #   results = estimator.predict(testing_samples)
     #
     # *Reference*
-    # - C D. Manning, P. Raghavan, and H. Schutze, "Introduction to Information Retrieval," Cambridge University Press., 2008.
+    # - Manning, C D., Raghavan, P., and Schutze, H., "Introduction to Information Retrieval," Cambridge University Press., 2008.
     class BernoulliNB < BaseNaiveBayes
       # Return the class labels.
       # @return [Numo::Int32] (size: n_classes)

@@ -11,7 +11,7 @@ module Rumale
     #   puts evaluator.score(x, predicted)
     #
     # *Reference*
-    # - T. Calinski and J. Harabsz, "A dendrite method for cluster analysis," Communication in Statistics, Vol. 3 (1), pp. 1--27, 1972.
+    # - Calinski, T., and Harabsz, J., "A dendrite method for cluster analysis," Communication in Statistics, Vol. 3 (1), pp. 1--27, 1972.
     class CalinskiHarabaszScore
       include Base::Evaluator
 

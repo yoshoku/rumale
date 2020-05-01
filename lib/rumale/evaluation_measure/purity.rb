@@ -11,7 +11,7 @@ module Rumale
     #   puts evaluator.score(ground_truth, predicted)
     #
     # *Reference*
-    # - C D. Manning, P. Raghavan, and H. Schutze, "Introduction to Information Retrieval," Cambridge University Press., 2008.
+    # - Manning, C D., Raghavan, P., and Schutze, H., "Introduction to Information Retrieval," Cambridge University Press., 2008.
     class Purity
       include Base::Evaluator
 

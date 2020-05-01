@@ -11,7 +11,7 @@ module Rumale
       # Adam is a class that implements Adam optimizer.
       #
       # *Reference*
-      # - D P. Kingma and J. Ba, "Adam: A Method for Stochastic Optimization," Proc. ICLR'15, 2015.
+      # - Kingma, D P., and Ba, J., "Adam: A Method for Stochastic Optimization," Proc. ICLR'15, 2015.
       class Adam
         include Base::BaseEstimator
 
