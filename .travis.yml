@@ -1,6 +1,6 @@
-os: linux
-dist: xenial
+---
 language: ruby
+cache: bundler
 rvm:
   - '2.4'
   - '2.5'
@@ -14,4 +14,4 @@ addons:
       - liblapacke-dev
 
 before_install:
-  - gem install bundler -v 2.0.2
+  - gem install bundler -v 2.1.4
