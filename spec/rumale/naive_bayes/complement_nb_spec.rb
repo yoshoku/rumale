@@ -55,7 +55,7 @@ RSpec.describe Rumale::NaiveBayes::ComplementNB do
     it_behaves_like 'classification'
   end
 
-  context 'when classifier is defined without normalization' do
+  context 'when classifier is defined with normalization' do
     let(:norm) { true }
 
     it_behaves_like 'classification'

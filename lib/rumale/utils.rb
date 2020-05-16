@@ -13,6 +13,7 @@ module Rumale
         chosen = 0
         probs.each_with_index do |p, idx|
           break (chosen = idx) if target <= p
+
           target -= p
         end
         chosen

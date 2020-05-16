@@ -41,6 +41,7 @@ module Rumale
       def initialize(degree: 2)
         check_params_numeric(degree: degree)
         raise ArgumentError, 'Expect the value of degree parameter greater than or eqaul to 1.' if degree < 1
+
         @params = {}
         @params[:degree] = degree
         @n_output_features = nil

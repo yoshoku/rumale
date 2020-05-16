@@ -30,6 +30,7 @@ module Rumale
       def initialize(reg_param: 1.0)
         raise TypeError, 'Expect class of reg_param to be Float or Numo::DFloat' unless reg_param.is_a?(Float) || reg_param.is_a?(Numo::DFloat)
         raise ArgumentError, 'Expect reg_param array to be 1-D arrray' if reg_param.is_a?(Numo::DFloat) && reg_param.shape.size != 1
+
         @params = {}
         @params[:reg_param] = reg_param
         @weight_vec = nil
@@ -55,6 +56,7 @@ module Rumale
           @weight_vec = Numo::Linalg.solve(reg_kernel_mat, y, driver: 'sym')
         else
           raise ArgumentError, 'Expect y and reg_param to have the same number of elements.' unless y.shape[1] == @params[:reg_param].shape[0]
+
           n_outputs = y.shape[1]
           @weight_vec = Numo::DFloat.zeros(n_samples, n_outputs)
           n_outputs.times do |n|

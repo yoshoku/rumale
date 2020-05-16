@@ -93,6 +93,7 @@ module Rumale
         check_sample_tvalue_size(x, y)
         # Check target values
         raise ArgumentError, 'Expect target value vector to be 1-D arrray' unless y.shape.size == 1
+
         # Initialize some variables.
         n_samples, n_features = x.shape
         @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
@@ -117,6 +118,7 @@ module Rumale
           abs_err = ((p - y) / y).abs
           err = observation_weights[abs_err.gt(@params[:threshold])].sum
           break if err <= 0.0
+
           # Calculate weight.
           beta = err**@params[:exponent]
           weight = Math.log(1.fdiv(beta))
@@ -131,6 +133,7 @@ module Rumale
           observation_weights = observation_weights.clip(1.0e-15, nil)
           sum_observation_weights = observation_weights.sum
           break if sum_observation_weights.zero?
+
           observation_weights /= sum_observation_weights
         end
         @estimator_weights = Numo::DFloat.asarray(@estimator_weights)

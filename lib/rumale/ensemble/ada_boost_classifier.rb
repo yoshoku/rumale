@@ -105,6 +105,7 @@ module Rumale
           # Fit classfier.
           ids = Rumale::Utils.choice_ids(n_samples, observation_weights, sub_rng)
           break if y[ids].to_a.uniq.size != n_classes
+
           tree = Tree::DecisionTreeClassifier.new(
             criterion: @params[:criterion], max_depth: @params[:max_depth],
             max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
@@ -120,12 +121,14 @@ module Rumale
           @estimators.push(tree)
           @feature_importances += tree.feature_importances
           break if error.zero?
+
           # Update observation weights.
           log_proba = Numo::NMath.log(proba)
           observation_weights *= Numo::NMath.exp(-1.0 * (n_classes - 1).fdiv(n_classes) * (y_codes * log_proba).sum(1))
           observation_weights = observation_weights.clip(1.0e-15, nil)
           sum_observation_weights = observation_weights.sum
           break if sum_observation_weights.zero?
+
           observation_weights /= sum_observation_weights
         end
         @feature_importances /= @feature_importances.sum

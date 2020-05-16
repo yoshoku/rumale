@@ -90,9 +90,11 @@ module Rumale
           @components = (sqrt_noise_variance.diag.dot(u) * scaler).transpose.dup
           @noise_variance = Numo::DFloat.maximum(sample_vars - @components.transpose.dot(@components).diagonal, 1e-12)
           next if @params[:tol].nil?
+
           new_loglike = log_likelihood(cov_mat, @components, @noise_variance)
           @loglike.push(new_loglike)
           break if (old_loglike - new_loglike).abs <= @params[:tol]
+
           old_loglike = new_loglike
         end
 

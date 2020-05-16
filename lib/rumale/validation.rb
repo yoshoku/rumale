@@ -9,6 +9,7 @@ module Rumale
     def check_convert_sample_array(x)
       x = Numo::DFloat.cast(x) unless x.is_a?(Numo::DFloat)
       raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.ndim == 2
+
       x
     end
 
@@ -16,6 +17,7 @@ module Rumale
     def check_convert_label_array(y)
       y = Numo::Int32.cast(y) unless y.is_a?(Numo::Int32)
       raise ArgumentError, 'Expect label vector to be 1-D arrray' unless y.ndim == 1
+
       y
     end
 
@@ -29,6 +31,7 @@ module Rumale
     def check_sample_array(x)
       raise TypeError, 'Expect class of sample matrix to be Numo::DFloat' unless x.is_a?(Numo::DFloat)
       raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.ndim == 2
+
       nil
     end
 
@@ -36,24 +39,28 @@ module Rumale
     def check_label_array(y)
       raise TypeError, 'Expect class of label vector to be Numo::Int32' unless y.is_a?(Numo::Int32)
       raise ArgumentError, 'Expect label vector to be 1-D arrray' unless y.ndim == 1
+
       nil
     end
 
     # @!visibility private
     def check_tvalue_array(y)
       raise TypeError, 'Expect class of target value vector to be Numo::DFloat' unless y.is_a?(Numo::DFloat)
+
       nil
     end
 
     # @!visibility private
     def check_sample_label_size(x, y)
       raise ArgumentError, 'Expect to have the same number of samples for sample matrix and label vector' unless x.shape[0] == y.shape[0]
+
       nil
     end
 
     # @!visibility private
     def check_sample_tvalue_size(x, y)
       raise ArgumentError, 'Expect to have the same number of samples for sample matrix and target value vector' unless x.shape[0] == y.shape[0]
+
       nil
     end
 

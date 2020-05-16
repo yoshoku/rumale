@@ -106,6 +106,7 @@ module Rumale
         rand_id = [*0...n_samples].sample(@params[:n_clusters], random: sub_rng)
         @cluster_centers = x[rand_id, true].dup
         return unless @params[:init] == 'k-means++'
+
         # k-means++ initialize
         (1...@params[:n_clusters]).each do |n|
           distance_matrix = PairwiseMetric.euclidean_distance(x, @cluster_centers[0...n, true])

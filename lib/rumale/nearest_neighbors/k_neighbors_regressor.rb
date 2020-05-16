@@ -61,6 +61,7 @@ module Rumale
         y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         @prototypes = if @params[:metric] == 'euclidean'
                         if @params[:algorithm] == 'vptree'
                           VPTree.new(x)
@@ -82,6 +83,7 @@ module Rumale
         if @params[:metric] == 'precomputed' && x.shape[1] != @values.shape[0]
           raise ArgumentError, 'Expect the size input matrix to be n_testing_samples-by-n_training_samples.'
         end
+
         # Initialize some variables.
         n_samples = x.shape[0]
         n_prototypes, n_outputs = @values.shape

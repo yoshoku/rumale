@@ -110,6 +110,7 @@ module Rumale
         return node.probs if node.leaf
         return predict_proba_at_node(node.left, sample) if node.right.nil?
         return predict_proba_at_node(node.right, sample) if node.left.nil?
+
         if sample[node.feature_id] <= node.threshold
           predict_proba_at_node(node.left, sample)
         else

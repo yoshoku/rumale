@@ -54,6 +54,7 @@ module Rumale
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         partial_fit(x)
         self
       end
@@ -66,6 +67,7 @@ module Rumale
       def fit_predict(x)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         partial_fit(x)
         labels
       end
@@ -80,6 +82,7 @@ module Rumale
         @labels = Numo::Int32.zeros(n_samples) - 2
         n_samples.times do |query_id|
           next if @labels[query_id] >= -1
+
           cluster_id += 1 if expand_cluster(metric_mat, query_id, cluster_id)
         end
         @core_sample_ids = Numo::Int32[*@core_sample_ids.flatten]
@@ -102,6 +105,7 @@ module Rumale
           while (m = target_ids.shift)
             neighbor_ids = region_query(metric_mat[m, true])
             next if neighbor_ids.size < @params[:min_samples]
+
             neighbor_ids.each do |n|
               target_ids.push(n) if @labels[n] < -1
               @labels[n] = cluster_id if @labels[n] <= -1

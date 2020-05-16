@@ -65,6 +65,7 @@ module Rumale
         Rumale::Validation.check_params_numeric_or_nil(noise: noise, random_seed: random_seed)
         raise ArgumentError, 'The number of samples must be more than 2.' if n_samples <= 1
         raise RangeError, 'The interval of factor is (0, 1).' if factor <= 0 || factor >= 1
+
         # initialize some variables.
         rs = random_seed
         rs ||= srand
@@ -101,6 +102,7 @@ module Rumale
         Rumale::Validation.check_params_boolean(shuffle: shuffle)
         Rumale::Validation.check_params_numeric_or_nil(noise: noise, random_seed: random_seed)
         raise ArgumentError, 'The number of samples must be more than 2.' if n_samples <= 1
+
         # initialize some variables.
         rs = random_seed
         rs ||= srand

@@ -51,6 +51,7 @@ module Rumale
       def fit(x, _y = nil)
         x = Numo::Int32.cast(x) unless x.is_a?(Numo::Int32)
         raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
+
         @n_values = x.max(0) + 1
         @feature_indices = Numo::Int32.hstack([[0], @n_values]).cumsum
         @active_features = encode(x, @feature_indices).sum(0).ne(0).where
@@ -67,6 +68,7 @@ module Rumale
         x = Numo::Int32.cast(x) unless x.is_a?(Numo::Int32)
         raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
         raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
+
         fit(x).transform(x)
       end
 
@@ -77,6 +79,7 @@ module Rumale
       def transform(x)
         x = Numo::Int32.cast(x) unless x.is_a?(Numo::Int32)
         raise ArgumentError, 'Expected the input samples only consists of non-negative integer values.' if x.lt(0).any?
+
         codes = encode(x, @feature_indices)
         codes[true, @active_features].dup
       end

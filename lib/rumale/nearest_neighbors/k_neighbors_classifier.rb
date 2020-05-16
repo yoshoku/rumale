@@ -67,6 +67,7 @@ module Rumale
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         @prototypes = if @params[:metric] == 'euclidean'
                         if @params[:algorithm] == 'vptree'
                           VPTree.new(x)

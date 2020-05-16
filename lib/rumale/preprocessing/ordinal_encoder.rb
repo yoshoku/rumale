@@ -51,6 +51,7 @@ module Rumale
       def fit(x, _y = nil)
         raise TypeError, 'Expect class of sample matrix to be Numo::NArray' unless x.is_a?(Numo::NArray)
         raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.shape.size == 2
+
         n_features = x.shape[1]
         @categories = Array.new(n_features) { |n| x[true, n].to_a.uniq.sort }
         self
@@ -65,6 +66,7 @@ module Rumale
       def fit_transform(x, _y = nil)
         raise TypeError, 'Expect class of sample matrix to be Numo::NArray' unless x.is_a?(Numo::NArray)
         raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.shape.size == 2
+
         fit(x).transform(x)
       end
 

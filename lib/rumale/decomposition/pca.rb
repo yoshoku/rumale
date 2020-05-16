@@ -87,6 +87,7 @@ module Rumale
             @params[:max_iter].times do
               updated = orthogonalize(covariance_mat.dot(comp_vec))
               break if (updated.dot(comp_vec) - 1).abs < @params[:tol]
+
               comp_vec = updated
             end
             @components = @components.nil? ? comp_vec : Numo::NArray.vstack([@components, comp_vec])

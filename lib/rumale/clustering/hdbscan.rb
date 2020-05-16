@@ -55,6 +55,7 @@ module Rumale
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         fit_predict(x)
         self
       end
@@ -67,6 +68,7 @@ module Rumale
       def fit_predict(x)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         distance_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x)
         @labels = partial_fit(distance_mat)
       end

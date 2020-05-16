@@ -86,6 +86,7 @@ module Rumale
           new_memberships = calc_memberships(x, @weights, @means, @covariances, @params[:covariance_type])
           error = (memberships - new_memberships).abs.max
           break if error <= @params[:tol]
+
           memberships = new_memberships.dup
         end
         self
@@ -209,6 +210,7 @@ module Rumale
 
       def check_enable_linalg(method_name)
         return unless @params[:covariance_type] == 'full' && !enable_linalg?
+
         raise "GaussianMixture##{method_name} requires Numo::Linalg when covariance_type is 'full' but that is not loaded."
       end
     end

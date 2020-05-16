@@ -64,6 +64,7 @@ module Rumale
         y_score = Numo::DFloat.cast(y_score) unless y_score.is_a?(Numo::DFloat)
         raise ArgumentError, 'Expect y_true to be 1-D arrray.' unless y_true.shape[1].nil?
         raise ArgumentError, 'Expect y_score to be 1-D arrray.' unless y_score.shape[1].nil?
+
         labels = y_true.to_a.uniq
         if pos_label.nil?
           raise ArgumentError, 'y_true must be binary labels or pos_label must be specified if y_true is multi-label' unless labels.size == 2
@@ -96,8 +97,10 @@ module Rumale
         y = Numo::NArray.asarray(y) unless y.is_a?(Numo::NArray)
         raise ArgumentError, 'Expect x to be 1-D arrray.' unless x.shape[1].nil?
         raise ArgumentError, 'Expect y to be 1-D arrray.' unless y.shape[1].nil?
+
         n_samples = [x.shape[0], y.shape[0]].min
         raise ArgumentError, 'At least two points are required to calculate area under curve.' if n_samples < 2
+
         (0...n_samples).to_a.each_cons(2).map { |i, j| 0.5 * (x[i] - x[j]).abs * (y[i] + y[j]) }.reduce(&:+)
       end
 

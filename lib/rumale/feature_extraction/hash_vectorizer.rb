@@ -71,6 +71,7 @@ module Rumale
           f.each do |k, v|
             k = "#{k}#{separator}#{v}".to_sym if v.is_a?(String)
             next if @vocabulary.key?(k)
+
             @feature_names.push(k)
             @vocabulary[k] = @vocabulary.size
           end

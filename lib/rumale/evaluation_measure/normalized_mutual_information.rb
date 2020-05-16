@@ -28,8 +28,10 @@ module Rumale
         # calculate entropies.
         class_entropy = entropy(y_true)
         return 0.0 if class_entropy.zero?
+
         cluster_entropy = entropy(y_pred)
         return 0.0 if cluster_entropy.zero?
+
         # calculate mutual information.
         mi = MutualInformation.new
         mi.score(y_true, y_pred) / Math.sqrt(class_entropy * cluster_entropy)

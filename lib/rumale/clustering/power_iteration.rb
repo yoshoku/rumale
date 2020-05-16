@@ -71,6 +71,7 @@ module Rumale
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
+
         fit_predict(x)
         self
       end
@@ -107,6 +108,7 @@ module Rumale
           new_embedded_line /= new_embedded_line.abs.sum
           new_error = (new_embedded_line - embedded_line).abs
           break if (new_error - error).abs.max <= tol
+
           embedded_line = new_embedded_line
           error = new_error
         end

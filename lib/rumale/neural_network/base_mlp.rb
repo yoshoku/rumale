@@ -233,6 +233,7 @@ module Rumale
             # calc loss function
             loss, dout = loss_func.call(out, sub_y)
             break if loss < @params[:tol]
+
             # backward
             backward.call(dout)
           end

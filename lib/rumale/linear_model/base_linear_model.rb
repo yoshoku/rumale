@@ -68,6 +68,7 @@ module Rumale
           # Update weight.
           loss_gradient = calc_loss_gradient(sub_samples, sub_targets, weight)
           next if loss_gradient.ne(0.0).count.zero?
+
           weight = calc_new_weight(optimizer, sub_samples, weight, loss_gradient)
         end
         split_weight(weight)

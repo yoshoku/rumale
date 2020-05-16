@@ -64,6 +64,7 @@ module Rumale
       def fit(x, _not_used = nil)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         # initialize some varibales.
         distance_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x)
         init_cluster_centers(distance_mat)
@@ -76,6 +77,7 @@ module Rumale
           end
           new_error = distance_mat[true, @medoid_ids].mean
           break if (error - new_error).abs <= @params[:tol]
+
           error = new_error
         end
         @cluster_centers = x[@medoid_ids, true].dup if @params[:metric] == 'euclidean'
@@ -93,6 +95,7 @@ module Rumale
         if @params[:metric] == 'precomputed' && distance_mat.shape[1] != @medoid_ids.size
           raise ArgumentError, 'Expect the size input matrix to be n_samples-by-n_clusters.'
         end
+
         assign_cluster(distance_mat)
       end
 
@@ -123,6 +126,7 @@ module Rumale
         sub_rng = @rng.dup
         @medoid_ids = Numo::Int32.asarray([*0...n_samples].sample(@params[:n_clusters], random: sub_rng))
         return unless @params[:init] == 'k-means++'
+
         # k-means++ initialize
         (1...@params[:n_clusters]).each do |n|
           distances = distance_mat[true, @medoid_ids[0...n]]

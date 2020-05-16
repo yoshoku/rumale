@@ -162,6 +162,7 @@ module Rumale
       def load_linalg?
         return false if defined?(Numo::Linalg).nil?
         return false if Numo::Linalg::VERSION < '0.1.4'
+
         true
       end
     end

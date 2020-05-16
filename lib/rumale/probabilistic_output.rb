@@ -47,6 +47,7 @@ module Rumale
           hess_mat = hessian_matrix(probs, df, sigma)
           break if grad_vec.abs.lt(1e-5).count == 2
           break if (old_grad_vec - grad_vec).abs.sum < 1e-5
+
           old_grad_vec = grad_vec
           # Calculate Newton directions.
           dirs_vec = directions(grad_vec, hess_mat)
@@ -58,6 +59,7 @@ module Rumale
             new_beta = beta + stepsize * dirs_vec[1]
             new_err = error_function(target_probs, df, new_alpha, new_beta)
             next unless new_err < err + 0.0001 * stepsize * grad_dir
+
             alpha = new_alpha
             beta = new_beta
             err = new_err

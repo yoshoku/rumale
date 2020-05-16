@@ -47,6 +47,7 @@ module Rumale
           cls_pos = y.eq(labels[n])
           sz_cluster = cls_pos.count
           next unless sz_cluster > 1
+
           cls_dist_mat = dist_mat[cls_pos, cls_pos].dup
           cls_dist_mat[cls_dist_mat.diag_indices] = 0.0
           intra_dists[cls_pos] = cls_dist_mat.sum(0) / (sz_cluster - 1)
@@ -57,6 +58,7 @@ module Rumale
           cls_pos = y.eq(labels[m])
           n_clusters.times do |n|
             next if m == n
+
             not_cls_pos = y.eq(labels[n])
             inter_dists[cls_pos] = Numo::DFloat.minimum(
               inter_dists[cls_pos], dist_mat[cls_pos, not_cls_pos].mean(1)

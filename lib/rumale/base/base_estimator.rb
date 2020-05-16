@@ -25,6 +25,7 @@ module Rumale
 
       def enable_parallel?
         return false if @params[:n_jobs].nil?
+
         if defined?(Parallel).nil?
           warn('If you want to use parallel option, you should install and load Parallel in advance.')
           return false
@@ -34,6 +35,7 @@ module Rumale
 
       def n_processes
         return 1 unless enable_parallel?
+
         @params[:n_jobs] <= 0 ? Parallel.processor_count : @params[:n_jobs]
       end
 

@@ -119,6 +119,7 @@ module Rumale
         @steps.keys.reverse_each do |name|
           transformer = @steps[name]
           next if transformer.nil?
+
           itrans_z = transformer.inverse_transform(itrans_z)
         end
         itrans_z
@@ -140,6 +141,7 @@ module Rumale
         steps.keys[0...-1].each do |name|
           transformer = steps[name]
           next if transformer.nil? || %i[fit transform].all? { |m| transformer.class.method_defined?(m) }
+
           raise TypeError,
                 'Class of intermediate step in pipeline should be implemented fit and transform methods: ' \
                 "#{name} => #{transformer.class}"
@@ -158,6 +160,7 @@ module Rumale
         @steps.keys[0...-1].each do |name|
           transformer = @steps[name]
           next if transformer.nil?
+
           transformer.fit(trans_x, y) if fit
           trans_x = transformer.transform(trans_x)
         end

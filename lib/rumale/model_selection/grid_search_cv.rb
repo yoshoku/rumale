@@ -156,6 +156,7 @@ module Rumale
 
       def valid_param_grid(grid)
         raise TypeError, 'Expect class of param_grid to be Hash or Array' unless grid.is_a?(Hash) || grid.is_a?(Array)
+
         grid = [grid] if grid.is_a?(Hash)
         grid.each do |h|
           raise TypeError, 'Expect class of elements in param_grid to be Hash' unless h.is_a?(Hash)

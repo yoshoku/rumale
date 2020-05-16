@@ -14,6 +14,7 @@ module Rumale
         y_true.sort.to_a.uniq.map do |label|
           target_positions = y_pred.eq(label)
           next 0.0 if y_pred[target_positions].empty?
+
           n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
           n_false_positives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           n_true_positives / (n_true_positives + n_false_positives)
@@ -25,6 +26,7 @@ module Rumale
         y_true.sort.to_a.uniq.map do |label|
           target_positions = y_true.eq(label)
           next 0.0 if y_pred[target_positions].empty?
+
           n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
           n_false_negatives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           n_true_positives / (n_true_positives + n_false_negatives)
@@ -35,6 +37,7 @@ module Rumale
       def f_score_each_class(y_true, y_pred)
         precision_each_class(y_true, y_pred).zip(recall_each_class(y_true, y_pred)).map do |p, r|
           next 0.0 if p.zero? && r.zero?
+
           (2.0 * p * r) / (p + r)
         end
       end
@@ -44,6 +47,7 @@ module Rumale
         evaluated_values = y_true.sort.to_a.uniq.map do |label|
           target_positions = y_pred.eq(label)
           next [0.0, 0.0] if y_pred[target_positions].empty?
+
           n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
           n_false_positives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           [n_true_positives, n_true_positives + n_false_positives]
@@ -57,6 +61,7 @@ module Rumale
         evaluated_values = y_true.sort.to_a.uniq.map do |label|
           target_positions = y_true.eq(label)
           next 0.0 if y_pred[target_positions].empty?
+
           n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
           n_false_negatives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           [n_true_positives, n_true_positives + n_false_negatives]

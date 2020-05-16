@@ -75,6 +75,7 @@ module Rumale
             # Calculate gradients for loss function.
             loss_grad = loss_gradient(sub_x, ex_sub_x, sub_y, factor_mat, weight_vec)
             next if loss_grad.ne(0.0).count.zero?
+
             # Update each parameter.
             weight_vec = weight_optimizer.call(weight_vec, weight_gradient(loss_grad, ex_sub_x, weight_vec))
             @params[:n_factors].times do |n|

@@ -89,6 +89,7 @@ module Rumale
       def fit(x, _not_used = nil)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         # initialize some varibales.
         @n_iter = 0
         distance_mat = @params[:metric] == 'precomputed' ? x**2 : Rumale::PairwiseMetric.squared_error(x)
@@ -99,6 +100,7 @@ module Rumale
         one_vec = Numo::DFloat.ones(x.shape[0]).expand_dims(1)
         @params[:max_iter].times do |t|
           break if terminate?(hi_prob_mat, lo_prob_mat)
+
           a = hi_prob_mat * lo_prob_mat
           b = lo_prob_mat * lo_prob_mat
           y = (b.dot(one_vec) * y + (a - b).dot(y)) / a.dot(one_vec)
@@ -170,6 +172,7 @@ module Rumale
           entropy, probs = gaussian_distributed_probability_vector(sample_id, distance_vec, beta)
           diff_entropy = entropy - init_entropy
           break if diff_entropy.abs <= 1e-5
+
           if diff_entropy.positive?
             betamin = beta
             if betamax == Float::MAX
@@ -211,6 +214,7 @@ module Rumale
 
       def terminate?(p, q)
         return false if @params[:tol].nil?
+
         cost(p, q) <= @params[:tol]
       end
     end

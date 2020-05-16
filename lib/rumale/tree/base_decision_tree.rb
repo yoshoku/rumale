@@ -53,6 +53,7 @@ module Rumale
         return node.leaf_id if node.leaf
         return apply_at_node(node.left, sample) if node.right.nil?
         return apply_at_node(node.right, sample) if node.left.nil?
+
         if sample[node.feature_id] <= node.threshold
           apply_at_node(node.left, sample)
         else
@@ -138,6 +139,7 @@ module Rumale
       def eval_importance_at_node(node)
         return nil if node.leaf
         return nil if node.left.nil? || node.right.nil?
+
         gain = node.n_samples * node.impurity -
                node.left.n_samples * node.left.impurity -
                node.right.n_samples * node.right.impurity

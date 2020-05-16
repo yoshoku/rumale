@@ -123,6 +123,7 @@ module Rumale
         return node.leaf_id if node.leaf
         return apply_at_node(node.left, sample) if node.right.nil?
         return apply_at_node(node.right, sample) if node.left.nil?
+
         if sample[node.feature_id] <= node.threshold
           apply_at_node(node.left, sample)
         else

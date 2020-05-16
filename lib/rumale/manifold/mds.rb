@@ -83,6 +83,7 @@ module Rumale
       def fit(x, _not_used = nil)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
+
         # initialize some varibales.
         n_samples = x.shape[0]
         hi_distance_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x)
@@ -142,6 +143,7 @@ module Rumale
       def terminate?(old_stress, new_stress)
         return false if @params[:tol].nil?
         return false if old_stress.nil?
+
         (old_stress - new_stress).abs <= @params[:tol]
       end
 
