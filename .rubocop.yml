@@ -3,7 +3,7 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.5
   DisplayCopNames: true
   DisplayStyleGuide: true
   Exclude:
@@ -70,14 +70,26 @@ Naming/MethodParameterName:
 Naming/ConstantName:
   Enabled: false
 
+Style/ExponentialNotation:
+  Enabled: true
+
 Style/FormatStringToken:
   Enabled: false
 
 Style/NumericLiterals:
   Enabled: false
 
+Style/SlicingWithRange:
+  Enabled: true
+
 Layout/EmptyLineAfterGuardClause:
-  Enabled: false
+  Enabled: true
+
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
 
 RSpec/MultipleExpectations:
   Enabled: false
