@@ -86,7 +86,8 @@ module Rumale
       weighted_recall = (Numo::DFloat.cast(recalls) * weights).sum
       weighted_fscore = (Numo::DFloat.cast(fscores) * weights).sum
       # output reults.
-      target_name ||= classes.map(&:to_s)
+      target_name ||= classes
+      target_name.map!(&:to_s)
       if output_hash
         res = {}
         target_name.each_with_index do |label, n|

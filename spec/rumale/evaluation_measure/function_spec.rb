@@ -52,7 +52,9 @@ RSpec.describe Rumale::EvaluationMeasure do
     end
 
     context 'when target_name is given' do
-      let(:target_name) { %w[a b c] }
+      let(:y_gt) { %w[10 15 20 20 20 10 15 20] }
+      let(:y_true) { Rumale::Preprocessing::LabelEncoder.new.fit_transform(y_gt) }
+      let(:target_name) { y_gt.uniq.sort }
 
       context 'when output_hash sets to true' do
         let(:output_hash) { true }
@@ -70,9 +72,9 @@ RSpec.describe Rumale::EvaluationMeasure do
             <<~RESULT
                             precision    recall  f1-score   support
 
-                         a       0.40      1.00      0.57         2
-                         b       0.00      0.00      0.00         2
-                         c       1.00      0.75      0.86         4
+                        10       0.40      1.00      0.57         2
+                        15       0.00      0.00      0.00         2
+                        20       1.00      0.75      0.86         4
 
                   accuracy                           0.62         8
                  macro avg       0.47      0.58      0.48         8
