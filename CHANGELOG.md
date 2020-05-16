@@ -1,3 +1,30 @@
+# 0.19.0
+- Change mmh3 and mopti gem to non-runtime dependent library.
+  - The mmh3 gem is used in [FeatureHasher](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/FeatureHasher.html).
+  You only need to require mmh3 gem when using FeatureHasher.
+    ```ruby
+    require 'mmh3'
+    require 'rumale'
+
+    encoder = Rumale::FeatureExtraction::FeatureHasher.new
+    ```
+  - The mopti gem is used in [NeighbourhoodComponentAnalysis](https://yoshoku.github.io/rumale/doc/Rumale/MetricLearning/NeighbourhoodComponentAnalysis.html).
+  You only need to require mopti gem when using NeighbourhoodComponentAnalysis.
+    ```ruby
+    require 'mopti'
+    require 'rumale'
+
+    transformer = Rumale::MetricLearning::NeighbourhoodComponentAnalysis.new
+    ```
+- Change the default value of solver parameter on [PCA](https://yoshoku.github.io/rumale/doc/Rumale/Decomposition/PCA.html) to 'auto'.
+If Numo::Linalg is loaded, 'evd' is selected for the solver, otherwise 'fpt' is selected.
+- Deprecate [PolynomialModel](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel.html), [Optimizer](https://yoshoku.github.io/rumale/doc/Rumale/Optimizer.html), and the estimators contained in them. They will be deleted in version 0.20.0.
+  - Many machine learning libraries do not contain factorization machine algorithms, they are provided by another compatible library.
+  In addition, there are no plans to implement estimators in PolynomialModel.
+  Thus, the author decided to deprecate PolynomialModel.
+  - Currently, the Optimizer classes are only used by PolynomialModel estimators.
+  Therefore, they have been deprecated together with PolynomialModel.
+
 # 0.18.7
 - Fix to convert target_name to string array in [classification_report method](https://yoshoku.github.io/rumale/doc/Rumale/EvaluationMeasure.html#classification_report-class_method).
 - Refactor some codes with Rubocop.
