@@ -86,11 +86,11 @@ RSpec.describe Rumale::MetricLearning::NeighbourhoodComponentAnalysis do
       Object.send(:remove_const, :Mopti)
     end
 
+    after { Mopti = @backup }
+
     it 'raises Runtime error' do
       expect { transformer.fit(x, y) }.to raise_error(RuntimeError)
     end
-
-    after { Mopti = @backup }
   end
 
   it 'dumps and restores itself using Marshal module.', :aggregate_failures do

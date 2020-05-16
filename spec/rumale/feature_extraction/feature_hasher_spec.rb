@@ -49,10 +49,10 @@ RSpec.describe Rumale::FeatureExtraction::FeatureHasher do
       Object.send(:remove_const, :Mmh3)
     end
 
+    after { Mmh3 = @backup }
+
     it 'raises Runtime error' do
       expect { encoder.fit_transform(x) }.to raise_error(RuntimeError)
     end
-
-    after { Mmh3 = @backup }
   end
 end
