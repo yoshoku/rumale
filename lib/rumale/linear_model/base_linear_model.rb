@@ -8,6 +8,7 @@ module Rumale
     # @note
     #   In version 0.17.0, a new linear model abstract class called BaseSGD is introduced.
     #   BaseLienarModel is deprecated and will be removed in the future.
+    # @deprecated Use BaseSGD class instead. This class will be deleted in version 0.20.0.
     #
     # BaseLinearModel is an abstract class for implementation of linear estimator
     # with mini-batch stochastic gradient descent optimization.
