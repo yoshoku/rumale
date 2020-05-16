@@ -1,3 +1,7 @@
+# 0.18.7
+- Fix to convert target_name to string array in [classification_report method](https://yoshoku.github.io/rumale/doc/Rumale/EvaluationMeasure.html#classification_report-class_method).
+- Refactor some codes with Rubocop.
+
 # 0.18.6
 - Fix some configuration files.
 - Update API documentation.
