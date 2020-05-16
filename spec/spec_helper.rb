@@ -15,6 +15,7 @@ require 'numo/linalg/autoloader'
 require 'rumale'
 require 'parallel'
 require 'mmh3'
+require 'mopti'
 
 def two_clusters_dataset
   rng = Random.new(8)

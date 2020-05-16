@@ -2,13 +2,15 @@
 
 require 'rumale/base/base_estimator'
 require 'rumale/base/transformer'
-require 'mopti/scaled_conjugate_gradient'
 
 module Rumale
   module MetricLearning
     # NeighbourhoodComponentAnalysis is a class that implements Neighbourhood Component Analysis.
     #
     # @example
+    #   require 'mopti'
+    #   require 'rumale'
+    #
     #   transformer = Rumale::MetricLearning::NeighbourhoodComponentAnalysis.new
     #   transformer.fit(training_samples, traininig_labels)
     #   low_samples = transformer.transform(testing_samples)
@@ -63,6 +65,8 @@ module Rumale
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [NeighbourhoodComponentAnalysis] The learned classifier itself.
       def fit(x, y)
+        raise 'NeighbourhoodComponentAnalysis#fit requires Mopti but that is not loaded.' unless enable_mopti?
+
         x = check_convert_sample_array(x)
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
@@ -97,6 +101,14 @@ module Rumale
       end
 
       private
+
+      def enable_mopti?
+        if defined?(Mopti).nil?
+          warn('NeighbourhoodComponentAnalysis#fit requires Mopti but that is not loaded. You should intall and load mopti gem in advance.')
+          return false
+        end
+        true
+      end
 
       def init_components(x, n_features, n_components)
         if @params[:init] == 'pca'
