@@ -62,6 +62,29 @@ RSpec.describe Rumale::Decomposition::PCA do
     it_behaves_like 'projection into one-dimensional subspace'
   end
 
+  context 'when solver is automatic' do
+    let(:solver) { 'auto' }
+
+    context 'with Numo::Linalg is loaded' do
+      it 'chooses "evd" solver' do
+        expect(decomposer.params[:solver]).to eq('evd')
+      end
+    end
+
+    context 'with Numo::Linalg is not loaded' do
+      before do
+        @backup = Numo::Linalg
+        Numo.class_eval { remove_const(:Linalg) }
+      end
+
+      after { Numo::Linalg = @backup }
+
+      it 'chooses "fpt" solver' do
+        expect(decomposer.params[:solver]).to eq('fpt')
+      end
+    end
+  end
+
   it 'dumps and restores itself using Marshal module.' do
     copied = Marshal.load(Marshal.dump(decomposer))
     expect(decomposer.class).to eq(copied.class)

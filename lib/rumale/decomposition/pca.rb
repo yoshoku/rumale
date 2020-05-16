@@ -9,12 +9,17 @@ module Rumale
     # PCA is a class that implements Principal Component Analysis.
     #
     # @example
-    #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2)
+    #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2, solver: 'fpt')
     #   representaion = decomposer.fit_transform(samples)
     #
     #   # If Numo::Linalg is installed, you can specify 'evd' for the solver option.
     #   require 'numo/linalg/autoloader'
     #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2, solver: 'evd')
+    #   representaion = decomposer.fit_transform(samples)
+    #
+    #   # If Numo::Linalg is loaded and the solver option is not given,
+    #   # the solver option is choosen 'evd' automatically.
+    #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2)
     #   representaion = decomposer.fit_transform(samples)
     #
     # *Reference*
@@ -38,18 +43,24 @@ module Rumale
       # Create a new transformer with PCA.
       #
       # @param n_components [Integer] The number of principal components.
-      # @param solver [String] The algorithm for the optimization ('fpt' or 'evd').
-      #   'fpt' uses the fixed-point algorithm. 'evd' performs eigen value decomposition of the covariance matrix of samples.
+      # @param solver [String] The algorithm for the optimization ('auto', 'fpt' or 'evd').
+      #   'auto' chooses the 'evd' solver if Numo::Linalg is loaded. Otherwise, it chooses the 'fpt' solver.
+      #   'fpt' uses the fixed-point algorithm.
+      #   'evd' performs eigen value decomposition of the covariance matrix of samples.
       # @param max_iter [Integer] The maximum number of iterations. If solver = 'evd', this parameter is ignored.
       # @param tol [Float] The tolerance of termination criterion. If solver = 'evd', this parameter is ignored.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(n_components: 2, solver: 'fpt', max_iter: 100, tol: 1.0e-4, random_seed: nil)
+      def initialize(n_components: 2, solver: 'auto', max_iter: 100, tol: 1.0e-4, random_seed: nil)
         check_params_numeric(n_components: n_components, max_iter: max_iter, tol: tol)
         check_params_string(solver: solver)
         check_params_numeric_or_nil(random_seed: random_seed)
         check_params_positive(n_components: n_components, max_iter: max_iter, tol: tol)
         @params = {}
-        @params[:solver] = solver != 'evd' ? 'fpt' : 'evd'
+        @params[:solver] = if solver == 'auto'
+                             load_linalg? ? 'evd' : 'fpt'
+                           else
+                             solver != 'evd' ? 'fpt' : 'evd'
+                           end
         @params[:n_components] = n_components
         @params[:max_iter] = max_iter
         @params[:tol] = tol
@@ -127,6 +138,13 @@ module Rumale
       end
 
       private
+
+      def load_linalg?
+        return false if defined?(Numo::Linalg).nil?
+        return false if Numo::Linalg::VERSION < '0.1.4'
+
+        true
+      end
 
       def orthogonalize(pcvec)
         unless @components.nil?
