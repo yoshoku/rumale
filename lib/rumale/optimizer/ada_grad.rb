@@ -7,6 +7,8 @@ module Rumale
   module Optimizer
     # AdaGrad is a class that implements AdaGrad optimizer.
     #
+    # @deprecated AdaGrad will be deleted in version 0.20.0.
+    #
     # *Reference*
     # - Duchi, J., Hazan, E., and Singer, Y., "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization," J. Machine Learning Research, vol. 12, pp. 2121--2159, 2011.
     class AdaGrad
@@ -17,6 +19,7 @@ module Rumale
       #
       # @param learning_rate [Float] The initial value of learning rate.
       def initialize(learning_rate: 0.01)
+        warn 'warning: AdaGrad is deprecated. This class will be deleted in version 0.20.0.'
         check_params_numeric(learning_rate: learning_rate)
         check_params_positive(learning_rate: learning_rate)
         @params = {}

@@ -7,6 +7,8 @@ module Rumale
   module Optimizer
     # Adam is a class that implements Adam optimizer.
     #
+    # @deprecated Adam will be deleted in version 0.20.0.
+    #
     # *Reference*
     # - Kingma, D P., and Ba, J., "Adam: A Method for Stochastic Optimization," Proc. ICLR'15, 2015.
     class Adam
@@ -19,6 +21,7 @@ module Rumale
       # @param decay1 [Float] The smoothing parameter for the first moment.
       # @param decay2 [Float] The smoothing parameter for the second moment.
       def initialize(learning_rate: 0.001, decay1: 0.9, decay2: 0.999)
+        warn 'warning: Adam is deprecated. This class will be deleted in version 0.20.0.'
         check_params_numeric(learning_rate: learning_rate, decay1: decay1, decay2: decay2)
         check_params_positive(learning_rate: learning_rate, decay1: decay1, decay2: decay2)
         @params = {}

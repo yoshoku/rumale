@@ -5,9 +5,13 @@ require 'rumale/optimizer/nadam'
 
 module Rumale
   # This module consists of the classes that implement polynomial models.
+  #
+  # @deprecated PolynomialModel module will be deleted in version 0.20.0.
   module PolynomialModel
     # BaseFactorizationMachine is an abstract class for implementation of Factorization Machine-based estimators.
     # This class is used internally.
+    #
+    # @deprecated BaseFactorizationMachine will be deleted in version 0.20.0.
     class BaseFactorizationMachine
       include Base::BaseEstimator
 

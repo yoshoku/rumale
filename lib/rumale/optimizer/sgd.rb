@@ -6,6 +6,8 @@ require 'rumale/base/base_estimator'
 module Rumale
   module Optimizer
     # SGD is a class that implements SGD optimizer.
+    #
+    # @deprecated SGD will be deleted in version 0.20.0.
     class SGD
       include Base::BaseEstimator
       include Validation
@@ -16,6 +18,7 @@ module Rumale
       # @param momentum [Float] The initial value of momentum.
       # @param decay [Float] The smooting parameter.
       def initialize(learning_rate: 0.01, momentum: 0.0, decay: 0.0)
+        warn 'warning: SGD is deprecated. This class will be deleted in version 0.20.0.'
         check_params_numeric(learning_rate: learning_rate, momentum: momentum, decay: decay)
         check_params_positive(learning_rate: learning_rate, momentum: momentum, decay: decay)
         @params = {}

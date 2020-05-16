@@ -8,6 +8,10 @@ module Rumale
     # FactorizationMachineRegressor is a class that implements Factorization Machine
     # with stochastic gradient descent (SGD) optimization.
     #
+    # @deprecated
+    #   FactorizationMachineRegressor will be deleted in version 0.20.0.
+    #   The Ruamle author recommends using the xlearn gem instead.
+    #
     # @example
     #   estimator =
     #     Rumale::PolynomialModel::FactorizationMachineRegressor.new(
@@ -58,6 +62,7 @@ module Rumale
       def initialize(n_factors: 2, reg_param_linear: 1.0, reg_param_factor: 1.0,
                      max_iter: 200, batch_size: 50, tol: 1e-4,
                      optimizer: nil, n_jobs: nil, verbose: false, random_seed: nil)
+        warn 'warning: FactorizationMachineClassifier is deprecated. This class will be deleted in version 0.20.0.'
         check_params_numeric(reg_param_linear: reg_param_linear, reg_param_factor: reg_param_factor,
                              n_factors: n_factors, max_iter: max_iter, batch_size: batch_size, tol: tol)
         check_params_boolean(verbose: verbose)

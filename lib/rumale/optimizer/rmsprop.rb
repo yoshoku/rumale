@@ -7,6 +7,8 @@ module Rumale
   module Optimizer
     # RMSProp is a class that implements RMSProp optimizer.
     #
+    # @deprecated RMSProp will be deleted in version 0.20.0.
+    #
     # *Reference*
     # - Sutskever, I., Martens, J., Dahl, G., and Hinton, G., "On the importance of initialization and momentum in deep learning," Proc. ICML' 13, pp. 1139--1147, 2013.
     # - Hinton, G., Srivastava, N., and Swersky, K., "Lecture 6e rmsprop," Neural Networks for Machine Learning, 2012.
@@ -20,6 +22,7 @@ module Rumale
       # @param momentum [Float] The initial value of momentum.
       # @param decay [Float] The smooting parameter.
       def initialize(learning_rate: 0.01, momentum: 0.9, decay: 0.9)
+        warn 'warning: RMSProp is deprecated. This class will be deleted in version 0.20.0.'
         check_params_numeric(learning_rate: learning_rate, momentum: momentum, decay: decay)
         check_params_positive(learning_rate: learning_rate, momentum: momentum, decay: decay)
         @params = {}
