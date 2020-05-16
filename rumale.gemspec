@@ -46,5 +46,4 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'numo-narray', '>= 0.9.1'
   spec.add_runtime_dependency 'mopti', '>= 0.1.0'
-  spec.add_runtime_dependency 'mmh3', '>= 0.1.0'
 end

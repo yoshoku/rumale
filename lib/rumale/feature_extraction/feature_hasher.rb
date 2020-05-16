@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'mmh3'
 require 'rumale/base/base_estimator'
 require 'rumale/base/transformer'
 
@@ -11,11 +10,15 @@ module Rumale
     # This encoder employs signed 32-bit Murmurhash3 as the hash function.
     #
     # @example
+    #   require 'mmh3'
+    #   require 'rumale'
+    #
     #   encoder = Rumale::FeatureExtraction::FeatureHasher.new(n_features: 10)
     #   x = encoder.transform([
     #     { dog: 1, cat: 2, elephant: 4 },
     #     { dog: 2, run: 5 }
     #   ])
+    #
     #   # > pp x
     #   # Numo::DFloat#shape=[2,10]
     #   # [[0, 0, -4, -1, 0, 0, 0, 0, 0, 2],
@@ -62,6 +65,8 @@ module Rumale
       # @param x [Array<Hash>] (shape: [n_samples]) The array of hash consisting of feature names and values.
       # @return [Numo::DFloat] (shape: [n_samples, n_features]) The encoded sample array.
       def transform(x)
+        raise 'FeatureHasher#transform requires Mmh3 but that is not loaded.' unless enable_mmh3?
+
         x = [x] unless x.is_a?(Array)
         n_samples = x.size
 
@@ -84,6 +89,14 @@ module Rumale
       end
 
       private
+
+      def enable_mmh3?
+        if defined?(Mmh3).nil?
+          warn('FeatureHasher#transform requires Mmh3 but that is not loaded. You should intall and load mmh3 gem in advance.')
+          return false
+        end
+        true
+      end
 
       def n_features
         @params[:n_features]
