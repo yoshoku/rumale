@@ -50,7 +50,8 @@ require 'rumale'
 
 # Prepare XOR data.
 samples = [[0, 0], [0, 1], [1, 0], [1, 1]]
-labels = [0, 1, 1, 0]
+labels = [0, 1, 1, 2]
+test_samples = [[0, 0],[0, 0],[1, 0], [1, 1]]
 
 # Train classifier with nearest neighbor rule.
 estimator = Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 1)
@@ -58,15 +59,15 @@ estimator.fit(samples, labels)
 
 # Predict labels.
 p labels
-p estimator.predict(samples)
+p estimator.predict(test_samples)
 ```
 
 Execution of the above script result in the following.
 
 ```ruby
-[0, 1, 1, 0]
+[0, 1, 1, 2]
 Numo::Int32#shape=[4]
-[0, 1, 1, 0]
+[0, 0, 1, 2]
 ```
 
 The basic usage of Rumale is to first train the model with the fit method
