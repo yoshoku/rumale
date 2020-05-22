@@ -42,39 +42,7 @@ Or install it yourself as:
 
 ## Usage
 
-### Example 1. XOR data
-First, let's classify simple xor data.
-
-```ruby
-require 'rumale'
-
-# Prepare XOR data.
-samples = [[0, 0], [0, 1], [1, 0], [1, 1]]
-labels = [0, 1, 1, 0]
-
-# Train classifier with nearest neighbor rule.
-estimator = Rumale::NearestNeighbors::KNeighborsClassifier.new(n_neighbors: 1)
-estimator.fit(samples, labels)
-
-# Predict labels.
-p labels
-p estimator.predict(samples)
-```
-
-Execution of the above script result in the following.
-
-```ruby
-[0, 1, 1, 0]
-Numo::Int32#shape=[4]
-[0, 1, 1, 0]
-```
-
-The basic usage of Rumale is to first train the model with the fit method
-and then estimate with the predict method.
-In addition, Rumale recommends using arrays such as feature vectors and labels with
-[Numo::NArray](https://github.com/ruby-numo/numo-narray).
-
-### Example 2. Pendigits dataset classification
+### Example 1. Pendigits dataset classification
 
 Rumale provides function loading libsvm format dataset file.
 We start by downloading the pendigits dataset from LIBSVM Data web site.
@@ -137,7 +105,7 @@ $ ruby test.rb
 Accuracy: 98.7%
 ```
 
-### Example 3. Cross-validation
+### Example 2. Cross-validation
 
 ```ruby
 require 'rumale'
@@ -168,7 +136,7 @@ $ ruby cross_validation.rb
 5-CV mean log-loss: 0.355
 ```
 
-### Example 4. Pipeline
+### Example 3. Pipeline
 
 ```ruby
 require 'rumale'
@@ -203,6 +171,7 @@ $ ruby pipeline.rb
 ## Speed up
 
 ### Numo::Linalg
+Rumale uses [Numo::NArray](https://github.com/ruby-numo/numo-narray) for typed arrays.
 Loading the [Numo::Linalg](https://github.com/ruby-numo/numo-linalg) allows to perform matrix product of Numo::NArray using BLAS libraries.
 For example, using the [OpenBLAS](https://github.com/xianyi/OpenBLAS) speeds up many estimators in Rumale.
 
