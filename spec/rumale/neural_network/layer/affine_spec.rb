@@ -8,7 +8,7 @@ RSpec.describe Rumale::NeuralNetwork::Layer::Affine do
   let(:z) { Numo::DFloat[[1, 2, 3, 4], [5, 6, 7, 8], [9, 8, 7, 6]] }
   let(:n_inputs) { x.shape[1] }
   let(:n_outputs) { z.shape[1] }
-  let(:adam) { Rumale::Optimizer::Adam.new }
+  let(:adam) { Rumale::NeuralNetwork::Optimizer::Adam.new }
   let(:affine) { described_class.new(n_inputs: n_inputs, n_outputs: n_outputs, optimizer: adam, rng: rng.dup) }
   let(:rand_mat) { 0.01 * Rumale::Utils.rand_normal([n_inputs, n_outputs], rng.dup) }
   let(:out) { affine.forward(x)[0] }

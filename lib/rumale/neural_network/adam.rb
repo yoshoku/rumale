@@ -32,7 +32,7 @@ module Rumale
         end
 
         # @!visibility private
-        # Calculate the updated weight with Nadam adaptive learning rate.
+        # Calculate the updated weight with Adam adaptive learning rate.
         #
         # @param weight [Numo::DFloat] (shape: [n_features]) The weight to be updated.
         # @param gradient [Numo::DFloat] (shape: [n_features]) The gradient for updating the weight.
