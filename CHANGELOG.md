@@ -1,3 +1,7 @@
+# 0.19.1
+- Add cluster analysis class for [mini-batch K-Means](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/MiniBatchKMeans.html).
+- Fix some typos.
+
 # 0.19.0
 - Change mmh3 and mopti gem to non-runtime dependent library.
   - The mmh3 gem is used in [FeatureHasher](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/FeatureHasher.html).
