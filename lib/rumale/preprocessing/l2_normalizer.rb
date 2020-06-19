@@ -34,6 +34,7 @@ module Rumale
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
         @norm_vec = Numo::NMath.sqrt((x**2).sum(1))
+        @norm_vec[@norm_vec.eq(0)] = 1
         self
       end
 
@@ -46,7 +47,7 @@ module Rumale
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
         fit(x)
-        x / @norm_vec.tile(x.shape[1], 1).transpose
+        x / @norm_vec.expand_dims(1)
       end
 
       # Calculate L2-norms of each sample, and then normalize samples to unit L2-norm.
