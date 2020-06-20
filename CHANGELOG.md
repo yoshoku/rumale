@@ -1,3 +1,8 @@
+# 0.19.2
+- Fix L2Normalizer to avoid zero divide.
+- Add preprocssing class for [L1Normalizer](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/L1Normalizer.html).
+- Add transformer class for [TfidfTransformer](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/TfidfTransformer.html).
+
 # 0.19.1
 - Add cluster analysis class for [mini-batch K-Means](https://yoshoku.github.io/rumale/doc/Rumale/Clustering/MiniBatchKMeans.html).
 - Fix some typos.
