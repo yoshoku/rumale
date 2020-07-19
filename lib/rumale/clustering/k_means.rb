@@ -103,7 +103,7 @@ module Rumale
         # random initialize
         n_samples = x.shape[0]
         sub_rng = @rng.dup
-        rand_id = [*0...n_samples].sample(@params[:n_clusters], random: sub_rng)
+        rand_id = Array(0...n_samples).sample(@params[:n_clusters], random: sub_rng)
         @cluster_centers = x[rand_id, true].dup
         return unless @params[:init] == 'k-means++'
 

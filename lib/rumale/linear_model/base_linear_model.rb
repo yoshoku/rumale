@@ -56,7 +56,7 @@ module Rumale
         samples = @params[:fit_bias] ? expand_feature(x) : x
         # Initialize some variables.
         n_samples, n_features = samples.shape
-        rand_ids = [*0...n_samples].shuffle(random: @rng.dup)
+        rand_ids = Array(0...n_samples).shuffle(random: @rng.dup)
         weight = Numo::DFloat.zeros(n_features)
         optimizer = @params[:optimizer].dup
         # Optimization.

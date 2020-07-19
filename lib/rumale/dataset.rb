@@ -81,7 +81,7 @@ module Rumale
         y = Numo::Int32.hstack([Numo::Int32.zeros(n_samples_out), Numo::Int32.ones(n_samples_in)])
         # shuffle data indices.
         if shuffle
-          rand_ids = [*0...n_samples].shuffle(random: rng.dup)
+          rand_ids = Array(0...n_samples).shuffle(random: rng.dup)
           x = x[rand_ids, true].dup
           y = y[rand_ids].dup
         end
@@ -118,7 +118,7 @@ module Rumale
         y = Numo::Int32.hstack([Numo::Int32.zeros(n_samples_out), Numo::Int32.ones(n_samples_in)])
         # shuffle data indices.
         if shuffle
-          rand_ids = [*0...n_samples].shuffle(random: rng.dup)
+          rand_ids = Array(0...n_samples).shuffle(random: rng.dup)
           x = x[rand_ids, true].dup
           y = y[rand_ids].dup
         end
@@ -173,7 +173,7 @@ module Rumale
         end
         # shuffle data.
         if shuffle
-          rand_ids = [*0...n_samples].shuffle(random: rng.dup)
+          rand_ids = Array(0...n_samples).shuffle(random: rng.dup)
           x = x[rand_ids, true].dup
           y = y[rand_ids].dup
         end

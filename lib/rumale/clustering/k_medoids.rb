@@ -124,7 +124,7 @@ module Rumale
         # random initialize
         n_samples = distance_mat.shape[0]
         sub_rng = @rng.dup
-        @medoid_ids = Numo::Int32.asarray([*0...n_samples].sample(@params[:n_clusters], random: sub_rng))
+        @medoid_ids = Numo::Int32.asarray(Array(0...n_samples).sample(@params[:n_clusters], random: sub_rng))
         return unless @params[:init] == 'k-means++'
 
         # k-means++ initialize

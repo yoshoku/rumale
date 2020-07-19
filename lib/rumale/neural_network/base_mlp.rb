@@ -222,7 +222,7 @@ module Rumale
         n_samples = x.shape[0]
 
         @params[:max_iter].times do |t|
-          sample_ids = [*0...n_samples]
+          sample_ids = Array(0...n_samples)
           sample_ids.shuffle!(random: srng)
           until (subset_ids = sample_ids.shift(@params[:batch_size])).empty?
             # random sampling

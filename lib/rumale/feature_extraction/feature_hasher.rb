@@ -67,7 +67,7 @@ module Rumale
       def transform(x)
         raise 'FeatureHasher#transform requires Mmh3 but that is not loaded.' unless enable_mmh3?
 
-        x = [x] unless x.is_a?(Array)
+        x = Array(x)
         n_samples = x.size
 
         z = Numo::DFloat.zeros(n_samples, n_features)

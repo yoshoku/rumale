@@ -69,7 +69,7 @@ module Rumale
         factor_optimizers = Array.new(@params[:n_factors]) { @params[:optimizer].dup }
         # Start optimization.
         @params[:max_iter].times do |t|
-          sample_ids = [*0...n_samples]
+          sample_ids = Array(0...n_samples)
           sample_ids.shuffle!(random: sub_rng)
           until (subset_ids = sample_ids.shift(@params[:batch_size])).empty?
             # Sampling.

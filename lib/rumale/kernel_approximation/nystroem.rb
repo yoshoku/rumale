@@ -69,7 +69,7 @@ module Rumale
         n_components = [1, [@params[:n_components], n_samples].min].max
 
         # random sampling.
-        @component_indices = Numo::Int32.cast([*0...n_samples].shuffle(random: sub_rng)[0...n_components])
+        @component_indices = Numo::Int32.cast(Array(0...n_samples).shuffle(random: sub_rng)[0...n_components])
         @components = x[@component_indices, true]
 
         # calculate normalizing factor.

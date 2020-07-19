@@ -209,7 +209,7 @@ module Rumale
         l1_penalty = LinearModel::Penalty::L1Penalty.new(reg_param: l1_reg_param) if apply_l1_penalty?
         # Optimization.
         @params[:max_iter].times do |t|
-          sample_ids = [*0...n_samples]
+          sample_ids = Array(0...n_samples)
           sample_ids.shuffle!(random: sub_rng)
           until (subset_ids = sample_ids.shift(@params[:batch_size])).empty?
             # sampling

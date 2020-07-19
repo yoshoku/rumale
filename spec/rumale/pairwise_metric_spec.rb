@@ -167,7 +167,7 @@ RSpec.describe Rumale::PairwiseMetric do
   describe '#rbf_kernel' do
     it 'calculates the RBF kernel matrix of dataset.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_a]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_a)).map do |m, n|
           dist = Math.sqrt(((samples_a[m, true] - samples_a[n, true])**2).sum)
           Math.exp(-gamma * (dist**2))
         end
@@ -181,7 +181,7 @@ RSpec.describe Rumale::PairwiseMetric do
 
     it 'calculates the RBF kernel matrix between different datasets.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_b]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_b)).map do |m, n|
           dist = Math.sqrt(((samples_a[m, true] - samples_b[n, true])**2).sum)
           Math.exp(-gamma * (dist**2))
         end
@@ -197,7 +197,7 @@ RSpec.describe Rumale::PairwiseMetric do
   describe '#linear_kernel' do
     it 'calculates the linear kernel matrix of dataset.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_a]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_a)).map do |m, n|
           samples_a[m, true].dot(samples_a[n, true].transpose).to_f
         end
       ).reshape(n_samples_a, n_samples_a)
@@ -210,7 +210,7 @@ RSpec.describe Rumale::PairwiseMetric do
 
     it 'calculates the linear kernel matrix between different datasets.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_b]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_b)).map do |m, n|
           samples_a[m, true].dot(samples_b[n, true].transpose).to_f
         end
       ).reshape(n_samples_a, n_samples_b)
@@ -225,7 +225,7 @@ RSpec.describe Rumale::PairwiseMetric do
   describe '#polynomial_kernel' do
     it 'calculates the polynomial kernel matrix of dataset.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_a]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_a)).map do |m, n|
           (samples_a[m, true].dot(samples_a[n, true].transpose).to_f * gamma + coef)**degree
         end
       ).reshape(n_samples_a, n_samples_a)
@@ -238,7 +238,7 @@ RSpec.describe Rumale::PairwiseMetric do
 
     it 'calculates the polynomial kernel matrix between different datasets.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_b]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_b)).map do |m, n|
           (samples_a[m, true].dot(samples_b[n, true].transpose).to_f * gamma + coef)**degree
         end
       ).reshape(n_samples_a, n_samples_b)
@@ -253,7 +253,7 @@ RSpec.describe Rumale::PairwiseMetric do
   describe '#sigmoid_kernel' do
     it 'calculates the sigmoid kernel matrix of dataset.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_a]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_a)).map do |m, n|
           Math.tanh(samples_a[m, true].dot(samples_a[n, true].transpose).to_f * gamma + coef)
         end
       ).reshape(n_samples_a, n_samples_a)
@@ -266,7 +266,7 @@ RSpec.describe Rumale::PairwiseMetric do
 
     it 'calculates the sigmoid kernel matrix between different datasets.' do
       kernel_mat_bf = Numo::DFloat.asarray(
-        [*0...n_samples_a].product([*0...n_samples_b]).map do |m, n|
+        Array(0...n_samples_a).product(Array(0...n_samples_b)).map do |m, n|
           Math.tanh(samples_a[m, true].dot(samples_b[n, true].transpose).to_f * gamma + coef)
         end
       ).reshape(n_samples_a, n_samples_b)

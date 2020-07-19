@@ -62,7 +62,7 @@ module Rumale
         end
         sub_rng = @rng.dup
         # Splits dataset ids to each fold.
-        dataset_ids = [*0...n_samples]
+        dataset_ids = Array(0...n_samples)
         dataset_ids.shuffle!(random: sub_rng) if @shuffle
         fold_sets = Array.new(@n_splits) do |n|
           n_fold_samples = n_samples / @n_splits

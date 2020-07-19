@@ -74,7 +74,7 @@ module Rumale
         end
         sub_rng = @rng.dup
         # Returns array consisting of the training and testing ids for each fold.
-        dataset_ids = [*0...n_samples]
+        dataset_ids = Array(0...n_samples)
         Array.new(@n_splits) do
           test_ids = dataset_ids.sample(n_test_samples, random: sub_rng)
           train_ids = if @train_size.nil?

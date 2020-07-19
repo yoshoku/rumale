@@ -30,7 +30,7 @@ module Rumale
         @params = {}
         @params[:min_samples_leaf] = min_samples_leaf
         @data = x
-        @tree = build_tree(Numo::Int32.cast([*0...@data.shape[0]]))
+        @tree = build_tree(Numo::Int32.cast(Array(0...@data.shape[0])))
       end
 
       # Search k-nearest neighbors of given query point.
