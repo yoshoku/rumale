@@ -232,7 +232,7 @@ module Rumale
       end
 
       def flatten(tree, stabilities)
-        node_ids = stabilities.keys.sort { |a, b| b <=> a }.slice(0, stabilities.size - 1)
+        node_ids = stabilities.keys.sort.reverse.slice(0, stabilities.size - 1)
 
         cluster_tree = tree.select { |edge| edge.n_elements > 1 }
         is_cluster = node_ids.each_with_object({}) { |n_id, h| h[n_id] = true }
