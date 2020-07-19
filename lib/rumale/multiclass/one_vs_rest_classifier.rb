@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rumale/base/base_estimator.rb'
-require 'rumale/base/classifier.rb'
+require 'rumale/base/base_estimator'
+require 'rumale/base/classifier'
 
 module Rumale
   # This module consists of the classes that implement multi-class classification strategy.
