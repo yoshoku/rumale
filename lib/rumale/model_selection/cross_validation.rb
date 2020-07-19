@@ -69,10 +69,11 @@ module Rumale
       #     the return_train_score is false.
       def perform(x, y)
         x = check_convert_sample_array(x)
-        if @estimator.is_a?(Rumale::Base::Classifier)
+        case @estimator
+        when Rumale::Base::Classifier
           y = check_convert_label_array(y)
           check_sample_label_size(x, y)
-        elsif @estimator.is_a?(Rumale::Base::Regressor)
+        when Rumale::Base::Regressor
           y = check_convert_tvalue_array(y)
           check_sample_tvalue_size(x, y)
         else
