@@ -24,6 +24,15 @@ Style/HashTransformKeys:
 Style/HashTransformValues:
   Enabled: true
 
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+
+Lint/DuplicateElsifCondition:
+  Enabled: true
+
+Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+
 Lint/RaiseException:
   Enabled: true
 
@@ -33,7 +42,6 @@ Lint/StructNewOverride:
 Layout/LineLength:
   Max: 145
   IgnoredPatterns: ['(\A|\s)#']
-
 
 Metrics/ModuleLength:
   Max: 200
@@ -70,14 +78,47 @@ Naming/MethodParameterName:
 Naming/ConstantName:
   Enabled: false
 
+Style/AccessorGrouping:
+  Enabled: true
+
+Style/ArrayCoercion:
+  Enabled: true
+
+Style/BisectedAttrAccessor:
+  Enabled: true
+
+Style/CaseLikeIf:
+  Enabled: true
+
 Style/ExponentialNotation:
   Enabled: true
 
 Style/FormatStringToken:
   Enabled: false
 
+Style/HashAsLastArrayItem:
+  Enabled: true
+
+Style/HashLikeCase:
+  Enabled: true
+
 Style/NumericLiterals:
   Enabled: false
+
+Style/RedundantAssignment:
+  Enabled: true
+
+Style/RedundantFetchBlock:
+  Enabled: true
+
+Style/RedundantFileExtensionInRequire:
+  Enabled: true
+
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+
+Style/RedundantRegexpEscape:
+  Enabled: true
 
 Style/SlicingWithRange:
   Enabled: true
@@ -89,6 +130,30 @@ Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 
 Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+Performance/AncestorsInclude:
+  Enabled: true
+
+Performance/BigDecimalWithNumericArgument:
+  Enabled: true
+
+Performance/RedundantSortBlock:
+  Enabled: true
+
+Performance/RedundantStringChars:
+  Enabled: true
+
+Performance/ReverseFirst:
+  Enabled: true
+
+Performance/SortReverse:
+  Enabled: true
+
+Performance/Squeeze:
+  Enabled: true
+
+Performance/StringInclude:
   Enabled: true
 
 RSpec/MultipleExpectations:
