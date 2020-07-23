@@ -1,3 +1,8 @@
+# 0.19.3
+- Add preprocessing class for [Binarizer](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/Binarizer.html)
+- Add preprocessing class for [MaxNormalizer](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/MaxNormalizer.html)
+- Refactor some codes with Rubocop.
+
 # 0.19.2
 - Fix L2Normalizer to avoid zero divide.
 - Add preprocssing class for [L1Normalizer](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/L1Normalizer.html).
