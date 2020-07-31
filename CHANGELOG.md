@@ -1,3 +1,7 @@
+# 0.20.0
+## Breaking changes
+- Delete deprecated estimators such as PolynomialModel, Optimizer, and BaseLinearModel.
+
 # 0.19.3
 - Add preprocessing class for [Binarizer](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/Binarizer.html)
 - Add preprocessing class for [MaxNormalizer](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/MaxNormalizer.html)
@@ -13,6 +17,7 @@
 - Fix some typos.
 
 # 0.19.0
+## Breaking changes
 - Change mmh3 and mopti gem to non-runtime dependent library.
   - The mmh3 gem is used in [FeatureHasher](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/FeatureHasher.html).
   You only need to require mmh3 gem when using FeatureHasher.
