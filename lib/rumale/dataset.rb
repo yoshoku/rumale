@@ -225,7 +225,7 @@ module Rumale
         line = dump_label(label, label_type.to_s)
         ftvec.to_a.each_with_index do |val, n|
           idx = n + (zero_based == false ? 1 : 0)
-          line += format(" %d:#{value_type}", idx, val) if val != 0.0
+          line += format(" %d:#{value_type}", idx, val) if val != 0
         end
         line
       end
