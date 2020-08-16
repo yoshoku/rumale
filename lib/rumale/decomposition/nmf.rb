@@ -77,7 +77,7 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
         x = check_convert_sample_array(x)
-        partial_fit(x, false)
+        partial_fit(x, update_comps: false)
       end
 
       # Inverse transform the given transformed data with the learned model.
@@ -91,7 +91,7 @@ module Rumale
 
       private
 
-      def partial_fit(x, update_comps = true)
+      def partial_fit(x, update_comps: true)
         # initialize some variables.
         n_samples, n_features = x.shape
         scale = Math.sqrt(x.mean / @params[:n_components])
