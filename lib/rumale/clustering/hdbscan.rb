@@ -136,7 +136,7 @@ module Rumale
         res
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def condense_tree(hierarchy, min_cluster_size)
         n_edges = hierarchy.size
         root = 2 * n_edges
@@ -265,7 +265,7 @@ module Rumale
         end
         res
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     end
   end
 end

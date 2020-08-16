@@ -85,7 +85,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [RandomForestClassifier] The learned classifier itself.
-      def fit(x, y)
+      def fit(x, y) # rubocop:disable Metrics/AbcSize
         x = check_convert_sample_array(x)
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)

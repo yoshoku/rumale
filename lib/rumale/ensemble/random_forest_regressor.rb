@@ -79,7 +79,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [RandomForestRegressor] The learned regressor itself.
-      def fit(x, y)
+      def fit(x, y) # rubocop:disable Metrics/AbcSize
         x = check_convert_sample_array(x)
         y = check_convert_tvalue_array(y)
         check_sample_tvalue_size(x, y)
