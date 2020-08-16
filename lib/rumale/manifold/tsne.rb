@@ -102,7 +102,7 @@ module Rumale
           break if terminate?(hi_prob_mat, lo_prob_mat)
 
           a = hi_prob_mat * lo_prob_mat
-          b = lo_prob_mat * lo_prob_mat
+          b = lo_prob_mat**2
           y = (b.dot(one_vec) * y + (a - b).dot(y)) / a.dot(one_vec)
           lo_prob_mat = t_distributed_probability_matrix(y)
           @n_iter = t + 1

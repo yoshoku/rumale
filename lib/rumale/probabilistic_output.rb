@@ -98,7 +98,7 @@ module Rumale
 
       def hessian_matrix(probs, df, sigma)
         sub = probs * (1 - probs)
-        h11 = (df * df * sub).sum + sigma
+        h11 = (df**2 * sub).sum + sigma
         h22 = sub.sum + sigma
         h21 = (df * sub).sum
         Numo::DFloat[[h11, h21], [h21, h22]]

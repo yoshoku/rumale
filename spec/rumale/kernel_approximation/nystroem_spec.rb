@@ -20,7 +20,7 @@ RSpec.describe Rumale::KernelApproximation::Nystroem do
     end
     res
   end
-  let(:mse) { ((kernel_mat - inner_mat)**2).sum.fdiv(n_samples * n_samples) }
+  let(:mse) { ((kernel_mat - inner_mat)**2).sum.fdiv(n_samples**2) }
   let(:copied) { Marshal.load(Marshal.dump(transformer.fit(x))) }
 
   it 'has a small approximation error for the RBF kernel function.', :aggregate_failures do
