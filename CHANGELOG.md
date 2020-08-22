@@ -1,3 +1,12 @@
+# 0.20.1
+- Add cross-validator classes that split data according group labels.
+  - [GroupKFold](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/GroupKFold.html)
+  - [GroupShuffleSplit](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/GroupShuffleSplit.html)
+- Fix fraction treating of the number of samples on shuffle split cross-validator classes.
+  - [ShuffleSplit](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/ShuffleSplit.html)
+  - [StratifiedShuffleSplit](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/StratifiedShuffleSplit.html)
+- Refactor some codes with Rubocop.
+
 # 0.20.0
 ## Breaking changes
 - Delete deprecated estimators such as PolynomialModel, Optimizer, and BaseLinearModel.
