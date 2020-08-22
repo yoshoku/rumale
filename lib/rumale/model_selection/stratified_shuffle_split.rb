@@ -66,15 +66,15 @@ module Rumale
           raise ArgumentError,
                 'The value of n_splits must be not less than 1 and not more than the number of samples in each class.'
         end
-        unless enough_data_size_each_class?(y, @test_size)
+        unless enough_data_size_each_class?(y, @test_size, 'test')
           raise RangeError,
                 'The number of samples in test split must be not less than 1 and not more than the number of samples in each class.'
         end
-        unless enough_data_size_each_class?(y, train_sz)
+        unless enough_data_size_each_class?(y, train_sz, 'train')
           raise RangeError,
                 'The number of samples in train split must be not less than 1 and not more than the number of samples in each class.'
         end
-        unless enough_data_size_each_class?(y, train_sz + @test_size)
+        unless enough_data_size_each_class?(y, train_sz + @test_size, 'train')
           raise RangeError,
                 'The total number of samples in test split and train split must be not more than the number of samples in each class.'
         end
@@ -85,12 +85,12 @@ module Rumale
           test_ids = []
           sample_ids_each_class.each do |sample_ids|
             n_samples = sample_ids.size
-            n_test_samples = (@test_size * n_samples).to_i
-            n_train_samples = (train_sz * n_samples).to_i
+            n_test_samples = (@test_size * n_samples).ceil.to_i
             test_ids += sample_ids.sample(n_test_samples, random: sub_rng)
             train_ids += if @train_size.nil?
                            sample_ids - test_ids
                          else
+                           n_train_samples = (train_sz * n_samples).floor.to_i
                            (sample_ids - test_ids).sample(n_train_samples, random: sub_rng)
                          end
           end
@@ -104,9 +104,13 @@ module Rumale
         y.to_a.uniq.map { |label| y.eq(label).where.size }.all? { |n_samples| @n_splits.between?(1, n_samples) }
       end
 
-      def enough_data_size_each_class?(y, data_size)
+      def enough_data_size_each_class?(y, data_size, data_type)
         y.to_a.uniq.map { |label| y.eq(label).where.size }.all? do |n_samples|
-          (data_size * n_samples).to_i.between?(1, n_samples)
+          if data_type == 'test'
+            (data_size * n_samples).ceil.to_i.between?(1, n_samples)
+          else
+            (data_size * n_samples).floor.to_i.between?(1, n_samples)
+          end
         end
       end
     end

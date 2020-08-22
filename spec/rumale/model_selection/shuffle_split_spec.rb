@@ -56,22 +56,13 @@ RSpec.describe Rumale::ModelSelection::ShuffleSplit do
     expect { splitter.split(samples, labels) }.to raise_error(ArgumentError)
   end
 
-  it 'raises RangeError given wrong sample sizes.' do
-    splitter = described_class.new(n_splits: 1, test_size: 1.1)
-    expect { splitter.split(samples, labels) }.to raise_error(RangeError)
-    splitter = described_class.new(n_splits: 1, test_size: 0.01)
-    expect { splitter.split(samples, labels) }.to raise_error(RangeError)
-    splitter = described_class.new(n_splits: 1, test_size: 0.0)
-    expect { splitter.split(samples, labels) }.to raise_error(RangeError)
-    splitter = described_class.new(n_splits: 1, train_size: 1.1)
-    expect { splitter.split(samples, labels) }.to raise_error(RangeError)
-    splitter = described_class.new(n_splits: 1, train_size: 0.01)
-    expect { splitter.split(samples, labels) }.to raise_error(RangeError)
-    splitter = described_class.new(n_splits: 1, train_size: 0.0)
-    expect { splitter.split(samples, labels) }.to raise_error(RangeError)
-    splitter = described_class.new(n_splits: 1, test_size: 0.1, train_size: 0.9)
-    expect { splitter.split(samples, labels) }.not_to raise_error
-    splitter = described_class.new(n_splits: 1, test_size: 0.2, train_size: 0.9)
-    expect { splitter.split(samples, labels) }.to raise_error(RangeError)
+  it 'raises RangeError given wrong sample sizes.', :aggregate_failures do
+    expect { described_class.new(n_splits: 1, test_size: 1.1).split(samples, labels) }.to raise_error(RangeError)
+    expect { described_class.new(n_splits: 1, test_size: 0.0).split(samples, labels) }.to raise_error(RangeError)
+    expect { described_class.new(n_splits: 1, train_size: 1.1).split(samples, labels) }.to raise_error(RangeError)
+    expect { described_class.new(n_splits: 1, train_size: 0.01).split(samples, labels) }.to raise_error(RangeError)
+    expect { described_class.new(n_splits: 1, train_size: 0.0).split(samples, labels) }.to raise_error(RangeError)
+    expect { described_class.new(n_splits: 1, test_size: 0.2, train_size: 0.9).split(samples, labels) }.to raise_error(RangeError)
+    expect { described_class.new(n_splits: 1, test_size: 0.1, train_size: 0.9).split(samples, labels) }.not_to raise_error
   end
 end

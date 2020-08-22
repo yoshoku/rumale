@@ -54,8 +54,8 @@ module Rumale
         x = check_convert_sample_array(x)
         # Initialize and check some variables.
         n_samples = x.shape[0]
-        n_test_samples = (@test_size * n_samples).to_i
-        n_train_samples = @train_size.nil? ? n_samples - n_test_samples : (@train_size * n_samples).to_i
+        n_test_samples = (@test_size * n_samples).ceil.to_i
+        n_train_samples = @train_size.nil? ? n_samples - n_test_samples : (@train_size * n_samples).floor.to_i
         unless @n_splits.between?(1, n_samples)
           raise ArgumentError,
                 'The value of n_splits must be not less than 1 and not more than the number of samples.'
