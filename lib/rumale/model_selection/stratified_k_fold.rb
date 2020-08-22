@@ -30,7 +30,7 @@ module Rumale
       # @return [Random]
       attr_reader :rng
 
-      # Create a new data splitter for K-fold cross validation.
+      # Create a new data splitter for stratified K-fold cross validation.
       #
       # @param n_splits [Integer] The number of folds.
       # @param shuffle [Boolean] The flag indicating whether to shuffle the dataset.

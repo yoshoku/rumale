@@ -62,11 +62,11 @@ module Rumale
         end
         unless n_test_samples.between?(1, n_samples)
           raise RangeError,
-                'The number of sample in test split must be not less than 1 and not more than the number of samples.'
+                'The number of samples in test split must be not less than 1 and not more than the number of samples.'
         end
         unless n_train_samples.between?(1, n_samples)
           raise RangeError,
-                'The number of sample in train split must be not less than 1 and not more than the number of samples.'
+                'The number of samples in train split must be not less than 1 and not more than the number of samples.'
         end
         if (n_test_samples + n_train_samples) > n_samples
           raise RangeError,

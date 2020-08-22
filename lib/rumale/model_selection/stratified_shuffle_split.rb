@@ -68,11 +68,11 @@ module Rumale
         end
         unless enough_data_size_each_class?(y, @test_size)
           raise RangeError,
-                'The number of sample in test split must be not less than 1 and not more than the number of samples in each class.'
+                'The number of samples in test split must be not less than 1 and not more than the number of samples in each class.'
         end
         unless enough_data_size_each_class?(y, train_sz)
           raise RangeError,
-                'The number of sample in train split must be not less than 1 and not more than the number of samples in each class.'
+                'The number of samples in train split must be not less than 1 and not more than the number of samples in each class.'
         end
         unless enough_data_size_each_class?(y, train_sz + @test_size)
           raise RangeError,
