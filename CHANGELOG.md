@@ -1,3 +1,7 @@
+# 0.20.2
+- Add cross-validator class for time-series data.
+  - [TimeSeriesSplit](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/TimeSeriesSplit.html)
+
 # 0.20.1
 - Add cross-validator classes that split data according group labels.
   - [GroupKFold](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/GroupKFold.html)
