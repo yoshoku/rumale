@@ -138,7 +138,7 @@ module Rumale
         nil
       end
 
-      def grow_node(depth, x, y, g, h)
+      def grow_node(depth, x, y, g, h) # rubocop:disable Metrics/AbcSize
         # intialize some variables.
         sum_g = g.sum
         sum_h = h.sum
@@ -146,17 +146,10 @@ module Rumale
         node = Node.new(depth: depth, n_samples: n_samples)
 
         # terminate growing.
-        unless @params[:max_leaf_nodes].nil?
-          return nil if @n_leaves >= @params[:max_leaf_nodes]
-        end
-
+        return nil if !@params[:max_leaf_nodes].nil? && @n_leaves >= @params[:max_leaf_nodes]
         return nil if n_samples < @params[:min_samples_leaf]
         return put_leaf(node, sum_g, sum_h) if n_samples == @params[:min_samples_leaf]
-
-        unless @params[:max_depth].nil?
-          return put_leaf(node, sum_g, sum_h) if depth == @params[:max_depth]
-        end
-
+        return put_leaf(node, sum_g, sum_h) if !@params[:max_depth].nil? && depth == @params[:max_depth]
         return put_leaf(node, sum_g, sum_h) if stop_growing?(y)
 
         # calculate optimal parameters.

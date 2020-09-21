@@ -51,7 +51,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
-      def fit_predict(x)
+      def fit_predict(x) # rubocop:disable Lint/UselessMethodDefinition
         super
       end
 

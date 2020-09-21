@@ -75,17 +75,10 @@ module Rumale
         node = Node.new(depth: depth, impurity: impurity, n_samples: n_samples)
 
         # terminate growing.
-        unless @params[:max_leaf_nodes].nil?
-          return nil if @n_leaves >= @params[:max_leaf_nodes]
-        end
-
+        return nil if !@params[:max_leaf_nodes].nil? && @n_leaves >= @params[:max_leaf_nodes]
         return nil if n_samples < @params[:min_samples_leaf]
         return put_leaf(node, y) if n_samples == @params[:min_samples_leaf]
-
-        unless @params[:max_depth].nil?
-          return put_leaf(node, y) if depth == @params[:max_depth]
-        end
-
+        return put_leaf(node, y) if !@params[:max_depth].nil? && depth == @params[:max_depth]
         return put_leaf(node, y) if stop_growing?(y)
 
         # calculate optimal parameters.

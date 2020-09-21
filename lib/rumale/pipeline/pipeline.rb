@@ -140,7 +140,7 @@ module Rumale
       def validate_steps(steps)
         steps.keys[0...-1].each do |name|
           transformer = steps[name]
-          next if transformer.nil? || %i[fit transform].all? { |m| transformer.class.method_defined?(m) }
+          next if transformer.nil? || (transformer.class.method_defined?(:fit) && transformer.class.method_defined?(:transform))
 
           raise TypeError,
                 'Class of intermediate step in pipeline should be implemented fit and transform methods: ' \
