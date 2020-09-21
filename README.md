@@ -228,6 +228,10 @@ When -1 is given to n_jobs parameter, all processors are used.
 estimator = Rumale::Ensemble::RandomForestClassifier.new(n_jobs: -1, random_seed: 1)
 ```
 
+## Novelties
+
+* [Rumale SHOP](https://suzuri.jp/yoshoku)
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/yoshoku/rumale.
