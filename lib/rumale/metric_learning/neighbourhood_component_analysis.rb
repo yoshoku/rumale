@@ -112,7 +112,7 @@ module Rumale
 
       def init_components(x, n_features, n_components)
         if @params[:init] == 'pca'
-          pca = Rumale::Decomposition::PCA.new(n_components: n_components, solver: 'evd')
+          pca = Rumale::Decomposition::PCA.new(n_components: n_components)
           pca.fit(x).components.flatten.dup
         else
           Rumale::Utils.rand_normal([n_features, n_components], @rng.dup).flatten.dup
