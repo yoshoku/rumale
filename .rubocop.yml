@@ -20,6 +20,9 @@ Layout/LineLength:
   Max: 145
   IgnoredPatterns: ['(\A|\s)#']
 
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
+
 Lint/MissingSuper:
   Enabled: false
 
@@ -70,6 +73,9 @@ Style/StringConcatenation:
 RSpec/MultipleExpectations:
   Enabled: false
 
+RSpec/MultipleMemoizedHelpers:
+  Max: 25
+
 RSpec/NestedGroups:
   Max: 4
 
@@ -80,4 +86,7 @@ RSpec/InstanceVariable:
   Enabled: false
 
 RSpec/LeakyConstantDeclaration:
+  Enabled: false
+
+Performance/Sum:
   Enabled: false
