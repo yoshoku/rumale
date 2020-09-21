@@ -1,3 +1,8 @@
+# 0.20.3
+- Fix to use automatic solver of PCA in NeighbourhoodComponentAnalysis.
+- Refactor some codes with Rubocop.
+- Update README.
+
 # 0.20.2
 - Add cross-validator class for time-series data.
   - [TimeSeriesSplit](https://yoshoku.github.io/rumale/doc/Rumale/ModelSelection/TimeSeriesSplit.html)
