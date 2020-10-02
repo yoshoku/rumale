@@ -1,3 +1,7 @@
+# 0.21.0
+## Breaking change
+- Change the default value of max_iter argument on LinearModel estimators to 1000.
+
 # 0.20.3
 - Fix to use automatic solver of PCA in NeighbourhoodComponentAnalysis.
 - Refactor some codes with Rubocop.
