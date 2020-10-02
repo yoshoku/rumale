@@ -14,7 +14,7 @@ module Rumale
     #
     # @example
     #   estimator =
-    #     Rumale::LinearModel::SVR.new(reg_param: 1.0, epsilon: 0.1, max_iter: 200, batch_size: 50, random_seed: 1)
+    #     Rumale::LinearModel::SVR.new(reg_param: 1.0, epsilon: 0.1, max_iter: 1000, batch_size: 50, random_seed: 1)
     #   estimator.fit(training_samples, traininig_target_values)
     #   results = estimator.predict(testing_samples)
     #
@@ -68,7 +68,7 @@ module Rumale
                      penalty: 'l2', reg_param: 1.0, l1_ratio: 0.5,
                      fit_bias: true, bias_scale: 1.0,
                      epsilon: 0.1,
-                     max_iter: 200, batch_size: 50, tol: 1e-4,
+                     max_iter: 1000, batch_size: 50, tol: 1e-4,
                      n_jobs: nil, verbose: false, random_seed: nil)
         check_params_numeric(learning_rate: learning_rate, momentum: momentum,
                              reg_param: reg_param, bias_scale: bias_scale, epsilon: epsilon,

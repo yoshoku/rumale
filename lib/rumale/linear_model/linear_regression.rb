@@ -10,7 +10,7 @@ module Rumale
     #
     # @example
     #   estimator =
-    #     Rumale::LinearModel::LinearRegression.new(max_iter: 500, batch_size: 20, random_seed: 1)
+    #     Rumale::LinearModel::LinearRegression.new(max_iter: 1000, batch_size: 20, random_seed: 1)
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     #
@@ -68,7 +68,7 @@ module Rumale
       #   If solver = 'svd', this parameter is ignored.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(learning_rate: 0.01, decay: nil, momentum: 0.9,
-                     fit_bias: true, bias_scale: 1.0, max_iter: 200, batch_size: 50, tol: 1e-4,
+                     fit_bias: true, bias_scale: 1.0, max_iter: 1000, batch_size: 50, tol: 1e-4,
                      solver: 'auto',
                      n_jobs: nil, verbose: false, random_seed: nil)
         check_params_numeric(learning_rate: learning_rate, momentum: momentum,

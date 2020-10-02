@@ -171,7 +171,7 @@ module Rumale
         @params[:fit_bias] = true
         @params[:reg_param] = 0.0
         @params[:l1_ratio] = 0.0
-        @params[:max_iter] = 200
+        @params[:max_iter] = 1000
         @params[:batch_size] = 50
         @params[:tol] = 0.0001
         @params[:verbose] = false
