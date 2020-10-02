@@ -11,7 +11,7 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
   let(:kernel_svc) { Rumale::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
   let(:linear_svc) { Rumale::LinearModel::SVC.new(random_seed: 1) }
   let(:linear_svr) { Rumale::LinearModel::SVR.new(random_seed: 1) }
-  let(:logit_reg) { Rumale::LinearModel::LogisticRegression.new(random_seed: 1) }
+  let(:logit_reg) { Rumale::LinearModel::LogisticRegression.new(max_iter: 200, random_seed: 1) }
   let(:f_score) { Rumale::EvaluationMeasure::FScore.new }
   let(:log_loss) { Rumale::EvaluationMeasure::LogLoss.new }
   let(:n_splits) { 5 }
