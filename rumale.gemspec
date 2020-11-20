@@ -45,4 +45,5 @@ Gem::Specification.new do |spec|
   }
 
   spec.add_runtime_dependency 'numo-narray', '>= 0.9.1'
+  spec.add_runtime_dependency 'lbfgsb', '>=0.3.0'
 end
