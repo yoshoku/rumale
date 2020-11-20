@@ -80,19 +80,6 @@ RSpec.describe Rumale::MetricLearning::NeighbourhoodComponentAnalysis do
     end
   end
 
-  context 'when Mopti is not loaded' do
-    before do
-      @backup = Mopti
-      Object.send(:remove_const, :Mopti)
-    end
-
-    after { Mopti = @backup }
-
-    it 'raises Runtime error' do
-      expect { transformer.fit(x, y) }.to raise_error(RuntimeError)
-    end
-  end
-
   it 'dumps and restores itself using Marshal module.', :aggregate_failures do
     copied = Marshal.load(Marshal.dump(transformer.fit(x, y)))
     expect(copied.class).to eq(transformer.class)
