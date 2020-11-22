@@ -1,3 +1,9 @@
+# 0.22.0
+## Breaking change
+- Add lbfgsb.rb gem to runtime dependencies. Rumale uses lbfgsb gem for optimization.
+This eliminates the need to require the mopti gem when using [NeighbourhoodComponentAnalysis](https://yoshoku.github.io/rumale/doc/Rumale/MetricLearning/NeighbourhoodComponentAnalysis.html).
+- Add lbfgs solver to [LogisticRegression](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/LogisticRegression.html) and make it the default solver.
+
 # 0.21.0
 ## Breaking change
 - Change the default value of max_iter argument on LinearModel estimators to 1000.
