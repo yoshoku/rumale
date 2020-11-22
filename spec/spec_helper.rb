@@ -2,12 +2,8 @@
 
 require 'pp'
 require 'simplecov'
-require 'coveralls'
 
-Coveralls.wear!
-
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([SimpleCov::Formatter::HTMLFormatter,
-                                                                Coveralls::SimpleCov::Formatter])
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([SimpleCov::Formatter::HTMLFormatter])
 SimpleCov.start
 
 require 'bundler/setup'
