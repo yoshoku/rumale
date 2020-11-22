@@ -7,17 +7,18 @@ require 'rumale/preprocessing/label_binarizer'
 
 module Rumale
   module LinearModel
-    # LogisticRegression is a class that implements Logistic Regression
-    # with stochastic gradient descent optimization.
-    # For multiclass classification problem, it uses one-vs-the-rest strategy.
+    # LogisticRegression is a class that implements Logistic Regression.
+    # In multiclass classification problem, it uses one-vs-the-rest strategy for the sgd solver
+    # and multinomial logistic regression for the lbfgs solver.
     #
-    # Rumale::SVM provides Logistic Regression based on LIBLINEAR.
-    # If you prefer execution speed, you should use Rumale::SVM::LogisticRegression.
-    # https://github.com/yoshoku/rumale-svm
+    # @note
+    #   Rumale::SVM provides Logistic Regression based on LIBLINEAR.
+    #   If you prefer execution speed, you should use Rumale::SVM::LogisticRegression.
+    #   https://github.com/yoshoku/rumale-svm
     #
     # @example
     #   estimator =
-    #     Rumale::LinearModel::LogisticRegression.new(reg_param: 1.0, max_iter: 1000, batch_size: 50, random_seed: 1)
+    #     Rumale::LinearModel::LogisticRegression.new(reg_param: 1.0, random_seed: 1)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
     #
@@ -44,7 +45,7 @@ module Rumale
       # @return [Random]
       attr_reader :rng
 
-      # Create a new classifier with Logisitc Regression by the SGD optimization.
+      # Create a new classifier with Logisitc Regression.
       #
       # @param learning_rate [Float] The initial value of learning rate.
       #   The learning rate decreases as the iteration proceeds according to the equation: learning_rate / (1 + decay * t).
