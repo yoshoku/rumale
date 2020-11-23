@@ -36,6 +36,22 @@ def xor_dataset
   [x, y]
 end
 
+def regression_dataset(n_samples: 200, n_features: 8, n_informative: 4)
+  rng = Random.new(1)
+  x = Rumale::Utils.rand_normal([n_samples, n_features], rng)
+
+  ground_truth = Numo::DFloat.zeros(n_features, 1)
+  ground_truth[0...n_informative, true] = 100 * Rumale::Utils.rand_uniform([n_informative, 1], rng)
+  y = x.dot(ground_truth)
+  y = y.flatten
+
+  rand_ids = Array(0...n_samples).shuffle(random: rng)
+  x = x[rand_ids, true].dup
+  y = y[rand_ids].dup
+
+  [x, y]
+end
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
