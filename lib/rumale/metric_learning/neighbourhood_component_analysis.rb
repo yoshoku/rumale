@@ -2,6 +2,8 @@
 
 require 'rumale/base/base_estimator'
 require 'rumale/base/transformer'
+require 'rumale/utils'
+require 'rumale/pairwise_metric'
 require 'lbfgsb'
 
 module Rumale
@@ -146,10 +148,11 @@ module Rumale
         mask_mat = y.expand_dims(1).eq(y)
         masked_prob_mat = prob_mat * mask_mat
         loss = n_samples - masked_prob_mat.sum
-        weighted_prob_mat = masked_prob_mat - prob_mat * masked_prob_mat.sum(1).expand_dims(1)
-        weighted_prob_mat += weighted_prob_mat.transpose
-        weighted_prob_mat[weighted_prob_mat.diag_indices] = -weighted_prob_mat.sum(0)
-        gradient = -2 * z.transpose.dot(weighted_prob_mat).dot(x)
+        sum_probs = masked_prob_mat.sum(1)
+        weight_mat = (sum_probs.expand_dims(1) * prob_mat - masked_prob_mat)
+        weight_mat += weight_mat.transpose
+        weight_mat = weight_mat.sum(0).diag - weight_mat
+        gradient = -2 * z.transpose.dot(weight_mat).dot(x)
         [loss, gradient.flatten.dup]
       end
 
