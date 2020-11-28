@@ -8,9 +8,10 @@ module Rumale
     # SVR is a class that implements Support Vector Regressor
     # with stochastic gradient descent optimization.
     #
-    # Rumale::SVM provides linear and kernel support vector regressor based on LIBLINEAR and LIBSVM.
-    # If you prefer execution speed, you should use Rumale::SVM::LinearSVR.
-    # https://github.com/yoshoku/rumale-svm
+    # @note
+    #   Rumale::SVM provides linear and kernel support vector regressor based on LIBLINEAR and LIBSVM.
+    #   If you prefer execution speed, you should use Rumale::SVM::LinearSVR.
+    #   https://github.com/yoshoku/rumale-svm
     #
     # @example
     #   estimator =

@@ -11,9 +11,10 @@ module Rumale
     # with stochastic gradient descent optimization.
     # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
-    # Rumale::SVM provides linear support vector classifier based on LIBLINEAR.
-    # If you prefer execution speed, you should use Rumale::SVM::LinearSVC.
-    # https://github.com/yoshoku/rumale-svm
+    # @note
+    #   Rumale::SVM provides linear support vector classifier based on LIBLINEAR.
+    #   If you prefer execution speed, you should use Rumale::SVM::LinearSVC.
+    #   https://github.com/yoshoku/rumale-svm
     #
     # @example
     #   estimator =

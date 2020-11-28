@@ -11,9 +11,10 @@ module Rumale
     # with stochastic gradient descent (SGD) optimization.
     # For multiclass classification problem, it uses one-vs-the-rest strategy.
     #
-    # Rumale::SVM provides kernel support vector classifier based on LIBSVM.
-    # If you prefer execution speed, you should use Rumale::SVM::SVC.
-    # https://github.com/yoshoku/rumale-svm
+    # @note
+    #   Rumale::SVM provides kernel support vector classifier based on LIBSVM.
+    #   If you prefer execution speed, you should use Rumale::SVM::SVC.
+    #   https://github.com/yoshoku/rumale-svm
     #
     # @example
     #   training_kernel_matrix = Rumale::PairwiseMetric::rbf_kernel(training_samples)
