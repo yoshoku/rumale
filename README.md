@@ -113,10 +113,10 @@ require 'rumale'
 samples, labels = Rumale::Dataset.load_libsvm_file('pendigits')
 
 # Define the estimator to be evaluated.
-lr = Rumale::LinearModel::LogisticRegression.new(learning_rate: 0.00001, reg_param: 0.0001, random_seed: 1)
+lr = Rumale::LinearModel::LogisticRegression.new
 
 # Define the evaluation measure, splitting strategy, and cross validation.
-ev = Rumale::EvaluationMeasure::LogLoss.new
+ev = Rumale::EvaluationMeasure::Accuracy.new
 kf = Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1)
 cv = Rumale::ModelSelection::CrossValidation.new(estimator: lr, splitter: kf, evaluator: ev)
 
@@ -124,15 +124,15 @@ cv = Rumale::ModelSelection::CrossValidation.new(estimator: lr, splitter: kf, ev
 report = cv.perform(samples, labels)
 
 # Output result.
-mean_logloss = report[:test_score].inject(:+) / kf.n_splits
-puts("5-CV mean log-loss: %.3f" % mean_logloss)
+mean_accuracy = report[:test_score].sum / kf.n_splits
+puts "5-CV mean accuracy: %.1f%%" % (100.0 * mean_accuracy)
 ```
 
 Execution of the above scripts result in the following.
 
 ```bash
 $ ruby cross_validation.rb
-5-CV mean log-loss: 0.355
+5-CV mean accuracy: 95.4%
 ```
 
 ### Example 3. Pipeline
@@ -143,10 +143,10 @@ require 'rumale'
 # Load dataset.
 samples, labels = Rumale::Dataset.load_libsvm_file('pendigits')
 
-# Construct pipeline with kernel approximation and SVC.
-rbf = Rumale::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 800, random_seed: 1)
-svc = Rumale::LinearModel::SVC.new(reg_param: 0.0001, random_seed: 1)
-pipeline = Rumale::Pipeline::Pipeline.new(steps: { trns: rbf, clsf: svc })
+# Construct pipeline with kernel approximation and LogisticRegression.
+rbf = Rumale::KernelApproximation::RBF.new(gamma: 1e-4, n_components: 800, random_seed: 1)
+lr = Rumale::LinearModel::LogisticRegression.new(reg_param: 1e-3)
+pipeline = Rumale::Pipeline::Pipeline.new(steps: { trns: rbf, clsf: lr })
 
 # Define the splitting strategy and cross validation.
 kf = Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1)
@@ -156,7 +156,7 @@ cv = Rumale::ModelSelection::CrossValidation.new(estimator: pipeline, splitter: 
 report = cv.perform(samples, labels)
 
 # Output result.
-mean_accuracy = report[:test_score].inject(:+) / kf.n_splits
+mean_accuracy = report[:test_score].sum / kf.n_splits
 puts("5-CV mean accuracy: %.1f %%" % (mean_accuracy * 100.0))
 ```
 
