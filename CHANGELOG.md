@@ -1,3 +1,8 @@
+# 0.22.1
+- Add transfomer class for MLKR, that implements Metric Learning for Kernel Regression.
+- Refactor NeighbourhoodComponentAnalysis.
+- Update API documentation.
+
 # 0.22.0
 ## Breaking change
 - Add lbfgsb.rb gem to runtime dependencies. Rumale uses lbfgsb gem for optimization.
