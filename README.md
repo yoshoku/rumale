@@ -4,7 +4,7 @@
 
 [![Build Status](https://github.com/yoshoku/rumale/workflows/build/badge.svg)](https://github.com/yoshoku/rumale/actions?query=workflow%3Abuild)
 [![Gem Version](https://badge.fury.io/rb/rumale.svg)](https://badge.fury.io/rb/rumale)
-[![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/rumale/blob/master/LICENSE.txt)
+[![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/rumale/blob/main/LICENSE.txt)
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://yoshoku.github.io/rumale/doc/)
 
 Rumale (**Ru**by **ma**chine **le**arning) is a machine learning library in Ruby.
@@ -244,4 +244,4 @@ The gem is available as open source under the terms of the [BSD 2-clause License
 ## Code of Conduct
 
 Everyone interacting in the Rumale project’s codebases, issue trackers,
-chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/yoshoku/Rumale/blob/master/CODE_OF_CONDUCT.md).
+chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/yoshoku/Rumale/blob/main/CODE_OF_CONDUCT.md).

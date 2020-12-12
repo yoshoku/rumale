@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata      = {
     'homepage_uri' => 'https://github.com/yoshoku/rumale',
-    'changelog_uri' => 'https://github.com/yoshoku/rumale/blob/master/CHANGELOG.md',
+    'changelog_uri' => 'https://github.com/yoshoku/rumale/blob/main/CHANGELOG.md',
     'source_code_uri' => 'https://github.com/yoshoku/rumale',
     'documentation_uri' => 'https://yoshoku.github.io/rumale/doc/',
     'bug_tracker_uri' => 'https://github.com/yoshoku/rumale/issues'
