@@ -109,7 +109,7 @@ module Rumale
 
     # @!visibility private
     def check_params_positive(params = {})
-      params.reject { |_, v| v.nil? }.each { |k, v| raise ArgumentError, "Expect #{k} to be positive value" if v.negative? }
+      params.compact.each { |k, v| raise ArgumentError, "Expect #{k} to be positive value" if v.negative? }
       nil
     end
   end
