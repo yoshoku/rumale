@@ -59,7 +59,7 @@ module Rumale
         @params[:solver] = if solver == 'auto'
                              load_linalg? ? 'evd' : 'fpt'
                            else
-                             solver != 'evd' ? 'fpt' : 'evd'
+                             solver != 'evd' ? 'fpt' : 'evd' # rubocop:disable Style/NegatedIfElseCondition
                            end
         @params[:n_components] = n_components
         @params[:max_iter] = max_iter

@@ -181,7 +181,7 @@ module Rumale
         @classes.size > 2
       end
 
-      def fit_lbfgs(base_x, base_y)
+      def fit_lbfgs(base_x, base_y) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         if multiclass_problem?
           fnc = proc do |w, x, y, a|
             n_features = x.shape[1]

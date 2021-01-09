@@ -123,7 +123,7 @@ module Rumale
       # @param gamma [Float] The parameter of polynomial kernel, if nil it is 1 / n_features.
       # @param coef [Integer] The parameter of polynomial kernel.
       # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
-      def polynomial_kernel(x, y = nil, degree = 3, gamma = nil, coef = 1)
+      def polynomial_kernel(x, y = nil, degree = 3, gamma = nil, coef = 1) # rubocop:disable Metrics/ParameterLists
         y = x if y.nil?
         gamma ||= 1.0 / x.shape[1]
         x = Rumale::Validation.check_convert_sample_array(x)

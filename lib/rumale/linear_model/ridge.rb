@@ -85,7 +85,7 @@ module Rumale
         @params[:solver] = if solver == 'auto'
                              load_linalg? ? 'svd' : 'sgd'
                            else
-                             solver != 'svd' ? 'sgd' : 'svd'
+                             solver != 'svd' ? 'sgd' : 'svd' # rubocop:disable Style/NegatedIfElseCondition
                            end
         @params[:decay] ||= @params[:reg_param] * @params[:learning_rate]
         @params[:random_seed] ||= srand
