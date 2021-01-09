@@ -99,7 +99,7 @@ module Rumale
       # @param x [Array<Hash>] (shape: [n_samples]) The array of hash consisting of feature names and values.
       # @return [Numo::DFloat] (shape: [n_samples, n_features]) The encoded sample array.
       def transform(x)
-        x = [x] unless x.is_a?(Array) # rubocop:disable Style/ArrayCoercion
+        x = [x] unless x.is_a?(Array)
         n_samples = x.size
         n_features = @vocabulary.size
         z = Numo::DFloat.zeros(n_samples, n_features)
