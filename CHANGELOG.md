@@ -1,5 +1,11 @@
+# 0.22.2
+- Add classifier and regressor classes for stacking method.
+  - [StackingClassifier](https://yoshoku.github.io/rumale/doc/Rumale/Ensemble/StackingClassifier.html)
+  - [StackingRegressor](https://yoshoku.github.io/rumale/doc/Rumale/Ensemble/StackingRegressor.html)
+- Refactor some codes with Rubocop.
+
 # 0.22.1
-- Add transfomer class for MLKR, that implements Metric Learning for Kernel Regression.
+- Add transfomer class for [MLKR](https://yoshoku.github.io/rumale/doc/Rumale/MetricLearning/MLKR.html), that implements Metric Learning for Kernel Regression.
 - Refactor NeighbourhoodComponentAnalysis.
 - Update API documentation.
 
