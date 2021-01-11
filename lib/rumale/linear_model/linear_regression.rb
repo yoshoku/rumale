@@ -95,7 +95,7 @@ module Rumale
       # Fit the model with given training data.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
+      # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [LinearRegression] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
