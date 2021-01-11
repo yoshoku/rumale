@@ -259,6 +259,10 @@ When -1 is given to n_jobs parameter, all processors are used.
 estimator = Rumale::Ensemble::RandomForestClassifier.new(n_jobs: -1, random_seed: 1)
 ```
 
+## Related Projects
+- [Rumale::SVM](https://github.com/yoshoku/rumale-svm) provides support vector machine algorithms in LIBSVM and LIBLINEAR with Rumale interface.
+- [Rumale::Torch](https://github.com/yoshoku/rumale-torch) provides the learning and inference by the neural network defined in torch.rb with Rumale interface.
+
 ## Novelties
 
 * [Rumale SHOP](https://suzuri.jp/yoshoku)
