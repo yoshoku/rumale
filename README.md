@@ -176,7 +176,7 @@ For example, using the [OpenBLAS](https://github.com/xianyi/OpenBLAS) speeds up 
 
 Install OpenBLAS library.
 
-Mac:
+macOS:
 
 ```bash
 $ brew install openblas
@@ -185,12 +185,13 @@ $ brew install openblas
 Ubuntu:
 
 ```bash
-$ sudo apt-get install gcc gfortran
-$ wget https://github.com/xianyi/OpenBLAS/archive/v0.3.5.tar.gz
-$ tar xzf v0.3.5.tar.gz
-$ cd OpenBLAS-0.3.5
-$ make USE_OPENMP=1
-$ sudo make PREFIX=/usr/local install
+$ sudo apt-get install libopenblas-dev liblapacke-dev
+```
+
+Windows (MSYS2):
+
+```bash
+$ pacman -S mingw-w64-x86_64-ruby mingw-w64-x86_64-openblas mingw-w64-x86_64-lapack
 ```
 
 Install Numo::Linalg gem.
@@ -203,6 +204,37 @@ In ruby script, you only need to require the autoloader module of Numo::Linalg.
 
 ```ruby
 require 'numo/linalg/autoloader'
+require 'rumale'
+```
+
+### Numo::OpenBLAS
+[Numo::OpenBLAS](https://github.com/yoshoku/numo-openblas) downloads and builds OpenBLAS during installation
+and uses that as a background library for Numo::Linalg.
+
+Install compilers for building OpenBLAS.
+
+macOS:
+
+```bash
+$ brew install gcc gfortran make
+```
+
+Ubuntu:
+
+```bash
+$ sudo apt-get install gcc gfortran make
+```
+
+Install Numo::OpenBLAS gem.
+
+```bash
+$ gem install numo-openblas
+```
+
+Load Numo::OpenBLAS gem instead of Numo::Linalg.
+
+```ruby
+require 'numo/openblas'
 require 'rumale'
 ```
 
