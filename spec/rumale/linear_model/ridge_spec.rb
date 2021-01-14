@@ -12,7 +12,7 @@ RSpec.describe Rumale::LinearModel::Ridge do
   let(:fit_bias) { false }
   let(:solver) { 'sgd' }
   let(:n_jobs) { nil }
-  let(:estimator) { described_class.new(reg_param: 0.1, fit_bias: fit_bias, solver: solver, n_jobs: n_jobs, random_seed: 1).fit(x, y) }
+  let(:estimator) { described_class.new(reg_param: 0.01, fit_bias: fit_bias, solver: solver, n_jobs: n_jobs, random_seed: 1).fit(x, y) }
   let(:predicted) { estimator.predict(x) }
   let(:score) { estimator.score(x, y) }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
@@ -117,6 +117,15 @@ RSpec.describe Rumale::LinearModel::Ridge do
 
   context 'when solver is singular value decomposition' do
     let(:solver) { 'svd' }
+
+    it_behaves_like 'single regression'
+    it_behaves_like 'single regression with bias'
+    it_behaves_like 'multiple regression with bias'
+    it_behaves_like 'multiple regression'
+  end
+
+  context 'when solver is l-bfgs' do
+    let(:solver) { 'lbfgs' }
 
     it_behaves_like 'single regression'
     it_behaves_like 'single regression with bias'
