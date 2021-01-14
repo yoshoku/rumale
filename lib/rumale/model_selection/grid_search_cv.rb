@@ -94,7 +94,7 @@ module Rumale
 
         param_combinations.each do |prm_set|
           prm_set.each do |prms|
-            report = perform_cross_validation(x, y, prms)
+            report = perform_cross_validation(x, y, prms.dup)
             store_cv_result(prms, report)
           end
         end
@@ -173,9 +173,10 @@ module Rumale
       end
 
       def perform_cross_validation(x, y, prms)
+        prob_cutoff = prms.delete(:prob_cutoff) #nil if not specified, removes the cutoff from prms (which is a dup)
         est = configurated_estimator(prms)
         cv = CrossValidation.new(estimator: est, splitter: @params[:splitter],
-                                 evaluator: @params[:evaluator], return_train_score: true)
+                                 evaluator: @params[:evaluator], prob_cutoff: prob_cutoff, return_train_score: true)
         cv.perform(x, y)
       end
 
