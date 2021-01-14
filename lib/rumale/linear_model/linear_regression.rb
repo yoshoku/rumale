@@ -6,7 +6,8 @@ require 'rumale/base/regressor'
 module Rumale
   module LinearModel
     # LinearRegression is a class that implements ordinary least square linear regression
-    # with stochastic gradient descent (SGD) optimization or singular value decomposition (SVD).
+    # with stochastic gradient descent (SGD) optimization,
+    # singular value decomposition (SVD), or L-BFGS optimization.
     #
     # @example
     #   estimator =
@@ -56,10 +57,11 @@ module Rumale
       #   If solver = 'svd', this parameter is ignored.
       # @param tol [Float] The tolerance of loss for terminating optimization.
       #   If solver = 'svd', this parameter is ignored.
-      # @param solver [String] The algorithm to calculate weights. ('auto', 'sgd' or 'svd').
+      # @param solver [String] The algorithm to calculate weights. ('auto', 'sgd', 'svd' or 'lbfgs').
       #   'auto' chooses the 'svd' solver if Numo::Linalg is loaded. Otherwise, it chooses the 'sgd' solver.
       #   'sgd' uses the stochastic gradient descent optimization.
       #   'svd' performs singular value decomposition of samples.
+      #   'lbfgs' uses the L-BFGS method for optimization.
       # @param n_jobs [Integer] The number of jobs for running the fit method in parallel.
       #   If nil is given, the method does not execute in parallel.
       #   If zero or less is given, it becomes equal to the number of processors.
@@ -82,7 +84,7 @@ module Rumale
         @params[:solver] = if solver == 'auto'
                              load_linalg? ? 'svd' : 'sgd'
                            else
-                             solver != 'svd' ? 'sgd' : 'svd' # rubocop:disable Style/NegatedIfElseCondition
+                             solver.match?(/^svd$|^sgd$|^lbfgs$/) ? solver : 'sgd'
                            end
         @params[:decay] ||= @params[:learning_rate]
         @params[:random_seed] ||= srand
@@ -104,6 +106,8 @@ module Rumale
 
         if @params[:solver] == 'svd' && enable_linalg?
           fit_svd(x, y)
+        elsif @params[:solver] == 'lbfgs'
+          fit_lbfgs(x, y)
         else
           fit_sgd(x, y)
         end
@@ -137,6 +141,41 @@ module Rumale
         end
       end
 
+      def fit_lbfgs(x, y)
+        fnc = proc do |w, x, y| # rubocop:disable Lint/ShadowingOuterLocalVariable
+          n_samples, n_features = x.shape
+          w = w.reshape(y.shape[1], n_features) unless y.shape[1].nil?
+          z = x.dot(w.transpose)
+          d = z - y
+          loss = (d**2).sum.fdiv(n_samples)
+          gradient = 2.fdiv(n_samples) * d.transpose.dot(x)
+          [loss, gradient.flatten.dup]
+        end
+
+        x = expand_feature(x) if fit_bias?
+
+        n_features = x.shape[1]
+        n_outputs = single_target?(y) ? 1 : y.shape[1]
+
+        w_init = Rumale::Utils.rand_normal([n_outputs, n_features], @rng.dup).flatten.dup
+
+        res = Lbfgsb.minimize(
+          fnc: fnc, jcb: true, x_init: w_init, args: [x, y],
+          maxiter: @params[:max_iter], factr: @params[:tol] / Lbfgsb::DBL_EPSILON,
+          verbose: @params[:verbose] ? 1 : -1
+        )
+
+        w = single_target?(y) ? res[:x] : res[:x].reshape(n_outputs, n_features).transpose
+
+        if fit_bias?
+          @weight_vec = single_target?(y) ? w[0...-1].dup : w[0...-1, true].dup
+          @bias_term = single_target?(y) ? w[-1] : w[-1, true].dup
+        else
+          @weight_vec = w.dup
+          @bias_term = single_target?(y) ? 0 : Numo::DFloat.zeros(y.shape[1])
+        end
+      end
+
       def fit_sgd(x, y)
         n_outputs = y.shape[1].nil? ? 1 : y.shape[1]
         n_features = x.shape[1]
@@ -155,8 +194,8 @@ module Rumale
         end
       end
 
-      def fit_bias?
-        @params[:fit_bias] == true
+      def single_target?(y)
+        y.ndim == 1
       end
 
       def load_linalg?

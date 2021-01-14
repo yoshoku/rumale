@@ -124,6 +124,15 @@ RSpec.describe Rumale::LinearModel::LinearRegression do
     it_behaves_like 'multiple regression'
   end
 
+  context 'when solver is l-bfgs' do
+    let(:solver) { 'lbfgs' }
+
+    it_behaves_like 'single regression'
+    it_behaves_like 'single regression with bias'
+    it_behaves_like 'multiple regression with bias'
+    it_behaves_like 'multiple regression'
+  end
+
   context 'when solver is automatic' do
     let(:estimator) { described_class.new(solver: 'auto') }
 
