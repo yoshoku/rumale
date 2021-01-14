@@ -92,6 +92,11 @@ module Rumale
     end
 
     # @!visibility private
+    def check_params_float_or_nil(params = {})
+      check_params_type_or_nil(Float, params)
+    end
+
+    # @!visibility private
     def check_params_integer(params = {})
       check_params_type(Integer, params)
     end
@@ -110,6 +115,12 @@ module Rumale
     # @!visibility private
     def check_params_positive(params = {})
       params.compact.each { |k, v| raise ArgumentError, "Expect #{k} to be positive value" if v.negative? }
+      nil
+    end
+
+    # @!visibility private
+    def check_params_within_range(min, max, params = {})
+      params.compact.each { |k, v| raise ArgumentError, "Expect #{k} to be between #{min} and #{max}" if v < min || v > max }
       nil
     end
   end

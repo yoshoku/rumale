@@ -35,6 +35,10 @@ module Rumale
       # @return [Evaluator]
       attr_reader :evaluator
 
+      # Return the probability cutoff that splits positive and negative predictions.
+      # @return [Float]
+      attr_reader :prob_cutoff
+
       # Return the flag indicating whether to caculate the score of training dataset.
       # @return [Boolean]
       attr_reader :return_train_score
@@ -44,15 +48,19 @@ module Rumale
       # @param estimator [Classifier] The classifier of which performance is evaluated.
       # @param splitter [Splitter] The splitter that divides dataset to training and testing dataset.
       # @param evaluator [Evaluator] The evaluator that calculates score of estimator results.
+      # @param prob_cutoff [Float] The cutoff for probability of a positive prediction. Constrained to [0, 1]
       # @param return_train_score [Boolean] The flag indicating whether to calculate the score of training dataset.
-      def initialize(estimator: nil, splitter: nil, evaluator: nil, return_train_score: false)
+      def initialize(estimator: nil, splitter: nil, evaluator: nil, prob_cutoff: nil, return_train_score: false)
         check_params_type(Rumale::Base::BaseEstimator, estimator: estimator)
         check_params_type(Rumale::Base::Splitter, splitter: splitter)
         check_params_type_or_nil(Rumale::Base::Evaluator, evaluator: evaluator)
         check_params_boolean(return_train_score: return_train_score)
+        check_params_float_or_nil(prob_cutoff: prob_cutoff)
+        check_params_within_range(0, 1, prob_cutoff: prob_cutoff)
         @estimator = estimator
         @splitter = splitter
         @evaluator = evaluator
+        @prob_cutoff = prob_cutoff 
         @return_train_score = return_train_score
       end
 
@@ -101,6 +109,15 @@ module Rumale
           elsif log_loss?
             report[:test_score].push(@evaluator.score(test_y, @estimator.predict_proba(test_x)))
             report[:train_score].push(@evaluator.score(train_y, @estimator.predict_proba(train_x))) if @return_train_score
+          elsif @prob_cutoff
+            probabilities_positive = @estimator.predict_proba(test_x)[true, 1]
+            predictions = probabilities_positive.map { |prob| prob <= @prob_cutoff ? 0 : 1 }
+            report[:test_score].push(@evaluator.score(test_y, predictions))
+            if @return_train_score
+              probabilities_positive = @estimator.predict_proba(train_x)[true, 1]
+              predictions = probabilities_positive.map { |prob| prob <= @prob_cutoff ? 0 : 1 }
+              report[:train_score].push(@evaluator.score(train_y, predictions))
+            end
           else
             report[:test_score].push(@evaluator.score(test_y, @estimator.predict(test_x)))
             report[:train_score].push(@evaluator.score(train_y, @estimator.predict(train_x))) if @return_train_score
