@@ -12,8 +12,8 @@ RSpec.describe Rumale::Base::BaseEstimator do
         @params[:n_jobs] = 1
       end
 
-      def linalg?
-        enable_linalg?
+      def linalg?(warning: true)
+        enable_linalg?(warning: warning)
       end
 
       def parallel?
@@ -40,6 +40,11 @@ RSpec.describe Rumale::Base::BaseEstimator do
 
       it 'returns false' do
         expect { dummy.linalg? }.to output(/you should install and load Numo::Linalg in advance./).to_stderr
+        expect(dummy).not_to be_linalg
+      end
+
+      it 'returns false without warning messages' do
+        expect { dummy.linalg?(warning: false) }.not_to output(/you should install and load Numo::Linalg in advance./).to_stderr
         expect(dummy).not_to be_linalg
       end
     end

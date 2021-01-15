@@ -11,13 +11,15 @@ module Rumale
 
       private
 
-      def enable_linalg?
+      def enable_linalg?(warning: true)
         if defined?(Numo::Linalg).nil?
-          warn('If you want to use features that depend on Numo::Linalg, you should install and load Numo::Linalg in advance.')
+          warn('If you want to use features that depend on Numo::Linalg, you should install and load Numo::Linalg in advance.') if warning
           return false
         end
         if Numo::Linalg::VERSION < '0.1.4'
-          warn('The loaded Numo::Linalg does not implement the methods required by Rumale. Please load Numo::Linalg version 0.1.4 or later.')
+          if warning
+            warn('The loaded Numo::Linalg does not implement the methods required by Rumale. Please load Numo::Linalg version 0.1.4 or later.')
+          end
           return false
         end
         true
