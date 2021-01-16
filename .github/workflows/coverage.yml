@@ -1,0 +1,28 @@
+name: coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install BLAS and LAPACK
+        run: sudo apt-get install -y libopenblas-dev liblapacke-dev
+      - name: Set up Ruby 2.7
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: Build and test with Rake
+        run: |
+          gem install bundler
+          bundle install
+          bundle exec rake
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
