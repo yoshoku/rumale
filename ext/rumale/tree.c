@@ -257,10 +257,13 @@ find_split_params_cls(VALUE self, VALUE criterion, VALUE impurity, VALUE order, 
   split_opts_cls opts = { StringValuePtr(criterion), NUM2LONG(n_classes), NUM2DBL(impurity) };
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, labels);
   VALUE results = rb_ary_new2(4);
-  rb_ary_store(results, 0, DBL2NUM(((double*)na_get_pointer_for_read(params))[0]));
-  rb_ary_store(results, 1, DBL2NUM(((double*)na_get_pointer_for_read(params))[1]));
-  rb_ary_store(results, 2, DBL2NUM(((double*)na_get_pointer_for_read(params))[2]));
-  rb_ary_store(results, 3, DBL2NUM(((double*)na_get_pointer_for_read(params))[3]));
+  double* params_ptr = (double*)na_get_pointer_for_read(params);
+  rb_ary_store(results, 0, DBL2NUM(params_ptr[0]));
+  rb_ary_store(results, 1, DBL2NUM(params_ptr[1]));
+  rb_ary_store(results, 2, DBL2NUM(params_ptr[2]));
+  rb_ary_store(results, 3, DBL2NUM(params_ptr[3]));
+  RB_GC_GUARD(params);
+  RB_GC_GUARD(criterion);
   return results;
 }
 
@@ -375,10 +378,13 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE impurity, VALUE order, 
   split_opts_reg opts = { StringValuePtr(criterion), NUM2DBL(impurity) };
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, targets);
   VALUE results = rb_ary_new2(4);
-  rb_ary_store(results, 0, DBL2NUM(((double*)na_get_pointer_for_read(params))[0]));
-  rb_ary_store(results, 1, DBL2NUM(((double*)na_get_pointer_for_read(params))[1]));
-  rb_ary_store(results, 2, DBL2NUM(((double*)na_get_pointer_for_read(params))[2]));
-  rb_ary_store(results, 3, DBL2NUM(((double*)na_get_pointer_for_read(params))[3]));
+  double* params_ptr = (double*)na_get_pointer_for_read(params);
+  rb_ary_store(results, 0, DBL2NUM(params_ptr[0]));
+  rb_ary_store(results, 1, DBL2NUM(params_ptr[1]));
+  rb_ary_store(results, 2, DBL2NUM(params_ptr[2]));
+  rb_ary_store(results, 3, DBL2NUM(params_ptr[3]));
+  RB_GC_GUARD(params);
+  RB_GC_GUARD(criterion);
   return results;
 }
 
@@ -464,8 +470,10 @@ find_split_params_grad_reg
   double opts[3] = { NUM2DBL(sum_gradient), NUM2DBL(sum_hessian), NUM2DBL(reg_lambda) };
   VALUE params = na_ndloop3(&ndf, opts, 4, order, features, gradients, hessians);
   VALUE results = rb_ary_new2(2);
-  rb_ary_store(results, 0, DBL2NUM(((double*)na_get_pointer_for_read(params))[0]));
-  rb_ary_store(results, 1, DBL2NUM(((double*)na_get_pointer_for_read(params))[1]));
+  double* params_ptr = (double*)na_get_pointer_for_read(params);
+  rb_ary_store(results, 0, DBL2NUM(params_ptr[0]));
+  rb_ary_store(results, 1, DBL2NUM(params_ptr[1]));
+  RB_GC_GUARD(params);
   return results;
 }
 
@@ -496,6 +504,9 @@ node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, 
   ret = DBL2NUM(calc_impurity_cls(StringValuePtr(criterion), histogram, n_elements, n_classes));
 
   xfree(histogram);
+
+  RB_GC_GUARD(y_nary);
+  RB_GC_GUARD(criterion);
 
   return ret;
 }
@@ -530,6 +541,8 @@ node_impurity_reg(VALUE self, VALUE criterion, VALUE y)
   ret = DBL2NUM(calc_impurity_reg(StringValuePtr(criterion), target_vecs, sum_vec));
 
   xfree(sum_vec);
+
+  RB_GC_GUARD(criterion);
 
   return ret;
 }
