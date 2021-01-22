@@ -27,6 +27,7 @@ module Rumale
       y
     end
 
+    # @deprecated Use check_convert_sample_array instead of this method.
     # @!visibility private
     def check_sample_array(x)
       raise TypeError, 'Expect class of sample matrix to be Numo::DFloat' unless x.is_a?(Numo::DFloat)
@@ -35,6 +36,7 @@ module Rumale
       nil
     end
 
+    # @deprecated Use check_convert_label_array instead of this method.
     # @!visibility private
     def check_label_array(y)
       raise TypeError, 'Expect class of label vector to be Numo::Int32' unless y.is_a?(Numo::Int32)
@@ -43,6 +45,7 @@ module Rumale
       nil
     end
 
+    # @deprecated Use check_convert_tvalue_array instead of this method.
     # @!visibility private
     def check_tvalue_array(y)
       raise TypeError, 'Expect class of target value vector to be Numo::DFloat' unless y.is_a?(Numo::DFloat)
@@ -64,49 +67,58 @@ module Rumale
       nil
     end
 
+    # TODO: Better to replace with RBS in the future.
     # @!visibility private
     def check_params_type(type, params = {})
       params.each { |k, v| raise TypeError, "Expect class of #{k} to be #{type}" unless v.is_a?(type) }
       nil
     end
 
+    # TODO: Better to replace with RBS in the future.
     # @!visibility private
     def check_params_type_or_nil(type, params = {})
       params.each { |k, v| raise TypeError, "Expect class of #{k} to be #{type} or nil" unless v.is_a?(type) || v.is_a?(NilClass) }
       nil
     end
 
+    # TODO: Better to replace with RBS in the future.
     # @!visibility private
     def check_params_numeric(params = {})
       check_params_type(Numeric, params)
     end
 
+    # TODO: Better to replace with RBS in the future.
     # @!visibility private
     def check_params_numeric_or_nil(params = {})
       check_params_type_or_nil(Numeric, params)
     end
 
+    # @deprecated Use check_params_numeric instead of this method.
     # @!visibility private
     def check_params_float(params = {})
       check_params_type(Float, params)
     end
 
+    # @deprecated Use check_params_numeric instead of this method.
     # @!visibility private
     def check_params_integer(params = {})
       check_params_type(Integer, params)
     end
 
+    # TODO: Better to replace with RBS in the future.
     # @!visibility private
     def check_params_string(params = {})
       check_params_type(String, params)
     end
 
+    # TODO: Better to replace with RBS in the future.
     # @!visibility private
     def check_params_boolean(params = {})
       params.each { |k, v| raise TypeError, "Expect class of #{k} to be Boolean" unless v.is_a?(FalseClass) || v.is_a?(TrueClass) }
       nil
     end
 
+    # TODO: Better to replace with RBS in the future.
     # @!visibility private
     def check_params_positive(params = {})
       params.compact.each { |k, v| raise ArgumentError, "Expect #{k} to be positive value" if v.negative? }
