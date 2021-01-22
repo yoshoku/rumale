@@ -1,3 +1,12 @@
+# 0.22.3
+- Add regressor class for non-negative least square method.
+  - [NNLS](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/NNLS.html)
+- Add lbfgs solver to [Ridge](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/Ridge.html) and [LinearRegression](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/LinearRegression.html).
+  - In version 0.23.0, these classes will be changed to attempt to optimize with 'svd' or 'lbfgs' solver if 'auto' is given to
+  the solver parameter. If you use 'sgd' solver, you need specify it explicitly.
+- Add GC guard to native extension codes.
+- Update API documentation.
+
 # 0.22.2
 - Add classifier and regressor classes for stacking method.
   - [StackingClassifier](https://yoshoku.github.io/rumale/doc/Rumale/Ensemble/StackingClassifier.html)
