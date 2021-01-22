@@ -10,7 +10,7 @@ module Rumale
     # NNLS is a class that implements non-negative least squares regression.
     # NNLS solves least squares problem under non-negative constraints on the coefficient using L-BFGS-B method.
     #
-    # @examples
+    # @example
     #   estimator = Rumale::LinearModel::NNLS.new(reg_param: 0.01, random_seed: 1)
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
