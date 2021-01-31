@@ -20,6 +20,11 @@ require 'rumale'
 require 'parallel'
 require 'mmh3'
 
+if defined?(GC.verify_compaction_references) == 'method'
+  # Calling this method will help to find object movement bugs.
+  GC.verify_compaction_references(double_heap: true, toward: :empty)
+end
+
 def two_clusters_dataset
   rng = Random.new(8)
   x_a = (2 * Rumale::Utils.rand_uniform([100, 2], rng) - 1) + Numo::DFloat[-2, 0]
