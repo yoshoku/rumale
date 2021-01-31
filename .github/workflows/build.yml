@@ -6,8 +6,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        ruby: [ '2.5', '2.6', '2.7' ]
+        ruby: [ '2.5', '2.6', '2.7', '3.0' ]
     steps:
       - uses: actions/checkout@v2
       - name: Install BLAS and LAPACK
@@ -17,7 +18,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: Build and test with Rake
+        env:
+          LD_LIBRARY_PATH: '/usr/lib/x86_64-linux-gnu/'
         run: |
-          gem install bundler
+          gem install --no-document bundler
           bundle install --jobs 4 --retry 3
           bundle exec rake
