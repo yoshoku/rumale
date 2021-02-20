@@ -5,9 +5,8 @@ RUBY_EXTERN VALUE mRumale;
 double*
 alloc_dbl_array(const long n_dimensions)
 {
-  long i;
   double* arr = ALLOC_N(double, n_dimensions);
-  for (i = 0; i < n_dimensions; i++) { arr[i] = 0.0; }
+  memset(arr, 0, n_dimensions * sizeof(double));
   return arr;
 }
 
