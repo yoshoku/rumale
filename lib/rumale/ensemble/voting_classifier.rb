@@ -2,6 +2,7 @@
 
 require 'rumale/base/base_estimator'
 require 'rumale/base/classifier'
+require 'rumale/preprocessing/label_encoder'
 
 module Rumale
   module Ensemble
