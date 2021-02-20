@@ -11,18 +11,18 @@ module Rumale
     # @example
     #   estimators = {
     #     lgr: Rumale::LinearModel::LogisticRegression.new(reg_param: 1e-2, random_seed: 1),
-    #     mlp: Rumele::NeuralNetwork::MLPClassifier.new(hidden_units: [256], random_seed: 1),
+    #     mlp: Rumale::NeuralNetwork::MLPClassifier.new(hidden_units: [256], random_seed: 1),
     #     rnd: Rumale::Ensemble::RandomForestClassifier.new(random_seed: 1)
     #   }
     #   meta_estimator = Rumale::LinearModel::LogisticRegression.new(random_seed: 1)
     #   classifier = Rumale::Ensemble::StackedClassifier.new(
     #     estimators: estimators, meta_estimator: meta_estimator, random_seed: 1
     #   )
-    #   classifier.fit(training_samples, traininig_labels)
+    #   classifier.fit(training_samples, training_labels)
     #   results = classifier.predict(testing_samples)
     #
     # *Reference*
-    # - Zhou, Z-H., "Ensemble Mehotds - Foundations and Algorithms," CRC Press Taylor and Francis Group, Chapman and Hall/CRC, 2012.
+    # - Zhou, Z-H., "Ensemble Methods - Foundations and Algorithms," CRC Press Taylor and Francis Group, Chapman and Hall/CRC, 2012.
     class StackingClassifier
       include Base::BaseEstimator
       include Base::Classifier
@@ -150,7 +150,7 @@ module Rumale
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probabilities.
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) The predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)

@@ -10,18 +10,18 @@ module Rumale
     # @example
     #   estimators = {
     #     las: Rumale::LinearModel::Lasso.new(reg_param: 1e-2, random_seed: 1),
-    #     mlp: Rumele::NeuralNetwork::MLPRegressor.new(hidden_units: [256], random_seed: 1),
+    #     mlp: Rumale::NeuralNetwork::MLPRegressor.new(hidden_units: [256], random_seed: 1),
     #     rnd: Rumale::Ensemble::RandomForestRegressor.new(random_seed: 1)
     #   }
     #   meta_estimator = Rumale::LinearModel::Ridge.new(random_seed: 1)
     #   regressor = Rumale::Ensemble::StackedRegressor.new(
     #     estimators: estimators, meta_estimator: meta_estimator, random_seed: 1
     #   )
-    #   regressor.fit(training_samples, traininig_values)
+    #   regressor.fit(training_samples, training_values)
     #   results = regressor.predict(testing_samples)
     #
     # *Reference*
-    # - Zhou, Z-H., "Ensemble Mehotds - Foundations and Algorithms," CRC Press Taylor and Francis Group, Chapman and Hall/CRC, 2012.
+    # - Zhou, Z-H., "Ensemble Methods - Foundations and Algorithms," CRC Press Taylor and Francis Group, Chapman and Hall/CRC, 2012.
     class StackingRegressor
       include Base::BaseEstimator
       include Base::Regressor

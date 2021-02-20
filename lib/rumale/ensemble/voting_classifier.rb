@@ -11,7 +11,7 @@ module Rumale
     # @example
     #   estimators = {
     #     lgr: Rumale::LinearModel::LogisticRegression.new(reg_param: 1e-2, random_seed: 1),
-    #     mlp: Rumele::NeuralNetwork::MLPClassifier.new(hidden_units: [256], random_seed: 1),
+    #     mlp: Rumale::NeuralNetwork::MLPClassifier.new(hidden_units: [256], random_seed: 1),
     #     rnd: Rumale::Ensemble::RandomForestClassifier.new(random_seed: 1)
     #   }
     #   weights = { lgr: 0.2, mlp: 0.3, rnd: 0.5 }
