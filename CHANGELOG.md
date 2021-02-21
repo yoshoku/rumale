@@ -1,3 +1,10 @@
+# 0.22.4
+- Add classifier and regressor classes for voting ensemble method.
+  - [VotingClassifier](https://yoshoku.github.io/rumale/doc/Rumale/Ensemble/VotingClassifier.html)
+  - [VotingRegressor](https://yoshoku.github.io/rumale/doc/Rumale/Ensemble/VotingRegressor.html)
+- Refactor some codes.
+- Fix some typos on API documentation.
+
 # 0.22.3
 - Add regressor class for non-negative least square method.
   - [NNLS](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/NNLS.html)
