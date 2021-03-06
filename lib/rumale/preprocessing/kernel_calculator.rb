@@ -95,7 +95,7 @@ module Rumale
             x.dot(y.transpose)
           end
         else
-          raise ArgumentError, ''
+          raise ArgumentError, "Expect kernel parameter to be given 'rbf', 'linear', 'poly', 'sigmoid', or Proc."
         end
       end
 
