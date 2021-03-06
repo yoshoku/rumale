@@ -11,7 +11,7 @@ module Rumale
     # @example
     #   require 'numo/linalg/autoloader'
     #
-    #   transformer = Rumale::KernelApproximation::Nystroem.new(gamma: 1, n_components: 128, random_seed: 1)
+    #   transformer = Rumale::KernelApproximation::Nystroem.new(kernel: 'rbf', gamma: 1, n_components: 128, random_seed: 1)
     #   new_training_samples = transformer.fit_transform(training_samples)
     #   new_testing_samples = transformer.transform(testing_samples)
     #
@@ -39,12 +39,15 @@ module Rumale
 
       # Create a new transformer for mapping to kernel feature space with Nystrom method.
       #
-      # @param kernel [String] The type of kernel. This parameter is ignored in the current implementation.
-      # @param gamma [Float] The parameter of RBF kernel: exp(-gamma * x^2).
-      # @param n_components [Integer] The number of dimensions of the RBF kernel feature space.
+      # @param kernel [String] The type of kernel function ('rbf', 'linear', 'poly', and 'sigmoid)
+      # @param gamma [Float] The gamma parameter in rbf/poly/sigmoid kernel function.
+      # @param degree [Integer] The degree parameter in polynomial kernel function.
+      # @param coef [Float] The coefficient in poly/sigmoid kernel function.
+      # @param n_components [Integer] The number of dimensions of the kernel feature space.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(kernel: 'rbf', gamma: 1, n_components: 100, random_seed: nil)
-        check_params_numeric(gamma: gamma, n_components: n_components)
+      def initialize(kernel: 'rbf', gamma: 1, degree: 3, coef: 1, n_components: 100, random_seed: nil)
+        check_params_string(kernel: kernel)
+        check_params_numeric(gamma: gamma, coef: coef, degree: degree, n_components: n_components)
         check_params_numeric_or_nil(random_seed: random_seed)
         @params = method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h
         @params[:random_seed] ||= srand
@@ -56,7 +59,7 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @overload fit(x) -> RBF
+      # @overload fit(x) -> Nystroem
       #   @param x [Numo::NArray] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [Nystroem] The learned transformer itself.
       def fit(x, _y = nil)
@@ -73,7 +76,7 @@ module Rumale
         @components = x[@component_indices, true]
 
         # calculate normalizing factor.
-        kernel_mat = Rumale::PairwiseMetric.rbf_kernel(@components, nil, @params[:gamma])
+        kernel_mat = kernel_mat(@components)
         eig_vals, eig_vecs = Numo::Linalg.eigh(kernel_mat)
         la = eig_vals.class.maximum(eig_vals.reverse, 1e-12)
         u = eig_vecs.reverse(1)
@@ -98,8 +101,25 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
         x = check_convert_sample_array(x)
-        z = Rumale::PairwiseMetric.rbf_kernel(x, @components, @params[:gamma])
+        z = kernel_mat(x, @components)
         z.dot(@normalizer)
+      end
+
+      private
+
+      def kernel_mat(x, y = nil)
+        case @params[:kernel]
+        when 'rbf'
+          Rumale::PairwiseMetric.rbf_kernel(x, y, @params[:gamma])
+        when 'poly'
+          Rumale::PairwiseMetric.polynomial_kernel(x, y, @params[:degree], @params[:gamma], @params[:coef])
+        when 'sigmoid'
+          Rumale::PairwiseMetric.sigmoid_kernel(x, y, @params[:gamma], @params[:coef])
+        when 'linear'
+          Rumale::PairwiseMetric.linear_kernel(x, y)
+        else
+          raise ArgumentError, "Expect kernel parameter to be given 'rbf', 'linear', 'poly', or 'sigmoid'."
+        end
       end
     end
   end
