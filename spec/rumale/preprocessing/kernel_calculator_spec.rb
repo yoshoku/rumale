@@ -26,7 +26,7 @@ RSpec.describe Rumale::Preprocessing::KernelCalculator do
 
     it 'classifies xor dataset', :aggregate_failures do
       expect(calculator).to be_a(described_class)
-      expect(calculator.params).to match({ kernel: 'rbf', kernel_params: nil })
+      expect(calculator.params).to match({ kernel: 'rbf', gamma: 1, degree: 3, coef: 1 })
       expect(calculator.components).to be_a(Numo::DFloat)
       expect(calculator.components.ndim).to eq(2)
       expect(calculator.components.shape).to eq(x_train.shape)
@@ -54,8 +54,10 @@ RSpec.describe Rumale::Preprocessing::KernelCalculator do
       end
     end
 
-    let(:kernel_params) { nil }
-    let(:calculator) { described_class.new(kernel: kernel, kernel_params: kernel_params) }
+    let(:gamma) { 1 }
+    let(:degree) { 3 }
+    let(:coef) { 1 }
+    let(:calculator) { described_class.new(kernel: kernel, gamma: gamma, degree: degree, coef: coef) }
     let(:x_train) { Numo::DFloat[[1, 2], [3, 2], [4, 3]] }
     let(:x_test) { Numo::DFloat[[2, 4], [3, 2]] }
     let(:kernel_mat_train) { calculator.fit_transform(x_train) }
@@ -81,19 +83,8 @@ RSpec.describe Rumale::Preprocessing::KernelCalculator do
 
     context "when kernel is 'sigmoid'" do
       let(:kernel) { 'sigmoid' }
-      let(:kernel_params) { { gamma: 0.01, coef: 0 } }
-
-      it_behaves_like 'kernel matrix'
-    end
-
-    context 'when kernel is user defined' do
-      let(:kernel) do
-        proc do |x, y, b:|
-          x.dot(y.transpose) + b
-        end
-      end
-
-      let(:kernel_params) { { b: 100 } }
+      let(:gamma) { 0.01 }
+      let(:coef) { 0 }
 
       it_behaves_like 'kernel matrix'
     end

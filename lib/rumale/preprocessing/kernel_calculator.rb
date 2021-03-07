@@ -9,9 +9,7 @@ module Rumale
     # KernelCalculator is a class that calculates the kernel matrix with training data.
     #
     # @example
-    #   transformer = Rumale::Preprocessing::KernelCalculator.new(
-    #     kernel: 'rbf', kernel_params: { gamma: 0.5 }
-    #   )
+    #   transformer = Rumale::Preprocessing::KernelCalculator.new(kernel: 'rbf', gamma: 0.5)
     #   regressor = Rumale::KernelMachine::KernelRidge.new
     #   pipeline = Rumale::Pipeline::Pipeline.new(
     #     steps: { trs: transfomer, est: regressor }
@@ -28,17 +26,18 @@ module Rumale
 
       # Create a new transformer that transforms feature vectors into a kernel matrix.
       #
-      # @param kernel [String/Method/Proc] The type of kernel function ('rbf', 'linear', 'poly', 'sigmoid', and user defined method).
-      # @param kernel_params [Hash/Nil] The parameters of kernel function. If nil is given, the fallowing default values will be used.
-      #   'rbf': { gamma: 1.0 }
-      #   'linear': nil
-      #   'poly': { degree: 3, gamma: 1, coef: 1 }
-      #   'sigmoid': { gamma: 1, coef: 1 }
-      def initialize(kernel: 'rbf', kernel_params: nil)
-        check_params_type_or_nil(Hash, kernel_params: kernel_params)
+      # @param kernel [String] The type of kernel function ('rbf', 'linear', 'poly', and 'sigmoid').
+      # @param gamma [Float] The gamma parameter in rbf/poly/sigmoid kernel function.
+      # @param degree [Integer] The degree parameter in polynomial kernel function.
+      # @param coef [Float] The coefficient in poly/sigmoid kernel function.
+      def initialize(kernel: 'rbf', gamma: 1, degree: 3, coef: 1)
+        check_params_string(kernel: kernel)
+        check_params_numeric(gamma: gamma, coef: coef, degree: degree)
         @params = {}
         @params[:kernel] = kernel
-        @params[:kernel_params] = kernel_params
+        @params[:gamma] = gamma
+        @params[:degree] = degree
+        @params[:coef] = coef
         @components = nil
       end
 
@@ -69,41 +68,23 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples, n_components]) The calculated kernel matrix.
       def transform(x)
         x = check_convert_sample_array(x)
-        kernel_mat(kernel_fnc, x, @params[:kernel_params])
+        kernel_mat(x, @components)
       end
 
       private
 
-      def kernel_fnc
-        return @params[:kernel] if @params[:kernel].is_a?(Method) || @params[:kernel].is_a?(Proc)
-
+      def kernel_mat(x, y)
         case @params[:kernel]
         when 'rbf'
-          proc do |x, y, gamma: 1|
-            Numo::NMath.exp(-gamma * Rumale::PairwiseMetric.squared_error(x, y))
-          end
+          Rumale::PairwiseMetric.rbf_kernel(x, y, @params[:gamma])
         when 'poly'
-          proc do |x, y, degree: 3, gamma: 1, coef: 1|
-            (x.dot(y.transpose) * gamma + coef)**degree
-          end
+          Rumale::PairwiseMetric.polynomial_kernel(x, y, @params[:degree], @params[:gamma], @params[:coef])
         when 'sigmoid'
-          proc do |x, y, gamma: 1, coef: 1|
-            Numo::NMath.tanh(gamma * x.dot(y.transpose) + coef)
-          end
+          Rumale::PairwiseMetric.sigmoid_kernel(x, y, @params[:gamma], @params[:coef])
         when 'linear'
-          proc do |x, y|
-            x.dot(y.transpose)
-          end
+          Rumale::PairwiseMetric.linear_kernel(x, y)
         else
-          raise ArgumentError, "Expect kernel parameter to be given 'rbf', 'linear', 'poly', 'sigmoid', or Proc."
-        end
-      end
-
-      def kernel_mat(fnc, x, args)
-        if args.is_a?(Hash)
-          fnc.call(x, @components, **args)
-        else
-          fnc.call(x, @components)
+          raise ArgumentError, "Expect kernel parameter to be given 'rbf', 'linear', 'poly', or 'sigmoid'."
         end
       end
     end
