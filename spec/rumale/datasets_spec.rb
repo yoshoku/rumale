@@ -59,6 +59,19 @@ RSpec.describe Rumale::Dataset do
       m, = described_class.load_libsvm_file(__dir__ + '/../test_zb.t', zero_based: true)
       expect(m).to eq(matrix_dbl)
     end
+
+    it 'lodas libsvm .t file with the number of features', :aggregate_failures do
+      m, = described_class.load_libsvm_file(__dir__ + '/../test_dbl.t', n_features: 6)
+      expect(m.shape[1]).to eq(6)
+      expect(m).to eq(matrix_dbl.concatenate(Numo::DFloat.zeros(6, 2), axis: 1))
+      m, = described_class.load_libsvm_file(__dir__ + '/../test_dbl.t', n_features: 2)
+      expect(m.shape[1]).to eq(matrix_dbl.shape[1])
+      m, = described_class.load_libsvm_file(__dir__ + '/../test_zb.t', zero_based: true, n_features: 6)
+      expect(m.shape[1]).to eq(6)
+      expect(m).to eq(matrix_dbl.concatenate(Numo::DFloat.zeros(6, 2), axis: 1))
+      m, = described_class.load_libsvm_file(__dir__ + '/../test_zb.t', zero_based: true, n_features: 2)
+      expect(m.shape[1]).to eq(matrix_dbl.shape[1])
+    end
   end
 
   describe '#dump_libsvm_file' do

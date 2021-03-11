@@ -12,22 +12,26 @@ module Rumale
       # Load a dataset with the libsvm file format into Numo::NArray.
       #
       # @param filename [String] A path to a dataset file.
+      # @param n_features [Integer/Nil] The number of features of data to load.
+      #   If nil is given, it will be detected automatically from given file.
       # @param zero_based [Boolean] Whether the column index starts from 0 (true) or 1 (false).
       # @param dtype [Numo::NArray] Data type of Numo::NArray for features to be loaded.
       #
       # @return [Array<Numo::NArray>]
       #   Returns array containing the (n_samples x n_features) matrix for feature vectors
       #   and (n_samples) vector for labels or target values.
-      def load_libsvm_file(filename, zero_based: false, dtype: Numo::DFloat)
+      def load_libsvm_file(filename, n_features: nil, zero_based: false, dtype: Numo::DFloat)
         ftvecs = []
         labels = []
-        n_features = 0
+        n_features_detected = 0
         CSV.foreach(filename, col_sep: "\s", headers: false) do |line|
           label, ftvec, max_idx = parse_libsvm_line(line, zero_based)
           labels.push(label)
           ftvecs.push(ftvec)
-          n_features = max_idx if n_features < max_idx
+          n_features_detected = max_idx if n_features_detected < max_idx
         end
+        n_features ||= n_features_detected
+        n_features = [n_features, n_features_detected].max
         [convert_to_matrix(ftvecs, n_features, dtype), Numo::NArray.asarray(labels)]
       end
 
