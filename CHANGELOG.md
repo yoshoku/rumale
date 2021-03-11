@@ -1,3 +1,11 @@
+# 0.22.5
+- Add transformer class for calculating kernel matrix.
+  - [KernelCalculator](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/KernelCalculator.html)
+- Add classifier class based on Ridge regression.
+  - [KernelRidgeClassifier](https://yoshoku.github.io/rumale/doc/Rumale/KernelMachine/KernelRidgeClassifier.html)
+- Add supported kernel functions to [Nystroem](https://yoshoku.github.io/rumale/doc/Rumale/KernelApproximation/Nystroem.html).
+- Add parameter for specifying the number of features to [load_libsvm_file](https://yoshoku.github.io/rumale/doc/Rumale/Dataset.html#load_libsvm_file-class_method).
+
 # 0.22.4
 - Add classifier and regressor classes for voting ensemble method.
   - [VotingClassifier](https://yoshoku.github.io/rumale/doc/Rumale/Ensemble/VotingClassifier.html)
