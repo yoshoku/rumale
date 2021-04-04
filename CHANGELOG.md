@@ -1,3 +1,11 @@
+# 0.23.0
+## Breaking change
+- Change automalically selected solver from sgd to lbfgs in
+[LinearRegression](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/LinearRegression.html) and
+[Ridge](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/Ridge.html).
+  - When given 'auto' to solver parameter, these estimator select  the 'svd' solver if Numo::Linalg is loaded.
+  Otherwise, they select the 'lbfgs' solver.
+
 # 0.22.5
 - Add transformer class for calculating kernel matrix.
   - [KernelCalculator](https://yoshoku.github.io/rumale/doc/Rumale/Preprocessing/KernelCalculator.html)
