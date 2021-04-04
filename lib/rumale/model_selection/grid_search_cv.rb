@@ -160,15 +160,15 @@ module Rumale
         grid = [grid] if grid.is_a?(Hash)
         grid.each do |h|
           raise TypeError, 'Expect class of elements in param_grid to be Hash' unless h.is_a?(Hash)
-          raise TypeError, 'Expect class of parameter values in param_grid to be Array' unless h.values.all? { |v| v.is_a?(Array) }
+          raise TypeError, 'Expect class of parameter values in param_grid to be Array' unless h.values.all?(Array)
         end
         grid
       end
 
       def param_combinations
         @param_combinations ||= @params[:param_grid].map do |prm|
-          x = Hash[prm.sort].map { |k, v| [k].product(v) }
-          x[0].product(*x[1...x.size]).map { |v| Hash[v] }
+          x = prm.sort.to_h.map { |k, v| [k].product(v) }
+          x[0].product(*x[1...x.size]).map(&:to_h)
         end
       end
 
