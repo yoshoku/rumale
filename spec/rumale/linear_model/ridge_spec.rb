@@ -150,8 +150,8 @@ RSpec.describe Rumale::LinearModel::Ridge do
 
       after { Numo::Linalg = @backup }
 
-      it 'chooses "sgd" solver' do
-        expect(estimator.params[:solver]).to eq('sgd')
+      it 'chooses "lbfgs" solver' do
+        expect(estimator.params[:solver]).to eq('lbfgs')
       end
     end
   end

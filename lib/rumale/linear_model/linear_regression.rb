@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'lbfgsb'
+
 require 'rumale/linear_model/base_sgd'
 require 'rumale/base/regressor'
 
@@ -58,7 +60,7 @@ module Rumale
       # @param tol [Float] The tolerance of loss for terminating optimization.
       #   If solver is 'svd', this parameter is ignored.
       # @param solver [String] The algorithm to calculate weights. ('auto', 'sgd', 'svd' or 'lbfgs').
-      #   'auto' chooses the 'svd' solver if Numo::Linalg is loaded. Otherwise, it chooses the 'sgd' solver.
+      #   'auto' chooses the 'svd' solver if Numo::Linalg is loaded. Otherwise, it chooses the 'lbfgs' solver.
       #   'sgd' uses the stochastic gradient descent optimization.
       #   'svd' performs singular value decomposition of samples.
       #   'lbfgs' uses the L-BFGS method for optimization.
@@ -82,9 +84,9 @@ module Rumale
         super()
         @params.merge!(method(:initialize).parameters.map { |_t, arg| [arg, binding.local_variable_get(arg)] }.to_h)
         @params[:solver] = if solver == 'auto'
-                             enable_linalg?(warning: false) ? 'svd' : 'sgd'
+                             enable_linalg?(warning: false) ? 'svd' : 'lbfgs'
                            else
-                             solver.match?(/^svd$|^sgd$|^lbfgs$/) ? solver : 'sgd'
+                             solver.match?(/^svd$|^sgd$|^lbfgs$/) ? solver : 'lbfgs'
                            end
         @params[:decay] ||= @params[:learning_rate]
         @params[:random_seed] ||= srand
