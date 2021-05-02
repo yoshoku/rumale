@@ -2,17 +2,13 @@
 
 RUBY_EXTERN VALUE mRumale;
 
-double*
-alloc_dbl_array(const long n_dimensions)
-{
+double* alloc_dbl_array(const long n_dimensions) {
   double* arr = ALLOC_N(double, n_dimensions);
   memset(arr, 0, n_dimensions * sizeof(double));
   return arr;
 }
 
-double
-calc_gini_coef(double* histogram, const long n_elements, const long n_classes)
-{
+double calc_gini_coef(double* histogram, const long n_elements, const long n_classes) {
   long i;
   double el;
   double gini = 0.0;
@@ -25,9 +21,7 @@ calc_gini_coef(double* histogram, const long n_elements, const long n_classes)
   return 1.0 - gini;
 }
 
-double
-calc_entropy(double* histogram, const long n_elements, const long n_classes)
-{
+double calc_entropy(double* histogram, const long n_elements, const long n_classes) {
   long i;
   double el;
   double entropy = 0.0;
@@ -41,8 +35,7 @@ calc_entropy(double* histogram, const long n_elements, const long n_classes)
 }
 
 VALUE
-calc_mean_vec(double* sum_vec, const long n_dimensions, const long n_elements)
-{
+calc_mean_vec(double* sum_vec, const long n_dimensions, const long n_elements) {
   long i;
   VALUE mean_vec = rb_ary_new2(n_dimensions);
 
@@ -53,9 +46,7 @@ calc_mean_vec(double* sum_vec, const long n_dimensions, const long n_elements)
   return mean_vec;
 }
 
-double
-calc_vec_mae(VALUE vec_a, VALUE vec_b)
-{
+double calc_vec_mae(VALUE vec_a, VALUE vec_b) {
   long i;
   const long n_dimensions = RARRAY_LEN(vec_a);
   double sum = 0.0;
@@ -69,9 +60,7 @@ calc_vec_mae(VALUE vec_a, VALUE vec_b)
   return sum / n_dimensions;
 }
 
-double
-calc_vec_mse(VALUE vec_a, VALUE vec_b)
-{
+double calc_vec_mse(VALUE vec_a, VALUE vec_b) {
   long i;
   const long n_dimensions = RARRAY_LEN(vec_a);
   double sum = 0.0;
@@ -85,9 +74,7 @@ calc_vec_mse(VALUE vec_a, VALUE vec_b)
   return sum / n_dimensions;
 }
 
-double
-calc_mae(VALUE target_vecs, VALUE mean_vec)
-{
+double calc_mae(VALUE target_vecs, VALUE mean_vec) {
   long i;
   const long n_elements = RARRAY_LEN(target_vecs);
   double sum = 0.0;
@@ -99,9 +86,7 @@ calc_mae(VALUE target_vecs, VALUE mean_vec)
   return sum / n_elements;
 }
 
-double
-calc_mse(VALUE target_vecs, VALUE mean_vec)
-{
+double calc_mse(VALUE target_vecs, VALUE mean_vec) {
   long i;
   const long n_elements = RARRAY_LEN(target_vecs);
   double sum = 0.0;
@@ -113,18 +98,14 @@ calc_mse(VALUE target_vecs, VALUE mean_vec)
   return sum / n_elements;
 }
 
-double
-calc_impurity_cls(const char* criterion, double* histogram, const long n_elements, const long n_classes)
-{
+double calc_impurity_cls(const char* criterion, double* histogram, const long n_elements, const long n_classes) {
   if (strcmp(criterion, "entropy") == 0) {
     return calc_entropy(histogram, n_elements, n_classes);
   }
   return calc_gini_coef(histogram, n_elements, n_classes);
 }
 
-double
-calc_impurity_reg(const char* criterion, VALUE target_vecs, double* sum_vec)
-{
+double calc_impurity_reg(const char* criterion, VALUE target_vecs, double* sum_vec) {
   const long n_elements = RARRAY_LEN(target_vecs);
   const long n_dimensions = RARRAY_LEN(rb_ary_entry(target_vecs, 0));
   VALUE mean_vec = calc_mean_vec(sum_vec, n_dimensions, n_elements);
@@ -135,9 +116,7 @@ calc_impurity_reg(const char* criterion, VALUE target_vecs, double* sum_vec)
   return calc_mse(target_vecs, mean_vec);
 }
 
-void
-add_sum_vec(double* sum_vec, VALUE target)
-{
+void add_sum_vec(double* sum_vec, VALUE target) {
   long i;
   const long n_dimensions = RARRAY_LEN(target);
 
@@ -146,9 +125,7 @@ add_sum_vec(double* sum_vec, VALUE target)
   }
 }
 
-void
-sub_sum_vec(double* sum_vec, VALUE target)
-{
+void sub_sum_vec(double* sum_vec, VALUE target) {
   long i;
   const long n_dimensions = RARRAY_LEN(target);
 
@@ -168,9 +145,7 @@ typedef struct {
 /**
  * @!visibility private
  */
-static void
-iter_find_split_params_cls(na_loop_t const* lp)
-{
+static void iter_find_split_params_cls(na_loop_t const* lp) {
   const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
   const double* f = (double*)NDL_PTR(lp, 1);
   const int32_t* y = (int32_t*)NDL_PTR(lp, 2);
@@ -200,7 +175,9 @@ iter_find_split_params_cls(na_loop_t const* lp)
   params[3] = 0.0;        /* gain */
 
   /* Initialize child node variables. */
-  for (i = 0; i < n_elements; i++) { r_histogram[y[o[i]]] += 1.0; }
+  for (i = 0; i < n_elements; i++) {
+    r_histogram[y[o[i]]] += 1.0;
+  }
 
   /* Find optimal parameters. */
   while (curr_pos < n_elements && curr_el != last_el) {
@@ -224,7 +201,8 @@ iter_find_split_params_cls(na_loop_t const* lp)
       params[2] = 0.5 * (curr_el + next_el);
       params[3] = gain;
     }
-    if (next_pos == n_elements) break;
+    if (next_pos == n_elements)
+      break;
     curr_pos = next_pos;
     curr_el = f[o[curr_pos]];
   }
@@ -246,14 +224,13 @@ iter_find_split_params_cls(na_loop_t const* lp)
  * @param n_classes [Integer] The number of classes.
  * @return [Array<Float>] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
  */
-static VALUE
-find_split_params_cls(VALUE self, VALUE criterion, VALUE impurity, VALUE order, VALUE features, VALUE labels, VALUE n_classes)
-{
-  ndfunc_arg_in_t ain[3] = { {numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cInt32, 1} };
-  size_t out_shape[1] = { 4 };
-  ndfunc_arg_out_t aout[1] = { {numo_cDFloat, 1, out_shape} };
-  ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_cls, NO_LOOP, 3, 1, ain, aout };
-  split_opts_cls opts = { StringValuePtr(criterion), NUM2LONG(n_classes), NUM2DBL(impurity) };
+static VALUE find_split_params_cls(VALUE self, VALUE criterion, VALUE impurity, VALUE order, VALUE features, VALUE labels,
+                                   VALUE n_classes) {
+  ndfunc_arg_in_t ain[3] = {{numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cInt32, 1}};
+  size_t out_shape[1] = {4};
+  ndfunc_arg_out_t aout[1] = {{numo_cDFloat, 1, out_shape}};
+  ndfunc_t ndf = {(na_iter_func_t)iter_find_split_params_cls, NO_LOOP, 3, 1, ain, aout};
+  split_opts_cls opts = {StringValuePtr(criterion), NUM2LONG(n_classes), NUM2DBL(impurity)};
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, labels);
   VALUE results = rb_ary_new2(4);
   double* params_ptr = (double*)na_get_pointer_for_read(params);
@@ -276,9 +253,7 @@ typedef struct {
 /**
  * @!visibility private
  */
-static void
-iter_find_split_params_reg(na_loop_t const* lp)
-{
+static void iter_find_split_params_reg(na_loop_t const* lp) {
   const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
   const double* f = (double*)NDL_PTR(lp, 1);
   const double* y = (double*)NDL_PTR(lp, 2);
@@ -346,7 +321,8 @@ iter_find_split_params_reg(na_loop_t const* lp)
       params[2] = 0.5 * (curr_el + next_el);
       params[3] = gain;
     }
-    if (next_pos == n_elements) break;
+    if (next_pos == n_elements)
+      break;
     curr_pos = next_pos;
     curr_el = f[o[curr_pos]];
   }
@@ -367,14 +343,12 @@ iter_find_split_params_reg(na_loop_t const* lp)
  * @param targets [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values.
  * @return [Array<Float>] The array consists of optimal parameters including impurities of child nodes, threshold, and gain.
  */
-static VALUE
-find_split_params_reg(VALUE self, VALUE criterion, VALUE impurity, VALUE order, VALUE features, VALUE targets)
-{
-  ndfunc_arg_in_t ain[3] = { {numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 2} };
-  size_t out_shape[1] = { 4 };
-  ndfunc_arg_out_t aout[1] = { {numo_cDFloat, 1, out_shape} };
-  ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_reg, NO_LOOP, 3, 1, ain, aout };
-  split_opts_reg opts = { StringValuePtr(criterion), NUM2DBL(impurity) };
+static VALUE find_split_params_reg(VALUE self, VALUE criterion, VALUE impurity, VALUE order, VALUE features, VALUE targets) {
+  ndfunc_arg_in_t ain[3] = {{numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 2}};
+  size_t out_shape[1] = {4};
+  ndfunc_arg_out_t aout[1] = {{numo_cDFloat, 1, out_shape}};
+  ndfunc_t ndf = {(na_iter_func_t)iter_find_split_params_reg, NO_LOOP, 3, 1, ain, aout};
+  split_opts_reg opts = {StringValuePtr(criterion), NUM2DBL(impurity)};
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, targets);
   VALUE results = rb_ary_new2(4);
   double* params_ptr = (double*)na_get_pointer_for_read(params);
@@ -390,9 +364,7 @@ find_split_params_reg(VALUE self, VALUE criterion, VALUE impurity, VALUE order, 
 /**
  * @!visibility private
  */
-static void
-iter_find_split_params_grad_reg(na_loop_t const* lp)
-{
+static void iter_find_split_params_grad_reg(na_loop_t const* lp) {
   const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
   const double* f = (double*)NDL_PTR(lp, 1);
   const double* g = (double*)NDL_PTR(lp, 2);
@@ -427,15 +399,16 @@ iter_find_split_params_grad_reg(na_loop_t const* lp)
     /* Calculate gain of new split. */
     r_grad = s_grad - l_grad;
     r_hess = s_hess - l_hess;
-    gain = (l_grad * l_grad) / (l_hess + reg_lambda) +
-           (r_grad * r_grad) / (r_hess + reg_lambda) -
+    gain = (l_grad * l_grad) / (l_hess + reg_lambda) + (r_grad * r_grad) / (r_hess + reg_lambda) -
            (s_grad * s_grad) / (s_hess + reg_lambda);
     /* Update optimal parameters. */
     if (gain > gain_max) {
       threshold = 0.5 * (curr_el + next_el);
       gain_max = gain;
     }
-    if (next_pos == n_elements) break;
+    if (next_pos == n_elements) {
+      break;
+    }
     curr_pos = next_pos;
     curr_el = f[o[curr_pos]];
   }
@@ -458,15 +431,13 @@ iter_find_split_params_grad_reg(na_loop_t const* lp)
  *   @param reg_lambda [Float] The L2 regularization term on weight.
  * @return [Array<Float>] The array consists of optimal parameters including threshold and gain.
  */
-static VALUE
-find_split_params_grad_reg
-(VALUE self, VALUE order, VALUE features, VALUE gradients, VALUE hessians, VALUE sum_gradient, VALUE sum_hessian, VALUE reg_lambda)
-{
-  ndfunc_arg_in_t ain[4] = { {numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 1} };
-  size_t out_shape[1] = { 2 };
-  ndfunc_arg_out_t aout[1] = { {numo_cDFloat, 1, out_shape} };
-  ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_grad_reg, NO_LOOP, 4, 1, ain, aout };
-  double opts[3] = { NUM2DBL(sum_gradient), NUM2DBL(sum_hessian), NUM2DBL(reg_lambda) };
+static VALUE find_split_params_grad_reg(VALUE self, VALUE order, VALUE features, VALUE gradients, VALUE hessians,
+                                        VALUE sum_gradient, VALUE sum_hessian, VALUE reg_lambda) {
+  ndfunc_arg_in_t ain[4] = {{numo_cInt32, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 1}, {numo_cDFloat, 1}};
+  size_t out_shape[1] = {2};
+  ndfunc_arg_out_t aout[1] = {{numo_cDFloat, 1, out_shape}};
+  ndfunc_t ndf = {(na_iter_func_t)iter_find_split_params_grad_reg, NO_LOOP, 4, 1, ain, aout};
+  double opts[3] = {NUM2DBL(sum_gradient), NUM2DBL(sum_hessian), NUM2DBL(reg_lambda)};
   VALUE params = na_ndloop3(&ndf, opts, 4, order, features, gradients, hessians);
   VALUE results = rb_ary_new2(2);
   double* params_ptr = (double*)na_get_pointer_for_read(params);
@@ -488,9 +459,7 @@ find_split_params_grad_reg
  * @param n_classes_ [Integer] The number of classes.
  * @return [Float] impurity
  */
-static VALUE
-node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, VALUE n_classes_)
-{
+static VALUE node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, VALUE n_classes_) {
   long i;
   const long n_classes = NUM2LONG(n_classes_);
   const long n_elements = NUM2LONG(n_elements_);
@@ -498,7 +467,9 @@ node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, 
   double* histogram = alloc_dbl_array(n_classes);
   VALUE ret;
 
-  for (i = 0; i < n_elements; i++) { histogram[y[i]] += 1; }
+  for (i = 0; i < n_elements; i++) {
+    histogram[y[i]] += 1;
+  }
 
   ret = DBL2NUM(calc_impurity_cls(StringValuePtr(criterion), histogram, n_elements, n_classes));
 
@@ -520,9 +491,7 @@ node_impurity_cls(VALUE self, VALUE criterion, VALUE y_nary, VALUE n_elements_, 
  * @param y [Array<Float>] (shape: [n_samples, n_outputs]) The taget values.
  * @return [Float] impurity
  */
-static VALUE
-node_impurity_reg(VALUE self, VALUE criterion, VALUE y)
-{
+static VALUE node_impurity_reg(VALUE self, VALUE criterion, VALUE y) {
   long i;
   const long n_elements = RARRAY_LEN(y);
   const long n_outputs = RARRAY_LEN(rb_ary_entry(y, 0));
@@ -546,8 +515,7 @@ node_impurity_reg(VALUE self, VALUE criterion, VALUE y)
   return ret;
 }
 
-void init_tree_module()
-{
+void init_tree_module() {
   VALUE mTree = rb_define_module_under(mRumale, "Tree");
   /**
    * Document-module: Rumale::Tree::ExtDecisionTreeClassifier
