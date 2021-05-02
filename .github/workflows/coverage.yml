@@ -18,6 +18,8 @@ jobs:
         with:
           ruby-version: '2.7'
       - name: Build and test with Rake
+        env:
+          LD_LIBRARY_PATH: '/usr/lib/x86_64-linux-gnu/'
         run: |
           gem install bundler
           bundle install
