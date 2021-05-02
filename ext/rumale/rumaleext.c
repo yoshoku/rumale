@@ -1,8 +1,8 @@
-#include "rumale.h"
+#include "rumaleext.h"
 
 VALUE mRumale;
 
-void Init_rumale(void)
+void Init_rumaleext(void)
 {
   mRumale = rb_define_module("Rumale");
 

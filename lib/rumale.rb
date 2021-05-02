@@ -2,7 +2,7 @@
 
 require 'numo/narray'
 
-require 'rumale/rumale'
+require 'rumale/rumaleext'
 
 require 'rumale/version'
 require 'rumale/validation'

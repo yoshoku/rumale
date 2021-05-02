@@ -2,6 +2,7 @@
 
 require 'rumale/base/base_estimator'
 require 'rumale/tree/node'
+require 'rumale/rumaleext'
 
 module Rumale
   # This module consists of the classes that implement tree models.

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rumale/rumale'
 require 'rumale/base/base_estimator'
 require 'rumale/base/regressor'
+require 'rumale/rumaleext'
 require 'rumale/tree/node'
 
 module Rumale

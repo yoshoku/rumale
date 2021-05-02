@@ -28,4 +28,4 @@ if RUBY_PLATFORM =~ /mswin|cygwin|mingw/
   end
 end
 
-create_makefile('rumale/rumale')
+create_makefile('rumale/rumaleext')

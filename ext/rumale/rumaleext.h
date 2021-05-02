@@ -5,4 +5,4 @@
 
 #include "tree.h"
 
-#endif /* RUMALE_H */
+#endif /* RUMALEEXT_H */

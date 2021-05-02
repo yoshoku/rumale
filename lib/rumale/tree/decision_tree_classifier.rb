@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rumale/rumale'
 require 'rumale/tree/base_decision_tree'
 require 'rumale/base/classifier'
 

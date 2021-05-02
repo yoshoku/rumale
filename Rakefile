@@ -7,7 +7,8 @@ require 'rake/extensiontask'
 
 task :build => :compile
 
-Rake::ExtensionTask.new('rumale') do |ext|
+Rake::ExtensionTask.new('rumaleext') do |ext|
+  ext.ext_dir = 'ext/rumale'
   ext.lib_dir = 'lib/rumale'
 end
 
