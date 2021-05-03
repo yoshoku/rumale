@@ -20,12 +20,14 @@ RSpec.describe Rumale::LinearModel::NNLS do
 
     it 'learns the model for single regression problem.', :aggregate_failures do
       expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.lt(0).count).to be_zero
       expect(estimator.bias_term).to be_zero
       expect(estimator.n_iter).not_to be_zero
       expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -61,15 +63,18 @@ RSpec.describe Rumale::LinearModel::NNLS do
 
     it 'learns the model for multiple-regression problems', :aggregate_failures do
       expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
       expect(estimator.weight_vec.lt(0).count).to be_zero
       expect(estimator.bias_term).to be_a(Numo::DFloat)
+      expect(estimator.bias_term).to be_contiguous
       expect(estimator.bias_term.ndim).to eq(1)
       expect(estimator.bias_term.shape[0]).to eq(n_outputs)
       expect(estimator.bias_term.eq(0).count).to eq(n_outputs)
       expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
@@ -83,11 +88,13 @@ RSpec.describe Rumale::LinearModel::NNLS do
 
     it 'learns the model for multiple regression problem with bias term', :aggregate_failures do
       expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
       expect(estimator.weight_vec.lt(0).count).to be_zero
       expect(estimator.bias_term).to be_a(Numo::DFloat)
+      expect(estimator.bias_term).to be_contiguous
       expect(estimator.bias_term.ndim).to eq(1)
       expect(estimator.bias_term.shape[0]).to eq(n_outputs)
       expect(estimator.bias_term.ge(0).count).to eq(n_outputs)

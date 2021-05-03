@@ -24,17 +24,21 @@ RSpec.describe Rumale::LinearModel::SVC do
     let(:dataset) { two_clusters_dataset }
 
     it 'classifies two clusters.', :aggregate_failures do
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.bias_term).to be_zero
-      expect(func_vals.class).to eq(Numo::DFloat)
+      expect(func_vals).to be_a(Numo::DFloat)
+      expect(func_vals).to be_contiguous
       expect(func_vals.ndim).to eq(1)
       expect(func_vals.shape[0]).to eq(n_samples)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
@@ -67,7 +71,8 @@ RSpec.describe Rumale::LinearModel::SVC do
       let(:probability) { true }
 
       it 'estimates class probabilities with two clusters dataset.', :aggregate_failures do
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs).to be_a(Numo::DFloat)
+        expect(probs).to be_contiguous
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(n_classes)
@@ -84,17 +89,21 @@ RSpec.describe Rumale::LinearModel::SVC do
       let(:fit_bias) { true }
 
       it 'classifies three clusters.', :aggregate_failures do
-        expect(estimator.classes.class).to eq(Numo::Int32)
+        expect(estimator.classes).to be_a(Numo::Int32)
+        expect(estimator.classes).to be_contiguous
         expect(estimator.classes.ndim).to eq(1)
         expect(estimator.classes.shape[0]).to eq(n_classes)
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec).to be_a(Numo::DFloat)
+        expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_classes)
         expect(estimator.weight_vec.shape[1]).to eq(n_features)
-        expect(estimator.bias_term.class).to eq(Numo::DFloat)
+        expect(estimator.bias_term).to be_a(Numo::DFloat)
+        expect(estimator.bias_term).to be_contiguous
         expect(estimator.bias_term.ndim).to eq(1)
         expect(estimator.bias_term.shape[0]).to eq(n_classes)
-        expect(predicted.class).to eq(Numo::Int32)
+        expect(predicted).to be_a(Numo::Int32)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted).to eq(y)
@@ -106,7 +115,8 @@ RSpec.describe Rumale::LinearModel::SVC do
       let(:probability) { true }
 
       it 'estimates class probabilities with three clusters dataset.', :aggregate_failures do
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs).to be_a(Numo::DFloat)
+        expect(probs).to be_contiguous
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(n_classes)
@@ -120,21 +130,26 @@ RSpec.describe Rumale::LinearModel::SVC do
       let(:n_jobs) { -1 }
 
       it 'estimates class probabilities with three clusters dataset in parallel.', :aggregate_failures do
-        expect(estimator.classes.class).to eq(Numo::Int32)
+        expect(estimator.classes).to be_a(Numo::Int32)
+        expect(estimator.classes).to be_contiguous
         expect(estimator.classes.ndim).to eq(1)
         expect(estimator.classes.shape[0]).to eq(n_classes)
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec).to be_a(Numo::DFloat)
+        expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_classes)
         expect(estimator.weight_vec.shape[1]).to eq(n_features)
-        expect(estimator.bias_term.class).to eq(Numo::DFloat)
+        expect(estimator.bias_term).to be_a(Numo::DFloat)
+        expect(estimator.bias_term).to be_contiguous
         expect(estimator.bias_term.ndim).to eq(1)
         expect(estimator.bias_term.shape[0]).to eq(n_classes)
-        expect(predicted.class).to eq(Numo::Int32)
+        expect(predicted).to be_a(Numo::Int32)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted).to eq(y)
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs).to be_a(Numo::DFloat)
+        expect(probs).to be_contiguous
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(n_classes)

@@ -20,11 +20,13 @@ RSpec.describe Rumale::LinearModel::SVR do
     let(:y) { single_target }
 
     it 'learns the linear model.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.bias_term).to be_zero
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -57,11 +59,13 @@ RSpec.describe Rumale::LinearModel::SVR do
     let(:y) { multi_target }
 
     it 'learns the model for multi-target problem.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
@@ -72,14 +76,17 @@ RSpec.describe Rumale::LinearModel::SVR do
       let(:n_jobs) { -1 }
 
       it 'learns the model for multiple-regression problems in parallel.', :aggregate_failures do
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec).to be_a(Numo::DFloat)
+        expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_features)
         expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-        expect(estimator.bias_term.class).to eq(Numo::DFloat)
+        expect(estimator.bias_term).to be_a(Numo::DFloat)
+        expect(estimator.bias_term).to be_contiguous
         expect(estimator.bias_term.ndim).to eq(1)
         expect(estimator.bias_term.shape[0]).to eq(n_outputs)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(2)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)

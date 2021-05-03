@@ -19,10 +19,11 @@ RSpec.describe Rumale::LinearModel::BaseSGD do
 
     it 'performs learning process' do
       uw, ub = base_sgd.send(:partial_fit, x, y)
-      expect(uw.class).to eq(Numo::DFloat)
+      expect(uw).to be_a(Numo::DFloat)
+      expect(uw).to be_contiguous
       expect(uw.ndim).to eq(1)
       expect(uw.shape[0]).to eq(2)
-      expect(ub.class).to eq(Float)
+      expect(ub).to be_a(Float)
     end
   end
 
