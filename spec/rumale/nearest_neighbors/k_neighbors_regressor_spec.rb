@@ -23,14 +23,17 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
       let(:y) { single_target }
 
       it 'learns the model for single regression problem.', :aggregate_failures do
-        expect(estimator.prototypes.class).to eq(Numo::DFloat)
+        expect(estimator.prototypes).to be_a(Numo::DFloat)
+        expect(estimator.prototypes).to be_contiguous
         expect(estimator.prototypes.ndim).to eq(2)
         expect(estimator.prototypes.shape[0]).to eq(n_samples)
         expect(estimator.prototypes.shape[1]).to eq(n_features)
-        expect(estimator.values.class).to eq(Numo::DFloat)
+        expect(estimator.values).to be_a(Numo::DFloat)
+        expect(estimator.values).to be_contiguous
         expect(estimator.values.ndim).to eq(1)
         expect(estimator.values.shape[0]).to eq(n_samples)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(score).to be_within(0.01).of(1.0)
@@ -48,11 +51,13 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
         let(:algorithm) { 'vptree' }
 
         it 'learns the model for single regression problem.', :aggregate_failures do
-          expect(estimator.prototypes.class).to eq(Rumale::NearestNeighbors::VPTree)
-          expect(estimator.values.class).to eq(Numo::DFloat)
+          expect(estimator.prototypes).to be_a(Rumale::NearestNeighbors::VPTree)
+          expect(estimator.values).to be_a(Numo::DFloat)
+          expect(estimator.values).to be_contiguous
           expect(estimator.values.ndim).to eq(1)
           expect(estimator.values.shape[0]).to eq(n_samples)
-          expect(predicted.class).to eq(Numo::DFloat)
+          expect(predicted).to be_a(Numo::DFloat)
+          expect(predicted).to be_contiguous
           expect(predicted.ndim).to eq(1)
           expect(predicted.shape[0]).to eq(n_samples)
           expect(score).to be_within(0.05).of(1.0)
@@ -64,15 +69,18 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
       let(:y) { multi_target }
 
       it 'learns the model for multiple regression problem.', :aggregate_failures do
-        expect(estimator.prototypes.class).to eq(Numo::DFloat)
+        expect(estimator.prototypes).to be_a(Numo::DFloat)
+        expect(estimator.prototypes).to be_contiguous
         expect(estimator.prototypes.ndim).to eq(2)
         expect(estimator.prototypes.shape[0]).to eq(n_samples)
         expect(estimator.prototypes.shape[1]).to eq(n_features)
-        expect(estimator.values.class).to eq(Numo::DFloat)
+        expect(estimator.values).to be_a(Numo::DFloat)
+        expect(estimator.values).to be_contiguous
         expect(estimator.values.ndim).to eq(2)
         expect(estimator.values.shape[0]).to eq(n_samples)
         expect(estimator.values.shape[1]).to eq(n_outputs)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(2)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)
@@ -83,12 +91,14 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
         let(:algorithm) { 'vptree' }
 
         it 'learns the model for multiple regression problem.', :aggregate_failures do
-          expect(estimator.prototypes.class).to eq(Rumale::NearestNeighbors::VPTree)
-          expect(estimator.values.class).to eq(Numo::DFloat)
+          expect(estimator.prototypes).to be_a(Rumale::NearestNeighbors::VPTree)
+          expect(estimator.values).to be_a(Numo::DFloat)
+          expect(estimator.values).to be_contiguous
           expect(estimator.values.ndim).to eq(2)
           expect(estimator.values.shape[0]).to eq(n_samples)
           expect(estimator.values.shape[1]).to eq(n_outputs)
-          expect(predicted.class).to eq(Numo::DFloat)
+          expect(predicted).to be_a(Numo::DFloat)
+          expect(predicted).to be_contiguous
           expect(predicted.ndim).to eq(2)
           expect(predicted.shape[0]).to eq(n_samples)
           expect(predicted.shape[1]).to eq(n_outputs)
@@ -106,11 +116,13 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
       let(:y) { single_target }
 
       it 'learns the model for single regression problem.', :aggregate_failures do
-        expect(estimator.prototypes.class).to eq(NilClass)
-        expect(estimator.values.class).to eq(Numo::DFloat)
+        expect(estimator.prototypes).to be_nil
+        expect(estimator.values).to be_a(Numo::DFloat)
+        expect(estimator.values).to be_contiguous
         expect(estimator.values.ndim).to eq(1)
         expect(estimator.values.shape[0]).to eq(n_samples)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(score).to be_within(0.01).of(1.0)
@@ -129,12 +141,14 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsRegressor do
       let(:y) { multi_target }
 
       it 'learns the model for multiple regression problem.', :aggregate_failures do
-        expect(estimator.prototypes.class).to eq(NilClass)
-        expect(estimator.values.class).to eq(Numo::DFloat)
+        expect(estimator.prototypes).to be_nil
+        expect(estimator.values).to be_a(Numo::DFloat)
+        expect(estimator.values).to be_contiguous
         expect(estimator.values.ndim).to eq(2)
         expect(estimator.values.shape[0]).to eq(n_samples)
         expect(estimator.values.shape[1]).to eq(n_outputs)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(2)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)

@@ -21,17 +21,21 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsClassifier do
       let(:algorithm) { 'brute' }
 
       it 'classifies three clusters data.', :aggregate_failures do
-        expect(estimator.prototypes.class).to eq(Numo::DFloat)
+        expect(estimator.prototypes).to be_a(Numo::DFloat)
+        expect(estimator.prototypes).to be_contiguous
         expect(estimator.prototypes.ndim).to eq(2)
         expect(estimator.prototypes.shape[0]).to eq(n_samples)
         expect(estimator.prototypes.shape[1]).to eq(n_features)
-        expect(estimator.labels.class).to eq(Numo::Int32)
+        expect(estimator.labels).to be_a(Numo::Int32)
+        expect(estimator.labels).to be_contiguous
         expect(estimator.labels.ndim).to eq(1)
         expect(estimator.labels.shape[0]).to eq(n_samples)
-        expect(estimator.classes.class).to eq(Numo::Int32)
+        expect(estimator.classes).to be_a(Numo::Int32)
+        expect(estimator.classes).to be_contiguous
         expect(estimator.classes.ndim).to eq(1)
         expect(estimator.classes.shape[0]).to eq(n_classes)
-        expect(predicted.class).to eq(Numo::Int32)
+        expect(predicted).to be_a(Numo::Int32)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted).to eq(y)
@@ -52,14 +56,17 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsClassifier do
       let(:algorithm) { 'vptree' }
 
       it 'classifies three clusters data.', :aggregate_failures do
-        expect(estimator.prototypes.class).to eq(Rumale::NearestNeighbors::VPTree)
-        expect(estimator.labels.class).to eq(Numo::Int32)
+        expect(estimator.prototypes).to be_a(Rumale::NearestNeighbors::VPTree)
+        expect(estimator.labels).to be_a(Numo::Int32)
+        expect(estimator.labels).to be_contiguous
         expect(estimator.labels.ndim).to eq(1)
         expect(estimator.labels.shape[0]).to eq(n_samples)
-        expect(estimator.classes.class).to eq(Numo::Int32)
+        expect(estimator.classes).to be_a(Numo::Int32)
+        expect(estimator.classes).to be_contiguous
         expect(estimator.classes.ndim).to eq(1)
         expect(estimator.classes.shape[0]).to eq(n_classes)
-        expect(predicted.class).to eq(Numo::Int32)
+        expect(predicted).to be_a(Numo::Int32)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(score).to be_within(0.05).of(1.0)
@@ -82,14 +89,17 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsClassifier do
     let(:x) { Rumale::PairwiseMetric.manhattan_distance(dataset[0]) }
 
     it 'classifies three clusters data.', :aggregate_failures do
-      expect(estimator.prototypes.class).to eq(NilClass)
-      expect(estimator.labels.class).to eq(Numo::Int32)
+      expect(estimator.prototypes).to be_nil
+      expect(estimator.labels).to be_a(Numo::Int32)
+      expect(estimator.labels).to be_contiguous
       expect(estimator.labels.ndim).to eq(1)
       expect(estimator.labels.shape[0]).to eq(n_samples)
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)

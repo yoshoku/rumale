@@ -18,11 +18,13 @@ RSpec.describe Rumale::NearestNeighbors::VPTree do
 
   shared_examples 'k-nearest neighbor search' do
     it 'searches k-nearest neighbors', :aggregate_failures do
-      expect(rel_ids.class).to eq(Numo::Int32)
+      expect(rel_ids).to be_a(Numo::Int32)
+      expect(rel_ids).to be_contiguous
       expect(rel_ids.ndim).to eq(2)
       expect(rel_ids.shape[0]).to eq(n_samples)
       expect(rel_ids.shape[1]).to eq(n_neighbors)
-      expect(rel_dists.class).to eq(Numo::DFloat)
+      expect(rel_dists).to be_a(Numo::DFloat)
+      expect(rel_dists).to be_contiguous
       expect(rel_dists.ndim).to eq(2)
       expect(rel_dists.shape[0]).to eq(n_samples)
       expect(rel_dists.shape[1]).to eq(n_neighbors)
