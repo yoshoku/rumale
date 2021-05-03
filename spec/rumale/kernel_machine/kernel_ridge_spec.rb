@@ -16,10 +16,12 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
     let(:y) { x[true, 0] + x[true, 1]**2 }
 
     it 'learns the model.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_samples)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -38,11 +40,13 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
     let(:n_outputs) { y.shape[1] }
 
     it 'learns the model.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_samples)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
@@ -53,12 +57,14 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
       let(:reg_param) { Numo::DFloat[0.1, 0.5] }
 
       it 'learns the model.', :aggregate_failures do
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec).to be_a(Numo::DFloat)
+        expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_samples)
         expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
         expect(estimator.params[:reg_param]).to eq(reg_param)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(2)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)

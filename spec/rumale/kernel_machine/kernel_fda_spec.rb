@@ -28,15 +28,18 @@ RSpec.describe Rumale::KernelMachine::KernelFDA do
     let(:copied) { Marshal.load(Marshal.dump(transformer.fit(kernel_mat_train, y_train))) }
 
     it 'maps into subspace.', :aggregate_failures do
-      expect(z_train.class).to eq(Numo::DFloat)
+      expect(z_train).to be_a(Numo::DFloat)
+      expect(z_train).to be_contiguous
       expect(z_train.ndim).to eq(2)
       expect(z_train.shape[0]).to eq(n_train_samples)
       expect(z_train.shape[1]).to eq(n_classes)
-      expect(z_test.class).to eq(Numo::DFloat)
+      expect(z_test).to be_a(Numo::DFloat)
+      expect(z_test).to be_contiguous
       expect(z_test.ndim).to eq(2)
       expect(z_test.shape[0]).to eq(n_test_samples)
       expect(z_test.shape[1]).to eq(n_classes)
-      expect(transformer.alphas.class).to eq(Numo::DFloat)
+      expect(transformer.alphas).to be_a(Numo::DFloat)
+      expect(transformer.alphas).to be_contiguous
       expect(transformer.alphas.ndim).to eq(2)
       expect(transformer.alphas.shape[0]).to eq(n_train_samples)
       expect(transformer.alphas.shape[1]).to eq(n_classes)
@@ -67,10 +70,12 @@ RSpec.describe Rumale::KernelMachine::KernelFDA do
     let(:test_score) { classifier.score(z_test.expand_dims(1), y_test) }
 
     it 'maps to a linearly separable space', :aggregate_failures do
-      expect(z_train.class).to eq(Numo::DFloat)
+      expect(z_train).to be_a(Numo::DFloat)
+      expect(z_train).to be_contiguous
       expect(z_train.ndim).to eq(1)
       expect(z_train.shape[0]).to eq(n_train_samples)
-      expect(z_test.class).to eq(Numo::DFloat)
+      expect(z_test).to be_a(Numo::DFloat)
+      expect(z_test).to be_contiguous
       expect(z_test.ndim).to eq(1)
       expect(z_test.shape[0]).to eq(n_test_samples)
       expect(train_score).to be_within(0.01).of(1.0)

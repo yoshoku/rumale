@@ -26,13 +26,16 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
     let(:dataset) { xor_dataset }
 
     it 'classifies xor data.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_samples)
-      expect(func_vals.class).to eq(Numo::DFloat)
+      expect(func_vals).to be_a(Numo::DFloat)
+      expect(func_vals).to be_contiguous
       expect(func_vals.ndim).to eq(1)
       expect(func_vals.shape[0]).to eq(n_samples)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
@@ -55,7 +58,8 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
       let(:probability) { true }
 
       it 'estimates class probabilities with xor data.', :aggregate_failures do
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs).to be_a(Numo::DFloat)
+        expect(probs).to be_contiguous
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(2)
@@ -69,19 +73,22 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
     let(:dataset) { three_clusters_dataset }
 
     it 'classifies three clusters.', :aggregate_failures do
-      expect(estimator.classes.class).to eq(Numo::Int32)
-      expect(estimator.classes.size).to eq(n_classes)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_classes)
       expect(estimator.weight_vec.shape[1]).to eq(n_samples)
-      expect(func_vals.class).to eq(Numo::DFloat)
+      expect(func_vals).to be_a(Numo::DFloat)
+      expect(func_vals).to be_contiguous
       expect(func_vals.ndim).to eq(2)
       expect(func_vals.shape[0]).to eq(n_samples)
       expect(func_vals.shape[1]).to eq(n_classes)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
@@ -92,7 +99,8 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
       let(:probability) { true }
 
       it 'estimates class probabilities with three clusters dataset.', :aggregate_failures do
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs).to be_a(Numo::DFloat)
+        expect(probs).to be_contiguous
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(n_classes)
@@ -109,22 +117,27 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
         backup = Numo::Linalg
         Numo.class_eval { remove_const(:Linalg) }
 
-        expect(estimator.classes.class).to eq(Numo::Int32)
+        expect(estimator.classes).to be_a(Numo::Int32)
+        expect(estimator.classes).to be_contiguous
         expect(estimator.classes.ndim).to eq(1)
         expect(estimator.classes.shape[0]).to eq(n_classes)
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec).to be_a(Numo::DFloat)
+        expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_classes)
         expect(estimator.weight_vec.shape[1]).to eq(n_samples)
-        expect(func_vals.class).to eq(Numo::DFloat)
+        expect(func_vals).to be_a(Numo::DFloat)
+        expect(func_vals).to be_contiguous
         expect(func_vals.ndim).to eq(2)
         expect(func_vals.shape[0]).to eq(n_samples)
         expect(func_vals.shape[1]).to eq(n_classes)
-        expect(predicted.class).to eq(Numo::Int32)
+        expect(predicted).to be_a(Numo::Int32)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted).to eq(y)
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs).to be_a(Numo::DFloat)
+        expect(probs).to be_contiguous
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(n_classes)

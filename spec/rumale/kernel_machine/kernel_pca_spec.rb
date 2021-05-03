@@ -27,18 +27,25 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
     let(:copied) { Marshal.load(Marshal.dump(transformer.fit(kernel_mat_train))) }
 
     it 'maps into subspace.', :aggregate_failures do
-      expect(z_train.class).to eq(Numo::DFloat)
+      expect(z_train).to be_a(Numo::DFloat)
+      expect(z_train).to be_contiguous
+      expect(z_train.ndim).to eq(2)
       expect(z_train.shape[0]).to eq(n_train_samples)
       expect(z_train.shape[1]).to eq(n_components)
-      expect(z_test.class).to eq(Numo::DFloat)
+      expect(z_test).to be_a(Numo::DFloat)
+      expect(z_test).to be_contiguous
+      expect(z_test.ndim).to eq(2)
       expect(z_test.shape[0]).to eq(n_test_samples)
       expect(z_test.shape[1]).to eq(n_components)
-      expect(transformer.alphas.class).to eq(Numo::DFloat)
+      expect(transformer.alphas).to be_a(Numo::DFloat)
+      expect(transformer.alphas).to be_contiguous
+      expect(transformer.alphas.ndim).to eq(2)
       expect(transformer.alphas.shape[0]).to eq(n_train_samples)
       expect(transformer.alphas.shape[1]).to eq(n_components)
-      expect(transformer.lambdas.class).to eq(Numo::DFloat)
+      expect(transformer.lambdas).to be_a(Numo::DFloat)
+      expect(transformer.lambdas).to be_contiguous
+      expect(transformer.lambdas.ndim).to eq(1)
       expect(transformer.lambdas.shape[0]).to eq(n_components)
-      expect(transformer.lambdas.shape[1]).to eq(nil)
     end
 
     it 'dumps and restores itself using Marshal module.', :aggregate_failures do
@@ -59,12 +66,14 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
       let(:z_test_pca) { pca.transform(x_test) }
 
       it 'maps data into one-dimensional subspace.', :aggregate_failures do
-        expect(z_train.class).to eq(Numo::DFloat)
+        expect(z_train).to be_a(Numo::DFloat)
+        expect(z_train).to be_contiguous
+        expect(z_train.ndim).to eq(1)
         expect(z_train.shape[0]).to eq(n_train_samples)
-        expect(z_train.shape[1]).to eq(nil)
-        expect(z_test.class).to eq(Numo::DFloat)
+        expect(z_test).to be_a(Numo::DFloat)
+        expect(z_test).to be_contiguous
+        expect(z_test.ndim).to eq(1)
         expect(z_test.shape[0]).to eq(n_test_samples)
-        expect(z_test.shape[1]).to eq(nil)
       end
 
       it 'has small error from PCA in the case of a linear kernel.', :aggregate_failures do
@@ -87,10 +96,14 @@ RSpec.describe Rumale::KernelMachine::KernelPCA do
     before { classifier.fit(z_train, y_train) }
 
     it 'maps to a linearly separable space', :aggregate_failures do
-      expect(z_train.class).to eq(Numo::DFloat)
+      expect(z_train).to be_a(Numo::DFloat)
+      expect(z_train).to be_contiguous
+      expect(z_train.ndim).to eq(2)
       expect(z_train.shape[0]).to eq(n_train_samples)
       expect(z_train.shape[1]).to eq(n_components)
-      expect(z_test.class).to eq(Numo::DFloat)
+      expect(z_test).to be_a(Numo::DFloat)
+      expect(z_test).to be_contiguous
+      expect(z_test.ndim).to eq(2)
       expect(z_test.shape[0]).to eq(n_test_samples)
       expect(z_test.shape[1]).to eq(n_components)
       expect(classifier.score(z_train, y_train)).to be_within(0.01).of(1.0)
