@@ -32,6 +32,7 @@ RSpec.describe Rumale::Ensemble::StackingRegressor do
       expect(estimator.estimators).to be_a(Hash)
       expect(estimator.meta_estimator).to be_a(Rumale::LinearModel::Ridge)
       expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -49,6 +50,7 @@ RSpec.describe Rumale::Ensemble::StackingRegressor do
     it 'learns the model for multiple regression problem.', :aggregate_failures do
       expect(estimator.meta_estimator).to be_a(Rumale::LinearModel::Lasso)
       expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -68,6 +70,7 @@ RSpec.describe Rumale::Ensemble::StackingRegressor do
 
       it 'extracts meta features', :aggregate_failures do
         expect(meta_features).to be_a(Numo::DFloat)
+        expect(meta_features).to be_contiguous
         expect(meta_features.ndim).to eq(2)
         expect(meta_features.shape[0]).to eq(n_samples)
         expect(meta_features.shape[1]).to eq(n_components)
@@ -78,6 +81,7 @@ RSpec.describe Rumale::Ensemble::StackingRegressor do
 
         it 'extracts meta features concatenated with original features', :aggregate_failures do
           expect(meta_features).to be_a(Numo::DFloat)
+          expect(meta_features).to be_contiguous
           expect(meta_features.ndim).to eq(2)
           expect(meta_features.shape[0]).to eq(n_samples)
           expect(meta_features.shape[1]).to eq(n_components + n_features)

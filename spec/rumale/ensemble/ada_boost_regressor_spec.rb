@@ -15,15 +15,18 @@ RSpec.describe Rumale::Ensemble::AdaBoostRegressor do
     let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
     it 'learns the model for single regression problem.', :aggregate_failures do
-      expect(estimator.estimators.class).to eq(Array)
-      expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeRegressor)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.estimators).to be_a(Array)
+      expect(estimator.estimators[0]).to be_a(Rumale::Tree::DecisionTreeRegressor)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
-      expect(estimator.estimator_weights.class).to eq(Numo::DFloat)
+      expect(estimator.estimator_weights).to be_a(Numo::DFloat)
+      expect(estimator.estimator_weights).to be_contiguous
       expect(estimator.estimator_weights.ndim).to eq(1)
       expect(estimator.estimator_weights.shape[0]).to eq(estimator.estimators.size)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)

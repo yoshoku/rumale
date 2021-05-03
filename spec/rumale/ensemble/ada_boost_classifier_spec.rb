@@ -20,22 +20,26 @@ RSpec.describe Rumale::Ensemble::AdaBoostClassifier do
     let(:dataset) { two_clusters_dataset }
 
     it 'classifies two clusters data.', :aggregate_failures do
-      expect(estimator.estimators.class).to eq(Array)
-      expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.estimators).to be_a(Array)
+      expect(estimator.estimators[0]).to be_a(Rumale::Tree::DecisionTreeClassifier)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.03).of(1.0)
     end
 
     it 'estimates class probabilities with three clusters dataset.', :aggregate_failures do
-      expect(probs.class).to eq(Numo::DFloat)
+      expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)
@@ -47,22 +51,26 @@ RSpec.describe Rumale::Ensemble::AdaBoostClassifier do
     let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
     it 'classifies three clusters data.', :aggregate_failures do
-      expect(estimator.estimators.class).to eq(Array)
-      expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.estimators).to be_a(Array)
+      expect(estimator.estimators[0]).to be_a(Rumale::Tree::DecisionTreeClassifier)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.03).of(1.0)
     end
 
     it 'estimates class probabilities with three clusters dataset.', :aggregate_failures do
-      expect(probs.class).to eq(Numo::DFloat)
+      expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)

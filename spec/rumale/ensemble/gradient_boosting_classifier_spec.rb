@@ -21,17 +21,20 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
     let(:dataset) { two_clusters_dataset }
 
     it 'classifies two clusters data.', :aggregate_failures do
-      expect(estimator.estimators.class).to eq(Array)
-      expect(estimator.estimators[0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+      expect(estimator.estimators).to be_a(Array)
+      expect(estimator.estimators[0]).to be_a(Rumale::Tree::GradientTreeRegressor)
       expect(estimator.estimators.size).to eq(n_estimators)
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
       expect(score).to be_within(0.02).of(1.0)
-      expect(leaf_ids.class).to eq(Numo::Int32)
+      expect(leaf_ids).to be_a(Numo::Int32)
+      expect(leaf_ids).to be_contiguous
       expect(leaf_ids.ndim).to eq(2)
       expect(leaf_ids.shape[0]).to eq(n_samples)
       expect(leaf_ids.shape[1]).to eq(n_estimators)
@@ -45,19 +48,22 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
     let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
     it 'classifies three clusters data.', :aggregate_failures do
-      expect(estimator.estimators.class).to eq(Array)
-      expect(estimator.estimators[0].class).to eq(Array)
-      expect(estimator.estimators[0][0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+      expect(estimator.estimators).to be_a(Array)
+      expect(estimator.estimators[0]).to be_a(Array)
+      expect(estimator.estimators[0][0]).to be_a(Rumale::Tree::GradientTreeRegressor)
       expect(estimator.estimators.size).to eq(3)
       expect(estimator.estimators[0].size).to eq(n_estimators)
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
       expect(score).to be_within(0.02).of(1.0)
-      expect(leaf_ids.class).to eq(Numo::Int32)
+      expect(leaf_ids).to be_a(Numo::Int32)
+      expect(leaf_ids).to be_contiguous
       expect(leaf_ids.ndim).to eq(3)
       expect(leaf_ids.shape[0]).to eq(n_samples)
       expect(leaf_ids.shape[1]).to eq(n_estimators)
@@ -65,7 +71,8 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
     end
 
     it 'estimates class probabilities with three clusters dataset.', :aggregate_failures do
-      expect(probs.class).to eq(Numo::DFloat)
+      expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)
@@ -86,19 +93,22 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
       let(:n_jobs) { -1 }
 
       it 'classifies three clusters data in parallel.', :aggregate_failures do
-        expect(estimator.estimators.class).to eq(Array)
-        expect(estimator.estimators[0].class).to eq(Array)
-        expect(estimator.estimators[0][0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+        expect(estimator.estimators).to be_a(Array)
+        expect(estimator.estimators[0]).to be_a(Array)
+        expect(estimator.estimators[0][0]).to be_a(Rumale::Tree::GradientTreeRegressor)
         expect(estimator.estimators.size).to eq(3)
         expect(estimator.estimators[0].size).to eq(n_estimators)
-        expect(estimator.classes.class).to eq(Numo::Int32)
+        expect(estimator.classes).to be_a(Numo::Int32)
+        expect(estimator.classes).to be_contiguous
         expect(estimator.classes.ndim).to eq(1)
         expect(estimator.classes.shape[0]).to eq(n_classes)
-        expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+        expect(estimator.feature_importances).to be_a(Numo::DFloat)
+        expect(estimator.feature_importances).to be_contiguous
         expect(estimator.feature_importances.ndim).to eq(1)
         expect(estimator.feature_importances.shape[0]).to eq(n_features)
         expect(score).to be_within(0.02).of(1.0)
-        expect(leaf_ids.class).to eq(Numo::Int32)
+        expect(leaf_ids).to be_a(Numo::Int32)
+        expect(leaf_ids).to be_contiguous
         expect(leaf_ids.ndim).to eq(3)
         expect(leaf_ids.shape[0]).to eq(n_samples)
         expect(leaf_ids.shape[1]).to eq(n_estimators)

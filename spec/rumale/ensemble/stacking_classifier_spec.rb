@@ -41,17 +41,21 @@ RSpec.describe Rumale::Ensemble::StackingClassifier do
       expect(estimator.estimators).to be_a(Hash)
       expect(estimator.meta_estimator).to be_a(Rumale::LinearModel::LogisticRegression)
       expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
       expect(estimator.stack_method).to eq({ dtr: :predict_proba, gnb: :predict_proba, svc: :predict_proba })
       expect(func_vals).to be_a(Numo::DFloat)
+      expect(func_vals).to be_contiguous
       expect(func_vals.ndim).to eq(1)
       expect(func_vals.shape[0]).to eq(n_samples)
       expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
       expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)
@@ -70,17 +74,21 @@ RSpec.describe Rumale::Ensemble::StackingClassifier do
     it 'classifies three clusters data.', :aggregate_failures do
       expect(estimator.meta_estimator).to be_a(Rumale::LinearModel::SVC)
       expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
       expect(func_vals).to be_a(Numo::DFloat)
+      expect(func_vals).to be_contiguous
       expect(func_vals.ndim).to eq(2)
       expect(func_vals.shape[0]).to eq(n_samples)
       expect(func_vals.shape[1]).to eq(n_classes)
       expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
       expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)
@@ -88,7 +96,8 @@ RSpec.describe Rumale::Ensemble::StackingClassifier do
     end
 
     it 'estimates class probabilities with three clusters dataset.', :aggregate_failures do
-      expect(probs.class).to eq(Numo::DFloat)
+      expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)
@@ -111,6 +120,7 @@ RSpec.describe Rumale::Ensemble::StackingClassifier do
 
     it 'extracts meta features', :aggregate_failures do
       expect(meta_features).to be_a(Numo::DFloat)
+      expect(meta_features).to be_contiguous
       expect(meta_features.ndim).to eq(2)
       expect(meta_features.shape[0]).to eq(n_samples)
       expect(meta_features.shape[1]).to eq(n_classes * n_base_estimators)
@@ -122,6 +132,7 @@ RSpec.describe Rumale::Ensemble::StackingClassifier do
 
       it 'extracts meta features concatenated with original features', :aggregate_failures do
         expect(meta_features).to be_a(Numo::DFloat)
+        expect(meta_features).to be_contiguous
         expect(meta_features.ndim).to eq(2)
         expect(meta_features.shape[0]).to eq(n_samples)
         expect(meta_features.shape[1]).to eq(n_classes + n_features)

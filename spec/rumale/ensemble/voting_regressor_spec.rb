@@ -23,6 +23,7 @@ RSpec.describe Rumale::Ensemble::VotingRegressor do
     it 'learns the model for single regression problem.', :aggregate_failures do
       expect(estimator.estimators).to be_a(Hash)
       expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -36,6 +37,7 @@ RSpec.describe Rumale::Ensemble::VotingRegressor do
 
     it 'learns the model for multiple regression problem.', :aggregate_failures do
       expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)

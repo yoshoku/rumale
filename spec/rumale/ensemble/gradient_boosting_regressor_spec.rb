@@ -23,17 +23,20 @@ RSpec.describe Rumale::Ensemble::GradientBoostingRegressor do
     it 'learns the model for single regression problem.', :aggregate_failures do
       expect(estimator.params[:n_estimators]).to eq(n_estimators)
       expect(estimator.params[:max_features]).to eq(1)
-      expect(estimator.estimators.class).to eq(Array)
-      expect(estimator.estimators[0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+      expect(estimator.estimators).to be_a(Array)
+      expect(estimator.estimators[0]).to be_a(Rumale::Tree::GradientTreeRegressor)
       expect(estimator.estimators.size).to eq(n_estimators)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.02).of(1.0)
-      expect(leaf_ids.class).to eq(Numo::Int32)
+      expect(leaf_ids).to be_a(Numo::Int32)
+      expect(leaf_ids).to be_contiguous
       expect(leaf_ids.ndim).to eq(2)
       expect(leaf_ids.shape[0]).to eq(n_samples)
       expect(leaf_ids.shape[1]).to eq(n_estimators)
@@ -55,17 +58,20 @@ RSpec.describe Rumale::Ensemble::GradientBoostingRegressor do
       it 'learns the model for single regression problem in parallel.', :aggregate_failures do
         expect(estimator.params[:n_estimators]).to eq(n_estimators)
         expect(estimator.params[:max_features]).to eq(1)
-        expect(estimator.estimators.class).to eq(Array)
-        expect(estimator.estimators[0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+        expect(estimator.estimators).to be_a(Array)
+        expect(estimator.estimators[0]).to be_a(Rumale::Tree::GradientTreeRegressor)
         expect(estimator.estimators.size).to eq(n_estimators)
-        expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+        expect(estimator.feature_importances).to be_a(Numo::DFloat)
+        expect(estimator.feature_importances).to be_contiguous
         expect(estimator.feature_importances.ndim).to eq(1)
         expect(estimator.feature_importances.shape[0]).to eq(n_features)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(score).to be_within(0.02).of(1.0)
-        expect(leaf_ids.class).to eq(Numo::Int32)
+        expect(leaf_ids).to be_a(Numo::Int32)
+        expect(leaf_ids).to be_contiguous
         expect(leaf_ids.ndim).to eq(2)
         expect(leaf_ids.shape[0]).to eq(n_samples)
         expect(leaf_ids.shape[1]).to eq(n_estimators)
@@ -79,20 +85,23 @@ RSpec.describe Rumale::Ensemble::GradientBoostingRegressor do
     let(:n_outputs) { y.shape[1] }
 
     it 'learns the model for multiple regression problem.', :aggregate_failures do
-      expect(estimator.estimators.class).to eq(Array)
-      expect(estimator.estimators[0].class).to eq(Array)
-      expect(estimator.estimators[0][0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+      expect(estimator.estimators).to be_a(Array)
+      expect(estimator.estimators[0]).to be_a(Array)
+      expect(estimator.estimators[0][0]).to be_a(Rumale::Tree::GradientTreeRegressor)
       expect(estimator.estimators.size).to eq(n_outputs)
       expect(estimator.estimators[0].size).to eq(n_estimators)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
       expect(score).to be_within(0.02).of(1.0)
-      expect(leaf_ids.class).to eq(Numo::Int32)
+      expect(leaf_ids).to be_a(Numo::Int32)
+      expect(leaf_ids).to be_contiguous
       expect(leaf_ids.ndim).to eq(3)
       expect(leaf_ids.shape[0]).to eq(n_samples)
       expect(leaf_ids.shape[1]).to eq(n_estimators)
@@ -103,20 +112,23 @@ RSpec.describe Rumale::Ensemble::GradientBoostingRegressor do
       let(:n_jobs) { -1 }
 
       it 'learns the model for multiple regression problem in parallel.', :aggregate_failures do
-        expect(estimator.estimators.class).to eq(Array)
-        expect(estimator.estimators[0].class).to eq(Array)
-        expect(estimator.estimators[0][0].class).to eq(Rumale::Tree::GradientTreeRegressor)
+        expect(estimator.estimators).to be_a(Array)
+        expect(estimator.estimators[0]).to be_a(Array)
+        expect(estimator.estimators[0][0]).to be_a(Rumale::Tree::GradientTreeRegressor)
         expect(estimator.estimators.size).to eq(n_outputs)
         expect(estimator.estimators[0].size).to eq(n_estimators)
-        expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+        expect(estimator.feature_importances).to be_a(Numo::DFloat)
+        expect(estimator.feature_importances).to be_contiguous
         expect(estimator.feature_importances.ndim).to eq(1)
         expect(estimator.feature_importances.shape[0]).to eq(n_features)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted).to be_a(Numo::DFloat)
+        expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(2)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)
         expect(score).to be_within(0.02).of(1.0)
-        expect(leaf_ids.class).to eq(Numo::Int32)
+        expect(leaf_ids).to be_a(Numo::Int32)
+        expect(leaf_ids).to be_contiguous
         expect(leaf_ids.ndim).to eq(3)
         expect(leaf_ids.shape[0]).to eq(n_samples)
         expect(leaf_ids.shape[1]).to eq(n_estimators)
