@@ -23,11 +23,13 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
 
   it 'classifies two clusters data.' do
     estimator.fit(x_bin, y_bin, grad, hess)
-    expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-    expect(estimator.leaf_weights.class).to eq(Numo::DFloat)
+    expect(estimator.tree).to be_a(Rumale::Tree::Node)
+    expect(estimator.leaf_weights).to be_a(Numo::DFloat)
+    expect(estimator.leaf_weights).to be_contiguous
     expect(estimator.leaf_weights.shape[0]).to eq(2)
     expect(estimator.leaf_weights.shape[1]).to be_nil
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances).to be_a(Numo::DFloat)
+    expect(estimator.feature_importances).to be_contiguous
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
     expect(estimator.score(x_bin, Numo::DFloat.cast(y_bin))).to be > 0.95

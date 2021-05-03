@@ -26,14 +26,17 @@ RSpec.describe Rumale::Tree::ExtraTreeRegressor do
     let(:y) { single_target }
 
     it 'learns the model for single regression problem.', :aggregate_failures do
-      expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.tree).to be_a(Rumale::Tree::Node)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
-      expect(estimator.leaf_values.class).to eq(Numo::DFloat)
+      expect(estimator.leaf_values).to be_a(Numo::DFloat)
+      expect(estimator.leaf_values).to be_contiguous
       expect(estimator.leaf_values.ndim).to eq(1)
       expect(estimator.leaf_values.shape[0]).not_to be_zero
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -111,11 +114,13 @@ RSpec.describe Rumale::Tree::ExtraTreeRegressor do
     let(:y) { multi_target }
 
     it 'learns the model for multiple regression problem.', :aggregate_failures do
-      expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-      expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+      expect(estimator.tree).to be_a(Rumale::Tree::Node)
+      expect(estimator.feature_importances).to be_a(Numo::DFloat)
+      expect(estimator.feature_importances).to be_contiguous
       expect(estimator.feature_importances.ndim).to eq(1)
       expect(estimator.feature_importances.shape[0]).to eq(n_features)
-      expect(estimator.leaf_values.class).to eq(Numo::DFloat)
+      expect(estimator.leaf_values).to be_a(Numo::DFloat)
+      expect(estimator.leaf_values).to be_contiguous
       expect(estimator.leaf_values.ndim).to eq(2)
       expect(estimator.leaf_values.shape[0]).not_to be_zero
       expect(estimator.leaf_values.shape[1]).to eq(n_outputs)
