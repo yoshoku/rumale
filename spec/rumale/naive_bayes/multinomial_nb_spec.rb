@@ -18,21 +18,26 @@ RSpec.describe Rumale::NaiveBayes::MultinomialNB do
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
   it 'classifies two clusters data.', :aggregate_failures do
-    expect(estimator.class_priors.class).to eq(Numo::DFloat)
+    expect(estimator.class_priors).to be_a(Numo::DFloat)
+    expect(estimator.class_priors).to be_contiguous
     expect(estimator.class_priors.ndim).to eq(1)
     expect(estimator.class_priors.shape[0]).to eq(n_classes)
-    expect(estimator.feature_probs.class).to eq(Numo::DFloat)
+    expect(estimator.feature_probs).to be_a(Numo::DFloat)
+    expect(estimator.feature_probs).to be_contiguous
     expect(estimator.feature_probs.ndim).to eq(2)
     expect(estimator.feature_probs.shape[0]).to eq(n_classes)
     expect(estimator.feature_probs.shape[1]).to eq(n_features)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes).to be_a(Numo::Int32)
+    expect(estimator.classes).to be_contiguous
     expect(estimator.classes.ndim).to eq(1)
     expect(estimator.classes.shape[0]).to eq(n_classes)
-    expect(func_vals.class).to eq(Numo::DFloat)
+    expect(func_vals).to be_a(Numo::DFloat)
+    expect(func_vals).to be_contiguous
     expect(func_vals.ndim).to eq(2)
     expect(func_vals.shape[0]).to eq(n_samples)
     expect(func_vals.shape[1]).to eq(n_classes)
-    expect(predicted.class).to eq(Numo::Int32)
+    expect(predicted).to be_a(Numo::Int32)
+    expect(predicted).to be_contiguous
     expect(predicted.ndim).to eq(1)
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted).to eq(y)
@@ -40,7 +45,8 @@ RSpec.describe Rumale::NaiveBayes::MultinomialNB do
   end
 
   it 'estimates class probabilities with two clusters dataset.', :aggregate_failures do
-    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs).to be_a(Numo::DFloat)
+    expect(probs).to be_contiguous
     expect(probs.ndim).to eq(2)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(n_classes)
