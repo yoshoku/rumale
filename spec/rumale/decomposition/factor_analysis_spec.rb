@@ -23,23 +23,30 @@ RSpec.describe Rumale::Decomposition::FactorAnalysis do
   end
 
   shared_examples 'projection into subspace' do
-    it 'projects high-dimensinal data into subspace.', aggregate_failures: true do
-      expect(sub_samples.class).to eq(Numo::DFloat)
+    it 'projects high-dimensinal data into subspace.', :aggregate_failures do
+      expect(sub_samples).to be_a(Numo::DFloat)
+      expect(sub_samples).to be_contiguous
+      expect(sub_samples.ndim).to eq(2)
       expect(sub_samples.shape[0]).to eq(n_samples)
       expect(sub_samples.shape[1]).to eq(n_components)
-      expect(decomposer.mean.class).to eq(Numo::DFloat)
+      expect(decomposer.mean).to be_a(Numo::DFloat)
+      expect(decomposer.mean).to be_contiguous
+      expect(decomposer.mean.ndim).to eq(1)
       expect(decomposer.mean.shape[0]).to eq(n_features)
-      expect(decomposer.mean.shape[1]).to be_nil
-      expect(decomposer.noise_variance.class).to eq(Numo::DFloat)
+      expect(decomposer.noise_variance).to be_a(Numo::DFloat)
+      expect(decomposer.noise_variance).to be_contiguous
+      expect(decomposer.noise_variance.ndim).to eq(1)
       expect(decomposer.noise_variance.shape[0]).to eq(n_features)
-      expect(decomposer.noise_variance.shape[1]).to be_nil
-      expect(decomposer.components.class).to eq(Numo::DFloat)
+      expect(decomposer.components).to be_a(Numo::DFloat)
+      expect(decomposer.components).to be_contiguous
+      expect(decomposer.components.ndim).to eq(2)
       expect(decomposer.components.shape[0]).to eq(n_components)
       expect(decomposer.components.shape[1]).to eq(n_features)
       expect(decomposer.n_iter).to be < max_iter
-      expect(decomposer.loglike.class).to eq(Numo::DFloat)
+      expect(decomposer.loglike).to be_a(Numo::DFloat)
+      expect(decomposer.loglike).to be_contiguous
+      expect(decomposer.loglike.ndim).to eq(1)
       expect(decomposer.loglike.shape[0]).to eq(decomposer.n_iter)
-      expect(decomposer.loglike.shape[1]).to be_nil
       expect(error).to be <= 0.1
     end
   end
@@ -51,18 +58,21 @@ RSpec.describe Rumale::Decomposition::FactorAnalysis do
     let(:tol) { nil }
     let(:sub_samples) { decomposer.fit_transform(samples).expand_dims(1) }
 
-    it 'projects data into one-dimensional subspace.', aggregate_failures: true do
+    it 'projects data into one-dimensional subspace.', :aggregate_failures do
       expect(sub_samples.shape[0]).to eq(n_samples)
       expect(sub_samples.shape[1]).to eq(n_components)
-      expect(decomposer.mean.class).to eq(Numo::DFloat)
+      expect(decomposer.mean).to be_a(Numo::DFloat)
+      expect(decomposer.mean).to be_contiguous
+      expect(decomposer.mean.ndim).to eq(1)
       expect(decomposer.mean.shape[0]).to eq(n_features)
-      expect(decomposer.mean.shape[1]).to be_nil
-      expect(decomposer.noise_variance.class).to eq(Numo::DFloat)
+      expect(decomposer.noise_variance).to be_a(Numo::DFloat)
+      expect(decomposer.noise_variance).to be_contiguous
+      expect(decomposer.noise_variance.ndim).to eq(1)
       expect(decomposer.noise_variance.shape[0]).to eq(n_features)
-      expect(decomposer.noise_variance.shape[1]).to be_nil
-      expect(decomposer.components.class).to eq(Numo::DFloat)
+      expect(decomposer.components).to be_a(Numo::DFloat)
+      expect(decomposer.components).to be_contiguous
+      expect(decomposer.components.ndim).to eq(1)
       expect(decomposer.components.shape[0]).to eq(n_features)
-      expect(decomposer.components.shape[1]).to be_nil
       expect(decomposer.n_iter).to eq(max_iter)
       expect(decomposer.loglike).to be_nil
     end
@@ -73,7 +83,7 @@ RSpec.describe Rumale::Decomposition::FactorAnalysis do
     it_behaves_like 'projection into one-dimensional subspace'
   end
 
-  it 'dumps and restores itself using Marshal module.', aggregate_failures: true do
+  it 'dumps and restores itself using Marshal module.', :aggregate_failures do
     copied = Marshal.load(Marshal.dump(decomposer))
     expect(decomposer.class).to eq(copied.class)
     expect(decomposer.params[:n_components]).to eq(copied.params[:n_components])

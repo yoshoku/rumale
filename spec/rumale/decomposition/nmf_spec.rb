@@ -14,37 +14,39 @@ RSpec.describe Rumale::Decomposition::NMF do
     a.dot(b)
   end
 
-  it 'decomposes non-negative matrix.' do
+  it 'decomposes non-negative matrix.', :aggregate_failures do
     x_coef = decomposer.fit_transform(x)
-
-    expect(x_coef.class).to eq(Numo::DFloat)
+    expect(x_coef).to be_a(Numo::DFloat)
+    expect(x_coef).to be_contiguous
+    expect(x_coef.ndim).to eq(2)
     expect(x_coef.shape[0]).to eq(n_samples)
     expect(x_coef.shape[1]).to eq(n_components)
-
-    expect(decomposer.components.class).to eq(Numo::DFloat)
+    expect(decomposer.components).to be_a(Numo::DFloat)
+    expect(decomposer.components).to be_contiguous
+    expect(decomposer.components.ndim).to eq(2)
     expect(decomposer.components.shape[0]).to eq(n_components)
     expect(decomposer.components.shape[1]).to eq(n_features)
-
     x_rec = decomposer.inverse_transform(x_coef)
     mse = ((x - x_rec)**2).sum(1).mean
     expect(mse).to be <= 1.0e-4
   end
 
-  it 'transform non-negative coefficients.' do
+  it 'transform non-negative coefficients.', :aggregate_failures do
     decomposer.fit(x)
     comp = decomposer.components.dup
     y = x[0...10, true] + Numo::DFloat.new(10, n_features).rand * 0.01
     y_coef = decomposer.transform(y)
-
-    expect(y_coef.class).to eq(Numo::DFloat)
+    expect(y_coef).to be_a(Numo::DFloat)
+    expect(y_coef).to be_contiguous
+    expect(y_coef.ndim).to eq(2)
     expect(y_coef.shape[0]).to eq(10)
     expect(y_coef.shape[1]).to eq(n_components)
-
     expect(decomposer.components).to eq(comp)
-    expect(decomposer.components.class).to eq(Numo::DFloat)
+    expect(decomposer.components).to be_a(Numo::DFloat)
+    expect(decomposer.components).to be_contiguous
+    expect(decomposer.components.ndim).to eq(2)
     expect(decomposer.components.shape[0]).to eq(n_components)
     expect(decomposer.components.shape[1]).to eq(n_features)
-
     y_rec = decomposer.inverse_transform(y_coef)
     mse = ((y - y_rec)**2).sum(1).mean
     expect(mse).to be <= 1.0e-4

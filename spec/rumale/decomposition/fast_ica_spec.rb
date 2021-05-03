@@ -39,15 +39,21 @@ RSpec.describe Rumale::Decomposition::FastICA do
   end
 
   context 'when the contrast function is logcosh' do
-    it 'reconstructs the source signals', aggregate_failures: true do
-      expect(reconstructed.class).to eq(Numo::DFloat)
+    it 'reconstructs the source signals', :aggregate_failures do
+      expect(reconstructed).to be_a(Numo::DFloat)
+      expect(reconstructed).to be_contiguous
+      expect(reconstructed.ndim).to eq(2)
       expect(reconstructed.shape[0]).to eq(n_samples)
       expect(reconstructed.shape[1]).to eq(n_components)
       expect(analyzer.n_iter).to be > 1
-      expect(analyzer.components.class).to eq(Numo::DFloat)
+      expect(analyzer.components).to be_a(Numo::DFloat)
+      expect(analyzer.components).to be_contiguous
+      expect(analyzer.components.ndim).to eq(2)
       expect(analyzer.components.shape[0]).to eq(n_components)
       expect(analyzer.components.shape[1]).to eq(n_features)
-      expect(analyzer.mixing.class).to eq(Numo::DFloat)
+      expect(analyzer.mixing).to be_a(Numo::DFloat)
+      expect(analyzer.mixing).to be_contiguous
+      expect(analyzer.mixing.ndim).to eq(2)
       expect(analyzer.mixing.shape[0]).to eq(n_features)
       expect(analyzer.mixing.shape[1]).to eq(n_components)
       expect(rec_error).to be < 1e-3
@@ -57,7 +63,7 @@ RSpec.describe Rumale::Decomposition::FastICA do
       expect(inv_error).to be < 1e-3
     end
 
-    it 'dumps and restores itself using Marshal module', aggregate_failures: true do
+    it 'dumps and restores itself using Marshal module', :aggregate_failures do
       copied = Marshal.load(Marshal.dump(analyzer.fit(observed)))
       err = Math.sqrt(((analyzer.transform(observed) - copied.transform(observed))**2).sum) / n_samples
       expect(analyzer.class).to eq(copied.class)
@@ -94,17 +100,20 @@ RSpec.describe Rumale::Decomposition::FastICA do
     let(:reconstructed) { analyzer.fit_transform(Rumale::Utils.rand_uniform([n_samples, n_features], Random.new(1))) }
     let(:inversed) { analyzer.inverse_transform(reconstructed.expand_dims(1)) }
 
-    it 'analyzes one independent component', aggregate_failures: true do
-      expect(reconstructed.class).to eq(Numo::DFloat)
+    it 'analyzes one independent component', :aggregate_failures do
+      expect(reconstructed).to be_a(Numo::DFloat)
+      expect(reconstructed).to be_contiguous
+      expect(reconstructed.ndim).to eq(1)
       expect(reconstructed.shape[0]).to eq(n_samples)
-      expect(reconstructed.shape[1]).to be_nil
-      expect(inversed.class).to eq(Numo::DFloat)
+      expect(inversed).to be_a(Numo::DFloat)
+      expect(inversed).to be_contiguous
+      expect(inversed.ndim).to eq(2)
       expect(inversed.shape[0]).to eq(n_samples)
       expect(inversed.shape[1]).to eq(n_features)
+      expect(analyzer.components.ndim).to eq(1)
       expect(analyzer.components.shape[0]).to eq(n_features)
-      expect(analyzer.components.shape[1]).to be_nil
+      expect(analyzer.mixing.ndim).to eq(1)
       expect(analyzer.mixing.shape[0]).to eq(n_features)
-      expect(analyzer.mixing.shape[1]).to be_nil
     end
   end
 
@@ -116,14 +125,20 @@ RSpec.describe Rumale::Decomposition::FastICA do
       (x - mean).dot(whiten_mat.transpose)
     end
 
-    it 'reconstructs the source signals', aggregate_failures: true do
-      expect(reconstructed.class).to eq(Numo::DFloat)
+    it 'reconstructs the source signals', :aggregate_failures do
+      expect(reconstructed).to be_a(Numo::DFloat)
+      expect(reconstructed).to be_contiguous
+      expect(reconstructed.ndim).to eq(2)
       expect(reconstructed.shape[0]).to eq(n_samples)
       expect(reconstructed.shape[1]).to eq(n_components)
-      expect(analyzer.components.class).to eq(Numo::DFloat)
+      expect(analyzer.components).to be_a(Numo::DFloat)
+      expect(analyzer.components).to be_contiguous
+      expect(analyzer.components.ndim).to eq(2)
       expect(analyzer.components.shape[0]).to eq(n_components)
       expect(analyzer.components.shape[1]).to eq(n_components)
-      expect(analyzer.mixing.class).to eq(Numo::DFloat)
+      expect(analyzer.mixing).to be_a(Numo::DFloat)
+      expect(analyzer.mixing).to be_contiguous
+      expect(analyzer.mixing.ndim).to eq(2)
       expect(analyzer.mixing.shape[0]).to eq(n_components)
       expect(analyzer.mixing.shape[1]).to eq(n_components)
       expect(rec_error).to be < 1e-3

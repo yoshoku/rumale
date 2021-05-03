@@ -16,18 +16,26 @@ RSpec.describe Rumale::Decomposition::PCA do
   let(:n_features) { samples.shape[1] }
 
   shared_examples 'projection into subspace' do
-    it 'projects high-dimensinal data into subspace.' do
-      expect(sub_samples.class).to eq(Numo::DFloat)
+    it 'projects high-dimensinal data into subspace.', :aggregate_failures do
+      expect(sub_samples).to be_a(Numo::DFloat)
+      expect(sub_samples).to be_contiguous
+      expect(sub_samples.ndim).to eq(2)
       expect(sub_samples.shape[0]).to eq(n_samples)
       expect(sub_samples.shape[1]).to eq(n_components)
+      expect(rec_samples).to be_a(Numo::DFloat)
+      expect(rec_samples).to be_contiguous
+      expect(rec_samples.ndim).to eq(2)
       expect(rec_samples.shape[0]).to eq(n_samples)
       expect(rec_samples.shape[1]).to eq(n_features)
-      expect(decomposer.components.class).to eq(Numo::DFloat)
+      expect(decomposer.components).to be_a(Numo::DFloat)
+      expect(decomposer.components).to be_contiguous
+      expect(decomposer.components.ndim).to eq(2)
       expect(decomposer.components.shape[0]).to eq(n_components)
       expect(decomposer.components.shape[1]).to eq(n_features)
-      expect(decomposer.mean.class).to eq(Numo::DFloat)
+      expect(decomposer.mean).to be_a(Numo::DFloat)
+      expect(decomposer.mean).to be_contiguous
+      expect(decomposer.mean.ndim).to eq(1)
       expect(decomposer.mean.shape[0]).to eq(n_features)
-      expect(decomposer.mean.shape[1]).to be_nil
       expect(mse).to be <= 0.1
     end
   end
@@ -35,17 +43,27 @@ RSpec.describe Rumale::Decomposition::PCA do
   shared_examples 'projection into one-dimensional subspace' do
     let(:n_components) { 1 }
     let(:samples) { x }
-    let(:sub_samples) { decomposer.fit_transform(samples).expand_dims(1) }
+    let(:sub_samples) { decomposer.fit_transform(samples).expand_dims(1).dup }
 
-    it 'projects data into one-dimensional subspace.' do
+    it 'projects data into one-dimensional subspace.', :aggregate_failures do
+      expect(sub_samples).to be_a(Numo::DFloat)
+      expect(sub_samples).to be_contiguous
+      expect(sub_samples.ndim).to eq(2)
       expect(sub_samples.shape[0]).to eq(n_samples)
       expect(sub_samples.shape[1]).to eq(n_components)
+      expect(rec_samples).to be_a(Numo::DFloat)
+      expect(rec_samples).to be_contiguous
+      expect(rec_samples.ndim).to eq(2)
       expect(rec_samples.shape[0]).to eq(n_samples)
       expect(rec_samples.shape[1]).to eq(n_features)
+      expect(decomposer.components).to be_a(Numo::DFloat)
+      expect(decomposer.components).to be_contiguous
+      expect(decomposer.components.ndim).to eq(1)
       expect(decomposer.components.shape[0]).to eq(n_features)
-      expect(decomposer.components.shape[1]).to be_nil
+      expect(decomposer.mean).to be_a(Numo::DFloat)
+      expect(decomposer.mean).to be_contiguous
+      expect(decomposer.mean.ndim).to eq(1)
       expect(decomposer.mean.shape[0]).to eq(n_features)
-      expect(decomposer.mean.shape[1]).to be_nil
       expect(mse).to be <= 0.5
     end
   end
