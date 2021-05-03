@@ -15,11 +15,13 @@ RSpec.describe Rumale::FeatureExtraction::TfidfTransformer do
 
   context 'when using idf weights' do
     it 'returns the tf-idf representation', :aggregate_failures do
-      expect(z.class).to eq(Numo::DFloat)
+      expect(z).to be_a(Numo::DFloat)
+      expect(z).to be_contiguous
       expect(z.ndim).to eq(2)
       expect(z.shape[0]).to eq(n_samples)
       expect(z.shape[1]).to eq(n_features)
-      expect(transformer.idf.class).to eq(Numo::DFloat)
+      expect(transformer.idf).to be_a(Numo::DFloat)
+      expect(transformer.idf).to be_contiguous
       expect(transformer.idf.ndim).to eq(1)
       expect(transformer.idf.shape[0]).to eq(n_features)
       expect((x * transformer.idf - z).abs.sum).to be < 1e-8
