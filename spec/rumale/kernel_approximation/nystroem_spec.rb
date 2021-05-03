@@ -23,18 +23,22 @@ RSpec.describe Rumale::KernelApproximation::Nystroem do
 
     it 'has a small approximation error for the kernel function.', :aggregate_failures do
       expect(mse).to be < 0.01
-      expect(mapped_x.class).to eq(Numo::DFloat)
+      expect(mapped_x).to be_a(Numo::DFloat)
+      expect(mapped_x).to be_contiguous
       expect(mapped_x.ndim).to eq(2)
       expect(mapped_x.shape[0]).to eq(n_samples)
       expect(mapped_x.shape[1]).to eq(n_components)
-      expect(transformer.components.class).to eq(Numo::DFloat)
+      expect(transformer.components).to be_a(Numo::DFloat)
+      expect(transformer.components).to be_contiguous
       expect(transformer.components.ndim).to eq(2)
       expect(transformer.components.shape[0]).to eq(n_components)
       expect(transformer.components.shape[1]).to eq(n_features)
-      expect(transformer.component_indices.class).to eq(Numo::Int32)
+      expect(transformer.component_indices).to be_a(Numo::Int32)
+      expect(transformer.component_indices).to be_contiguous
       expect(transformer.component_indices.ndim).to eq(1)
       expect(transformer.component_indices.shape[0]).to eq(n_components)
-      expect(transformer.normalizer.class).to eq(Numo::DFloat)
+      expect(transformer.normalizer).to be_a(Numo::DFloat)
+      expect(transformer.normalizer).to be_contiguous
       expect(transformer.normalizer.ndim).to eq(2)
       expect(transformer.normalizer.shape[0]).to eq(n_components)
       expect(transformer.normalizer.shape[1]).to eq(n_components)

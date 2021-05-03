@@ -25,15 +25,18 @@ RSpec.describe Rumale::KernelApproximation::RBF do
 
   it 'has a small approximation error for the RBF kernel function.', :aggregate_failures do
     expect(mse).to be < 0.01
-    expect(mapped_x.class).to eq(Numo::DFloat)
+    expect(mapped_x).to be_a(Numo::DFloat)
+    expect(mapped_x).to be_contiguous
     expect(mapped_x.ndim).to eq(2)
     expect(mapped_x.shape[0]).to eq(n_samples)
     expect(mapped_x.shape[1]).to eq(n_components)
-    expect(transformer.random_mat.class).to eq(Numo::DFloat)
+    expect(transformer.random_mat).to be_a(Numo::DFloat)
+    expect(transformer.random_mat).to be_contiguous
     expect(transformer.random_mat.ndim).to eq(2)
     expect(transformer.random_mat.shape[0]).to eq(n_features)
     expect(transformer.random_mat.shape[1]).to eq(n_components)
-    expect(transformer.random_vec.class).to eq(Numo::DFloat)
+    expect(transformer.random_vec).to be_a(Numo::DFloat)
+    expect(transformer.random_vec).to be_contiguous
     expect(transformer.random_vec.ndim).to eq(1)
     expect(transformer.random_vec.shape[0]).to eq(n_components)
   end
