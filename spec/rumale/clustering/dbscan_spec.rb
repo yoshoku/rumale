@@ -18,17 +18,20 @@ RSpec.describe Rumale::Clustering::DBSCAN do
 
   shared_examples 'cluster analysis' do
     it 'finds clusters.' do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels).to be_a(Numo::Int32)
+      expect(cluster_labels).to be_contiguous
       expect(cluster_labels.size).to eq(n_samples)
       expect(cluster_labels.shape[0]).to eq(n_samples)
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
       expect(cluster_labels.eq(2).count).to eq(100)
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels).to be_a(Numo::Int32)
+      expect(analyzer.labels).to be_contiguous
       expect(analyzer.labels.shape[0]).to eq(n_samples)
       expect(analyzer.labels.shape[1]).to be_nil
-      expect(analyzer.core_sample_ids.class).to eq(Numo::Int32)
+      expect(analyzer.core_sample_ids).to be_a(Numo::Int32)
+      expect(analyzer.core_sample_ids).to be_contiguous
       expect(analyzer.core_sample_ids.shape[0]).not_to be_nil
       expect(analyzer.core_sample_ids.shape[1]).to be_nil
       expect(analyzer.score(x, y_mlt)).to eq(1)

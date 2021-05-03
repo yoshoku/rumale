@@ -15,16 +15,18 @@ RSpec.describe Rumale::Clustering::PowerIteration do
     let(:n_clusters) { 3 }
     let(:copied) { Marshal.load(Marshal.dump(analyzer.fit(x))) }
 
-    it 'analyzes clusters.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+    it 'analyzes clusters.', :aggregate_failures do
+      expect(cluster_labels).to be_a(Numo::Int32)
+      expect(cluster_labels).to be_contiguous
+      expect(cluster_labels.ndim).to eq(1)
       expect(cluster_labels.shape[0]).to eq(n_samples)
-      expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(1).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(2).count).to eq(n_cluster_samples)
-      expect(analyzer.embedding.class).to eq(Numo::DFloat)
+      expect(analyzer.embedding).to be_a(Numo::DFloat)
+      expect(analyzer.embedding).to be_contiguous
+      expect(analyzer.embedding.ndim).to eq(1)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
-      expect(analyzer.embedding.shape[1]).to be_nil
       expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
       expect(analyzer.labels.eq(1).count).to eq(n_cluster_samples)
       expect(analyzer.labels.eq(2).count).to eq(n_cluster_samples)
@@ -32,7 +34,7 @@ RSpec.describe Rumale::Clustering::PowerIteration do
       expect(analyzer.score(x, y)).to eq(1)
     end
 
-    it 'dumps and restores itself using Marshal module.', aggregate_failures: true do
+    it 'dumps and restores itself using Marshal module.', :aggregate_failures do
       expect(analyzer.class).to eq(copied.class)
       expect(analyzer.params).to eq(copied.params)
       expect(analyzer.embedding).to eq(copied.embedding)
@@ -48,18 +50,21 @@ RSpec.describe Rumale::Clustering::PowerIteration do
     let(:y) { dataset[1] }
     let(:n_clusters) { 2 }
 
-    it 'analyzes clusters.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+    it 'analyzes clusters.', :aggregate_failures do
+      expect(cluster_labels).to be_a(Numo::Int32)
+      expect(cluster_labels).to be_contiguous
+      expect(cluster_labels.ndim).to eq(1)
       expect(cluster_labels.shape[0]).to eq(n_samples)
-      expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(1).count).to eq(n_cluster_samples)
-      expect(analyzer.embedding.class).to eq(Numo::DFloat)
+      expect(analyzer.embedding).to be_a(Numo::DFloat)
+      expect(analyzer.embedding).to be_contiguous
+      expect(analyzer.embedding.ndim).to eq(1)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
-      expect(analyzer.embedding.shape[1]).to be_nil
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels).to be_a(Numo::Int32)
+      expect(analyzer.labels).to be_contiguous
+      expect(analyzer.labels.ndim).to eq(1)
       expect(analyzer.labels.shape[0]).to eq(n_samples)
-      expect(analyzer.labels.shape[1]).to be_nil
       expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
       expect(analyzer.labels.eq(1).count).to eq(n_cluster_samples)
       expect(analyzer.n_iter).to be > 1
@@ -73,18 +78,21 @@ RSpec.describe Rumale::Clustering::PowerIteration do
     let(:y) { dataset[1] }
     let(:n_clusters) { 2 }
 
-    it 'analyzes clusters.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+    it 'analyzes clusters.', :aggregate_failures do
+      expect(cluster_labels).to be_a(Numo::Int32)
+      expect(cluster_labels).to be_contiguous
+      expect(cluster_labels.ndim).to eq(1)
       expect(cluster_labels.shape[0]).to eq(n_samples)
-      expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(1).count).to eq(n_cluster_samples)
-      expect(analyzer.embedding.class).to eq(Numo::DFloat)
+      expect(analyzer.embedding).to be_a(Numo::DFloat)
+      expect(analyzer.embedding).to be_contiguous
+      expect(analyzer.embedding.ndim).to eq(1)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
-      expect(analyzer.embedding.shape[1]).to be_nil
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels).to be_a(Numo::Int32)
+      expect(analyzer.labels).to be_contiguous
+      expect(analyzer.labels.ndim).to eq(1)
       expect(analyzer.labels.shape[0]).to eq(n_samples)
-      expect(analyzer.labels.shape[1]).to be_nil
       expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
       expect(analyzer.labels.eq(1).count).to eq(n_cluster_samples)
       expect(analyzer.n_iter).to be > 1

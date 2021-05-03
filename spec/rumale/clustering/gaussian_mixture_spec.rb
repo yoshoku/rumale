@@ -12,21 +12,25 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
   let(:copied) { Marshal.load(Marshal.dump(analyzer.fit(x))) }
 
   context 'when covariance matrix is diagonal matrix' do
-    it 'analyze cluster.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+    it 'analyze cluster.', :aggregate_failures do
+      expect(cluster_labels).to be_a(Numo::Int32)
+      expect(cluster_labels).to be_contiguous
       expect(cluster_labels.size).to eq(x.shape[0])
       expect(cluster_labels.shape[0]).to eq(x.shape[0])
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
       expect(cluster_labels.eq(2).count).to eq(100)
-      expect(analyzer.weights.class).to eq(Numo::DFloat)
+      expect(analyzer.weights).to be_a(Numo::DFloat)
+      expect(analyzer.weights).to be_contiguous
       expect(analyzer.weights.shape[0]).to eq(3)
       expect(analyzer.weights.shape[1]).to be_nil
-      expect(analyzer.means.class).to eq(Numo::DFloat)
+      expect(analyzer.means).to be_a(Numo::DFloat)
+      expect(analyzer.means).to be_contiguous
       expect(analyzer.means.shape[0]).to eq(3)
       expect(analyzer.means.shape[1]).to eq(2)
-      expect(analyzer.covariances.class).to eq(Numo::DFloat)
+      expect(analyzer.covariances).to be_a(Numo::DFloat)
+      expect(analyzer.covariances).to be_contiguous
       expect(analyzer.covariances.ndim).to eq(2)
       expect(analyzer.covariances.shape[0]).to eq(3)
       expect(analyzer.covariances.shape[1]).to eq(2)
@@ -37,21 +41,25 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
   context 'when covariance matrix is general covariance matrix' do
     let(:covariance_type) { 'full' }
 
-    it 'analyze cluster.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+    it 'analyze cluster.', :aggregate_failures do
+      expect(cluster_labels).to be_a(Numo::Int32)
+      expect(cluster_labels).to be_contiguous
       expect(cluster_labels.size).to eq(x.shape[0])
       expect(cluster_labels.shape[0]).to eq(x.shape[0])
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
       expect(cluster_labels.eq(2).count).to eq(100)
-      expect(analyzer.weights.class).to eq(Numo::DFloat)
+      expect(analyzer.weights).to be_a(Numo::DFloat)
+      expect(analyzer.weights).to be_contiguous
       expect(analyzer.weights.shape[0]).to eq(3)
       expect(analyzer.weights.shape[1]).to be_nil
-      expect(analyzer.means.class).to eq(Numo::DFloat)
+      expect(analyzer.means).to be_a(Numo::DFloat)
+      expect(analyzer.means).to be_contiguous
       expect(analyzer.means.shape[0]).to eq(3)
       expect(analyzer.means.shape[1]).to eq(2)
-      expect(analyzer.covariances.class).to eq(Numo::DFloat)
+      expect(analyzer.covariances).to be_a(Numo::DFloat)
+      expect(analyzer.covariances).to be_contiguous
       expect(analyzer.covariances.ndim).to eq(3)
       expect(analyzer.covariances.shape[0]).to eq(3)
       expect(analyzer.covariances.shape[1]).to eq(2)
@@ -73,7 +81,7 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
     end
   end
 
-  it 'dumps and restores itself using Marshal module.', aggregate_failures: true do
+  it 'dumps and restores itself using Marshal module.', :aggregate_failures do
     expect(analyzer.class).to eq(copied.class)
     expect(analyzer.params[:n_clusters]).to eq(copied.params[:n_clusters])
     expect(analyzer.params[:init]).to eq(copied.params[:init])

@@ -11,34 +11,36 @@ RSpec.describe Rumale::Clustering::KMedoids do
   let(:analyzer_precomputed) { described_class.new(n_clusters: 3, metric: 'precomputed', max_iter: 100, random_seed: 1) }
   let(:non_learn_analyzer) { described_class.new(n_clusters: 3, init: 'k-means++', max_iter: 0, random_seed: 1) }
 
-  it 'analyze cluster.', aggregate_failures: true do
+  it 'analyze cluster.', :aggregate_failures do
     cluster_labels = analyzer.fit(x_mlt).predict(x_mlt)
-    expect(cluster_labels.class).to eq(Numo::Int32)
-    expect(cluster_labels.size).to eq(x_mlt.shape[0])
+    expect(cluster_labels).to be_a(Numo::Int32)
+    expect(cluster_labels).to be_contiguous
+    expect(cluster_labels.ndim).to eq(1)
     expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
-    expect(cluster_labels.shape[1]).to be_nil
     expect(cluster_labels.eq(0).count).to eq(100)
     expect(cluster_labels.eq(1).count).to eq(100)
     expect(cluster_labels.eq(2).count).to eq(100)
-    expect(analyzer.medoid_ids.class).to eq(Numo::Int32)
+    expect(analyzer.medoid_ids).to be_a(Numo::Int32)
+    expect(analyzer.medoid_ids).to be_contiguous
+    expect(analyzer.medoid_ids.ndim).to eq(1)
     expect(analyzer.medoid_ids.shape[0]).to eq(3)
-    expect(analyzer.medoid_ids.shape[1]).to be_nil
     expect(analyzer.score(x_mlt, y_mlt)).to eq(1)
   end
 
-  it 'analyze cluster with distance matrix.', aggregate_failures: true do
+  it 'analyze cluster with distance matrix.', :aggregate_failures do
     analyzer_precomputed.fit(dist_mat)
     cluster_labels = analyzer_precomputed.predict(dist_mat[true, analyzer_precomputed.medoid_ids])
-    expect(cluster_labels.class).to eq(Numo::Int32)
-    expect(cluster_labels.size).to eq(x_mlt.shape[0])
+    expect(cluster_labels).to be_a(Numo::Int32)
+    expect(cluster_labels).to be_contiguous
+    expect(cluster_labels.ndim).to eq(1)
     expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
-    expect(cluster_labels.shape[1]).to be_nil
     expect(cluster_labels.eq(0).count).to eq(100)
     expect(cluster_labels.eq(1).count).to eq(100)
     expect(cluster_labels.eq(2).count).to eq(100)
-    expect(analyzer_precomputed.medoid_ids.class).to eq(Numo::Int32)
+    expect(analyzer_precomputed.medoid_ids).to be_a(Numo::Int32)
+    expect(analyzer_precomputed.medoid_ids).to be_contiguous
+    expect(analyzer_precomputed.medoid_ids.ndim).to eq(1)
     expect(analyzer_precomputed.medoid_ids.shape[0]).to eq(3)
-    expect(analyzer_precomputed.medoid_ids.shape[1]).to be_nil
     expect(analyzer_precomputed.score(dist_mat, y_mlt)).to eq(1)
   end
 

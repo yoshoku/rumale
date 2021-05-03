@@ -17,14 +17,16 @@ RSpec.describe Rumale::Clustering::HDBSCAN do
   end
 
   shared_examples 'cluster analysis' do
-    it 'finds clusters.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+    it 'finds clusters.', :aggregate_failures do
+      expect(cluster_labels).to be_a(Numo::Int32)
+      expect(cluster_labels).to be_contiguous
       expect(cluster_labels.size).to eq(n_samples)
       expect(cluster_labels.shape[0]).to eq(n_samples)
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels).to be_a(Numo::Int32)
+      expect(analyzer.labels).to be_contiguous
       expect(analyzer.labels.shape[0]).to eq(n_samples)
       expect(analyzer.labels.shape[1]).to be_nil
       expect(analyzer.score(x, y)).to eq(1)
@@ -32,7 +34,7 @@ RSpec.describe Rumale::Clustering::HDBSCAN do
   end
 
   shared_examples 'outlier detection' do
-    it 'detects outlier points.', aggregate_failures: true do
+    it 'detects outlier points.', :aggregate_failures do
       expect(cluster_labels.eq(-1).count).to eq(n_outliers)
       expect(analyzer.labels.eq(-1).count).to eq(n_outliers)
     end
@@ -69,13 +71,13 @@ RSpec.describe Rumale::Clustering::HDBSCAN do
       it_behaves_like 'outlier detection'
     end
 
-    it 'raises ArgumentError when given a non-square matrix', aggregate_failures: true do
+    it 'raises ArgumentError when given a non-square matrix', :aggregate_failures do
       expect { analyzer.fit(Numo::DFloat.new(3, 2).rand) }.to raise_error(ArgumentError)
       expect { analyzer.fit_predict(Numo::DFloat.new(2, 3).rand) }.to raise_error(ArgumentError)
     end
   end
 
-  it 'dumps and restores itself using Marshal module.', aggregate_failures: true do
+  it 'dumps and restores itself using Marshal module.', :aggregate_failures do
     analyzer.fit(samples)
     copied = Marshal.load(Marshal.dump(analyzer))
     expect(analyzer.class).to eq(copied.class)
