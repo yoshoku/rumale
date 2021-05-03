@@ -16,7 +16,8 @@ RSpec.describe Rumale::NeuralNetwork::MLPRegressor do
 
   shared_examples 'regression' do
     it 'fits model for given dataset.', :aggregate_failures do
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(y.ndim)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be > 0.98

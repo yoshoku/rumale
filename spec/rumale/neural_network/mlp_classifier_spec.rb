@@ -17,15 +17,17 @@ RSpec.describe Rumale::NeuralNetwork::MLPClassifier do
 
   shared_examples 'classification' do
     it 'classifies given dataset.', :aggregate_failures do
-      expect(estimator.classes.class).to eq(Numo::Int32)
-      expect(estimator.classes.size).to eq(n_classes)
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
-      expect(probs.class).to eq(Numo::DFloat)
+      expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)
