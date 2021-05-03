@@ -30,14 +30,18 @@ RSpec.describe Rumale::Manifold::TSNE do
     let(:x) { samples }
 
     it 'maps high-dimensional data into low-dimensional data.', :aggregate_failures do
-      expect(low_samples.class).to eq(Numo::DFloat)
+      expect(low_samples).to be_a(Numo::DFloat)
+      expect(low_samples).to be_contiguous
+      expect(low_samples.ndim).to eq(2)
       expect(low_samples.shape[0]).to eq(n_samples)
       expect(low_samples.shape[1]).to eq(n_components)
-      expect(tsne.embedding.class).to eq(Numo::DFloat)
+      expect(tsne.embedding).to be_a(Numo::DFloat)
+      expect(tsne.embedding).to be_contiguous
+      expect(tsne.embedding.ndim).to eq(2)
       expect(tsne.embedding.shape[0]).to eq(n_samples)
       expect(tsne.embedding.shape[1]).to eq(n_components)
       expect(tsne.n_iter).to eq(max_iter)
-      expect(tsne.kl_divergence.class).to eq(Float)
+      expect(tsne.kl_divergence).to be_a(Float)
       expect(tsne.kl_divergence).not_to be_nil
       expect(tsne.kl_divergence).to be < init_kl
     end
@@ -60,14 +64,18 @@ RSpec.describe Rumale::Manifold::TSNE do
       let(:tol) { 1 }
 
       it 'terminates optimization based on the tol parameter.', :aggregate_failures do
-        expect(low_samples.class).to eq(Numo::DFloat)
+        expect(low_samples).to be_a(Numo::DFloat)
+        expect(low_samples).to be_contiguous
+        expect(low_samples.ndim).to eq(2)
         expect(low_samples.shape[0]).to eq(n_samples)
         expect(low_samples.shape[1]).to eq(n_components)
-        expect(tsne.embedding.class).to eq(Numo::DFloat)
+        expect(tsne.embedding).to be_a(Numo::DFloat)
+        expect(tsne.embedding).to be_contiguous
+        expect(tsne.embedding.ndim).to eq(2)
         expect(tsne.embedding.shape[0]).to eq(n_samples)
         expect(tsne.embedding.shape[1]).to eq(n_components)
         expect(tsne.n_iter).to be < max_iter
-        expect(tsne.kl_divergence.class).to eq(Float)
+        expect(tsne.kl_divergence).to be_a(Float)
         expect(tsne.kl_divergence).not_to be_nil
         expect(tsne.kl_divergence).to be < init_kl
       end
@@ -89,14 +97,18 @@ RSpec.describe Rumale::Manifold::TSNE do
     let(:x) { Rumale::PairwiseMetric.euclidean_distance(samples) }
 
     it 'maps high-dimensional data represented by distance matrix.', :aggregate_failures do
-      expect(low_samples.class).to eq(Numo::DFloat)
+      expect(low_samples).to be_a(Numo::DFloat)
+      expect(low_samples).to be_contiguous
+      expect(low_samples.ndim).to eq(2)
       expect(low_samples.shape[0]).to eq(n_samples)
       expect(low_samples.shape[1]).to eq(n_components)
-      expect(tsne.embedding.class).to eq(Numo::DFloat)
+      expect(tsne.embedding).to be_a(Numo::DFloat)
+      expect(tsne.embedding).to be_contiguous
+      expect(tsne.embedding.ndim).to eq(2)
       expect(tsne.embedding.shape[0]).to eq(n_samples)
       expect(tsne.embedding.shape[1]).to eq(n_components)
       expect(tsne.n_iter).to eq(max_iter)
-      expect(tsne.kl_divergence.class).to eq(Float)
+      expect(tsne.kl_divergence).to be_a(Float)
       expect(tsne.kl_divergence).not_to be_nil
       expect(tsne.kl_divergence).to be < init_kl
     end

@@ -29,10 +29,14 @@ RSpec.describe Rumale::Manifold::MDS do
     let(:x) { samples }
 
     it 'maps high-dimensional data into low-dimensional data.', :aggregate_failures do
-      expect(low_samples.class).to eq(Numo::DFloat)
+      expect(low_samples).to be_a(Numo::DFloat)
+      expect(low_samples).to be_contiguous
+      expect(low_samples.ndim).to eq(2)
       expect(low_samples.shape[0]).to eq(n_samples)
       expect(low_samples.shape[1]).to eq(n_components)
-      expect(mds.embedding.class).to eq(Numo::DFloat)
+      expect(mds.embedding).to be_a(Numo::DFloat)
+      expect(mds.embedding).to be_contiguous
+      expect(mds.embedding.ndim).to eq(2)
       expect(mds.embedding.shape[0]).to eq(n_samples)
       expect(mds.embedding.shape[1]).to eq(n_components)
       expect(mds.n_iter).to eq(max_iter)
@@ -59,14 +63,18 @@ RSpec.describe Rumale::Manifold::MDS do
       let(:tol) { 1000 }
 
       it 'terminates optimization based on the tol parameter.', :aggregate_failures do
-        expect(low_samples.class).to eq(Numo::DFloat)
+        expect(low_samples).to be_a(Numo::DFloat)
+        expect(low_samples).to be_contiguous
+        expect(low_samples.ndim).to eq(2)
         expect(low_samples.shape[0]).to eq(n_samples)
         expect(low_samples.shape[1]).to eq(n_components)
-        expect(mds.embedding.class).to eq(Numo::DFloat)
+        expect(mds.embedding).to be_a(Numo::DFloat)
+        expect(mds.embedding).to be_contiguous
+        expect(mds.embedding.ndim).to eq(2)
         expect(mds.embedding.shape[0]).to eq(n_samples)
         expect(mds.embedding.shape[1]).to eq(n_components)
         expect(mds.n_iter).to be < max_iter
-        expect(mds.stress.class).to eq(Float)
+        expect(mds.stress).to be_a(Float)
         expect(mds.stress).not_to be_nil
         expect(mds.stress).to be < init_stress
       end
@@ -87,14 +95,18 @@ RSpec.describe Rumale::Manifold::MDS do
     let(:x) { Rumale::PairwiseMetric.euclidean_distance(samples) }
 
     it 'maps high-dimensional data represented by distance matrix.', :aggregate_failures do
-      expect(low_samples.class).to eq(Numo::DFloat)
+      expect(low_samples).to be_a(Numo::DFloat)
+      expect(low_samples).to be_contiguous
+      expect(low_samples.ndim).to eq(2)
       expect(low_samples.shape[0]).to eq(n_samples)
       expect(low_samples.shape[1]).to eq(n_components)
-      expect(mds.embedding.class).to eq(Numo::DFloat)
+      expect(mds.embedding).to be_a(Numo::DFloat)
+      expect(mds.embedding).to be_contiguous
+      expect(mds.embedding.ndim).to eq(2)
       expect(mds.embedding.shape[0]).to eq(n_samples)
       expect(mds.embedding.shape[1]).to eq(n_components)
       expect(mds.n_iter).to eq(50)
-      expect(mds.stress.class).to eq(Float)
+      expect(mds.stress).to be_a(Float)
       expect(mds.stress).not_to be_nil
       expect(mds.stress).to be < init_stress
     end
