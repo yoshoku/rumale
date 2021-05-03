@@ -144,7 +144,7 @@ module Rumale
                    else
                      @estimators.map { |tree| tree.apply(x) }
                    end
-        Numo::Int32[*leaf_ids].transpose
+        Numo::Int32[*leaf_ids].transpose.dup
       end
 
       private

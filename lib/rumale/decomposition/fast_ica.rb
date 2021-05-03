@@ -81,7 +81,7 @@ module Rumale
         wx = @params[:whiten] ? (x - @mean).dot(whiten_mat.transpose) : x
         unmixing, @n_iter = ica(wx, @params[:fun], @params[:max_iter], @params[:tol], @rng.dup)
         @components = @params[:whiten] ? unmixing.dot(whiten_mat) : unmixing
-        @mixing = Numo::Linalg.pinv(@components)
+        @mixing = Numo::Linalg.pinv(@components).dup
         if @params[:n_components] == 1
           @components = @components.flatten.dup
           @mixing = @mixing.flatten.dup

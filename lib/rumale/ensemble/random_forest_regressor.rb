@@ -136,7 +136,7 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
-        Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
+        Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose.dup
       end
 
       private

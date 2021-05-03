@@ -152,7 +152,7 @@ module Rumale
 
         if @classes.size > 2
           probs = 1.0 / (Numo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)
-          return (probs.transpose / probs.sum(axis: 1)).transpose
+          return (probs.transpose / probs.sum(axis: 1)).transpose.dup
         end
 
         n_samples, = x.shape

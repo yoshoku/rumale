@@ -161,7 +161,7 @@ module Rumale
 
         proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
 
-        return (proba.transpose / proba.sum(axis: 1)).transpose if @classes.size > 2
+        return (proba.transpose / proba.sum(axis: 1)).transpose.dup if @classes.size > 2
 
         n_samples, = x.shape
         probs = Numo::DFloat.zeros(n_samples, 2)
@@ -182,7 +182,7 @@ module Rumale
                    else
                      @estimators.map { |tree| tree.apply(x) }
                    end
-        Numo::Int32[*leaf_ids].transpose
+        Numo::Int32[*leaf_ids].transpose.dup
       end
 
       private

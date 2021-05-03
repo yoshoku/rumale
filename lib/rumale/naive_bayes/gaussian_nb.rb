@@ -62,7 +62,7 @@ module Rumale
             Numo::NMath.log(2.0 * Math::PI * @variances[l, true]) +
             ((x - @means[l, true])**2 / @variances[l, true])).sum(1)
         end
-        Numo::DFloat[*log_likelihoods].transpose
+        Numo::DFloat[*log_likelihoods].transpose.dup
       end
     end
   end

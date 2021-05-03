@@ -73,7 +73,7 @@ module Rumale
 
         # random sampling.
         @component_indices = Numo::Int32.cast(Array(0...n_samples).shuffle(random: sub_rng)[0...n_components])
-        @components = x[@component_indices, true]
+        @components = x[@component_indices, true].dup
 
         # calculate normalizing factor.
         kernel_mat = kernel_mat(@components)

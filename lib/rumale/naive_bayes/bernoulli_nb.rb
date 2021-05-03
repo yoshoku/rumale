@@ -75,7 +75,7 @@ module Rumale
             (Numo::DFloat[*bin_x] * Numo::NMath.log(@feature_probs[l, true])).sum(1)
             (Numo::DFloat[*not_bin_x] * Numo::NMath.log(1.0 - @feature_probs[l, true])).sum(1))
         end
-        Numo::DFloat[*log_likelihoods].transpose
+        Numo::DFloat[*log_likelihoods].transpose.dup
       end
     end
   end
