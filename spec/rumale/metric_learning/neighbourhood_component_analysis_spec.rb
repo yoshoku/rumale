@@ -21,10 +21,12 @@ RSpec.describe Rumale::MetricLearning::NeighbourhoodComponentAnalysis do
   context 'when n_components is not given' do
     it 'projects data into subspace', :aggregate_failures do
       expect(z).to be_a(Numo::DFloat)
+      expect(z).to be_contiguous
       expect(z.ndim).to eq(2)
       expect(z.shape[0]).to eq(n_samples)
       expect(z.shape[1]).to eq(n_features)
       expect(transformer.components).to be_a(Numo::DFloat)
+      expect(transformer.components).to be_contiguous
       expect(transformer.components.ndim).to eq(2)
       expect(transformer.components.shape[0]).to eq(n_features)
       expect(transformer.components.shape[1]).to eq(n_features)
@@ -50,6 +52,7 @@ RSpec.describe Rumale::MetricLearning::NeighbourhoodComponentAnalysis do
 
     it 'projects data into a higly discriminating subspace', :aggregate_failures do
       expect(transformer.components).to be_a(Numo::DFloat)
+      expect(transformer.components).to be_contiguous
       expect(transformer.components.ndim).to eq(2)
       expect(transformer.components.shape[0]).to eq(n_components)
       expect(transformer.components.shape[1]).to eq(n_features)
@@ -62,9 +65,11 @@ RSpec.describe Rumale::MetricLearning::NeighbourhoodComponentAnalysis do
 
     it 'projects data into one-dimensional subspace.', :aggregate_failures do
       expect(z).to be_a(Numo::DFloat)
+      expect(z).to be_contiguous
       expect(z.ndim).to eq(1)
       expect(z.shape[0]).to eq(n_samples)
       expect(transformer.components).to be_a(Numo::DFloat)
+      expect(transformer.components).to be_contiguous
       expect(transformer.components.ndim).to eq(1)
       expect(transformer.components.shape[0]).to eq(n_features)
     end

@@ -30,22 +30,27 @@ RSpec.describe Rumale::MetricLearning::FisherDiscriminantAnalysis do
 
   context 'when n_components is not given' do
     it 'projects data into subspace', :aggregate_failures do
-      expect(z.class).to eq(Numo::DFloat)
+      expect(z).to be_a(Numo::DFloat)
+      expect(z).to be_contiguous
       expect(z.ndim).to eq(2)
       expect(z.shape[0]).to eq(n_samples)
       expect(z.shape[1]).to eq(n_classes - 1)
-      expect(transformer.components.class).to eq(Numo::DFloat)
+      expect(transformer.components).to be_a(Numo::DFloat)
+      expect(transformer.components).to be_contiguous
       expect(transformer.components.ndim).to eq(2)
       expect(transformer.components.shape[0]).to eq(n_classes - 1)
       expect(transformer.components.shape[1]).to eq(n_features)
-      expect(transformer.mean.class).to eq(Numo::DFloat)
+      expect(transformer.mean).to be_a(Numo::DFloat)
+      expect(transformer.mean).to be_contiguous
       expect(transformer.mean.ndim).to eq(1)
       expect(transformer.mean.shape[0]).to eq(n_features)
-      expect(transformer.class_means.class).to eq(Numo::DFloat)
+      expect(transformer.class_means).to be_a(Numo::DFloat)
+      expect(transformer.class_means).to be_contiguous
       expect(transformer.class_means.ndim).to eq(2)
       expect(transformer.class_means.shape[0]).to eq(n_classes)
       expect(transformer.class_means.shape[1]).to eq(n_features)
-      expect(transformer.classes.class).to eq(Numo::Int32)
+      expect(transformer.classes).to be_a(Numo::Int32)
+      expect(transformer.classes).to be_contiguous
       expect(transformer.classes.ndim).to eq(1)
       expect(transformer.classes.shape[0]).to eq(n_classes)
     end
@@ -62,16 +67,20 @@ RSpec.describe Rumale::MetricLearning::FisherDiscriminantAnalysis do
     let(:n_components) { 1 }
 
     it 'projects data into one-dimensional subspace.', :aggregate_failures do
-      expect(z.class).to eq(Numo::DFloat)
+      expect(z).to be_a(Numo::DFloat)
+      expect(z).to be_contiguous
       expect(z.ndim).to eq(1)
       expect(z.shape[0]).to eq(n_samples)
-      expect(transformer.components.class).to eq(Numo::DFloat)
+      expect(transformer.components).to be_a(Numo::DFloat)
+      expect(transformer.components).to be_contiguous
       expect(transformer.components.ndim).to eq(1)
       expect(transformer.components.shape[0]).to eq(n_features)
-      expect(transformer.mean.class).to eq(Numo::DFloat)
+      expect(transformer.mean).to be_a(Numo::DFloat)
+      expect(transformer.mean).to be_contiguous
       expect(transformer.mean.ndim).to eq(1)
       expect(transformer.mean.shape[0]).to eq(n_features)
-      expect(transformer.class_means.class).to eq(Numo::DFloat)
+      expect(transformer.class_means).to be_a(Numo::DFloat)
+      expect(transformer.class_means).to be_contiguous
       expect(transformer.class_means.ndim).to eq(2)
       expect(transformer.class_means.shape[0]).to eq(n_classes)
       expect(transformer.class_means.shape[1]).to eq(n_features)
