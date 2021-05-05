@@ -45,21 +45,25 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
-        Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
+        Numo::Int32[*(Array.new(x.shape[0]) { |n| partial_apply(@tree, x[n, true]) })]
       end
 
       private
 
-      def apply_at_node(node, sample)
-        return node.leaf_id if node.leaf
-        return apply_at_node(node.left, sample) if node.right.nil?
-        return apply_at_node(node.right, sample) if node.left.nil?
-
-        if sample[node.feature_id] <= node.threshold
-          apply_at_node(node.left, sample)
-        else
-          apply_at_node(node.right, sample)
+      def partial_apply(tree, sample)
+        node = tree
+        until node.leaf
+          # :nocov:
+          node = if node.right.nil?
+                   node.left
+                 elsif node.left.nil?
+                   node.right
+                   # :nocov:
+                 else
+                   sample[node.feature_id] <= node.threshold ? node.left : node.right
+                 end
         end
+        node.leaf_id
       end
 
       def build_tree(x, y)

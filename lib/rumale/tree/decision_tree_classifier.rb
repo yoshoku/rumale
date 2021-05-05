@@ -100,21 +100,25 @@ module Rumale
       # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
-        Numo::DFloat[*(Array.new(x.shape[0]) { |n| predict_proba_at_node(@tree, x[n, true]) })]
+        Numo::DFloat[*(Array.new(x.shape[0]) { |n| partial_predict_proba(@tree, x[n, true]) })]
       end
 
       private
 
-      def predict_proba_at_node(node, sample)
-        return node.probs if node.leaf
-        return predict_proba_at_node(node.left, sample) if node.right.nil?
-        return predict_proba_at_node(node.right, sample) if node.left.nil?
-
-        if sample[node.feature_id] <= node.threshold
-          predict_proba_at_node(node.left, sample)
-        else
-          predict_proba_at_node(node.right, sample)
+      def partial_predict_proba(tree, sample)
+        node = tree
+        until node.leaf
+          # :nocov:
+          node = if node.right.nil?
+                   node.left
+                 elsif node.left.nil?
+                   node.right
+                   # :nocov:
+                 else
+                   sample[node.feature_id] <= node.threshold ? node.left : node.right
+                 end
         end
+        node.probs
       end
 
       def stop_growing?(y)
