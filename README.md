@@ -2,7 +2,7 @@
 
 ![Rumale](https://dl.dropboxusercontent.com/s/joxruk2720ur66o/rumale_header_400.png)
 
-[![Build Status](https://github.com/yoshoku/rumale/workflows/build/badge.svg)](https://github.com/yoshoku/rumale/actions?query=workflow%3Abuild)
+[![Build Status](https://github.com/yoshoku/rumale/actions/workflows/build.yml/badge.svg)](https://github.com/yoshoku/rumale/actions/workflows/build.yml)
 [![Coverage Status](https://coveralls.io/repos/github/yoshoku/rumale/badge.svg?branch=main)](https://coveralls.io/github/yoshoku/rumale?branch=main)
 [![Gem Version](https://badge.fury.io/rb/rumale.svg)](https://badge.fury.io/rb/rumale)
 [![BSD 2-Clause License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/yoshoku/rumale/blob/main/LICENSE.txt)
