@@ -1,3 +1,9 @@
+# 0.23.1
+- Fix all estimators to return inference results in a contiguous narray.
+- Fix to use until statement instead of recursive call on apply methods of tree estimators.
+- Rename native extension files.
+- Introduce clang-format for native extension codes.
+
 # 0.23.0
 ## Breaking change
 - Change automalically selected solver from sgd to lbfgs in
