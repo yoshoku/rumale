@@ -189,6 +189,11 @@ Ubuntu:
 $ sudo apt-get install libopenblas-dev liblapacke-dev
 ```
 
+Fedora:
+```bash
+$ sudo dnf install openblas-devel lapack-devel
+```
+
 Windows (MSYS2):
 
 ```bash
@@ -224,6 +229,12 @@ Ubuntu:
 
 ```bash
 $ sudo apt-get install gcc gfortran make
+```
+
+Fedora:
+
+```bash
+$ sudo dnf install gcc gcc-gfortran make
 ```
 
 Install Numo::OpenBLAS gem.
