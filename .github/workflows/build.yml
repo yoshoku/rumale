@@ -14,13 +14,9 @@ jobs:
       - name: Install BLAS and LAPACK
         run: sudo apt-get install -y libopenblas-dev liblapacke-dev
       - name: Set up Ruby ${{ matrix.ruby }}
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
       - name: Build and test with Rake
-        env:
-          LD_LIBRARY_PATH: '/usr/lib/x86_64-linux-gnu/'
-        run: |
-          gem install --no-document bundler
-          bundle install --jobs 4 --retry 3
-          bundle exec rake
+        run: bundle exec rake
