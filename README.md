@@ -190,6 +190,7 @@ $ sudo apt-get install libopenblas-dev liblapacke-dev
 ```
 
 Fedora:
+
 ```bash
 $ sudo dnf install openblas-devel lapack-devel
 ```
@@ -247,6 +248,25 @@ Load Numo::OpenBLAS gem instead of Numo::Linalg.
 
 ```ruby
 require 'numo/openblas'
+require 'rumale'
+```
+
+### Numo::BLIS
+[Numo::BLIS](https://github.com/yoshoku/numo-blis) downloads and builds BLIS during installation
+and uses that as a background library for Numo::Linalg.
+BLIS is one of the high-performance BLAS as with OpenBLAS,
+and using that can be expected to speed up of processing in Rumale.
+
+Install Numo::BLIS gem.
+
+```bash
+$ gem install numo-blis
+```
+
+Load Numo::BLIS gem instead of Numo::Linalg.
+
+```ruby
+require 'numo/blis'
 require 'rumale'
 ```
 
