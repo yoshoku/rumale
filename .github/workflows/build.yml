@@ -18,6 +18,9 @@ jobs:
       - name: Install BLAS and LAPACK (macos)
         if: runner.os == 'macOS'
         run: brew install openblas
+      - name: Install BLAS and LAPACK (windows)
+        if: runner.os == 'Windows'
+        run: pacman -S mingw-w64-x86_64-openblas mingw-w64-x86_64-lapack
       - name: Set up Ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:
