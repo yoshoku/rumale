@@ -4,15 +4,20 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        os: [ 'ubuntu', 'macos', 'windows' ]
         ruby: [ '2.6', '2.7', '3.0' ]
+    runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install BLAS and LAPACK
-        run: sudo apt-get install -y libopenblas-dev liblapacke-dev
+      - name: Install BLAS and LAPACK (ubuntu)
+        if: runner.os == 'Linux'
+        run: sudo apt install -y libopenblas-dev liblapacke-dev
+      - name: Install BLAS and LAPACK (macos)
+        if: runner.os == 'macOS'
+        run: brew install openblas lapack
       - name: Set up Ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:
