@@ -1,6 +1,6 @@
 #include "tree.h"
 
-RUBY_EXTERN VALUE mRumale;
+extern VALUE mRumale;
 
 double* alloc_dbl_array(const long n_dimensions) {
   double* arr = ALLOC_N(double, n_dimensions);
