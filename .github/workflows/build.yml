@@ -18,13 +18,14 @@ jobs:
       - name: Install BLAS and LAPACK (macos)
         if: runner.os == 'macOS'
         run: brew install openblas
-      - name: Install BLAS and LAPACK (windows)
-        if: runner.os == 'Windows'
-        run: pacman -S mingw-w64-x86_64-openblas mingw-w64-x86_64-lapack
       - name: Set up Ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      # Windows: pacman will work after Ruby is set up
+      - name: Install BLAS and LAPACK (windows)
+        if: runner.os == 'Windows'
+        run: pacman -S --noconfirm mingw-w64-x86_64-openblas mingw-w64-x86_64-lapack
       - name: Build and test with Rake
         run: bundle exec rake
