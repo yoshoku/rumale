@@ -21,3 +21,6 @@ iterate.dat
 /spec/dump_int.t
 /spec/dump_mult_dbl.t
 /spec/dump_zb.t
+
+# ignore dynamic library file
+lib/rumale/rumaleext.so
