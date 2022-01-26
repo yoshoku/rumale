@@ -23,4 +23,7 @@ iterate.dat
 /spec/dump_zb.t
 
 # ignore dynamic library file
-lib/rumale/rumaleext.so
+/lib/rumale/rumaleext.so
+
+# coverage file
+/coverage
