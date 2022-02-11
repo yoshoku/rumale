@@ -1,5 +1,7 @@
 # Rumale
 
+**This project is suspended for the author's health reasons. It will be resumed when the author recovers.**
+
 ![Rumale](https://dl.dropboxusercontent.com/s/joxruk2720ur66o/rumale_header_400.png)
 
 [![Build Status](https://github.com/yoshoku/rumale/actions/workflows/build.yml/badge.svg)](https://github.com/yoshoku/rumale/actions/workflows/build.yml)
