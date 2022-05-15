@@ -10,7 +10,8 @@ AllCops:
   DisplayStyleGuide: true
   Exclude:
     - 'ext/rumale/extconf.rb'
-    - 'tmp/**/*.rb'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
     - 'rumale.gemspec'
     - 'Rakefile'
     - 'Gemfile'
