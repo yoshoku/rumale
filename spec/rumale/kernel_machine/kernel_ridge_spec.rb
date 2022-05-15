@@ -29,7 +29,7 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
 
     it 'dumps and restores itself using Marshal module.', :aggregate_failures do
       expect(estimator.class).to eq(copied.class)
-      expect(estimator.params[:reg_param]).to eq(estimator.params[:reg_param])
+      expect(estimator.params[:reg_param]).to eq(copied.params[:reg_param])
       expect(estimator.weight_vec).to eq(copied.weight_vec)
       expect(score).to eq(copied.score(kernel_mat, y))
     end

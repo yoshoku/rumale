@@ -94,6 +94,6 @@ RSpec.describe Rumale::MetricLearning::FisherDiscriminantAnalysis do
     expect(copied.components).to eq(transformer.components)
     expect(copied.mean).to eq(transformer.mean)
     expect(copied.class_means).to eq(transformer.class_means)
-    expect(copied.classes).to eq(copied.classes)
+    expect(copied.classes).to eq(transformer.classes)
   end
 end

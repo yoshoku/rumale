@@ -90,7 +90,7 @@ RSpec.describe Rumale::MetricLearning::NeighbourhoodComponentAnalysis do
     expect(copied.class).to eq(transformer.class)
     expect(copied.params).to eq(transformer.params)
     expect(copied.components).to eq(transformer.components)
-    expect(copied.n_iter).to eq(copied.n_iter)
-    expect(copied.rng).to eq(copied.rng)
+    expect(copied.n_iter).to eq(transformer.n_iter)
+    expect(copied.rng).to eq(transformer.rng)
   end
 end
