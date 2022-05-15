@@ -20,7 +20,7 @@ Style/Documentation:
 
 Layout/LineLength:
   Max: 145
-  IgnoredPatterns: ['(\A|\s)#']
+  AllowedPatterns: ['(\A|\s)#']
 
 Lint/AmbiguousOperatorPrecedence:
   Enabled: false
