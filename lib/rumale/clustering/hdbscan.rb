@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
 require 'rumale/base/base_estimator'
 require 'rumale/base/cluster_analyzer'
 require 'rumale/pairwise_metric'
@@ -108,7 +107,28 @@ module Rumale
         end
       end
 
-      private_constant :UnionFind
+      # @!visibility private
+      class Node
+        # @!visibility private
+        attr_reader :x, :y, :weight, :n_elements
+
+        # @!visibility private
+        def initialize(x:, y:, weight:, n_elements: 0)
+          @x = x
+          @y = y
+          @weight = weight
+          @n_elements = n_elements
+        end
+
+        # @!visibility private
+        def ==(other)
+          # :nocov:
+          x == other.x && y == other.y && weight == other.weight && n_elements == other.n_elements
+          # :nocov:
+        end
+      end
+
+      private_constant :UnionFind, :Node
 
       def partial_fit(distance_mat)
         mr_distance_mat = mutual_reachability_distances(distance_mat, @params[:min_samples])
@@ -161,30 +181,30 @@ module Rumale
 
           if n_x_elements >= min_cluster_size && n_y_elements >= min_cluster_size
             relabel[edge.x] = next_label
-            res.push(OpenStruct.new(x: relabel[n_id], y: relabel[edge.x], weight: density, n_elements: n_x_elements))
+            res.push(Node.new(x: relabel[n_id], y: relabel[edge.x], weight: density, n_elements: n_x_elements))
             next_label += 1
             relabel[edge.y] = next_label
-            res.push(OpenStruct.new(x: relabel[n_id], y: relabel[edge.y], weight: density, n_elements: n_y_elements))
+            res.push(Node.new(x: relabel[n_id], y: relabel[edge.y], weight: density, n_elements: n_y_elements))
             next_label += 1
           elsif n_x_elements < min_cluster_size && n_y_elements < min_cluster_size
             breadth_first_search_hierarchy(hierarchy, edge.x).each do |sn_id|
-              res.push(OpenStruct.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
+              res.push(Node.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
               visited[sn_id] = true
             end
             breadth_first_search_hierarchy(hierarchy, edge.y).each do |sn_id|
-              res.push(OpenStruct.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
+              res.push(Node.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
               visited[sn_id] = true
             end
           elsif n_x_elements < min_cluster_size
             relabel[edge.y] = relabel[n_id]
             breadth_first_search_hierarchy(hierarchy, edge.x).each do |sn_id|
-              res.push(OpenStruct.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
+              res.push(Node.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
               visited[sn_id] = true
             end
           elsif n_y_elements < min_cluster_size
             relabel[edge.x] = relabel[n_id]
             breadth_first_search_hierarchy(hierarchy, edge.y).each do |sn_id|
-              res.push(OpenStruct.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
+              res.push(Node.new(x: relabel[n_id], y: sn_id, weight: density, n_elements: 1)) if sn_id < n_points
               visited[sn_id] = true
             end
           end

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
 require 'rumale/base/base_estimator'
 require 'rumale/base/cluster_analyzer'
 require 'rumale/pairwise_metric'
@@ -25,7 +24,7 @@ module Rumale
       attr_reader :labels
 
       # Return the hierarchical structure.
-      # @return [Array<OpenStruct>] (shape: [n_samples - 1])
+      # @return [Array<SingleLinkage::Node>] (shape: [n_samples - 1])
       attr_reader :hierarchy
 
       # Create a new cluster analyzer with single linkage algorithm.
@@ -104,7 +103,26 @@ module Rumale
         end
       end
 
-      private_constant :UnionFind
+      # @!visibility private
+      class Node
+        # @!visibility private
+        attr_reader :x, :y, :weight, :n_elements
+
+        # @!visibility private
+        def initialize(x:, y:, weight:, n_elements: 0)
+          @x = x
+          @y = y
+          @weight = weight
+          @n_elements = n_elements
+        end
+
+        # @!visibility private
+        def ==(other)
+          x == other.x && y == other.y && weight == other.weight && n_elements == other.n_elements
+        end
+      end
+
+      private_constant :UnionFind, :Node
 
       def partial_fit(distance_mat)
         mst = minimum_spanning_tree(distance_mat)
@@ -125,7 +143,7 @@ module Rumale
           curr_weights = Numo::DFloat.minimum(curr_weights[target], complete_graph[curr_node, curr_labels])
           next_node = curr_labels[curr_weights.min_index]
           weight = curr_weights.min
-          OpenStruct.new(x: curr_node, y: next_node, weight: weight)
+          Node.new(x: curr_node, y: next_node, weight: weight)
         end
         mst.sort! { |a, b| a.weight <=> b.weight }
       end
@@ -140,7 +158,7 @@ module Rumale
           x_root, y_root = [y_root, x_root] unless x_root < y_root
           weight = mst[n].weight
           n_samples = uf.union(x_root, y_root)
-          OpenStruct.new(x: x_root, y: y_root, weight: weight, n_elements: n_samples)
+          Node.new(x: x_root, y: y_root, weight: weight, n_elements: n_samples)
         end
       end
 
