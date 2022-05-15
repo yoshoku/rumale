@@ -118,8 +118,7 @@ module Rumale
         desc_y_true = Numo::Int32.cast(bin_y_true[desc_pred_ids])
         desc_y_score = y_score[desc_pred_ids]
 
-        dist_value_ids = desc_y_score.diff.ne(0).where
-        threshold_ids = dist_value_ids.append(desc_y_true.size - 1)
+        threshold_ids = Numo::Int32.cast(desc_y_score.diff.ne(0).where.to_a.append(desc_y_true.size - 1))
 
         true_pos = desc_y_true.cumsum[threshold_ids]
         false_pos = 1 + threshold_ids - true_pos
