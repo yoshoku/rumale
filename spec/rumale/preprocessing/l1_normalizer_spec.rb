@@ -25,7 +25,7 @@ RSpec.describe Rumale::Preprocessing::L1Normalizer do
       Numo::DFloat.new(n_samples, n_features).rand.tap { |x| x[0, true] = Numo::DFloat.zeros(n_features) }
     end
 
-    it 'does not normalize vectors with zero norm ' do
+    it 'does not normalize vectors with zero norm' do
       expect(normalized[0, true]).to eq(x[0, true])
       expect(normalizer.norm_vec[0]).to eq(1)
     end

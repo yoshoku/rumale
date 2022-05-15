@@ -27,7 +27,7 @@ RSpec.describe Rumale::FeatureExtraction::TfidfTransformer do
       expect((x * transformer.idf - z).abs.sum).to be < 1e-8
     end
 
-    context 'with smoothed idf ' do
+    context 'with smoothed idf' do
       let(:smooth_idf) { true }
       let(:sidf) { Numo::NMath.log((n_samples + 1) / (Numo::DFloat[1, 1, 2] + 1)) + 1 }
 
