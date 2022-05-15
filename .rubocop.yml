@@ -21,6 +21,9 @@ Layout/LineLength:
   Max: 145
   IgnoredPatterns: ['(\A|\s)#']
 
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
 Lint/ConstantDefinitionInBlock:
   Enabled: false
 
