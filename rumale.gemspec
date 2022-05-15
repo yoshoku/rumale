@@ -41,7 +41,8 @@ Gem::Specification.new do |spec|
     'changelog_uri' => 'https://github.com/yoshoku/rumale/blob/main/CHANGELOG.md',
     'source_code_uri' => 'https://github.com/yoshoku/rumale',
     'documentation_uri' => 'https://yoshoku.github.io/rumale/doc/',
-    'bug_tracker_uri' => 'https://github.com/yoshoku/rumale/issues'
+    'bug_tracker_uri' => 'https://github.com/yoshoku/rumale/issues',
+    'rubygems_mfa_required' => 'true'
   }
 
   spec.add_runtime_dependency 'numo-narray', '>= 0.9.1'
