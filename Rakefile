@@ -1,6 +1,10 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 
+require 'rubocop/rake_task'
+
+RuboCop::RakeTask.new
+
 RSpec::Core::RakeTask.new(:spec)
 
 require 'rake/extensiontask'
@@ -12,4 +16,4 @@ Rake::ExtensionTask.new('rumaleext') do |ext|
   ext.lib_dir = 'lib/rumale'
 end
 
-task :default => [:clobber, :compile, :spec]
+task :default => [:clobber, :compile, :rubocop, :spec]
