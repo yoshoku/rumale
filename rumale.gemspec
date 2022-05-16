@@ -45,6 +45,6 @@ Gem::Specification.new do |spec|
     'rubygems_mfa_required' => 'true'
   }
 
-  spec.add_runtime_dependency 'numo-narray', '>= 0.9.1'
-  spec.add_runtime_dependency 'lbfgsb', '>=0.3.0'
+  spec.add_dependency 'numo-narray', '>= 0.9.1'
+  spec.add_dependency 'lbfgsb', '>=0.3.0'
 end
