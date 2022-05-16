@@ -10,6 +10,8 @@ module Rumale
     # This implementation, unlike the paper, does not perform random sampling with vantage point selection.
     # This class is used internally for k-nearest neighbor estimators.
     #
+    # @deprecated This class will be removed in ver. 0.24.0. The author recommends to use the annoy-rb gem instead.
+    #
     # *Reference*
     # - Yianilos, P N., "Data Structures and Algorithms for Nearest Neighbor Search in General Metric Spaces," Proc. SODA'93, pp. 311--321, 1993.
     class VPTree
