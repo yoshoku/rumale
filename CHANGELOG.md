@@ -1,3 +1,10 @@
+# 0.23.2
+Rumale project will be rebooted on version 0.24.0.
+This version is probably the last release of the series starting with version 0.8.0.
+
+- Refactor some codes and configs.
+- Deprecate VPTree class.
+
 # 0.23.1
 - Fix all estimators to return inference results in a contiguous narray.
 - Fix to use until statement instead of recursive call on apply methods of tree estimators.
