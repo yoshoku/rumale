@@ -1,7 +1,7 @@
 {
   "name": "rumale",
   "author": "Atsush Tatsuma <yoshoku@outlook.com>",
-  "license": "BSD-3-Clause",
+  "license": "BSD-2-Clause",
   "private": true,
   "scripts": {
     "prepare": "husky install"
