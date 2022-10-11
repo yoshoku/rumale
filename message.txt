@@ -1,0 +1,20 @@
+こんにちは。これはプルリクエストではなく、ただのメールです。
+
+以前、issueセクションでUMAPをRumaleに追加する依頼をしたのを覚えていらっしゃるでしょうか。最近、C++で実装されたUMAPのライブラリであるUmapppのバインディングを作成し公開しました。
+
+https://github.com/kojix2/ruby-umappp
+
+C++の呼び出しにRiceを使い、numo.hppを使ってNumo::NArrayをサポートしています。残念ながら、私は数学が苦手でUMAPのことはよくわからず、プログラミングも独学ですが、とりあえず動くようです。
+
+RumaleはRubyの世界では珍しく、貴重な機械学習ライブラリです。Rumaleの今後の発展を祈ります。
+
+Hello. This is not a pull request, just a mail.
+
+You may remember a previous request to add UMAP to Rumale in the issues section. I have recently created and published a binding for Umappp, a library of UMAP implemented in C++.
+
+https://github.com/kojix2/ruby-umappp
+
+It uses Rice for the C++ calls and supports Numo::NArray using numo.hpp. Unfortunately, I'm not good at math and don't know much about UMAP, and I'm self-taught in programming, but it seems to work anyway.
+
+Rumale is a rare and valuable machine learning library in the Ruby world. I wish Rumale all the best in its future development.
+
