@@ -1,3 +1,6 @@
+# 0.23.3
+- Fix build failure with Xcode 14 and Ruby 3.1.x.
+
 # 0.23.2
 Rumale project will be rebooted on version 0.24.0.
 This version is probably the last release of the series starting with version 0.8.0.
