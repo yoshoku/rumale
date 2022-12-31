@@ -1,0 +1,13 @@
+inherit_from: ../.rubocop.yml
+
+AllCops:
+  Exclude:
+    - 'ext/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - 'Gemfile'
+    - 'Steepfile'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
