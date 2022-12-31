@@ -16,4 +16,5 @@ tmp/
 .DS_Store
 .rspec_status
 Gemfile.lock
+yarn.lock
 dump_*
