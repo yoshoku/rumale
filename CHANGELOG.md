@@ -1,3 +1,8 @@
+# 0.24.0
+## Breaking change
+- Divided into gems for each machine learning algorithm, with Rumale as the meta-gem.
+- Changed the license of Rumale to the 3-Caluse BSD License.
+
 # 0.23.3
 - Fix build failure with Xcode 14 and Ruby 3.1.x.
 
