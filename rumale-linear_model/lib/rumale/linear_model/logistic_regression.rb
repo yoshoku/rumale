@@ -1,0 +1,266 @@
+# frozen_string_literal: true
+
+require 'lbfgsb'
+
+require 'rumale/base/classifier'
+require 'rumale/utils'
+require 'rumale/validation'
+require 'rumale/linear_model/base_sgd'
+
+module Rumale
+  module LinearModel
+    # LogisticRegression is a class that implements Logistic Regression.
+    # In multiclass classification problem, it uses one-vs-the-rest strategy for the sgd solver
+    # and multinomial logistic regression for the lbfgs solver.
+    #
+    # @note
+    #   Rumale::SVM provides Logistic Regression based on LIBLINEAR.
+    #   If you prefer execution speed, you should use Rumale::SVM::LogisticRegression.
+    #   https://github.com/yoshoku/rumale-svm
+    #
+    # @example
+    #   require 'rumale/linear_model/logistic_regression'
+    #
+    #   estimator =
+    #     Rumale::LinearModel::LogisticRegression.new(reg_param: 1.0, random_seed: 1)
+    #   estimator.fit(training_samples, traininig_labels)
+    #   results = estimator.predict(testing_samples)
+    #
+    # *Reference*
+    # - Shalev-Shwartz, S., Singer, Y., Srebro, N., and Cotter, A., "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Mathematical Programming, vol. 127 (1), pp. 3--30, 2011.
+    # - Tsuruoka, Y., Tsujii, J., and Ananiadou, S., "Stochastic Gradient Descent Training for L1-regularized Log-linear Models with Cumulative Penalty," Proc. ACL'09, pp. 477--485, 2009.
+    # - Bottou, L., "Large-Scale Machine Learning with Stochastic Gradient Descent," Proc. COMPSTAT'10, pp. 177--186, 2010.
+    class LogisticRegression < BaseSGD # rubocop:disable Metrics/ClassLength
+      include ::Rumale::Base::Classifier
+
+      # Return the weight vector for Logistic Regression.
+      # @return [Numo::DFloat] (shape: [n_classes, n_features])
+      attr_reader :weight_vec
+
+      # Return the bias term (a.k.a. intercept) for Logistic Regression.
+      # @return [Numo::DFloat] (shape: [n_classes])
+      attr_reader :bias_term
+
+      # Return the class labels.
+      # @return [Numo::Int32] (shape: [n_classes])
+      attr_reader :classes
+
+      # Return the random generator for performing random sampling.
+      # @return [Random]
+      attr_reader :rng
+
+      # Create a new classifier with Logisitc Regression.
+      #
+      # @param learning_rate [Float] The initial value of learning rate.
+      #   The learning rate decreases as the iteration proceeds according to the equation: learning_rate / (1 + decay * t).
+      #   If solver = 'lbfgs', this parameter is ignored.
+      # @param decay [Float] The smoothing parameter for decreasing learning rate as the iteration proceeds.
+      #   If nil is given, the decay sets to 'reg_param * learning_rate'.
+      #   If solver = 'lbfgs', this parameter is ignored.
+      # @param momentum [Float] The momentum factor.
+      #   If solver = 'lbfgs', this parameter is ignored.
+      # @param penalty [String] The regularization type to be used ('l1', 'l2', and 'elasticnet').
+      #   If solver = 'lbfgs', only 'l2' can be selected for this parameter.
+      # @param l1_ratio [Float] The elastic-net type regularization mixing parameter.
+      #   If penalty set to 'l2' or 'l1', this parameter is ignored.
+      #   If l1_ratio = 1, the regularization is similar to Lasso.
+      #   If l1_ratio = 0, the regularization is similar to Ridge.
+      #   If 0 < l1_ratio < 1, the regularization is a combination of L1 and L2.
+      #   If solver = 'lbfgs', this parameter is ignored.
+      # @param reg_param [Float] The regularization parameter.
+      # @param fit_bias [Boolean] The flag indicating whether to fit the bias term.
+      # @param bias_scale [Float] The scale of the bias term.
+      #   If fit_bias is true, the feature vector v becoms [v; bias_scale].
+      # @param max_iter [Integer] The maximum number of epochs that indicates
+      #   how many times the whole data is given to the training process.
+      # @param batch_size [Integer] The size of the mini batches.
+      #   If solver = 'lbfgs', this parameter is ignored.
+      # @param tol [Float] The tolerance of loss for terminating optimization.
+      #   If solver = 'lbfgs', this value is given as tol / Lbfgsb::DBL_EPSILON to the factr argument of Lbfgsb.minimize method.
+      # @param solver [String] The algorithm for optimization. ('lbfgs' or 'sgd').
+      #   'lbfgs' uses the L-BFGS with lbfgs.rb gem.
+      #   'sgd' uses the stochastic gradient descent optimization.
+      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
+      #   If nil is given, the methods do not execute in parallel.
+      #   If zero or less is given, it becomes equal to the number of processors.
+      #   This parameter is ignored if the Parallel gem is not loaded or the solver is 'lbfgs'.
+      # @param verbose [Boolean] The flag indicating whether to output loss during iteration.
+      #   If solver = 'lbfgs' and true is given, 'iterate.dat' file is generated by lbfgsb.rb.
+      # @param random_seed [Integer] The seed value using to initialize the random generator.
+      def initialize(learning_rate: 0.01, decay: nil, momentum: 0.9,
+                     penalty: 'l2', reg_param: 1.0, l1_ratio: 0.5,
+                     fit_bias: true, bias_scale: 1.0,
+                     max_iter: 1000, batch_size: 50, tol: 1e-4,
+                     solver: 'lbfgs',
+                     n_jobs: nil, verbose: false, random_seed: nil)
+        raise ArgumentError, "The 'lbfgs' solver supports only 'l2' penalties." if solver == 'lbfgs' && penalty != 'l2'
+
+        super()
+        @params.merge!(method(:initialize).parameters.to_h { |_t, arg| [arg, binding.local_variable_get(arg)] })
+        @params[:solver] = solver == 'sgd' ? 'sgd' : 'lbfgs'
+        @params[:decay] ||= @params[:reg_param] * @params[:learning_rate]
+        @params[:random_seed] ||= srand
+        @rng = Random.new(@params[:random_seed])
+        @penalty_type = @params[:penalty]
+        @loss_func = ::Rumale::LinearModel::Loss::LogLoss.new
+      end
+
+      # Fit the model with given training data.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @return [LogisticRegression] The learned classifier itself.
+      def fit(x, y)
+        x = ::Rumale::Validation.check_convert_sample_array(x)
+        y = ::Rumale::Validation.check_convert_label_array(y)
+        ::Rumale::Validation.check_sample_size(x, y)
+
+        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        if @params[:solver] == 'sgd'
+          fit_sgd(x, y)
+        else
+          fit_lbfgs(x, y)
+        end
+
+        self
+      end
+
+      # Calculate confidence scores for samples.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
+      def decision_function(x)
+        x = ::Rumale::Validation.check_convert_sample_array(x)
+
+        x.dot(@weight_vec.transpose) + @bias_term
+      end
+
+      # Predict class labels for samples.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      def predict(x)
+        x = ::Rumale::Validation.check_convert_sample_array(x)
+
+        n_samples, = x.shape
+        decision_values = predict_proba(x)
+        predicted = if enable_parallel?
+                      parallel_map(n_samples) { |n| @classes[decision_values[n, true].max_index] }
+                    else
+                      Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] }
+                    end
+        Numo::Int32.asarray(predicted)
+      end
+
+      # Predict probability for samples.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      def predict_proba(x)
+        x = ::Rumale::Validation.check_convert_sample_array(x)
+
+        proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
+        return (proba.transpose / proba.sum(axis: 1)).transpose.dup if multiclass_problem?
+
+        n_samples, = x.shape
+        probs = Numo::DFloat.zeros(n_samples, 2)
+        probs[true, 1] = proba
+        probs[true, 0] = 1.0 - proba
+        probs
+      end
+
+      private
+
+      def multiclass_problem?
+        @classes.size > 2
+      end
+
+      def fit_lbfgs(base_x, base_y) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        if multiclass_problem?
+          fnc = proc do |w, x, y, a|
+            n_features = x.shape[1]
+            n_classes = y.shape[1]
+            z = x.dot(w.reshape(n_classes, n_features).transpose)
+            # logsumexp and softmax
+            z_max = z.max(-1).expand_dims(-1).dup
+            z_max[~z_max.isfinite] = 0.0
+            lgsexp = Numo::NMath.log(Numo::NMath.exp(z - z_max).sum(axis: -1)).expand_dims(-1) + z_max
+            t = z - lgsexp
+            sftmax = Numo::NMath.exp(t)
+            # loss and gradient
+            loss = -(y * t).sum + 0.5 * a * w.dot(w)
+            grad = (sftmax - y).transpose.dot(x).flatten.dup + a * w
+            [loss, grad]
+          end
+
+          base_x = expand_feature(base_x) if fit_bias?
+          onehot_y = ::Rumale::Utils.binarize_labels(base_y)
+          n_classes = @classes.size
+          n_features = base_x.shape[1]
+          w_init = Numo::DFloat.zeros(n_classes * n_features)
+
+          verbose = @params[:verbose] ? 1 : -1
+          res = Lbfgsb.minimize(
+            fnc: fnc, jcb: true, x_init: w_init, args: [base_x, onehot_y, @params[:reg_param]],
+            maxiter: @params[:max_iter], factr: @params[:tol] / Lbfgsb::DBL_EPSILON, verbose: verbose
+          )
+
+          if fit_bias?
+            weight = res[:x].reshape(n_classes, n_features)
+            @weight_vec = weight[true, 0...-1].dup
+            @bias_term = weight[true, -1].dup
+          else
+            @weight_vec = res[:x].reshape(n_classes, n_features)
+            @bias_term = Numo::DFloat.zeros(n_classes)
+          end
+        else
+          fnc = proc do |w, x, y, a|
+            z = 1 + Numo::NMath.exp(-y * x.dot(w))
+            loss = Numo::NMath.log(z).sum + 0.5 * a * w.dot(w)
+            grad = (y / z - y).dot(x) + a * w
+            [loss, grad]
+          end
+
+          base_x = expand_feature(base_x) if fit_bias?
+          negative_label = @classes[0]
+          bin_y = Numo::Int32.cast(base_y.ne(negative_label)) * 2 - 1
+          n_features = base_x.shape[1]
+          w_init = Numo::DFloat.zeros(n_features)
+
+          verbose = @params[:verbose] ? 1 : -1
+          res = Lbfgsb.minimize(
+            fnc: fnc, jcb: true, x_init: w_init, args: [base_x, bin_y, @params[:reg_param]],
+            maxiter: @params[:max_iter], factr: @params[:tol] / Lbfgsb::DBL_EPSILON, verbose: verbose
+          )
+
+          @weight_vec, @bias_term = split_weight(res[:x])
+        end
+      end
+
+      def fit_sgd(x, y)
+        if multiclass_problem?
+          n_classes = @classes.size
+          n_features = x.shape[1]
+          @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
+          @bias_term = Numo::DFloat.zeros(n_classes)
+          if enable_parallel?
+            models = parallel_map(n_classes) do |n|
+              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              partial_fit(x, bin_y)
+            end
+            n_classes.times { |n| @weight_vec[n, true], @bias_term[n] = models[n] }
+          else
+            n_classes.times do |n|
+              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
+            end
+          end
+        else
+          negative_label = @classes[0]
+          bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
+          @weight_vec, @bias_term = partial_fit(x, bin_y)
+        end
+      end
+    end
+  end
+end
