@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+# Specify your gem's dependencies in rumale-tree.gemspec
+gemspec
+
+gem 'rumale-core', path: '../rumale-core'
+gem 'rumale-evaluation_measure', path: '../rumale-evaluation_measure'
+gem 'rumale-linear_model', path: '../rumale-linear_model'
+gem 'rumale-model_selection', path: '../rumale-model_selection'
+gem 'rumale-preprocessing', path: '../rumale-preprocessing'
+gem 'rumale-tree', path: '../rumale-tree'
+
+gem 'rumale-naive_bayes', path: '../rumale-naive_bayes'
+gem 'rumale-neural_network', path: '../rumale-neural_network'
+
+gem 'parallel', '~> 1.22'
+gem 'rake', '~> 13.0'
+gem 'rspec', '~> 3.0'
+gem 'rubocop', '~> 1.21'
+gem 'rubocop-performance', '~> 1.8'
+gem 'rubocop-rake', '~> 0.5'
+gem 'rubocop-rspec', '~> 2.0'
+gem 'simplecov', '~> 0.21'
