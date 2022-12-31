@@ -1,0 +1,45 @@
+name: rumale-kernel_machine test
+
+on:
+  push:
+    branches:
+      - main
+      - dev*
+      - v[0-9]+.[0-9]+.[0-9]+
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+    paths:
+      - 'rumale-core/**'
+      - 'rumale-kernel_machine/**'
+      - '.github/workflows/rumale-kernel_machine_test.yml'
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - 'rumale-core/**'
+      - 'rumale-kernel_machine/**'
+      - '.github/workflows/rumale-kernel_machine_test.yml'
+
+jobs:
+  test:
+    defaults:
+      run:
+        working-directory: rumale-kernel_machine
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [ '2.7', '3.0', '3.1', '3.2' ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install BLAS and LAPACK
+        run: sudo apt-get install -y libopenblas-dev liblapacke-dev
+      - name: Set up Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Build and test with Rake
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+          bundle exec rake
