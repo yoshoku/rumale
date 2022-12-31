@@ -1,0 +1,35 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+# Specify your gem's dependencies in rumale.gemspec
+gemspec
+
+gem 'rumale-clustering', path: '../rumale-clustering'
+gem 'rumale-core', path: '../rumale-core'
+gem 'rumale-decomposition', path: '../rumale-decomposition'
+gem 'rumale-ensemble', path: '../rumale-ensemble'
+gem 'rumale-evaluation_measure', path: '../rumale-evaluation_measure'
+gem 'rumale-feature_extraction', path: '../rumale-feature_extraction'
+gem 'rumale-kernel_approximation', path: '../rumale-kernel_approximation'
+gem 'rumale-kernel_machine', path: '../rumale-kernel_machine'
+gem 'rumale-linear_model', path: '../rumale-linear_model'
+gem 'rumale-manifold', path: '../rumale-manifold'
+gem 'rumale-metric_learning', path: '../rumale-metric_learning'
+gem 'rumale-model_selection', path: '../rumale-model_selection'
+gem 'rumale-naive_bayes', path: '../rumale-naive_bayes'
+gem 'rumale-nearest_neighbors', path: '../rumale-nearest_neighbors'
+gem 'rumale-neural_network', path: '../rumale-neural_network'
+gem 'rumale-pipeline', path: '../rumale-pipeline'
+gem 'rumale-preprocessing', path: '../rumale-preprocessing'
+gem 'rumale-tree', path: '../rumale-tree'
+
+gem 'numo-linalg', '~> 0.1.4'
+gem 'rake', '~> 13.0'
+gem 'red-datasets-numo-narray', '~> 0.0.1'
+gem 'rspec', '~> 3.0'
+gem 'rubocop', '~> 1.21'
+gem 'rubocop-performance', '~> 1.8'
+gem 'rubocop-rake', '~> 0.5'
+gem 'rubocop-rspec', '~> 2.0'
+gem 'simplecov', '~> 0.21'
