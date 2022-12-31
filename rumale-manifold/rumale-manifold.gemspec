@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
     such as Multi-dimensional Scaling and t-distributed Stochastic Neighbor Embedding,
     with Rumale interface.
   MSG
-  spec.homepage = 'https://gitlab.com/yoshoku/rumale'
+  spec.homepage = 'https://github.com/yoshoku/rumale'
   spec.license = 'BSD-3-Clause'
 
   spec.metadata['homepage_uri'] = spec.homepage

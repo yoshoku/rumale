@@ -1,7 +1,7 @@
 # Rumale::Manifold
 
 [![Gem Version](https://badge.fury.io/rb/rumale-manifold.svg)](https://badge.fury.io/rb/rumale-manifold)
-[![BSD 3-Clause License](https://img.shields.io/badge/License-BSD%203--Clause-orange.svg)](https://gitlab.com/yoshoku/rumale/-/blob/main/rumale-manifold/LICENSE.txt)
+[![BSD 3-Clause License](https://img.shields.io/badge/License-BSD%203--Clause-orange.svg)](https://github.com/yoshoku/rumale/blob/main/rumale-manifold/LICENSE.txt)
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://yoshoku.github.io/rumale/doc/Rumale/Manifold.html)
 
 Rumale is a machine learning library in Ruby.
