@@ -1,0 +1,53 @@
+require:
+  - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.6
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 128
+  AllowedPatterns: ['(\A|\s)#']
+
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 60
+
+Metrics/BlockLength:
+  Max: 40
+
+Metrics/ClassLength:
+  Max: 128
+
+Metrics/CyclomaticComplexity:
+  Max: 16
+
+Metrics/MethodLength:
+  Max: 40
+
+Metrics/ParameterLists:
+  Max: 16
+
+Metrics/PerceivedComplexity:
+  Max: 16
+
+Naming/MethodParameterName:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 40
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 24
+
+RSpec/NestedGroups:
+  Max: 4
