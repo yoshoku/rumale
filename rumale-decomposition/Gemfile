@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+# Specify your gem's dependencies in rumale-decomposition.gemspec
+gemspec
+
+gem 'rumale-core', path: '../rumale-core'
+gem 'rumale-kernel_approximation', path: '../rumale-kernel_approximation'
+
+gem 'numo-linalg', '~> 0.1.4'
+gem 'rake', '~> 13.0'
+gem 'rspec', '~> 3.0'
+gem 'rubocop', '~> 1.21'
+gem 'rubocop-performance', '~> 1.8'
+gem 'rubocop-rake', '~> 0.5'
+gem 'rubocop-rspec', '~> 2.0'
+gem 'simplecov', '~> 0.21'
