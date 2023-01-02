@@ -75,7 +75,7 @@ module Rumale
 
         false_pos, true_pos, thresholds = binary_roc_curve(y_true, y_score, pos_label)
 
-        if true_pos.size.zero? || false_pos[0] != 0 || true_pos[0] != 0
+        if true_pos.empty? || false_pos[0] != 0 || true_pos[0] != 0
           # NOTE: Numo::NArray#insert is not a destructive method.
           # rubocop:disable Style/RedundantSelfAssignment
           true_pos = true_pos.insert(0, 0)
