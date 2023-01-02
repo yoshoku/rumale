@@ -110,6 +110,14 @@ module Rumale
         def dloss(out, y)
           y / (1 + Numo::NMath.exp(-y * out)) - y
         end
+
+        # @!visibility private
+        def name
+          NAME
+        end
+
+        # @!visibility private
+        NAME = 'log_loss'
       end
 
       # @!visibility private
@@ -127,6 +135,14 @@ module Rumale
           d[tids] = -y[tids] if tids.count.positive?
           d
         end
+
+        # @!visibility private
+        def name
+          NAME
+        end
+
+        # @!visibility private
+        NAME = 'hinge'
       end
 
       # @!visibility private
