@@ -18,4 +18,11 @@ Rake::ExtensionTask.new('ext') do |ext|
   ext.lib_dir = 'lib/rumale/tree'
 end
 
-task default: %i[clobber compile spec rubocop]
+task default: %i[clobber compile rubocop spec]
+
+Rake::Task['release'].clear
+gemspec = Bundler.load_gemspec(Dir.glob('*.gemspec').first)
+desc "Build and push #{gemspec.name}-#{gemspec.version}.gem to rubygems.org\n" \
+     'To prevent publishing in RubyGems use `gem_push=no rake release`'
+task 'release', [:remote] => ['build', 'release:guard_clean', 'release:rubygem_push'] do # rubocop:disable Lint/EmptyBlock
+end
