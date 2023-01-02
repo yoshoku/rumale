@@ -51,3 +51,6 @@ RSpec/MultipleMemoizedHelpers:
 
 RSpec/NestedGroups:
   Max: 4
+
+Style/YodaExpression:
+  Enabled: false
