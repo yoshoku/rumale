@@ -54,8 +54,6 @@ RSpec.describe Rumale::LinearModel::SVC do
       expect(copied.bias_term).to eq(estimator.bias_term)
       expect(copied.rng).to eq(estimator.rng)
       expect(copied.score(x, y)).to eq(score)
-      expect(copied.instance_variable_get(:@penalty_type)).to eq('l2')
-      expect(copied.instance_variable_get(:@loss_func).class).to eq(Rumale::LinearModel::Loss::HingeLoss)
     end
 
     context 'when fit_bias parameter is true' do
