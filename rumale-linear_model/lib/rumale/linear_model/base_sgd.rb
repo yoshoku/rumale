@@ -96,6 +96,14 @@ module Rumale
         def dloss(out, y)
           2.fdiv(y.shape[0]) * (out - y)
         end
+
+        # @!visibility private
+        def name
+          NAME
+        end
+
+        # @!visibility private
+        NAME = 'squared_error'
       end
 
       # @!visibility private
@@ -167,6 +175,14 @@ module Rumale
           d[tids] = -1 if tids.count.positive?
           d
         end
+
+        # @!visibility private
+        def name
+          NAME
+        end
+
+        # @!visibility private
+        NAME = 'epsilon_insensitive'
       end
     end
 
