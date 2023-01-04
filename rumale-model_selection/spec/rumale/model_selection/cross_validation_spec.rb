@@ -9,7 +9,7 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
   let(:values) { samples.dot(Numo::DFloat[1.0, 2.0]) }
   let(:kernel_mat) { Rumale::PairwiseMetric.rbf_kernel(samples, nil, 1.0) }
   let(:kernel_svc) { Rumale::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
-  let(:linear_svc) { Rumale::LinearModel::SVC.new(random_seed: 1) }
+  let(:linear_svc) { Rumale::LinearModel::SVC.new }
   let(:linear_svr) { Rumale::LinearModel::SVR.new(random_seed: 1) }
   let(:logit_reg) { Rumale::LinearModel::LogisticRegression.new }
   let(:f_score) { Rumale::EvaluationMeasure::FScore.new }

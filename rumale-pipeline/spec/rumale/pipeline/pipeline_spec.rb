@@ -22,7 +22,7 @@ RSpec.describe Rumale::Pipeline::Pipeline do
   let(:rbf) { Rumale::KernelApproximation::RBF.new(gamma: 0.1, n_components: n_rbf_comps, random_seed: 1) }
   let(:pca) { Rumale::Decomposition::PCA.new(n_components: n_pca_comps, tol: 1.0e-8, random_seed: 1) }
   let(:nmf) { Rumale::Decomposition::NMF.new(n_components: n_nmf_comps, random_seed: 1) }
-  let(:svc) { Rumale::LinearModel::SVC.new(random_seed: 1) }
+  let(:svc) { Rumale::LinearModel::SVC.new }
   let(:nrm) { Rumale::Preprocessing::L2Normalizer.new }
   let(:nbs) { Rumale::NaiveBayes::GaussianNB.new }
   let(:kms) { Rumale::Clustering::KMeans.new(n_clusters: n_clusters, random_seed: 1) }

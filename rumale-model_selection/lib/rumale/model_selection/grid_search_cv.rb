@@ -22,7 +22,7 @@ module Rumale
     #
     # @example
     #   rbf = Rumale::KernelApproximation::RBF.new(random_seed: 1)
-    #   svc = Rumale::LinearModel::SVC.new(random_seed: 1)
+    #   svc = Rumale::LinearModel::SVC.new
     #   pipe = Rumale::Pipeline::Pipeline.new(steps: { rbf: rbf, svc: svc })
     #   pg = { rbf__gamma: [32.0, 1.0], rbf__n_components: [4, 128], svc__reg_param: [16.0, 0.1] }
     #   kf = Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5)

@@ -13,7 +13,7 @@ module Rumale
     #   require 'rumale/pipeline/pipeline'
     #
     #   rbf = Rumale::KernelApproximation::RBF.new(gamma: 1.0, n_components: 128, random_seed: 1)
-    #   svc = Rumale::LinearModel::SVC.new(reg_param: 1.0, fit_bias: true, max_iter: 5000, random_seed: 1)
+    #   svc = Rumale::LinearModel::SVC.new(reg_param: 1.0, fit_bias: true, max_iter: 5000)
     #   pipeline = Rumale::Pipeline::Pipeline.new(steps: { trs: rbf, est: svc })
     #   pipeline.fit(training_samples, traininig_labels)
     #   results = pipeline.predict(testing_samples)

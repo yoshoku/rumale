@@ -12,9 +12,7 @@ RSpec.describe Rumale::LinearModel::SVC do
   let(:fit_bias) { false }
   let(:probability) { false }
   let(:n_jobs) { nil }
-  let(:estimator) do
-    described_class.new(reg_param: 1, fit_bias: fit_bias, probability: probability, n_jobs: n_jobs, random_seed: 1).fit(x, y)
-  end
+  let(:estimator) { described_class.new(reg_param: 1, fit_bias: fit_bias, probability: probability, n_jobs: n_jobs).fit(x, y) }
   let(:func_vals) { estimator.decision_function(x) }
   let(:predicted) { estimator.predict(x) }
   let(:probs) { estimator.predict_proba(x) }
@@ -52,7 +50,6 @@ RSpec.describe Rumale::LinearModel::SVC do
       expect(copied.params).to eq(estimator.params)
       expect(copied.weight_vec).to eq(estimator.weight_vec)
       expect(copied.bias_term).to eq(estimator.bias_term)
-      expect(copied.rng).to eq(estimator.rng)
       expect(copied.score(x, y)).to eq(score)
     end
 
