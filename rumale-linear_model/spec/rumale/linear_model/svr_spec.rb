@@ -11,9 +11,7 @@ RSpec.describe Rumale::LinearModel::SVR do
   let(:n_outputs) { multi_target.shape[1] }
   let(:fit_bias) { false }
   let(:n_jobs) { nil }
-  let(:estimator) do
-    described_class.new(reg_param: 1, epsilon: 0.1, fit_bias: fit_bias, n_jobs: n_jobs, random_seed: 1).fit(x, y)
-  end
+  let(:estimator) { described_class.new(reg_param: 1, epsilon: 0.1, fit_bias: fit_bias, n_jobs: n_jobs).fit(x, y) }
   let(:predicted) { estimator.predict(x) }
   let(:score) { estimator.score(x, y) }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
@@ -50,10 +48,7 @@ RSpec.describe Rumale::LinearModel::SVR do
       expect(copied.params).to eq(estimator.params)
       expect(copied.weight_vec).to eq(estimator.weight_vec)
       expect(copied.bias_term).to eq(estimator.bias_term)
-      expect(copied.rng).to eq(estimator.rng)
       expect(copied.score(x, y)).to eq(score)
-      expect(copied.instance_variable_get(:@penalty_type)).to eq('l2')
-      expect(copied.instance_variable_get(:@loss_func).class).to eq(Rumale::LinearModel::Loss::EpsilonInsensitive)
     end
   end
 
