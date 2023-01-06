@@ -12,7 +12,7 @@ module Rumale
     #   require 'rumale/ensemble/voting_regressor'
     #
     #   estimators = {
-    #     rdg: Rumale::LinearModel::Ridge.new(reg_param: 1e-2, random_seed: 1),
+    #     rdg: Rumale::LinearModel::Ridge.new(reg_param: 0.1),
     #     mlp: Rumale::NeuralNetwork::MLPRegressor.new(hidden_units: [256], random_seed: 1),
     #     rnd: Rumale::Ensemble::RandomForestRegressor.new(random_seed: 1)
     #   }

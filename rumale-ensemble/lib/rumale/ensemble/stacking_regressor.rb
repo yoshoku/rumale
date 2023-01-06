@@ -18,7 +18,7 @@ module Rumale
     #     mlp: Rumale::NeuralNetwork::MLPRegressor.new(hidden_units: [256], random_seed: 1),
     #     rnd: Rumale::Ensemble::RandomForestRegressor.new(random_seed: 1)
     #   }
-    #   meta_estimator = Rumale::LinearModel::Ridge.new(random_seed: 1)
+    #   meta_estimator = Rumale::LinearModel::Ridge.new
     #   regressor = Rumale::Ensemble::StackedRegressor.new(
     #     estimators: estimators, meta_estimator: meta_estimator, random_seed: 1
     #   )
