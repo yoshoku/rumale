@@ -42,7 +42,7 @@ RSpec.describe Rumale::Ensemble::StackingRegressor do
   context 'when multi-target problem' do
     let(:y) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.0, 0.1]]) }
     let(:n_outputs) { y.shape[1] }
-    let(:meta_estimator) { Rumale::LinearModel::Lasso.new(random_seed: 1) }
+    let(:meta_estimator) { Rumale::LinearModel::Lasso.new }
 
     before { estimator.fit(x, y) }
 
