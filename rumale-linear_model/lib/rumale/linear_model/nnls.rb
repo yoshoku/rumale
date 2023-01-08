@@ -4,6 +4,7 @@ require 'lbfgsb'
 
 require 'rumale/base/estimator'
 require 'rumale/base/regressor'
+require 'rumale/utils'
 require 'rumale/validation'
 
 module Rumale
@@ -18,8 +19,8 @@ module Rumale
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     #
-    class NNLS < ::Rumale::Base::Estimator
-      include ::Rumale::Base::Regressor
+    class NNLS < Rumale::Base::Estimator
+      include Rumale::Base::Regressor
 
       # Return the weight vector.
       # @return [Numo::DFloat] (shape: [n_outputs, n_features])
@@ -69,9 +70,9 @@ module Rumale
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [NonneagtiveLeastSquare] The learned regressor itself.
       def fit(x, y)
-        x = ::Rumale::Validation.check_convert_sample_array(x)
-        y = ::Rumale::Validation.check_convert_target_value_array(y)
-        ::Rumale::Validation.check_sample_size(x, y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_target_value_array(y)
+        Rumale::Validation.check_sample_size(x, y)
 
         x = expand_feature(x) if fit_bias?
 
@@ -89,13 +90,13 @@ module Rumale
         )
 
         @n_iter = res[:n_iter]
-        w = single_target?(y) ? res[:x] : res[:x].reshape(n_outputs, n_features).transpose
+        w = single_target?(y) ? res[:x] : res[:x].reshape(n_outputs, n_features)
 
         if fit_bias?
-          @weight_vec = single_target?(y) ? w[0...-1].dup : w[0...-1, true].dup
-          @bias_term = single_target?(y) ? w[-1] : w[-1, true].dup
+          @weight_vec = single_target?(y) ? w[0...-1].dup : w[true, 0...-1].dup
+          @bias_term = single_target?(y) ? w[-1] : w[true, -1].dup
         else
-          @weight_vec = w.dup
+          @weight_vec = w
           @bias_term = single_target?(y) ? 0 : Numo::DFloat.zeros(y.shape[1])
         end
 
@@ -107,7 +108,7 @@ module Rumale
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
       # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
-        x = ::Rumale::Validation.check_convert_sample_array(x)
+        x = Rumale::Validation.check_convert_sample_array(x)
 
         x.dot(@weight_vec.transpose) + @bias_term
       end

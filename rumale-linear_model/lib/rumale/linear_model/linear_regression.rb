@@ -101,7 +101,7 @@ module Rumale
       def fit_svd(x, y)
         x = expand_feature(x) if fit_bias?
         w = Numo::Linalg.pinv(x, driver: 'svd').dot(y)
-        single_target?(y) ? split_weight(w) : split_weight_mult(w)
+        single_target?(y) ? split_weight(w) : split_weight_mult(w.transpose.dup)
       end
 
       def fit_lbfgs(base_x, base_y)
@@ -130,7 +130,7 @@ module Rumale
         if single_target?(base_y)
           split_weight(res[:x])
         else
-          split_weight_mult(res[:x].reshape(n_outputs, n_features).transpose)
+          split_weight_mult(res[:x].reshape(n_outputs, n_features))
         end
       end
 
@@ -153,9 +153,9 @@ module Rumale
 
       def split_weight_mult(w)
         if fit_bias?
-          [w[0...-1, true].dup, w[-1, true].dup]
+          [w[true, 0...-1].dup, w[true, -1].dup]
         else
-          [w.dup, Numo::DFloat.zeros(w.shape[1])]
+          [w, Numo::DFloat.zeros(w.shape[0])]
         end
       end
 
