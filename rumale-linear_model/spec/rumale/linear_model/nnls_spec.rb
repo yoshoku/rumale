@@ -10,7 +10,7 @@ RSpec.describe Rumale::LinearModel::NNLS do
   let(:n_features) { x.shape[1] }
   let(:n_outputs) { multi_target.shape[1] }
   let(:fit_bias) { false }
-  let(:estimator) { described_class.new(reg_param: 1e-4, fit_bias: fit_bias, random_seed: 1).fit(x, y) }
+  let(:estimator) { described_class.new(reg_param: 1e-4, fit_bias: fit_bias).fit(x, y) }
   let(:predicted) { estimator.predict(x) }
   let(:score) { estimator.score(x, y) }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
@@ -39,7 +39,6 @@ RSpec.describe Rumale::LinearModel::NNLS do
       expect(copied.weight_vec).to eq(estimator.weight_vec)
       expect(copied.bias_term).to eq(estimator.bias_term)
       expect(copied.n_iter).to eq(estimator.n_iter)
-      expect(copied.rng).to eq(estimator.rng)
       expect(copied.score(x, y)).to eq(score)
     end
   end

@@ -3,7 +3,6 @@
 require 'lbfgsb'
 
 require 'rumale/base/regressor'
-require 'rumale/utils'
 require 'rumale/validation'
 
 require_relative 'base_estimator'
@@ -16,7 +15,7 @@ module Rumale
     # @example
     #   require 'rumale/linear_model/nnls'
     #
-    #   estimator = Rumale::LinearModel::NNLS.new(reg_param: 0.01, random_seed: 1)
+    #   estimator = Rumale::LinearModel::NNLS.new(reg_param: 0.01)
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     #
@@ -26,10 +25,6 @@ module Rumale
       # Returns the number of iterations when converged.
       # @return [Integer]
       attr_reader :n_iter
-
-      # Return the random generator for initializing weight.
-      # @return [Random]
-      attr_reader :rng
 
       # Create a new regressor with non-negative least squares method.
       #
@@ -41,9 +36,7 @@ module Rumale
       # @param tol [Float] The tolerance of loss for terminating optimization.
       #   If solver = 'svd', this parameter is ignored.
       # @param verbose [Boolean] The flag indicating whether to output loss during iteration.
-      # @param random_seed [Integer] The seed value using to initialize the random generator.
-      def initialize(reg_param: 1.0, fit_bias: true, bias_scale: 1.0,
-                     max_iter: 1000, tol: 1e-4, verbose: false, random_seed: nil)
+      def initialize(reg_param: 1.0, fit_bias: true, bias_scale: 1.0, max_iter: 1000, tol: 1e-4, verbose: false)
         super()
         @params = {
           reg_param: reg_param,
@@ -51,10 +44,8 @@ module Rumale
           bias_scale: bias_scale,
           max_iter: max_iter,
           tol: tol,
-          verbose: verbose,
-          random_seed: random_seed || srand
+          verbose: verbose
         }
-        @rng = Random.new(@params[:random_seed])
       end
 
       # Fit the model with given training data.
@@ -72,8 +63,7 @@ module Rumale
         n_features = x.shape[1]
         n_outputs = single_target?(y) ? 1 : y.shape[1]
 
-        w_init = ::Rumale::Utils.rand_normal([n_outputs, n_features], @rng.dup).flatten.dup
-        w_init[w_init.lt(0)] = 0
+        w_init = Numo::DFloat.zeros(n_outputs * n_features)
         bounds = Numo::DFloat.zeros(n_outputs * n_features, 2)
         bounds.shape[0].times { |n| bounds[n, 1] = Float::INFINITY }
 
