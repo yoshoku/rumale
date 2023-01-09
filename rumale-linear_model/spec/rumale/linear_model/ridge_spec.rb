@@ -61,6 +61,11 @@ RSpec.describe Rumale::LinearModel::Ridge do
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_outputs)
       expect(estimator.weight_vec.shape[1]).to eq(n_features)
+      expect(estimator.bias_term).to be_a(Numo::DFloat)
+      expect(estimator.bias_term).to be_contiguous
+      expect(estimator.bias_term.ndim).to eq(1)
+      expect(estimator.bias_term.shape[0]).to eq(n_outputs)
+      expect(estimator.bias_term.to_a).to all(be_zero)
       expect(predicted).to be_a(Numo::DFloat)
       expect(predicted).to be_contiguous
       expect(predicted.ndim).to eq(2)
@@ -84,6 +89,7 @@ RSpec.describe Rumale::LinearModel::Ridge do
       expect(estimator.bias_term).to be_contiguous
       expect(estimator.bias_term.ndim).to eq(1)
       expect(estimator.bias_term.shape[0]).to eq(n_outputs)
+      expect(estimator.bias_term.sum).not_to be_zero
       expect(Math.sqrt((estimator.bias_term**2).sum)).not_to be_zero
       expect(score).to be_within(0.01).of(1.0)
     end

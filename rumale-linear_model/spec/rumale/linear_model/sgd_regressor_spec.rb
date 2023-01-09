@@ -6,7 +6,7 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
   let(:x) { two_clusters_dataset[0] }
   let(:y) { single_target }
   let(:single_target) { x.dot(Numo::DFloat[1.0, 2.0]) }
-  let(:multi_target) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
+  let(:multi_target) { x.dot(Numo::DFloat[[1.0, 2.0, 1.0], [2.0, 1.0, 2.0]]) }
   let(:n_samples) { x.shape[0] }
   let(:n_features) { x.shape[1] }
   let(:n_outputs) { multi_target.shape[1] }
@@ -23,7 +23,7 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
     context 'when single target problem' do
       let(:y) { single_target }
 
-      it 'learns the linear model.', :aggregate_failures do
+      it 'learns the linear model', :aggregate_failures do
         expect(estimator.weight_vec).to be_a(Numo::DFloat)
         expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(1)
@@ -39,7 +39,7 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
       context 'when fit_bias parameter is true' do
         let(:fit_bias) { true }
 
-        it 'learns the linear model with bias term.', :aggregate_failures do
+        it 'learns the linear model with bias term', :aggregate_failures do
           expect(estimator.weight_vec.ndim).to eq(1)
           expect(estimator.weight_vec.shape[0]).to eq(n_features)
           expect(estimator.bias_term).not_to be_zero
@@ -51,12 +51,12 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
     context 'when multi-target problem' do
       let(:y) { multi_target }
 
-      it 'learns the model for multi-target problem.', :aggregate_failures do
+      it 'learns the model for multi-target problem', :aggregate_failures do
         expect(estimator.weight_vec).to be_a(Numo::DFloat)
         expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(2)
-        expect(estimator.weight_vec.shape[0]).to eq(n_features)
-        expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
+        expect(estimator.weight_vec.shape[0]).to eq(n_outputs)
+        expect(estimator.weight_vec.shape[1]).to eq(n_features)
         expect(predicted).to be_a(Numo::DFloat)
         expect(predicted).to be_contiguous
         expect(predicted.ndim).to eq(2)
@@ -68,12 +68,12 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
       context 'when n_jobs parameter is not nil' do
         let(:n_jobs) { -1 }
 
-        it 'learns the model for multiple-regression problems in parallel.', :aggregate_failures do
+        it 'learns the model for multiple-regression problems in parallel', :aggregate_failures do
           expect(estimator.weight_vec).to be_a(Numo::DFloat)
           expect(estimator.weight_vec).to be_contiguous
           expect(estimator.weight_vec.ndim).to eq(2)
-          expect(estimator.weight_vec.shape[0]).to eq(n_features)
-          expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
+          expect(estimator.weight_vec.shape[0]).to eq(n_outputs)
+          expect(estimator.weight_vec.shape[1]).to eq(n_features)
           expect(estimator.bias_term).to be_a(Numo::DFloat)
           expect(estimator.bias_term).to be_contiguous
           expect(estimator.bias_term.ndim).to eq(1)
@@ -94,7 +94,7 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
 
     it_behaves_like 'regression problems'
 
-    it 'dumps and restores itself using Marshal module.', :aggregate_failures do
+    it 'dumps and restores itself using Marshal module', :aggregate_failures do
       expect(copied.class).to eq(estimator.class)
       expect(copied.params).to eq(estimator.params)
       expect(copied.weight_vec).to eq(estimator.weight_vec)
@@ -111,7 +111,7 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
 
     it_behaves_like 'regression problems'
 
-    it 'dumps and restores itself using Marshal module.', :aggregate_failures do
+    it 'dumps and restores itself using Marshal module', :aggregate_failures do
       expect(copied.class).to eq(estimator.class)
       expect(copied.params).to eq(estimator.params)
       expect(copied.weight_vec).to eq(estimator.weight_vec)

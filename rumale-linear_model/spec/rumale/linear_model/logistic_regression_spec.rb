@@ -22,7 +22,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
   context 'when binary classification problem' do
     let(:dataset) { two_clusters_dataset }
 
-    it 'classifies two clusters.', :aggregate_failures do
+    it 'classifies two clusters', :aggregate_failures do
       expect(estimator.classes).to be_a(Numo::Int32)
       expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
@@ -51,7 +51,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
       expect(score).to eq(1.0)
     end
 
-    it 'dumps and restores itself using Marshal module.', :aggregate_failures do
+    it 'dumps and restores itself using Marshal module', :aggregate_failures do
       expect(copied.class).to eq(estimator.class)
       expect(copied.params).to eq(estimator.params)
       expect(copied.weight_vec).to eq(estimator.weight_vec)
@@ -63,7 +63,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
     context 'when fit_bias parameter is true' do
       let(:fit_bias) { true }
 
-      it 'learns the model of two clusters dataset with bias term.', :aggregate_failures do
+      it 'learns the model of two clusters dataset with bias term', :aggregate_failures do
         expect(estimator.weight_vec.ndim).to eq(1)
         expect(estimator.weight_vec.shape[0]).to eq(n_features)
         expect(estimator.bias_term).not_to be_zero
@@ -75,7 +75,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
   context 'when multiclass classification problem' do
     let(:dataset) { three_clusters_dataset }
 
-    it 'classifies three clusters.', :aggregate_failures do
+    it 'classifies three clusters', :aggregate_failures do
       expect(estimator.classes).to be_a(Numo::Int32)
       expect(estimator.classes).to be_contiguous
       expect(estimator.classes.ndim).to eq(1)
@@ -107,7 +107,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
     context 'when fit_bias parameter is true' do
       let(:fit_bias) { true }
 
-      it 'learns the model of three clusters dataset with bias term.', :aggregate_failures do
+      it 'learns the model of three clusters dataset with bias term', :aggregate_failures do
         expect(estimator.weight_vec).to be_a(Numo::DFloat)
         expect(estimator.weight_vec).to be_contiguous
         expect(estimator.weight_vec.ndim).to eq(2)
@@ -125,7 +125,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
     context 'when n_jobs parameter is not nil' do
       let(:n_jobs) { -1 }
 
-      it 'classifies three clusters dataset in parallel.', :aggregate_failures do
+      it 'classifies three clusters dataset in parallel', :aggregate_failures do
         expect(estimator.classes).to be_a(Numo::Int32)
         expect(estimator.classes).to be_contiguous
         expect(estimator.classes.ndim).to eq(1)
