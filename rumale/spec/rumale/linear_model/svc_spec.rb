@@ -10,7 +10,7 @@ RSpec.describe Rumale::LinearModel::SVC do
   let(:y_train) { dataset[:y_train] }
   let(:x_test) { dataset[:x_test] }
   let(:y_test) { dataset[:y_test] }
-  let(:estimator) { described_class.new(random_seed: 38).fit(x_train, y_train) }
+  let(:estimator) { described_class.new.fit(x_train, y_train) }
 
   it 'obtains high classification accuracy with iris dataset' do
     expect(score).to be >= 0.8
