@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require 'rumale/validation'
 require 'rumale/base/regressor'
-require 'rumale/linear_model/base_sgd'
+require 'rumale/validation'
+
+require_relative 'sgd_estimator'
 
 module Rumale
   module LinearModel
@@ -20,16 +21,8 @@ module Rumale
     # - Shalev-Shwartz, S., and Singer, Y., "Pegasos: Primal Estimated sub-GrAdient SOlver for SVM," Proc. ICML'07, pp. 807--814, 2007.
     # - Tsuruoka, Y., Tsujii, J., and Ananiadou, S., "Stochastic Gradient Descent Training for L1-regularized Log-linear Models with Cumulative Penalty," Proc. ACL'09, pp. 477--485, 2009.
     # - Bottou, L., "Large-Scale Machine Learning with Stochastic Gradient Descent," Proc. COMPSTAT'10, pp. 177--186, 2010.
-    class SGDRegressor < Rumale::LinearModel::BaseSGD
+    class SGDRegressor < Rumale::LinearModel::SGDEstimator
       include Rumale::Base::Regressor
-
-      # Return the weight vector.
-      # @return [Numo::DFloat] (shape: [n_outputs, n_features])
-      attr_reader :weight_vec
-
-      # Return the bias term (a.k.a. intercept).
-      # @return [Numo::DFloat] (shape: [n_outputs])
-      attr_reader :bias_term
 
       # Return the random generator for performing random sampling.
       # @return [Random]

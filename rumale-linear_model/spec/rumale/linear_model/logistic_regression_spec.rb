@@ -11,7 +11,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
   let(:n_classes) { classes.size }
   let(:fit_bias) { false }
   let(:n_jobs) { nil }
-  let(:estimator) { described_class.new(fit_bias: fit_bias, n_jobs: n_jobs, random_seed: 1).fit(x, y) }
+  let(:estimator) { described_class.new(fit_bias: fit_bias, n_jobs: n_jobs).fit(x, y) }
   let(:func_vals) { estimator.decision_function(x) }
   let(:predicted) { estimator.predict(x) }
   let(:probs) { estimator.predict_proba(x) }
@@ -56,7 +56,6 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
       expect(copied.params).to eq(estimator.params)
       expect(copied.weight_vec).to eq(estimator.weight_vec)
       expect(copied.bias_term).to eq(estimator.bias_term)
-      expect(copied.rng).to eq(estimator.rng)
       expect(copied.score(x, y)).to eq(score)
     end
 

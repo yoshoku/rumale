@@ -4,6 +4,8 @@ require 'rumale/base/estimator'
 require 'rumale/base/regressor'
 require 'rumale/validation'
 
+require_relative 'base_estimator'
+
 module Rumale
   module LinearModel
     # Lasso is a class that implements Lasso Regression with coordinate descent optimization.
@@ -18,16 +20,8 @@ module Rumale
     # *Reference*
     # - Friedman, J., Hastie, T., and Tibshirani, R., "Regularization Paths for Generalized Linear Models via Coordinate Descent," Journal of Statistical Software, 33 (1), pp. 1--22, 2010.
     # - Simon, N., Friedman, J., and Hastie, T., "A Blockwise Descent Algorithm for Group-penalized Multiresponse and Multinomial Regression," arXiv preprint arXiv:1311.6529, 2013.
-    class Lasso < Rumale::Base::Estimator
+    class Lasso < Rumale::LinearModel::BaseEstimator
       include Rumale::Base::Regressor
-
-      # Return the weight vector.
-      # @return [Numo::DFloat] (shape: [n_outputs, n_features])
-      attr_reader :weight_vec
-
-      # Return the bias term (a.k.a. intercept).
-      # @return [Numo::DFloat] (shape: [n_outputs])
-      attr_reader :bias_term
 
       # Return the number of iterations performed in coordinate descent optimization.
       # @return [Integer]
@@ -142,7 +136,7 @@ module Rumale
           break if w_err <= @params[:tol]
         end
 
-        split_weight_mult(w)
+        split_weight(w)
       end
 
       def soft_threshold(z, threshold)
@@ -157,31 +151,6 @@ module Rumale
 
       def single_target?(y)
         y.ndim == 1
-      end
-
-      def expand_feature(x)
-        n_samples = x.shape[0]
-        Numo::NArray.hstack([x, Numo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
-      end
-
-      def split_weight(w)
-        if fit_bias?
-          [w[0...-1].dup, w[-1]]
-        else
-          [w, 0.0]
-        end
-      end
-
-      def split_weight_mult(w)
-        if fit_bias?
-          [w[true, 0...-1].dup, w[true, -1].dup]
-        else
-          [w, Numo::DFloat.zeros(w.shape[0])]
-        end
-      end
-
-      def fit_bias?
-        @params[:fit_bias] == true
       end
     end
   end

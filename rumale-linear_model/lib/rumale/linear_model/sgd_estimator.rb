@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rumale/base/estimator'
+require_relative 'base_estimator'
 
 module Rumale
   module LinearModel
@@ -186,10 +186,10 @@ module Rumale
       end
     end
 
-    # BaseSGD is an abstract class for implementation of linear model with mini-batch stochastic gradient descent (SGD) optimization.
+    # SGDEstimator is an abstract class for implementation of linear model with mini-batch stochastic gradient descent (SGD) optimization.
     # This class is used internally.
-    class BaseSGD < ::Rumale::Base::Estimator
-      # Create an initial linear model.
+    class SGDEstimator < Rumale::LinearModel::BaseEstimator
+      # Create an initial linear model with SGD.
       def initialize
         super()
         @params = {
@@ -254,23 +254,6 @@ module Rumale
           break if loss < @params[:tol]
         end
         split_weight(weight)
-      end
-
-      def expand_feature(x)
-        n_samples = x.shape[0]
-        Numo::NArray.hstack([x, Numo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
-      end
-
-      def split_weight(weight)
-        if fit_bias?
-          [weight[0...-1].dup, weight[-1]]
-        else
-          [weight, 0.0]
-        end
-      end
-
-      def fit_bias?
-        @params[:fit_bias] == true
       end
 
       def apply_l2_penalty?

@@ -15,11 +15,11 @@ module Rumale
     #   require 'rumale/ensemble/stacking_classifier'
     #
     #   estimators = {
-    #     lgr: Rumale::LinearModel::LogisticRegression.new(reg_param: 1e-2, random_seed: 1),
+    #     lgr: Rumale::LinearModel::LogisticRegression.new(reg_param: 1e-2),
     #     mlp: Rumale::NeuralNetwork::MLPClassifier.new(hidden_units: [256], random_seed: 1),
     #     rnd: Rumale::Ensemble::RandomForestClassifier.new(random_seed: 1)
     #   }
-    #   meta_estimator = Rumale::LinearModel::LogisticRegression.new(random_seed: 1)
+    #   meta_estimator = Rumale::LinearModel::LogisticRegression.new
     #   classifier = Rumale::Ensemble::StackedClassifier.new(
     #     estimators: estimators, meta_estimator: meta_estimator, random_seed: 1
     #   )

@@ -2,9 +2,10 @@
 
 require 'lbfgsb'
 
-require 'rumale/base/estimator'
 require 'rumale/base/regressor'
 require 'rumale/validation'
+
+require_relative 'base_estimator'
 
 module Rumale
   module LinearModel
@@ -25,16 +26,8 @@ module Rumale
     #   estimator = Rumale::LinearModel::Ridge.new(reg_param: 0.1, solver: 'svd')
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
-    class Ridge < Rumale::Base::Estimator
+    class Ridge < Rumale::LinearModel::BaseEstimator
       include Rumale::Base::Regressor
-
-      # Return the weight vector.
-      # @return [Numo::DFloat] (shape: [n_outputs, n_features])
-      attr_reader :weight_vec
-
-      # Return the bias term (a.k.a. intercept).
-      # @return [Numo::DFloat] (shape: [n_outputs])
-      attr_reader :bias_term
 
       # Create a new Ridge regressor.
       #
@@ -80,9 +73,9 @@ module Rumale
         Rumale::Validation.check_sample_size(x, y)
 
         @weight_vec, @bias_term = if @params[:solver] == 'svd' && enable_linalg?(warning: false)
-                                    fit_svd(x, y)
+                                    partial_fit_svd(x, y)
                                   else
-                                    fit_lbfgs(x, y)
+                                    partial_fit_lbfgs(x, y)
                                   end
 
         self
@@ -100,17 +93,16 @@ module Rumale
 
       private
 
-      def fit_svd(x, y)
+      def partial_fit_svd(x, y)
         x = expand_feature(x) if fit_bias?
-
         s, u, vt = Numo::Linalg.svd(x, driver: 'sdd', job: 'S')
         d = (s / (s**2 + @params[:reg_param])).diag
         w = vt.transpose.dot(d).dot(u.transpose).dot(y)
-
-        single_target?(y) ? split_weight(w) : split_weight_mult(w.transpose.dup)
+        w = w.transpose.dup unless single_target?(y)
+        split_weight(w)
       end
 
-      def fit_lbfgs(base_x, base_y)
+      def partial_fit_lbfgs(base_x, base_y)
         fnc = proc do |w, x, y, a|
           n_samples, n_features = x.shape
           w = w.reshape(y.shape[1], n_features) unless y.shape[1].nil?
@@ -133,40 +125,12 @@ module Rumale
           verbose: @params[:verbose] ? 1 : -1
         )
 
-        if single_target?(base_y)
-          split_weight(res[:x])
-        else
-          split_weight_mult(res[:x].reshape(n_outputs, n_features))
-        end
+        w = single_target?(base_y) ? res[:x] : res[:x].reshape(n_outputs, n_features)
+        split_weight(w)
       end
 
       def single_target?(y)
         y.ndim == 1
-      end
-
-      def expand_feature(x)
-        n_samples = x.shape[0]
-        Numo::NArray.hstack([x, Numo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
-      end
-
-      def split_weight(weight)
-        if fit_bias?
-          [weight[0...-1].dup, weight[-1]]
-        else
-          [weight, 0.0]
-        end
-      end
-
-      def split_weight_mult(w)
-        if fit_bias?
-          [w[true, 0...-1].dup, w[true, -1].dup]
-        else
-          [w, Numo::DFloat.zeros(w.shape[0])]
-        end
-      end
-
-      def fit_bias?
-        @params[:fit_bias] == true
       end
     end
   end

@@ -13,7 +13,7 @@ module Rumale
     #   require 'rumale/ensemble/voting_classifier'
     #
     #   estimators = {
-    #     lgr: Rumale::LinearModel::LogisticRegression.new(reg_param: 1e-2, random_seed: 1),
+    #     lgr: Rumale::LinearModel::LogisticRegression.new(reg_param: 1e-2),
     #     mlp: Rumale::NeuralNetwork::MLPClassifier.new(hidden_units: [256], random_seed: 1),
     #     rnd: Rumale::Ensemble::RandomForestClassifier.new(random_seed: 1)
     #   }

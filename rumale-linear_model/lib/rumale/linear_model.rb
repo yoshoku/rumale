@@ -2,7 +2,6 @@
 
 require 'numo/narray'
 
-require_relative 'linear_model/base_sgd'
 require_relative 'linear_model/sgd_classifier'
 require_relative 'linear_model/sgd_regressor'
 require_relative 'linear_model/elastic_net'

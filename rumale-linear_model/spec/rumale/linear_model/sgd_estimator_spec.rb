@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Rumale::LinearModel::BaseSGD do
+RSpec.describe Rumale::LinearModel::SGDEstimator do
   let(:x) { Numo::DFloat[[40, 50], [60, 70], [80, 90]] }
   let(:y) { Numo::Int32[-1, 1, 1] }
   let(:w) { Numo::DFloat[10, 20, 30] }

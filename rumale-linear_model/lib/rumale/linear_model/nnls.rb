@@ -2,10 +2,11 @@
 
 require 'lbfgsb'
 
-require 'rumale/base/estimator'
 require 'rumale/base/regressor'
 require 'rumale/utils'
 require 'rumale/validation'
+
+require_relative 'base_estimator'
 
 module Rumale
   module LinearModel
@@ -19,16 +20,8 @@ module Rumale
     #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     #
-    class NNLS < Rumale::Base::Estimator
+    class NNLS < Rumale::LinearModel::BaseEstimator
       include Rumale::Base::Regressor
-
-      # Return the weight vector.
-      # @return [Numo::DFloat] (shape: [n_outputs, n_features])
-      attr_reader :weight_vec
-
-      # Return the bias term (a.k.a. intercept).
-      # @return [Numo::DFloat] (shape: [n_outputs])
-      attr_reader :bias_term
 
       # Returns the number of iterations when converged.
       # @return [Integer]
@@ -91,14 +84,7 @@ module Rumale
 
         @n_iter = res[:n_iter]
         w = single_target?(y) ? res[:x] : res[:x].reshape(n_outputs, n_features)
-
-        if fit_bias?
-          @weight_vec = single_target?(y) ? w[0...-1].dup : w[true, 0...-1].dup
-          @bias_term = single_target?(y) ? w[-1] : w[true, -1].dup
-        else
-          @weight_vec = w
-          @bias_term = single_target?(y) ? 0 : Numo::DFloat.zeros(y.shape[1])
-        end
+        @weight_vec, @bias_term = split_weight(w)
 
         self
       end
@@ -123,15 +109,6 @@ module Rumale
         loss = (d**2).sum.fdiv(n_samples) + alpha * (w * w).sum
         gradient = 2.fdiv(n_samples) * d.transpose.dot(x) + 2.0 * alpha * w
         [loss, gradient.flatten.dup]
-      end
-
-      def expand_feature(x)
-        n_samples = x.shape[0]
-        Numo::NArray.hstack([x, Numo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
-      end
-
-      def fit_bias?
-        @params[:fit_bias] == true
       end
 
       def single_target?(y)

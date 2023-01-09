@@ -2,13 +2,13 @@
 
 require 'lbfgsb'
 
-require 'rumale/base/estimator'
 require 'rumale/base/classifier'
 require 'rumale/probabilistic_output'
 require 'rumale/validation'
 
+require_relative 'base_estimator'
+
 module Rumale
-  # This module consists of the classes that implement generalized linear models.
   module LinearModel
     # SVC is a class that implements Support Vector Classifier with the squared hinge loss.
     # For multiclass classification problem, it uses one-vs-the-rest strategy.
@@ -25,16 +25,8 @@ module Rumale
     #     Rumale::LinearModel::SVC.new(reg_param: 1.0)
     #   estimator.fit(training_samples, traininig_labels)
     #   results = estimator.predict(testing_samples)
-    class SVC < Rumale::Base::Estimator
+    class SVC < Rumale::LinearModel::BaseEstimator
       include Rumale::Base::Classifier
-
-      # Return the weight vector for SVC.
-      # @return [Numo::DFloat] (shape: [n_classes, n_features])
-      attr_reader :weight_vec
-
-      # Return the bias term (a.k.a. intercept) for SVC.
-      # @return [Numo::DFloat] (shape: [n_classes])
-      attr_reader :bias_term
 
       # Return the class labels.
       # @return [Numo::Int32] (shape: [n_classes])
@@ -197,23 +189,6 @@ module Rumale
 
       def multiclass_problem?
         @classes.size > 2
-      end
-
-      def expand_feature(x)
-        n_samples = x.shape[0]
-        Numo::NArray.hstack([x, Numo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
-      end
-
-      def split_weight(weight)
-        if fit_bias?
-          [weight[0...-1].dup, weight[-1]]
-        else
-          [weight, 0.0]
-        end
-      end
-
-      def fit_bias?
-        @params[:fit_bias] == true
       end
     end
   end

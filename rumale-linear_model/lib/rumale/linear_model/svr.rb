@@ -2,9 +2,10 @@
 
 require 'lbfgsb'
 
-require 'rumale/base/estimator'
 require 'rumale/base/regressor'
 require 'rumale/validation'
+
+require_relative 'base_estimator'
 
 module Rumale
   module LinearModel
@@ -21,16 +22,8 @@ module Rumale
     #   estimator = Rumale::LinearModel::SVR.new(reg_param: 1.0, epsilon: 0.1)
     #   estimator.fit(training_samples, traininig_target_values)
     #   results = estimator.predict(testing_samples)
-    class SVR < Rumale::Base::Estimator
+    class SVR < Rumale::LinearModel::BaseEstimator
       include Rumale::Base::Regressor
-
-      # Return the weight vector for SVR.
-      # @return [Numo::DFloat] (shape: [n_outputs, n_features])
-      attr_reader :weight_vec
-
-      # Return the bias term (a.k.a. intercept) for SVR.
-      # @return [Numo::DFloat] (shape: [n_outputs])
-      attr_reader :bias_term
 
       # Create a new regressor with Support Vector Machine by the SGD optimization.
       #
@@ -129,23 +122,6 @@ module Rumale
         )
 
         split_weight(res[:x])
-      end
-
-      def expand_feature(x)
-        n_samples = x.shape[0]
-        Numo::NArray.hstack([x, Numo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
-      end
-
-      def split_weight(weight)
-        if fit_bias?
-          [weight[0...-1].dup, weight[-1]]
-        else
-          [weight, 0.0]
-        end
-      end
-
-      def fit_bias?
-        @params[:fit_bias] == true
       end
     end
   end
