@@ -154,7 +154,7 @@ module Rumale
           probs = 1.0 / (Numo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)
           (probs.transpose / probs.sum(axis: 1)).transpose.dup
         else
-          n_samples, = x.shape
+          n_samples = x.shape[0]
           probs = Numo::DFloat.zeros(n_samples, 2)
           probs[true, 1] = 1.0 / (Numo::NMath.exp(@prob_param[0] * decision_function(x) + @prob_param[1]) + 1.0)
           probs[true, 0] = 1.0 - probs[true, 1]
@@ -171,9 +171,12 @@ module Rumale
           t = 1 - y * z
           loss = 0.5 * reg_param * w.dot(w) + (x.class.maximum(0, t)**2).sum.fdiv(n_samples)
           indices = t.gt(0)
-          sx = x[indices, true]
-          sy = y[indices]
-          grad = reg_param * w + 2.fdiv(n_samples) * sx.transpose.dot((sx.dot(w) - sy))
+          grad = reg_param * w
+          if indices.count.positive?
+            sx = x[indices, true]
+            sy = y[indices]
+            grad += 2.fdiv(n_samples) * sx.transpose.dot((sx.dot(w) - sy))
+          end
           [loss, grad]
         end
 
@@ -186,12 +189,7 @@ module Rumale
           verbose: @params[:verbose] ? 1 : -1
         )
 
-        prb = if @params[:probability]
-                Rumale::ProbabilisticOutput.fit_sigmoid(base_x.dot(res[:x]), bin_y)
-              else
-                Numo::DFloat[1, 0]
-              end
-
+        prb = @params[:probability] ? Rumale::ProbabilisticOutput.fit_sigmoid(base_x.dot(res[:x]), bin_y) : Numo::DFloat[1, 0]
         w, b = split_weight(res[:x])
 
         [w, b, prb]
