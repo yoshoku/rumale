@@ -2,6 +2,7 @@
 
 require 'rumale/base/estimator'
 require 'rumale/base/transformer'
+require 'rumale/utils'
 require 'rumale/validation'
 
 module Rumale
