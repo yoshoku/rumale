@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rumale/base/classifier'
+require 'rumale/probabilistic_output'
 require 'rumale/validation'
 
 require_relative 'sgd_estimator'
