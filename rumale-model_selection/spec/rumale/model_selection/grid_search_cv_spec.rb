@@ -14,7 +14,7 @@ RSpec.describe Rumale::ModelSelection::GridSearchCV do
   let(:kfold) { Rumale::ModelSelection::KFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
   let(:skfold) { Rumale::ModelSelection::StratifiedKFold.new(n_splits: 5, shuffle: true, random_seed: 1) }
   let(:rbf) { Rumale::KernelApproximation::RBF.new(gamma: 0.1, random_seed: 1) }
-  let(:lgt) { Rumale::LinearModel::LogisticRegression.new(random_seed: 1) }
+  let(:lgt) { Rumale::LinearModel::LogisticRegression.new }
   let(:scl) { Rumale::Preprocessing::MinMaxScaler.new }
   let(:nbs) { Rumale::NaiveBayes::GaussianNB.new }
   let(:dtr) { Rumale::Tree::DecisionTreeRegressor.new(random_seed: 1) }
