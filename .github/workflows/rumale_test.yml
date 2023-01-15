@@ -8,20 +8,11 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+
     tags:
       - v[0-9]+.[0-9]+.[0-9]+
-    paths:
-      - 'rumale/**'
-      - '.github/workflows/rumale_test.yml'
   pull_request:
     types: [opened, reopened, synchronize]
-    paths:
-      - 'rumale/**'
-      - '.github/workflows/rumale_test.yml'
 
 jobs:
   test:
-    defaults:
-      run:
-        working-directory: rumale
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -36,14 +27,5 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Build rumale-tree
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
-          bundle exec rake compile
-        working-directory: rumale-tree
       - name: Build and test with Rake
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
-          bundle exec rake
+        run: bash rumale-test.sh
