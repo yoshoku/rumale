@@ -64,7 +64,7 @@ transformer = Rumale::KernelApproximation::RBF.new(gamma: 0.0001, n_components: 
 transformed = transformer.fit_transform(samples)
 
 # Train linear SVM classifier.
-classifier = Rumale::LinearModel::SVC.new(reg_param: 0.0001, random_seed: 1)
+classifier = Rumale::LinearModel::SVC.new(reg_param: 0.0001)
 classifier.fit(transformed, labels)
 
 # Save the model.
@@ -101,7 +101,7 @@ Execution of the above scripts result in the following.
 ```bash
 $ ruby train.rb
 $ ruby test.rb
-Accuracy: 98.7%
+Accuracy: 98.5%
 ```
 
 ### Example 2. Cross-validation
@@ -132,7 +132,7 @@ Execution of the above scripts result in the following.
 
 ```bash
 $ ruby cross_validation.rb
-5-CV mean accuracy: 95.4%
+5-CV mean accuracy: 95.5%
 ```
 
 
