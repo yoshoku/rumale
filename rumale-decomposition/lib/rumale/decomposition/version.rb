@@ -5,6 +5,6 @@ module Rumale
   # Module for matrix decomposition algorithms.
   module Decomposition
     # @!visibility private
-    VERSION = '0.24.0'
+    VERSION = '0.25.0'
   end
 end

@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that implement estimators based on nearest neighbors rule.
   module NearestNeighbors
     # @!visibility private
-    VERSION = '0.24.0'
+    VERSION = '0.25.0'
   end
 end

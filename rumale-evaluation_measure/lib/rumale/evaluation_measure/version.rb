@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes for model evaluation.
   module EvaluationMeasure
     # @!visibility private
-    VERSION = '0.24.0'
+    VERSION = '0.25.0'
   end
 end

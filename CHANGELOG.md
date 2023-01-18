@@ -1,3 +1,26 @@
+# 0.25.0
+## rumale-linear_model
+**Breaking change**
+- Add new SGDClassfier and SGDRegressor by extracting stochastic gradient descent solver from each linear model.
+- Change the optimization method of ElasticNet and Lasso to use the coordinate descent algorithm.
+- Change the optimization method of SVC and SVR to use the L-BFGS method.
+- Change the loss function of SVC to the squared hinge loss.
+- Change the loss function of SVR to the squared epsilon-insensitive loss.
+- Change not to use random vector for initialization of weights.
+  - From the above changes, keyword arguments such as learning_rate, decay, momentum, batch_size,
+    and random_seed for LinearModel estimators have been removed.
+- Fix the column and row vectors of weight matrix are reversed in LinearRegression, Ridge, and NNLS.
+
+## rumale-decomposition
+- Fix missing require method to load Rumale::Utils in PCA class.
+It is needed to initialize the principal components when optimizing with fixed-point algorithm.
+
+## rumale-evaluation_measure
+- Apply automatic correction for Style/ZeroLengthPredicate of RuboCop to ROCAUC class.
+
+## others
+- No changes, or only modifications in test code or configuration.
+
 # 0.24.0
 ## Breaking change
 - Divided into gems for each machine learning algorithm, with Rumale as the meta-gem.
