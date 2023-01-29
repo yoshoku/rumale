@@ -11,3 +11,7 @@ AllCops:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+
+Lint/FormatParameterMismatch:
+  Exclude:
+    - lib/rumale/dataset.rb
