@@ -71,7 +71,7 @@ module Rumale
         # initialize some variables.
         sub_rng = @rng.dup
         n_samples = x.shape[0]
-        n_components = [1, [@params[:n_components], n_samples].min].max
+        n_components = [1, [@params[:n_components], n_samples].min].max # rubocop:disable Style/ComparableClamp
 
         # random sampling.
         @component_indices = Numo::Int32.cast(Array(0...n_samples).shuffle(random: sub_rng)[0...n_components])

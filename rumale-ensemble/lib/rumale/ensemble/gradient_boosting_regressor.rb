@@ -88,7 +88,7 @@ module Rumale
         # initialize some variables.
         n_features = x.shape[1]
         @params[:max_features] = n_features if @params[:max_features].nil?
-        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
+        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min # rubocop:disable Style/ComparableClamp
         n_outputs = y.shape[1].nil? ? 1 : y.shape[1]
         # train regressor.
         @base_predictions = n_outputs > 1 ? y.mean(0) : y.mean
@@ -141,7 +141,7 @@ module Rumale
         # initialize some variables.
         estimators = []
         n_samples = x.shape[0]
-        n_sub_samples = [n_samples, [(n_samples * @params[:subsample]).to_i, 1].max].min
+        n_sub_samples = [n_samples, [(n_samples * @params[:subsample]).to_i, 1].max].min # rubocop:disable Style/ComparableClamp
         whole_ids = Array.new(n_samples) { |v| v }
         y_pred = Numo::DFloat.ones(n_samples) * init_pred
         sub_rng = @rng.dup

@@ -76,7 +76,7 @@ module Rumale
         # Initialize some variables.
         n_features = x.shape[1]
         @params[:max_features] = Math.sqrt(n_features).to_i if @params[:max_features].nil?
-        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
+        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min # rubocop:disable Style/ComparableClamp
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         sub_rng = @rng.dup
         # Construct trees.

@@ -86,7 +86,7 @@ module Rumale
         @estimators = []
         @feature_importances = Numo::DFloat.zeros(n_features)
         @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
-        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
+        @params[:max_features] = [[1, @params[:max_features]].max, n_features].min # rubocop:disable Style/ComparableClamp
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         n_classes = @classes.shape[0]
         sub_rng = @rng.dup
