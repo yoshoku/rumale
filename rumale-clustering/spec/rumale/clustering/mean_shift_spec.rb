@@ -6,7 +6,7 @@ RSpec.describe Rumale::Clustering::MeanShift do
   let(:three_clusters) { three_clusters_dataset }
   let(:x_mlt) { three_clusters[0] }
   let(:y_mlt) { three_clusters[1] }
-  let(:analyzer) { described_class.new(bandwidth: 0.5, threshold: 1e-2) }
+  let(:analyzer) { described_class.new(bandwidth: 1.0) }
   let(:cluster_labels) { analyzer.fit(x_mlt).predict(x_mlt) }
 
   it 'analyze cluster', :aggregate_failures do

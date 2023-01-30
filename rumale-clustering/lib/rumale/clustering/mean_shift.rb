@@ -7,7 +7,7 @@ require 'rumale/validation'
 
 module Rumale
   module Clustering
-    # MeanShift is a class that implements mean-shift clustering.
+    # MeanShift is a class that implements mean-shift clustering with flat kernel.
     #
     # @example
     #   require 'rumale/clustering/mean_shift'
@@ -28,15 +28,13 @@ module Rumale
 
       # Create a new cluster analyzer with mean-shift algorithm.
       #
-      # @param bandwidth [Float] The bandwidth parameter of RBF kernel.
-      # @param threshold [Float] The distance threshold for connecting cluster centers.
+      # @param bandwidth [Float] The bandwidth parameter of flat kernel.
       # @param max_iter [Integer] The maximum number of iterations.
       # @param tol [Float] The tolerance of termination criterion
-      def initialize(bandwidth: 1.0, threshold: 1.0, max_iter: 500, tol: 1e-4)
+      def initialize(bandwidth: 1.0, max_iter: 500, tol: 1e-4)
         super()
         @params = {
           bandwidth: bandwidth,
-          threshold: threshold,
           max_iter: max_iter,
           tol: tol
         }
@@ -50,12 +48,10 @@ module Rumale
       def fit(x, _y = nil)
         x = Rumale::Validation.check_convert_sample_array(x)
 
-        gamma = 0.5.fdiv(@params[:bandwidth]**2)
-
         z = x.dup
         @params[:max_iter].times do
-          distance_mat = Rumale::PairwiseMetric.squared_error(x, z)
-          kernel_mat = Numo::NMath.exp(-gamma * distance_mat)
+          distance_mat = Rumale::PairwiseMetric.euclidean_distance(x, z)
+          kernel_mat = Numo::DFloat.cast(distance_mat.le(@params[:bandwidth]))
           sum_kernel = kernel_mat.sum(axis: 0)
           weight_mat = kernel_mat.dot((1 / sum_kernel).diag)
           updated = weight_mat.transpose.dot(x)
@@ -65,6 +61,8 @@ module Rumale
         end
 
         @cluster_centers = connect_components(z)
+        p z
+        p @cluster_centers
 
         self
       end
@@ -100,13 +98,12 @@ module Rumale
       def connect_components(z)
         centers = []
         n_samples = z.shape[0]
-        epsilon = @params[:threshold]**2
 
         n_samples.times do |idx|
           assigned = false
           centers.each do |cluster_vec|
-            dist = ((z[idx, true] - cluster_vec)**2).sum
-            if dist < epsilon
+            dist = Math.sqrt(((z[idx, true] - cluster_vec)**2).sum.abs)
+            if dist <= @params[:bandwidth]
               assigned = true
               break
             end
