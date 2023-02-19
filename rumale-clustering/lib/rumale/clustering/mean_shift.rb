@@ -61,8 +61,6 @@ module Rumale
         end
 
         @cluster_centers = connect_components(z)
-        p z
-        p @cluster_centers
 
         self
       end
