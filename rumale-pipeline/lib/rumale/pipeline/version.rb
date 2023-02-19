@@ -5,6 +5,6 @@ module Rumale
   # Module implements utilities of pipeline that cosists of a chain of transfomers and estimators.
   module Pipeline
     # @!visibility private
-    VERSION = '0.25.0'
+    VERSION = '0.26.0'
   end
 end

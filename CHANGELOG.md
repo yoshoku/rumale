@@ -1,3 +1,20 @@
+# 0.26.0
+## rumale-clustering
+- Add cluster analysis class for mean-shift method.
+  - MeanShift
+
+## rumale-manifold
+- Add transformer classes for Loccally Linear Embedding and Laplacian Eigenmaps.
+  - LocallyLinearEmbedding
+  - LaplacianEigenmaps
+
+## rumale-metric_learning
+- Add transformer class for Local Fisher Discriminant Analysis.
+  - LocalFisherDiscriminantAnalysis
+
+## others
+- No changes, or only slight changes to configuration files.
+
 # 0.25.0
 ## rumale-linear_model
 **Breaking change**
