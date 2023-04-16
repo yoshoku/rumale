@@ -26,12 +26,12 @@ RSpec.describe Rumale::ModelSelection::ShuffleSplit do
     expect(validation_ids[1][1].size).to eq(n_test_samples)
     expect(validation_ids[2][0].size).to eq(n_train_samples)
     expect(validation_ids[2][1].size).to eq(n_test_samples)
-    expect(validation_ids[0][0]).not_to match_array([0, 1, 2, 3, 4, 5])
-    expect(validation_ids[0][1]).not_to match_array([0, 1])
-    expect(validation_ids[1][0]).not_to match_array([0, 1, 2, 3, 4, 5])
-    expect(validation_ids[1][1]).not_to match_array([0, 1])
-    expect(validation_ids[2][0]).not_to match_array([0, 1, 2, 3, 4, 5])
-    expect(validation_ids[2][1]).not_to match_array([0, 1])
+    expect(validation_ids[0][0]).not_to contain_exactly(0, 1, 2, 3, 4, 5)
+    expect(validation_ids[0][1]).not_to contain_exactly(0, 1)
+    expect(validation_ids[1][0]).not_to contain_exactly(0, 1, 2, 3, 4, 5)
+    expect(validation_ids[1][1]).not_to contain_exactly(0, 1)
+    expect(validation_ids[2][0]).not_to contain_exactly(0, 1, 2, 3, 4, 5)
+    expect(validation_ids[2][1]).not_to contain_exactly(0, 1)
   end
 
   it 'splits the dataset with given test size', :aggregate_failures do
@@ -43,8 +43,8 @@ RSpec.describe Rumale::ModelSelection::ShuffleSplit do
     expect(validation_ids[0].size).to eq(2)
     expect(validation_ids[0][0].size).to eq(9)
     expect(validation_ids[0][1].size).to eq(1)
-    expect(validation_ids[0][0]).not_to match_array([3, 4, 5, 6, 7, 8])
-    expect(validation_ids[0][1]).not_to match_array([0, 1, 2])
+    expect(validation_ids[0][0]).not_to contain_exactly(3, 4, 5, 6, 7, 8)
+    expect(validation_ids[0][1]).not_to contain_exactly(0, 1, 2)
   end
 
   it 'raises ArgumentError given a wrong split number', :aggregate_failures do

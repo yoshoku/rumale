@@ -20,12 +20,12 @@ RSpec.describe Rumale::ModelSelection::KFold do
     expect(validation_ids[0].size).to eq(2)
     expect(validation_ids[0][0].size).to eq(n_training_samples)
     expect(validation_ids[0][1].size).to eq(n_testing_samples)
-    expect(validation_ids[0][0]).to match_array([3, 4, 5, 6, 7, 8])
-    expect(validation_ids[0][1]).to match_array([0, 1, 2])
-    expect(validation_ids[1][0]).to match_array([0, 1, 2, 6, 7, 8])
-    expect(validation_ids[1][1]).to match_array([3, 4, 5])
-    expect(validation_ids[2][0]).to match_array([0, 1, 2, 3, 4, 5])
-    expect(validation_ids[2][1]).to match_array([6, 7, 8])
+    expect(validation_ids[0][0]).to contain_exactly(3, 4, 5, 6, 7, 8)
+    expect(validation_ids[0][1]).to contain_exactly(0, 1, 2)
+    expect(validation_ids[1][0]).to contain_exactly(0, 1, 2, 6, 7, 8)
+    expect(validation_ids[1][1]).to contain_exactly(3, 4, 5)
+    expect(validation_ids[2][0]).to contain_exactly(0, 1, 2, 3, 4, 5)
+    expect(validation_ids[2][1]).to contain_exactly(6, 7, 8)
   end
 
   it 'shuffles and splits the dataset', :aggregate_failures do
@@ -37,8 +37,8 @@ RSpec.describe Rumale::ModelSelection::KFold do
     expect(validation_ids[0].size).to eq(2)
     expect(validation_ids[0][0].size).to eq(n_training_samples)
     expect(validation_ids[0][1].size).to eq(n_testing_samples)
-    expect(validation_ids[0][0]).not_to match_array([3, 4, 5, 6, 7, 8])
-    expect(validation_ids[0][1]).not_to match_array([0, 1, 2])
+    expect(validation_ids[0][0]).not_to contain_exactly(3, 4, 5, 6, 7, 8)
+    expect(validation_ids[0][1]).not_to contain_exactly(0, 1, 2)
   end
 
   it 'raises ArgumentError given a wrong split number', :aggregate_failures do

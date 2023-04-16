@@ -16,9 +16,9 @@ RSpec.describe Rumale::ModelSelection::TimeSeriesSplit do
       expect(splitter.n_splits).to eq(n_splits)
       expect(splitter.max_train_size).to be_nil
       expect(validation_ids.size).to eq(n_splits)
-      expect(validation_ids[0]).to match_array([[0, 1], [2, 3]])
-      expect(validation_ids[1]).to match_array([[0, 1, 2, 3], [4, 5]])
-      expect(validation_ids[2]).to match_array([[0, 1, 2, 3, 4, 5], [6, 7]])
+      expect(validation_ids[0]).to contain_exactly([0, 1], [2, 3])
+      expect(validation_ids[1]).to contain_exactly([0, 1, 2, 3], [4, 5])
+      expect(validation_ids[2]).to contain_exactly([0, 1, 2, 3, 4, 5], [6, 7])
     end
   end
 
