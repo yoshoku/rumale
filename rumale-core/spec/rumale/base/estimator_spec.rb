@@ -6,6 +6,7 @@ RSpec.describe Rumale::Base::Estimator do
   let(:dummy) do
     Class.new(described_class) do
       def initialize
+        super
         @params = {}
         @params[:n_jobs] = 2
       end
