@@ -6,8 +6,8 @@ require 'rumale/utils'
 
 module Rumale
   # Module for loading and saving a dataset file.
-  module Dataset # rubocop:disable Metrics/ModuleLength
-    class << self
+  module Dataset
+    class << self # rubocop:disable Metrics/ClassLength
       # Load a dataset with the libsvm file format into Numo::NArray.
       #
       # @param filename [String] A path to a dataset file.
