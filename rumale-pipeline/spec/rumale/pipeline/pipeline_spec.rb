@@ -78,13 +78,13 @@ RSpec.describe Rumale::Pipeline::Pipeline do
     let(:n_high_features) { 16 }
     let(:projected_x) { x.abs.dot(Numo::DFloat.new(n_features, n_high_features).rand) }
     let(:pipe) { described_class.new(steps: { nmf: nmf, pca: pca }) }
-    let(:trans_x1) { pipe.fit_transform(projected_x, y) }
-    let(:trans_x2) { pipe.fit(projected_x, y).transform(projected_x) }
-    let(:reconst_x) { pipe.inverse_transform(trans_x1) }
+    let(:z_fit_transform) { pipe.fit_transform(projected_x, y) }
+    let(:z_fit_and_transform) { pipe.fit(projected_x, y).transform(projected_x) }
+    let(:reconst_x) { pipe.inverse_transform(z_fit_transform) }
 
     it 'transforms high-dimensional data with NMF and PCA.', :aggregate_failures do
-      expect(trans_x1.shape).to match([n_samples, n_pca_comps])
-      expect(trans_x2.shape).to match([n_samples, n_pca_comps])
+      expect(z_fit_transform.shape).to match([n_samples, n_pca_comps])
+      expect(z_fit_and_transform.shape).to match([n_samples, n_pca_comps])
       expect(pipe.steps[:nmf].components.shape).to match([n_nmf_comps, n_high_features])
       expect(pipe.steps[:pca].components.shape).to match([n_pca_comps, n_nmf_comps])
       expect(reconst_x.shape).to match([n_samples, n_high_features])
