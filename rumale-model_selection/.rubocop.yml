@@ -11,3 +11,7 @@ AllCops:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+
+RSpec/IndexedLet:
+  Enabled:
+    false
