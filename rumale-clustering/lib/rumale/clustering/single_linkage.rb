@@ -148,7 +148,7 @@ module Rumale
           weight = curr_weights.min
           Node.new(x: curr_node, y: next_node, weight: weight)
         end
-        mst.sort! { |a, b| a.weight <=> b.weight }
+        mst.sort_by!(&:weight)
       end
 
       def single_linkage_hierarchy(mst)

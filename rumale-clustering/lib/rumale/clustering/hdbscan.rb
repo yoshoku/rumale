@@ -211,7 +211,7 @@ module Rumale
       end
 
       def cluster_stability(tree)
-        tree.sort! { |a, b| a.weight <=> b.weight }
+        tree.sort_by!(&:weight)
 
         root = tree.map(&:x).min
         child_max = tree.map(&:y).max
