@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::LinearModel::Loss::LogLoss do
-  let(:y) { Numo::DFloat[1, -1,  1, -1] }
-  let(:t) { Numo::DFloat[1,  1, -1, -1] }
+  let(:y) { Numo::DFloat[1, -1, 1, -1] }
+  let(:t) { Numo::DFloat[1, 1, -1, -1] }
   let(:loss) { described_class.new.loss(y, t) }
   let(:dout) { described_class.new.dloss(y, t) }
 
