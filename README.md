@@ -158,45 +158,27 @@ require 'numo/linalg/autoloader'
 require 'rumale'
 ```
 
-### Numo::OpenBLAS
-[Numo::OpenBLAS](https://github.com/yoshoku/numo-openblas) downloads and builds OpenBLAS during installation
-and uses that as a background library for Numo::Linalg.
+Numo::Linalg allows [user selection of background libraries for BLAS/LAPACK](https://github.com/ruby-numo/numo-linalg/blob/master/doc/select-backend.md).
+Instead of fixing the background library,
+[Numo::OpenBLAS](https://github.com/yoshoku/numo-openblas) and [Numo::BLIS](https://github.com/yoshoku/numo-blis)
+are available to simplify installation.
 
-Install compilers for building OpenBLAS.
-
-```bash
-$ sudo apt-get install gcc gfortran make
-```
-
-Install Numo::OpenBLAS gem.
+### Numo::TinyLinalg
+[Numo::TinyLinalg](https://github.com/yoshoku/numo-tiny_linalg) is a subset library from Numo::Linalg consisting only of methods used in machine learning algorithms.
+Numo::TinyLinalg only supports OpenBLAS as a backend library for BLAS and LAPACK.
+If the OpenBLAS library is not found during installation, Numo::TinyLinalg downloads and builds that.
 
 ```bash
-$ gem install numo-openblas
+$ gem install numo-tiny_linalg
 ```
 
-Load Numo::OpenBLAS gem instead of Numo::Linalg.
+Load Numo::TinyLinalg instead of Numo::Linalg.
 
 ```ruby
-require 'numo/openblas'
-require 'rumale'
-```
+require 'numo/tiny_linalg'
 
-### Numo::BLIS
-[Numo::BLIS](https://github.com/yoshoku/numo-blis) downloads and builds BLIS during installation
-and uses that as a background library for Numo::Linalg.
-BLIS is one of the high-performance BLAS as with OpenBLAS,
-and using that can be expected to speed up of processing in Rumale.
+Numo::Linalg = Numo::TinyLinalg
 
-Install Numo::BLIS gem.
-
-```bash
-$ gem install numo-blis
-```
-
-Load Numo::BLIS gem instead of Numo::Linalg.
-
-```ruby
-require 'numo/blis'
 require 'rumale'
 ```
 
