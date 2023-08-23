@@ -217,15 +217,8 @@ static VALUE find_split_params_cls(VALUE self, VALUE criterion, VALUE impurity, 
   ndfunc_t ndf = {(na_iter_func_t)iter_find_split_params_cls, NO_LOOP, 3, 1, ain, aout};
   split_opts_cls opts = {StringValuePtr(criterion), NUM2LONG(n_classes), NUM2DBL(impurity)};
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, labels);
-  VALUE results = rb_ary_new2(4);
-  double* params_ptr = (double*)na_get_pointer_for_read(params);
-  rb_ary_store(results, 0, DBL2NUM(params_ptr[0]));
-  rb_ary_store(results, 1, DBL2NUM(params_ptr[1]));
-  rb_ary_store(results, 2, DBL2NUM(params_ptr[2]));
-  rb_ary_store(results, 3, DBL2NUM(params_ptr[3]));
-  RB_GC_GUARD(params);
   RB_GC_GUARD(criterion);
-  return results;
+  return params;
 }
 
 /**
@@ -335,15 +328,8 @@ static VALUE find_split_params_reg(VALUE self, VALUE criterion, VALUE impurity, 
   ndfunc_t ndf = {(na_iter_func_t)iter_find_split_params_reg, NO_LOOP, 3, 1, ain, aout};
   split_opts_reg opts = {StringValuePtr(criterion), NUM2DBL(impurity)};
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, targets);
-  VALUE results = rb_ary_new2(4);
-  double* params_ptr = (double*)na_get_pointer_for_read(params);
-  rb_ary_store(results, 0, DBL2NUM(params_ptr[0]));
-  rb_ary_store(results, 1, DBL2NUM(params_ptr[1]));
-  rb_ary_store(results, 2, DBL2NUM(params_ptr[2]));
-  rb_ary_store(results, 3, DBL2NUM(params_ptr[3]));
-  RB_GC_GUARD(params);
   RB_GC_GUARD(criterion);
-  return results;
+  return params;
 }
 
 /**
@@ -424,12 +410,7 @@ static VALUE find_split_params_grad_reg(VALUE self, VALUE order, VALUE features,
   ndfunc_t ndf = {(na_iter_func_t)iter_find_split_params_grad_reg, NO_LOOP, 4, 1, ain, aout};
   double opts[3] = {NUM2DBL(sum_gradient), NUM2DBL(sum_hessian), NUM2DBL(reg_lambda)};
   VALUE params = na_ndloop3(&ndf, opts, 4, order, features, gradients, hessians);
-  VALUE results = rb_ary_new2(2);
-  double* params_ptr = (double*)na_get_pointer_for_read(params);
-  rb_ary_store(results, 0, DBL2NUM(params_ptr[0]));
-  rb_ary_store(results, 1, DBL2NUM(params_ptr[1]));
-  RB_GC_GUARD(params);
-  return results;
+  return params;
 }
 
 /**
