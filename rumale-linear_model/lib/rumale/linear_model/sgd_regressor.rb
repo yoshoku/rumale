@@ -112,13 +112,13 @@ module Rumale
           @weight_vec = Numo::DFloat.zeros(n_outputs, n_features)
           @bias_term = Numo::DFloat.zeros(n_outputs)
           if enable_parallel?
-            models = parallel_map(n_outputs) { |n| partial_fit(x, y[true, n]) }
+            models = parallel_map(n_outputs) { |n| partial_fit_(x, y[true, n]) }
             n_outputs.times { |n| @weight_vec[n, true], @bias_term[n] = models[n] }
           else
-            n_outputs.times { |n| @weight_vec[n, true], @bias_term[n] = partial_fit(x, y[true, n]) }
+            n_outputs.times { |n| @weight_vec[n, true], @bias_term[n] = partial_fit_(x, y[true, n]) }
           end
         else
-          @weight_vec, @bias_term = partial_fit(x, y)
+          @weight_vec, @bias_term = partial_fit_(x, y)
         end
 
         self

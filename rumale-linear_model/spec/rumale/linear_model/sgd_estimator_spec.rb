@@ -18,7 +18,7 @@ RSpec.describe Rumale::LinearModel::SGDEstimator do
     end
 
     it 'performs learning process', :aggregate_failures do
-      uw, ub = base_sgd.send(:partial_fit, x, y)
+      uw, ub = base_sgd.send(:partial_fit_, x, y)
       expect(uw).to be_a(Numo::DFloat)
       expect(uw).to be_contiguous
       expect(uw.ndim).to eq(1)

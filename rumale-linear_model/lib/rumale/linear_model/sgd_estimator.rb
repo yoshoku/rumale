@@ -215,45 +215,49 @@ module Rumale
 
       private_constant :L2_PENALTY, :L1_PENALTY, :ELASTICNET_PENALTY
 
-      def partial_fit(x, y)
+      def init_vars(n_features)
+        @sub_rng = @rng.dup
+        @weight = Numo::DFloat.zeros(n_features)
+        @optimizer = ::Rumale::LinearModel::Optimizer::SGD.new(
+          learning_rate: @params[:learning_rate], momentum: @params[:momentum], decay: @params[:decay]
+        )
+        @l2_penalty = ::Rumale::LinearModel::Penalty::L2Penalty.new(reg_param: l2_reg_param)
+        @l1_penalty = ::Rumale::LinearModel::Penalty::L1Penalty.new(reg_param: l1_reg_param)
+      end
+
+      def partial_fit_(x, y, max_iter: @params[:max_iter], init: true)
         class_name = self.class.to_s.split('::').last if @params[:verbose]
         narr = x.class
         # Expand feature vectors for bias term.
         x = expand_feature(x) if fit_bias?
         # Initialize some variables.
-        sub_rng = @rng.dup
         n_samples, n_features = x.shape
-        weight = Numo::DFloat.zeros(n_features)
-        optimizer = ::Rumale::LinearModel::Optimizer::SGD.new(
-          learning_rate: @params[:learning_rate], momentum: @params[:momentum], decay: @params[:decay]
-        )
-        l2_penalty = ::Rumale::LinearModel::Penalty::L2Penalty.new(reg_param: l2_reg_param) if apply_l2_penalty?
-        l1_penalty = ::Rumale::LinearModel::Penalty::L1Penalty.new(reg_param: l1_reg_param) if apply_l1_penalty?
+        init_vars(n_features) if init
         # Optimization.
-        @params[:max_iter].times do |t|
+        max_iter.times do |t|
           sample_ids = Array(0...n_samples)
-          sample_ids.shuffle!(random: sub_rng)
+          sample_ids.shuffle!(random: @sub_rng)
           until (subset_ids = sample_ids.shift(@params[:batch_size])).empty?
             # sampling
             sub_x = x[subset_ids, true]
             sub_y = y[subset_ids]
             # calculate gradient
-            dloss = @loss_func.dloss(sub_x.dot(weight), sub_y)
+            dloss = @loss_func.dloss(sub_x.dot(@weight), sub_y)
             dloss = narr.minimum(1e12, narr.maximum(-1e12, dloss))
             gradient = dloss.dot(sub_x)
             # update weight
-            lr = optimizer.current_learning_rate
-            weight = optimizer.call(weight, gradient)
+            lr = @optimizer.current_learning_rate
+            @weight = @optimizer.call(@weight, gradient)
             # l2 regularization
-            weight = l2_penalty.call(weight, lr) if apply_l2_penalty?
+            @weight = @l2_penalty.call(@weight, lr) if apply_l2_penalty?
             # l1 regularization
-            weight = l1_penalty.call(weight, lr) if apply_l1_penalty?
+            @weight = @l1_penalty.call(@weight, lr) if apply_l1_penalty?
           end
-          loss = @loss_func.loss(x.dot(weight), y)
+          loss = @loss_func.loss(x.dot(@weight), y)
           puts "[#{class_name}] Loss after #{t + 1} epochs: #{loss}" if @params[:verbose]
           break if loss < @params[:tol]
         end
-        split_weight(weight)
+        split_weight(@weight)
       end
 
       def apply_l2_penalty?

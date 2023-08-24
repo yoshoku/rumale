@@ -156,14 +156,14 @@ module Rumale
           models = if enable_parallel?
                      parallel_map(n_classes) do |n|
                        bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-                       w, b = partial_fit(x, bin_y)
+                       w, b = partial_fit_(x, bin_y)
                        prb = Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(w.transpose) + b, bin_y)
                        [w, b, prb]
                      end
                    else
                      Array.new(n_classes) do |n|
                        bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-                       w, b = partial_fit(x, bin_y)
+                       w, b = partial_fit_(x, bin_y)
                        prb = Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(w.transpose) + b, bin_y)
                        [w, b, prb]
                      end
@@ -173,7 +173,7 @@ module Rumale
         else
           negative_label = @classes[0]
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
-          @weight_vec, @bias_term = partial_fit(x, bin_y)
+          @weight_vec, @bias_term = partial_fit_(x, bin_y)
           @prob_param = Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose) + @bias_term, bin_y)
         end
       end
@@ -187,19 +187,19 @@ module Rumale
           if enable_parallel?
             models = parallel_map(n_classes) do |n|
               bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-              partial_fit(x, bin_y)
+              partial_fit_(x, bin_y)
             end
             n_classes.times { |n| @weight_vec[n, true], @bias_term[n] = models[n] }
           else
             n_classes.times do |n|
               bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-              @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
+              @weight_vec[n, true], @bias_term[n] = partial_fit_(x, bin_y)
             end
           end
         else
           negative_label = @classes[0]
           bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
-          @weight_vec, @bias_term = partial_fit(x, bin_y)
+          @weight_vec, @bias_term = partial_fit_(x, bin_y)
         end
       end
 
