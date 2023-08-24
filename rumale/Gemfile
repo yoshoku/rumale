@@ -24,7 +24,6 @@ gem 'rumale-pipeline', path: '../rumale-pipeline'
 gem 'rumale-preprocessing', path: '../rumale-preprocessing'
 gem 'rumale-tree', path: '../rumale-tree'
 
-gem 'numo-linalg', '~> 0.1.4'
 gem 'rake', '~> 13.0'
 gem 'red-datasets-numo-narray', '~> 0.0.1'
 gem 'rspec', '~> 3.0'

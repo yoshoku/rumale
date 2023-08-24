@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require 'numo/linalg/autoloader'
+require 'numo/tiny_linalg'
+Numo::Linalg = Numo::TinyLinalg
+
 require 'parallel'
 require 'rumale/dataset'
 require 'rumale/pairwise_metric'
