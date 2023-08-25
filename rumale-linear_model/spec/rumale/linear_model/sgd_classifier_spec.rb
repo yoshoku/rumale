@@ -135,10 +135,83 @@ RSpec.describe Rumale::LinearModel::SGDClassifier do
     end
   end
 
+  shared_examples 'partially fitted classification problems' do
+    let(:estimator) do
+      described_class.new(loss: loss, reg_param: 1, fit_bias: fit_bias, n_jobs: n_jobs, random_seed: 1)
+    end
+
+    it 'classifies two clusters', :aggregate_failures do
+      estimator.partial_fit(x, y)
+
+      expect(estimator.classes).to be_a(Numo::Int32)
+      expect(estimator.classes).to be_contiguous
+      expect(estimator.classes.ndim).to eq(1)
+      expect(estimator.classes.shape[0]).to eq(n_classes)
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
+      expect(estimator.weight_vec.ndim).to eq(1)
+      expect(estimator.weight_vec.shape[0]).to eq(n_features)
+      expect(estimator.bias_term).to be_zero
+
+      prev_weight = estimator.weight_vec
+      100.times { estimator.partial_fit(x, y) }
+      curr_weight = estimator.weight_vec
+      expect((prev_weight - curr_weight).abs.max).to be > 1.0
+
+      prev_weight = curr_weight
+      estimator.partial_fit(x, y)
+      curr_weight = estimator.weight_vec
+      expect((prev_weight - curr_weight).abs.max).to be < 0.1
+
+      expect(func_vals).to be_a(Numo::DFloat)
+      expect(func_vals).to be_contiguous
+      expect(func_vals.ndim).to eq(1)
+      expect(func_vals.shape[0]).to eq(n_samples)
+      expect(probs).to be_a(Numo::DFloat)
+      expect(probs).to be_contiguous
+      expect(probs.ndim).to eq(2)
+      expect(probs.shape[0]).to eq(n_samples)
+      expect(probs.shape[1]).to eq(n_classes)
+      expect(probs.sum(axis: 1).eq(1).count).to eq(n_samples)
+      expect(predicted_by_probs).to eq(y)
+      expect(predicted).to be_a(Numo::Int32)
+      expect(predicted).to be_contiguous
+      expect(predicted.ndim).to eq(1)
+      expect(predicted.shape[0]).to eq(n_samples)
+      expect(predicted).to eq(y)
+      expect(score).to eq(1.0)
+    end
+
+    context 'when fit_bias parameter is true' do
+      let(:fit_bias) { true }
+
+      it 'learns the model of two clusters dataset with bias term', :aggregate_failures do
+        estimator.partial_fit(x, y)
+
+        expect(estimator.weight_vec.ndim).to eq(1)
+        expect(estimator.weight_vec.shape[0]).to eq(n_features)
+        expect(estimator.bias_term).not_to be_zero
+
+        prev_bias = estimator.bias_term
+        100.times { estimator.partial_fit(x, y) }
+        curr_bias = estimator.bias_term
+        expect((prev_bias - curr_bias).abs).to be > 0.01
+
+        prev_bias = curr_bias
+        estimator.partial_fit(x, y)
+        curr_bias = estimator.bias_term
+        expect((prev_bias - curr_bias).abs).to be < 0.01
+
+        expect(score).to eq(1.0)
+      end
+    end
+  end
+
   context 'when loss is "hinge"' do
     let(:loss) { 'hinge' }
 
     it_behaves_like 'classification problems'
+    it_behaves_like 'partially fitted classification problems'
 
     it 'dumps and restores itself using Marshal module', :aggregate_failures do
       expect(copied.class).to eq(estimator.class)
@@ -156,6 +229,7 @@ RSpec.describe Rumale::LinearModel::SGDClassifier do
     let(:loss) { 'log_loss' }
 
     it_behaves_like 'classification problems'
+    it_behaves_like 'partially fitted classification problems'
 
     it 'dumps and restores itself using Marshal module', :aggregate_failures do
       expect(copied.class).to eq(estimator.class)

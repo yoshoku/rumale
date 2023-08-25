@@ -114,6 +114,32 @@ module Rumale
         self
       end
 
+      # Perform 1-epoch of stochastic gradient descent optimization with given training data.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Numo::Int32] (shape: [n_samples]) The binary labels to be used for fitting the model.
+      # @return [SGDClassifier] The learned classifier itself.
+      def partial_fit(x, y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_label_array(y)
+        Rumale::Validation.check_sample_size(x, y)
+
+        n_features = x.shape[1]
+        n_features += 1 if fit_bias?
+        need_init = @weight.nil? || @weight.shape[0] != n_features
+
+        @classes = Numo::Int32[*y.to_a.uniq.sort] if need_init
+        negative_label = @classes[0]
+        bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
+
+        @weight_vec, @bias_term = partial_fit_(x, bin_y, max_iter: 1, init: need_init)
+        if @loss_func.name == Rumale::LinearModel::Loss::HingeLoss::NAME
+          @prob_param = Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose) + @bias_term, bin_y)
+        end
+
+        self
+      end
+
       # Calculate confidence scores for samples.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
