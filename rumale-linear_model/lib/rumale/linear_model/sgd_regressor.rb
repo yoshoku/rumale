@@ -124,6 +124,25 @@ module Rumale
         self
       end
 
+      # Perform 1-epoch of stochastic gradient descent optimization with given training data.
+      #
+      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Numo::DFloat] (shape: [n_samples]) The single target variables to be used for fitting the model.
+      # @return [SGDRegressor] The learned regressor itself.
+      def partial_fit(x, y)
+        x = Rumale::Validation.check_convert_sample_array(x)
+        y = Rumale::Validation.check_convert_target_value_array(y)
+        Rumale::Validation.check_sample_size(x, y)
+
+        n_features = x.shape[1]
+        n_features += 1 if fit_bias?
+        need_init = @weight.nil? || @weight.shape[0] != n_features
+
+        @weight_vec, @bias_term = partial_fit_(x, y, max_iter: 1, init: need_init)
+
+        self
+      end
+
       # Predict values for samples.
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.

@@ -89,10 +89,68 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
     end
   end
 
+  shared_examples 'partially fitted regression problems' do
+    let(:y) { single_target }
+    let(:estimator) do
+      described_class.new(loss: loss, reg_param: 1, epsilon: 0.1, fit_bias: fit_bias, n_jobs: n_jobs, random_seed: 1)
+    end
+
+    it 'learns the linear model', :aggregate_failures do
+      estimator.partial_fit(x, y)
+
+      expect(estimator.weight_vec).to be_a(Numo::DFloat)
+      expect(estimator.weight_vec).to be_contiguous
+      expect(estimator.weight_vec.ndim).to eq(1)
+      expect(estimator.weight_vec.shape[0]).to eq(n_features)
+      expect(estimator.bias_term).to be_zero
+
+      prev_weight = estimator.weight_vec
+      999.times { estimator.partial_fit(x, y) }
+      curr_weight = estimator.weight_vec
+      expect((prev_weight - curr_weight).abs.max).to be > 1.0
+
+      prev_weight = curr_weight
+      estimator.partial_fit(x, y)
+      curr_weight = estimator.weight_vec
+      expect((prev_weight - curr_weight).abs.max).to be < 0.5
+
+      expect(predicted).to be_a(Numo::DFloat)
+      expect(predicted).to be_contiguous
+      expect(predicted.ndim).to eq(1)
+      expect(predicted.shape[0]).to eq(n_samples)
+      expect(score).to be_within(0.01).of(1.0)
+    end
+
+    context 'when fit_bias parameter is true' do
+      let(:fit_bias) { true }
+
+      it 'learns the linear model with bias term', :aggregate_failures do
+        estimator.partial_fit(x, y)
+
+        expect(estimator.weight_vec.ndim).to eq(1)
+        expect(estimator.weight_vec.shape[0]).to eq(n_features)
+        expect(estimator.bias_term).not_to be_zero
+
+        prev_bias = estimator.bias_term
+        999.times { estimator.partial_fit(x, y) }
+        curr_bias = estimator.bias_term
+        expect((prev_bias - curr_bias).abs).to be > 0.01
+
+        prev_bias = curr_bias
+        estimator.partial_fit(x, y)
+        curr_bias = estimator.bias_term
+        expect((prev_bias - curr_bias).abs).to be < 0.01
+
+        expect(score).to be_within(0.01).of(1.0)
+      end
+    end
+  end
+
   context 'when loss is "squared_error"' do
     let(:loss) { 'squared_error' }
 
     it_behaves_like 'regression problems'
+    it_behaves_like 'partially fitted regression problems'
 
     it 'dumps and restores itself using Marshal module', :aggregate_failures do
       expect(copied.class).to eq(estimator.class)
@@ -110,6 +168,7 @@ RSpec.describe Rumale::LinearModel::SGDRegressor do
     let(:loss) { 'epsilon_insensitive' }
 
     it_behaves_like 'regression problems'
+    it_behaves_like 'partially fitted regression problems'
 
     it 'dumps and restores itself using Marshal module', :aggregate_failures do
       expect(copied.class).to eq(estimator.class)
