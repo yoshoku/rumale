@@ -1,3 +1,14 @@
+# 0.27.0
+## rumale-linear_model
+- Add `partial_fit` method to SGDClassifier and SGDRegressor.
+  - It performs 1-epoch of stochastic gradient descent. It only supports binary labels and single target variables.
+
+## rumale-tree
+- Remove unnecessary array generation in native extension.
+
+## others
+- No changes, or minor changes using RuboCop.
+
 # 0.26.0
 ## rumale-clustering
 - Add cluster analysis class for mean-shift method.

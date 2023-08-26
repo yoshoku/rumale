@@ -31,5 +31,5 @@ Gem::Specification.new do |spec|
   spec.extensions = ['ext/rumale/tree/extconf.rb']
 
   spec.add_dependency 'numo-narray', '>= 0.9.1'
-  spec.add_dependency 'rumale-core', '~> 0.26.0'
+  spec.add_dependency 'rumale-core', '~> 0.27.0'
 end
