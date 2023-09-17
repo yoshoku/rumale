@@ -215,7 +215,7 @@ static VALUE find_split_params_cls(VALUE self, VALUE criterion, VALUE impurity, 
   size_t out_shape[1] = { 4 };
   ndfunc_arg_out_t aout[1] = { { numo_cDFloat, 1, out_shape } };
   ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_cls, NO_LOOP, 3, 1, ain, aout };
-  split_opts_cls opts = { StringValuePtr(criterion), NUM2LONG(n_classes), NUM2DBL(impurity) };
+  split_opts_cls opts = { StringValueCStr(criterion), NUM2LONG(n_classes), NUM2DBL(impurity) };
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, labels);
   RB_GC_GUARD(criterion);
   return params;
@@ -326,7 +326,7 @@ static VALUE find_split_params_reg(VALUE self, VALUE criterion, VALUE impurity, 
   size_t out_shape[1] = { 4 };
   ndfunc_arg_out_t aout[1] = { { numo_cDFloat, 1, out_shape } };
   ndfunc_t ndf = { (na_iter_func_t)iter_find_split_params_reg, NO_LOOP, 3, 1, ain, aout };
-  split_opts_reg opts = { StringValuePtr(criterion), NUM2DBL(impurity) };
+  split_opts_reg opts = { StringValueCStr(criterion), NUM2DBL(impurity) };
   VALUE params = na_ndloop3(&ndf, &opts, 3, order, features, targets);
   RB_GC_GUARD(criterion);
   return params;
@@ -451,7 +451,7 @@ static VALUE node_impurity_cls(VALUE self, VALUE criterion, VALUE y, VALUE n_cla
   ndfunc_arg_in_t ain[1] = { { numo_cInt32, 1 } };
   ndfunc_arg_out_t aout[1] = { { numo_cDFloat, 0 } };
   ndfunc_t ndf = { (na_iter_func_t)iter_node_impurity_cls, NDF_EXTRACT, 1, 1, ain, aout };
-  node_impurity_cls_opts opts = { StringValuePtr(criterion), NUM2LONG(n_classes) };
+  node_impurity_cls_opts opts = { StringValueCStr(criterion), NUM2LONG(n_classes) };
   VALUE ret = na_ndloop3(&ndf, &opts, 1, y);
   RB_GC_GUARD(criterion);
   return ret;
@@ -514,7 +514,7 @@ static VALUE node_impurity_reg(VALUE self, VALUE criterion, VALUE y) {
     rb_ary_push(target_vecs, target);
   }
 
-  VALUE ret = DBL2NUM(calc_impurity_reg(StringValuePtr(criterion), target_vecs, sum_vec));
+  VALUE ret = DBL2NUM(calc_impurity_reg(StringValueCStr(criterion), target_vecs, sum_vec));
   xfree(sum_vec);
   RB_GC_GUARD(criterion);
   return ret;
