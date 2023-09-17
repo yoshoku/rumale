@@ -463,13 +463,13 @@ static VALUE node_impurity_cls(VALUE self, VALUE criterion, VALUE y, VALUE n_cla
 static void iter_check_same_label(na_loop_t const* lp) {
   const int32_t* y = (int32_t*)NDL_PTR(lp, 0);
   const long n_elements = NDL_SHAPE(lp, 0)[0];
-  int32_t* ret = (int32_t*)NDL_PTR(lp, 1);
-  *ret = 1;
+  VALUE* ret = (VALUE*)NDL_PTR(lp, 1);
+  *ret = Qtrue;
   if (n_elements > 0) {
     int32_t label = y[0];
     for (long i = 0; i < n_elements; i++) {
       if (y[i] != label) {
-        *ret = 0;
+        *ret = Qfalse;
         break;
       }
     }
@@ -487,10 +487,9 @@ static void iter_check_same_label(na_loop_t const* lp) {
  */
 static VALUE check_same_label(VALUE self, VALUE y) {
   ndfunc_arg_in_t ain[1] = {{numo_cInt32, 1}};
-  ndfunc_arg_out_t aout[1] = {{numo_cInt32, 0}};
-  ndfunc_t ndf = {(na_iter_func_t)iter_check_same_label, NDF_EXTRACT, 1, 1, ain, aout};
-  VALUE ret = na_ndloop(&ndf, 1, y);
-  return (NUM2INT(ret) == 1 ? Qtrue : Qfalse);
+  ndfunc_arg_out_t aout[1] = {{numo_cRObject, 0}};
+  ndfunc_t ndf = {(na_iter_func_t)iter_check_same_label, NO_LOOP | NDF_EXTRACT, 1, 1, ain, aout};
+  return na_ndloop(&ndf, 1, y);
 }
 
 /**
