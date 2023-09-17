@@ -450,7 +450,7 @@ static void iter_node_impurity_cls(na_loop_t const* lp) {
 static VALUE node_impurity_cls(VALUE self, VALUE criterion, VALUE y, VALUE n_classes) {
   ndfunc_arg_in_t ain[1] = { { numo_cInt32, 1 } };
   ndfunc_arg_out_t aout[1] = { { numo_cDFloat, 0 } };
-  ndfunc_t ndf = { (na_iter_func_t)iter_node_impurity_cls, NDF_EXTRACT, 1, 1, ain, aout };
+  ndfunc_t ndf = { (na_iter_func_t)iter_node_impurity_cls, NO_LOOP | NDF_EXTRACT, 1, 1, ain, aout };
   node_impurity_cls_opts opts = { StringValueCStr(criterion), NUM2LONG(n_classes) };
   VALUE ret = na_ndloop3(&ndf, &opts, 1, y);
   RB_GC_GUARD(criterion);
