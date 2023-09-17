@@ -20,7 +20,7 @@ RSpec.describe Rumale::Pipeline::FeatureUnion do
   let(:fu) { described_class.new(transformers: { rbf: rbf, pca: pca, nmf: nmf }) }
   let(:z) { fu.fit_transform(x) }
 
-  it 'concatenates each transformed data', aggregate_failures: true do
+  it 'concatenates each transformed data', :aggregate_failures do
     expect(z.class).to eq(Numo::DFloat)
     expect(z.ndim).to eq(2)
     expect(z.shape[0]).to eq(n_samples)
