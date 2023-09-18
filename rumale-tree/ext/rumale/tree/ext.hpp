@@ -251,38 +251,20 @@ public:
   }
 
 private:
-  static double calc_impurity_(const std::string& criterion, const std::vector<std::vector<double> >& target_vecs, const std::vector<double>& sum_vec) {
-    const size_t n_elements = target_vecs.size();
-    const size_t n_outputs = target_vecs[0].size();
-    std::vector<double> mean_vec(n_outputs, 0);
-    for (size_t j = 0; j < n_outputs; j++) mean_vec[j] = sum_vec[j] / static_cast<double>(n_elements);
-
-    double impurity = 0.0;
-    if (criterion == "mae") {
-      double sum_mae = 0.0;
-      for (size_t i = 0; i < n_elements; i++) {
-        double mae = 0.0;
-        for (size_t j = 0; j < n_outputs; j++) {
-          const double el = target_vecs[i][j] - mean_vec[j];
-          mae += std::fabs(el);
-        }
-        mae /= static_cast<double>(n_outputs);
-        sum_mae += mae;
+  static double calc_impurity_(const std::string& criterion, const int32_t* order, const double* vecs, const double* mean_vec,
+                               const size_t& n_elements, const size_t& n_outputs, const size_t& order_offset) {
+    const bool is_mae = criterion == "mae";
+    double sum_err = 0.0;
+    for (size_t i = 0; i < n_elements; i++) {
+      double err = 0.0;
+      for (size_t j = 0; j < n_outputs; j++) {
+        const double el = vecs[order[order_offset + i] * n_outputs + j] - mean_vec[j];
+        err += is_mae ? std::fabs(el) : el * el;
       }
-      impurity = sum_mae / static_cast<double>(n_elements);
-    } else {
-      double sum_mse = 0.0;
-      for (size_t i = 0; i < n_elements; i++) {
-        double mse = 0.0;
-        for (size_t j = 0; j < n_outputs; j++) {
-          const double el = target_vecs[i][j] - mean_vec[j];
-          mse += el * el;
-        }
-        mse /= static_cast<double>(n_outputs);
-        sum_mse += mse;
-      }
-      impurity = sum_mse / static_cast<double>(n_elements);
+      err /= static_cast<double>(n_outputs);
+      sum_err += err;
     }
+    const double impurity = sum_err / static_cast<double>(n_elements);
     return impurity;
   }
 
@@ -307,7 +289,7 @@ private:
 
   static void iter_find_split_params_(na_loop_t const* lp) {
     // Obtain iteration variables.
-    const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
+    const int32_t* order = (int32_t*)NDL_PTR(lp, 0);
     const size_t n_elements = NDL_SHAPE(lp, 0)[0];
     const double* f = (double*)NDL_PTR(lp, 1);
     const double* y = (double*)NDL_PTR(lp, 2);
@@ -317,23 +299,18 @@ private:
 
     // Initialize optimal parameters.
     double* params = (double*)NDL_PTR(lp, 3);
-    params[0] = 0.0;        // left impurity
-    params[1] = w_impurity; // right impurity
-    params[2] = f[o[0]];    // threshold
-    params[3] = 0.0;        // gain
+    params[0] = 0.0;         // left impurity
+    params[1] = w_impurity;  // right impurity
+    params[2] = f[order[0]]; // threshold
+    params[3] = 0.0;         // gain
 
     // Initialize child node variables.
-    std::vector<double> r_sum_vec(n_outputs, 0);
-    std::vector<std::vector<double> > r_target_vecs;
-    r_target_vecs.reserve(n_elements);
+    std::vector<double> l_sum_y(n_outputs, 0);
+    std::vector<double> r_sum_y(n_outputs, 0);
     for (size_t i = 0; i < n_elements; i++) {
-      std::vector<double> target(n_outputs, 0);
       for (size_t j = 0; j < n_outputs; j++) {
-        const double el = y[o[i] * n_outputs + j];
-        r_sum_vec[j] += el;
-        target[j] = el;
+        r_sum_y[j] += y[order[i] * n_outputs + j];
       }
-      r_target_vecs.push_back(target);
     }
 
     // Find optimal parameters.
@@ -341,26 +318,29 @@ private:
     size_t next_pos = 0;
     size_t n_l_elements = 0;
     size_t n_r_elements = n_elements;
-    double curr_el = f[o[0]];
-    const double last_el = f[o[n_elements - 1]];
-    std::vector<double> l_sum_vec(n_outputs, 0);
-    std::vector<std::vector<double> > l_target_vecs;
+    std::vector<double> l_mean_y(n_outputs, 0);
+    std::vector<double> r_mean_y(n_outputs, 0);
+    double curr_el = f[order[0]];
+    const double last_el = f[order[n_elements - 1]];
     while (curr_pos < n_elements && curr_el != last_el) {
-      double next_el = f[o[next_pos]];
+      double next_el = f[order[next_pos]];
       while (next_pos < n_elements && next_el == curr_el) {
-        std::vector<double> target = r_target_vecs[0];
-        r_target_vecs.erase(r_target_vecs.begin());
-        for (size_t j = 0; j < n_outputs; j++) r_sum_vec[j] -= target[j];
-        n_r_elements--;
-        l_target_vecs.push_back(target);
-        for (size_t j = 0; j < n_outputs; j++) l_sum_vec[j] += target[j];
+        for (size_t j = 0; j < n_outputs; j++) {
+          l_sum_y[j] += y[order[next_pos] * n_outputs + j];
+          r_sum_y[j] -= y[order[next_pos] * n_outputs + j];
+        }
         n_l_elements++;
+        n_r_elements--;
         next_pos++;
-        next_el = f[o[next_pos]];
+        next_el = f[order[next_pos]];
       }
       // Calculate gain of new split.
-      const double l_impurity = calc_impurity_(criterion, l_target_vecs, l_sum_vec);
-      const double r_impurity = calc_impurity_(criterion, r_target_vecs, r_sum_vec);
+      for (size_t j = 0; j < n_outputs; j++) {
+        l_mean_y[j] = l_sum_y[j] / static_cast<double>(n_l_elements);
+        r_mean_y[j] = r_sum_y[j] / static_cast<double>(n_r_elements);
+      }
+      const double l_impurity = calc_impurity_(criterion, order, y, l_mean_y.data(), n_l_elements, n_outputs, 0);
+      const double r_impurity = calc_impurity_(criterion, order, y, r_mean_y.data(), n_r_elements, n_outputs, next_pos);
       const double gain = w_impurity - (n_l_elements * l_impurity + n_r_elements * r_impurity) / static_cast<double>(n_elements);
       // Update optimal parameters.
       if (gain > params[3]) {
@@ -371,7 +351,7 @@ private:
       }
       if (next_pos == n_elements) break;
       curr_pos = next_pos;
-      curr_el = f[o[curr_pos]];
+      curr_el = f[order[curr_pos]];
     }
   }
 
@@ -406,22 +386,21 @@ private:
     const size_t n_elements = NDL_SHAPE(lp, 0)[0];
     const size_t n_outputs = NDL_SHAPE(lp, 0)[1];
     const std::string criterion = ((NodeImpurityOpts_*)lp->opt_ptr)->criterion;
-    double* ret = (double*)NDL_PTR(lp, 1);
 
-    std::vector<double> sum_vec(n_outputs, 0);
-    std::vector<std::vector<double> > target_vecs;
-    target_vecs.reserve(n_elements);
-    for (size_t r = 0; r < n_elements; r++) {
-      std::vector<double> target(n_outputs, 0);
-      for (size_t c = 0; c < n_outputs; c++) {
-        const double el = y[r * n_outputs + c];
-        sum_vec[c] += el;
-        target[c] = el;
+    std::vector<int32_t> order(n_elements);
+    std::vector<double> mean_y(n_outputs, 0);
+    for (size_t i = 0; i < n_elements; i++) {
+      order[i] = static_cast<int32_t>(i);
+      for (size_t j = 0; j < n_outputs; j++) {
+        mean_y[j] += y[i * n_outputs + j];
       }
-      target_vecs.push_back(target);
+    }
+    for (size_t j = 0; j < n_outputs; j++) {
+      mean_y[j] /= static_cast<double>(n_elements);
     }
 
-    *ret = calc_impurity_(criterion, target_vecs, sum_vec);
+    double* ret = (double*)NDL_PTR(lp, 1);
+    *ret = calc_impurity_(criterion, order.data(), y, mean_y.data(), n_elements, n_outputs, 0);
   }
 
   static VALUE node_impurity_(VALUE self, VALUE criterion, VALUE y) {
