@@ -68,6 +68,7 @@ module Rumale
         @params[:max_features] = [@params[:max_features], n_features].min
         @n_leaves = 0
         @leaf_values = []
+        @feature_ids = Array.new(x.shape[1]) { |v| v }
         @sub_rng = @rng.dup
         build_tree(x, y)
         eval_importance(n_samples, n_features)
@@ -87,6 +88,12 @@ module Rumale
       end
 
       private
+
+      def build_tree(x, y)
+        y = y.expand_dims(1).dup if y.shape[1].nil?
+        @tree = grow_node(0, x, y, impurity(y))
+        nil
+      end
 
       def stop_growing?(y)
         y.to_a.uniq.size == 1

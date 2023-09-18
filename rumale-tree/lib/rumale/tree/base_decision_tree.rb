@@ -63,11 +63,7 @@ module Rumale
       end
 
       def build_tree(x, y)
-        y = y.expand_dims(1).dup if y.shape[1].nil?
-        @feature_ids = Array.new(x.shape[1]) { |v| v }
-        @tree = grow_node(0, x, y, impurity(y))
-        @feature_ids = nil
-        nil
+        raise NotImplementedError, "#{__method__} has to be implemented in #{self.class}."
       end
 
       def grow_node(depth, x, y, impurity) # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity
