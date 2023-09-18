@@ -106,7 +106,7 @@ module Rumale
       end
 
       def impurity(y)
-        node_impurity(@params[:criterion], y.to_a)
+        node_impurity(@params[:criterion], y)
       end
     end
   end
