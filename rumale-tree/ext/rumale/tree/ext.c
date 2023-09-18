@@ -6,7 +6,7 @@ double* alloc_dbl_array(const long n_dimensions) {
   return arr;
 }
 
-double calc_gini_coef(double* histogram, const long n_elements, const long n_classes) {
+double calc_gini_coef(double* histogram, const size_t n_elements, const long n_classes) {
   double gini = 0.0;
 
   for (long i = 0; i < n_classes; i++) {
@@ -17,7 +17,7 @@ double calc_gini_coef(double* histogram, const long n_elements, const long n_cla
   return 1.0 - gini;
 }
 
-double calc_entropy(double* histogram, const long n_elements, const long n_classes) {
+double calc_entropy(double* histogram, const size_t n_elements, const long n_classes) {
   double entropy = 0.0;
 
   for (long i = 0; i < n_classes; i++) {
@@ -85,7 +85,7 @@ double calc_mse(VALUE target_vecs, VALUE mean_vec) {
   return sum / n_elements;
 }
 
-double calc_impurity_cls(const char* criterion, double* histogram, const long n_elements, const long n_classes) {
+double calc_impurity_cls(const char* criterion, double* histogram, const size_t n_elements, const long n_classes) {
   if (strcmp(criterion, "entropy") == 0) {
     return calc_entropy(histogram, n_elements, n_classes);
   }
@@ -135,15 +135,15 @@ static void iter_find_split_params_cls(na_loop_t const* lp) {
   const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
   const double* f = (double*)NDL_PTR(lp, 1);
   const int32_t* y = (int32_t*)NDL_PTR(lp, 2);
-  const long n_elements = NDL_SHAPE(lp, 0)[0];
+  const size_t n_elements = NDL_SHAPE(lp, 0)[0];
   const char* criterion = ((split_opts_cls*)lp->opt_ptr)->criterion;
   const long n_classes = ((split_opts_cls*)lp->opt_ptr)->n_classes;
   const double w_impurity = ((split_opts_cls*)lp->opt_ptr)->impurity;
   double* params = (double*)NDL_PTR(lp, 3);
-  long curr_pos = 0;
-  long next_pos = 0;
-  long n_l_elements = 0;
-  long n_r_elements = n_elements;
+  size_t curr_pos = 0;
+  size_t next_pos = 0;
+  size_t n_l_elements = 0;
+  size_t n_r_elements = n_elements;
   double curr_el = f[o[0]];
   double last_el = f[o[n_elements - 1]];
   double next_el;
@@ -160,7 +160,7 @@ static void iter_find_split_params_cls(na_loop_t const* lp) {
   params[3] = 0.0;        /* gain */
 
   /* Initialize child node variables. */
-  for (long i = 0; i < n_elements; i++) {
+  for (size_t i = 0; i < n_elements; i++) {
     r_histogram[y[o[i]]] += 1.0;
   }
 
@@ -236,15 +236,15 @@ static void iter_find_split_params_reg(na_loop_t const* lp) {
   const int32_t* o = (int32_t*)NDL_PTR(lp, 0);
   const double* f = (double*)NDL_PTR(lp, 1);
   const double* y = (double*)NDL_PTR(lp, 2);
-  const long n_elements = NDL_SHAPE(lp, 0)[0];
-  const long n_outputs = NDL_SHAPE(lp, 2)[1];
+  const size_t n_elements = NDL_SHAPE(lp, 0)[0];
+  const size_t n_outputs = NDL_SHAPE(lp, 2)[1];
   const char* criterion = ((split_opts_reg*)lp->opt_ptr)->criterion;
   const double w_impurity = ((split_opts_reg*)lp->opt_ptr)->impurity;
   double* params = (double*)NDL_PTR(lp, 3);
-  long curr_pos = 0;
-  long next_pos = 0;
-  long n_l_elements = 0;
-  long n_r_elements = n_elements;
+  size_t curr_pos = 0;
+  size_t next_pos = 0;
+  size_t n_l_elements = 0;
+  size_t n_r_elements = n_elements;
   double curr_el = f[o[0]];
   double last_el = f[o[n_elements - 1]];
   double next_el;
@@ -265,9 +265,9 @@ static void iter_find_split_params_reg(na_loop_t const* lp) {
   params[3] = 0.0;        /* gain */
 
   /* Initialize child node variables. */
-  for (long i = 0; i < n_elements; i++) {
+  for (size_t i = 0; i < n_elements; i++) {
     target = rb_ary_new2(n_outputs);
-    for (long j = 0; j < n_outputs; j++) {
+    for (size_t j = 0; j < n_outputs; j++) {
       target_var = y[o[i] * n_outputs + j];
       rb_ary_store(target, j, DBL2NUM(target_var));
       r_sum_vec[j] += target_var;
@@ -343,10 +343,10 @@ static void iter_find_split_params_grad_reg(na_loop_t const* lp) {
   const double s_grad = ((double*)lp->opt_ptr)[0];
   const double s_hess = ((double*)lp->opt_ptr)[1];
   const double reg_lambda = ((double*)lp->opt_ptr)[2];
-  const long n_elements = NDL_SHAPE(lp, 0)[0];
+  const size_t n_elements = NDL_SHAPE(lp, 0)[0];
   double* params = (double*)NDL_PTR(lp, 4);
-  long curr_pos = 0;
-  long next_pos = 0;
+  size_t curr_pos = 0;
+  size_t next_pos = 0;
   double curr_el = f[o[0]];
   double last_el = f[o[n_elements - 1]];
   double next_el;
@@ -428,10 +428,10 @@ static void iter_node_impurity_cls(na_loop_t const* lp) {
   const int32_t* y = (int32_t*)NDL_PTR(lp, 0);
   const char* criterion = ((node_impurity_cls_opts*)lp->opt_ptr)->criterion;
   const long n_classes = ((node_impurity_cls_opts*)lp->opt_ptr)->n_classes;
-  const long n_elements = NDL_SHAPE(lp, 0)[0];
+  const size_t n_elements = NDL_SHAPE(lp, 0)[0];
   double* ret = (double*)NDL_PTR(lp, 1);
   double* histogram = alloc_dbl_array(n_classes);
-  for (long i = 0; i < n_elements; i++) histogram[y[i]] += 1;
+  for (size_t i = 0; i < n_elements; i++) histogram[y[i]] += 1;
   *ret = calc_impurity_cls(criterion, histogram, n_elements, n_classes);
   xfree(histogram);
 }
@@ -462,12 +462,12 @@ static VALUE node_impurity_cls(VALUE self, VALUE criterion, VALUE y, VALUE n_cla
  */
 static void iter_check_same_label(na_loop_t const* lp) {
   const int32_t* y = (int32_t*)NDL_PTR(lp, 0);
-  const long n_elements = NDL_SHAPE(lp, 0)[0];
+  const size_t n_elements = NDL_SHAPE(lp, 0)[0];
   VALUE* ret = (VALUE*)NDL_PTR(lp, 1);
   *ret = Qtrue;
   if (n_elements > 0) {
     int32_t label = y[0];
-    for (long i = 0; i < n_elements; i++) {
+    for (size_t i = 0; i < n_elements; i++) {
       if (y[i] != label) {
         *ret = Qfalse;
         break;
