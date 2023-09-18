@@ -1,15 +1,15 @@
 #include "ext.h"
 
-double* alloc_dbl_array(const long n_dimensions) {
+double* alloc_dbl_array(const size_t n_dimensions) {
   double* arr = ALLOC_N(double, n_dimensions);
   memset(arr, 0, n_dimensions * sizeof(double));
   return arr;
 }
 
-double calc_gini_coef(double* histogram, const size_t n_elements, const long n_classes) {
+double calc_gini_coef(double* histogram, const size_t n_elements, const size_t n_classes) {
   double gini = 0.0;
 
-  for (long i = 0; i < n_classes; i++) {
+  for (size_t i = 0; i < n_classes; i++) {
     double el = histogram[i] / n_elements;
     gini += el * el;
   }
@@ -17,10 +17,10 @@ double calc_gini_coef(double* histogram, const size_t n_elements, const long n_c
   return 1.0 - gini;
 }
 
-double calc_entropy(double* histogram, const size_t n_elements, const long n_classes) {
+double calc_entropy(double* histogram, const size_t n_elements, const size_t n_classes) {
   double entropy = 0.0;
 
-  for (long i = 0; i < n_classes; i++) {
+  for (size_t i = 0; i < n_classes; i++) {
     double el = histogram[i] / n_elements;
     entropy += el * log(el + 1.0);
   }
@@ -85,7 +85,7 @@ double calc_mse(VALUE target_vecs, VALUE mean_vec) {
   return sum / n_elements;
 }
 
-double calc_impurity_cls(const char* criterion, double* histogram, const size_t n_elements, const long n_classes) {
+double calc_impurity_cls(const char* criterion, double* histogram, const size_t n_elements, const size_t n_classes) {
   if (strcmp(criterion, "entropy") == 0) {
     return calc_entropy(histogram, n_elements, n_classes);
   }
@@ -124,7 +124,7 @@ void sub_sum_vec(double* sum_vec, VALUE target) {
  */
 typedef struct {
   char* criterion;
-  long n_classes;
+  size_t n_classes;
   double impurity;
 } split_opts_cls;
 
@@ -137,7 +137,7 @@ static void iter_find_split_params_cls(na_loop_t const* lp) {
   const int32_t* y = (int32_t*)NDL_PTR(lp, 2);
   const size_t n_elements = NDL_SHAPE(lp, 0)[0];
   const char* criterion = ((split_opts_cls*)lp->opt_ptr)->criterion;
-  const long n_classes = ((split_opts_cls*)lp->opt_ptr)->n_classes;
+  const size_t n_classes = ((split_opts_cls*)lp->opt_ptr)->n_classes;
   const double w_impurity = ((split_opts_cls*)lp->opt_ptr)->impurity;
   double* params = (double*)NDL_PTR(lp, 3);
   size_t curr_pos = 0;
@@ -418,7 +418,7 @@ static VALUE find_split_params_grad_reg(VALUE self, VALUE order, VALUE features,
  */
 typedef struct {
   char* criterion;
-  long n_classes;
+  size_t n_classes;
 } node_impurity_cls_opts;
 
 /**
@@ -427,7 +427,7 @@ typedef struct {
 static void iter_node_impurity_cls(na_loop_t const* lp) {
   const int32_t* y = (int32_t*)NDL_PTR(lp, 0);
   const char* criterion = ((node_impurity_cls_opts*)lp->opt_ptr)->criterion;
-  const long n_classes = ((node_impurity_cls_opts*)lp->opt_ptr)->n_classes;
+  const size_t n_classes = ((node_impurity_cls_opts*)lp->opt_ptr)->n_classes;
   const size_t n_elements = NDL_SHAPE(lp, 0)[0];
   double* ret = (double*)NDL_PTR(lp, 1);
   double* histogram = alloc_dbl_array(n_classes);
