@@ -32,6 +32,7 @@
 #define RUMALE_TREE_EXT_HPP 1
 
 #include <cmath>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -204,7 +205,7 @@ private:
 
   /**
    * @!visibility private
-   * Check all elements have the save value.
+   * Check all elements have the same value.
    *
    * @overload check_same_label(y) -> Boolean
    *
@@ -248,6 +249,7 @@ public:
     VALUE rb_mExtDTreeReg = rb_define_module_under(outer, "ExtDecisionTreeRegressor");
     rb_define_private_method(rb_mExtDTreeReg, "find_split_params", find_split_params_, 5);
     rb_define_private_method(rb_mExtDTreeReg, "node_impurity", node_impurity_, 2);
+    rb_define_private_method(rb_mExtDTreeReg, "stop_growing?", check_same_value_, 1);
   }
 
 private:
@@ -411,6 +413,43 @@ private:
     VALUE ret = na_ndloop3(&ndf, &opts, 1, y);
     RB_GC_GUARD(criterion);
     return ret;
+  }
+
+  /**
+   * @!visibility private
+   * Check all elements have the same value/vector.
+   *
+   * @overload check_same_value(y) -> Boolean
+   *
+   * @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values.
+   * @return [Boolean]
+   */
+
+  static void iter_check_same_value_(na_loop_t const* lp) {
+    const double* y = (double*)NDL_PTR(lp, 0);
+    const size_t n_elements = NDL_SHAPE(lp, 0)[0];
+    const size_t n_outputs = NDL_SHAPE(lp, 0)[1];
+    VALUE* ret = (VALUE*)NDL_PTR(lp, 1);
+    const double eps = std::numeric_limits<double>::epsilon();
+    *ret = Qtrue;
+    if (n_elements > 0) {
+      for (size_t i = 1; i < n_elements; i++) {
+        for (size_t j = 0; j < n_outputs; j++) {
+          if (std::abs(y[i * n_outputs + j] - y[j]) > eps) {
+            *ret = Qfalse;
+            break;
+          }
+        }
+        if (*ret == Qfalse) break;
+      }
+    }
+  }
+
+  static VALUE check_same_value_(VALUE self, VALUE y) {
+    ndfunc_arg_in_t ain[1] = { { numo_cDFloat, 2 } };
+    ndfunc_arg_out_t aout[1] = { { numo_cRObject, 0 } };
+    ndfunc_t ndf = { (na_iter_func_t)iter_check_same_value_, NO_LOOP | NDF_EXTRACT, 1, 1, ain, aout };
+    return na_ndloop(&ndf, 1, y);
   }
 };
 

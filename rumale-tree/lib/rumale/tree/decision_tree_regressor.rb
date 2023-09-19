@@ -95,10 +95,6 @@ module Rumale
         nil
       end
 
-      def stop_growing?(y)
-        y.to_a.uniq.size == 1
-      end
-
       def put_leaf(node, y)
         node.probs = nil
         node.leaf = true
