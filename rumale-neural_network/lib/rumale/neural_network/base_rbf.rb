@@ -64,7 +64,7 @@ module Rumale
         # initialize centers randomly
         n_samples = x.shape[0]
         sub_rng = @rng.dup
-        rand_id = Array(0...n_samples).sample(n_centers, random: sub_rng)
+        rand_id = Array.new(n_centers) { |_v| sub_rng.rand(0...n_samples) }
         @centers = x[rand_id, true].dup
 
         # find centers
