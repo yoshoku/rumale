@@ -14,7 +14,7 @@ module Rumale
     #   require 'rumale/neural_network/mlp_regressor'
     #
     #   estimator = Rumale::NeuralNetwork::MLPRegressor.new(hidden_units: [100, 100], dropout_rate: 0.3)
-    #   estimator.fit(training_samples, traininig_labels)
+    #   estimator.fit(training_samples, traininig_values)
     #   results = estimator.predict(testing_samples)
     class MLPRegressor < BaseMLP
       include ::Rumale::Base::Regressor
