@@ -55,12 +55,12 @@ module Rumale
       #
       # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
-      # @return [MLPRegressor] The learned regressor itself.
+      # @return [RVFLRegressor] The learned regressor itself.
       def fit(x, y)
         x = ::Rumale::Validation.check_convert_sample_array(x)
         y = ::Rumale::Validation.check_convert_target_value_array(y)
         ::Rumale::Validation.check_sample_size(x, y)
-        raise 'RBFRegressor#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?(warning: false)
+        raise 'RVFLRegressor#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?(warning: false)
 
         y = y.expand_dims(1) if y.ndim == 1
 
