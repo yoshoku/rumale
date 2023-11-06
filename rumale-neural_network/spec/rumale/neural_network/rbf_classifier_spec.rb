@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 require 'numo/tiny_linalg'
-Numo::Linalg = Numo::TinyLinalg
+Numo::Linalg = Numo::TinyLinalg unless defined?(Numo::Linalg)
 
 RSpec.describe Rumale::NeuralNetwork::RBFClassifier do
   let(:x) { dataset[0] }
