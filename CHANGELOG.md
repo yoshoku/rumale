@@ -1,3 +1,19 @@
+# [[0.28.0](https://github.com/yoshoku/rumale/compare/v0.27.0...v0.28.0)]
+## rumale-tree
+- Rewrite native exntension codes with C++.
+- Reimplements stop_growing? private method in DecisionTreeRegressor with native extension.
+
+## rumae-neural_network
+- Add classifier and regressor classes for Radial Basis Function (RBF) Network.
+  - RBFClassifier
+  - RBFRegressor
+- Add classifier and regressor classes for Random Vector Functinal Link (RVFL) Network.
+  - RVFLClassifier
+  - RVFLRegressor
+
+## others
+- No changes, minor changes in configuration files, or minor refactoring using RuboCop.
+
 # 0.27.0
 ## rumale-linear_model
 - Add `partial_fit` method to SGDClassifier and SGDRegressor.

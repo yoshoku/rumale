@@ -5,6 +5,6 @@ module Rumale
   # Module for data embedding algorithms.
   module Manifold
     # @!visibility private
-    VERSION = '0.27.0'
+    VERSION = '0.28.0'
   end
 end
