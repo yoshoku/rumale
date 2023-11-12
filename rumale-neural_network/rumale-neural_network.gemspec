@@ -9,12 +9,12 @@ Gem::Specification.new do |spec|
   spec.email = ['yoshoku@outlook.com']
 
   spec.summary = <<~MSG
-    Rumale::NeuralNetwork provides classifier and regression
-    based on multi-layer perceptron with Rumale interface.
+    Rumale::NeuralNetwork provides classifiers and regression algorithms based on multi-layer perceptron,
+    radial basis function network, and random vector functional link network in the Rumale interface.
   MSG
   spec.description = <<~MSG
-    Rumale::NeuralNetwork provides classifier and regression
-    based on multi-layer perceptron with Rumale interface.
+    Rumale::NeuralNetwork provides classifiers and regression algorithms based on multi-layer perceptron,
+    radial basis function network, and random vector functional link network in the Rumale interface.
   MSG
   spec.homepage = 'https://github.com/yoshoku/rumale'
   spec.license = 'BSD-3-Clause'

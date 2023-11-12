@@ -5,8 +5,8 @@
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork.html)
 
 Rumale is a machine learning library in Ruby.
-Rumale::NeuralNetwork provides classifier and regression based on multi-layer perceptron
-with Rumale interface.
+Rumale::NeuralNetwork provides classifiers and regression algorithms based on multi-layer perceptron,
+radial basis function network, and random vector functional link network in the Rumale interface.
 
 ## Installation
 
