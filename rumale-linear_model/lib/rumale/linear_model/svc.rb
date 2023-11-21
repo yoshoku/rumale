@@ -167,7 +167,8 @@ module Rumale
           if indices.count.positive?
             sx = x[indices, true]
             sy = y[indices]
-            grad += 2.fdiv(n_samples) * sx.transpose.dot((sx.dot(w) - sy))
+            sz = z[indices]
+            grad += 2.fdiv(n_samples) * (sz - sy).dot(sx)
           end
           [loss, grad]
         end
