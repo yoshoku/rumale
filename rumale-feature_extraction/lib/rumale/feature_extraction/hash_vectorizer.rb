@@ -71,7 +71,7 @@ module Rumale
 
         x.each do |f|
           f.each do |k, v|
-            k = "#{k}#{separator}#{v}".to_sym if v.is_a?(String)
+            k = :"#{k}#{separator}#{v}" if v.is_a?(String)
             next if @vocabulary.key?(k)
 
             @feature_names.push(k)
@@ -109,7 +109,7 @@ module Rumale
         x.each_with_index do |f, i|
           f.each do |k, v|
             if v.is_a?(String)
-              k = "#{k}#{separator}#{v}".to_sym
+              k = :"#{k}#{separator}#{v}"
               v = 1
             end
             z[i, @vocabulary[k]] = v if @vocabulary.key?(k)
