@@ -43,7 +43,7 @@ module Rumale
       # @param y [Numo::NArray/Nil] (shape: [n_samples, n_outputs]) The target values or labels to be used for fitting the transformers.
       # @return [FeatureUnion] The learned feature union itself.
       def fit(x, y = nil)
-        @transformers.each { |_k, t| t.fit(x, y) }
+        @transformers.each_value { |t| t.fit(x, y) }
         self
       end
 
