@@ -60,9 +60,9 @@ module Rumale
       end
 
       def special_cases?(n_samples, n_classes, n_clusters)
-        ((n_classes.zero? && n_clusters.zero?) ||
-         (n_classes == 1 && n_clusters == 1) ||
-         (n_classes == n_samples && n_clusters == n_samples))
+        (n_classes.zero? && n_clusters.zero?) ||
+          (n_classes == 1 && n_clusters == 1) ||
+          (n_classes == n_samples && n_clusters == n_samples)
       end
 
       def comb_two(k)

@@ -42,7 +42,7 @@ module Rumale
           max_iter: max_iter,
           tol: tol,
           eps: eps,
-          random_seed: (random_seed || srand)
+          random_seed: random_seed || srand
         }
         @rng = Random.new(@params[:random_seed])
       end

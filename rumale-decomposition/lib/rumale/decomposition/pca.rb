@@ -62,7 +62,7 @@ module Rumale
           solver: 'fpt',
           max_iter: max_iter,
           tol: tol,
-          random_seed: (random_seed || srand)
+          random_seed: random_seed || srand
         }
         @params[:solver] = 'evd' if (solver == 'auto' && enable_linalg?(warning: false)) || solver == 'evd'
         @rng = Random.new(@params[:random_seed])
