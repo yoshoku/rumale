@@ -109,7 +109,7 @@ module Rumale
 
         @classes = Numo::Int32[*y.to_a.uniq.sort]
 
-        send("fit_#{@loss_func.name}", x, y)
+        send(:"fit_#{@loss_func.name}", x, y)
 
         self
       end
@@ -157,7 +157,7 @@ module Rumale
       def predict(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
 
-        send("predict_#{@loss_func.name}", x)
+        send(:"predict_#{@loss_func.name}", x)
       end
 
       # Predict probability for samples.
@@ -167,7 +167,7 @@ module Rumale
       def predict_proba(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
 
-        send("predict_proba_#{@loss_func.name}", x)
+        send(:"predict_proba_#{@loss_func.name}", x)
       end
 
       private
