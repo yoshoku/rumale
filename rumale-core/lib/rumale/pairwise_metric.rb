@@ -13,7 +13,6 @@ module Rumale
     # @param y [Numo::DFloat] (shape: [n_samples_y, n_features])
     # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
     def euclidean_distance(x, y = nil)
-      y = x if y.nil?
       Numo::NMath.sqrt(squared_error(x, y).abs)
     end
 
