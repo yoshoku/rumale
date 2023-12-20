@@ -38,9 +38,9 @@ module Rumale
     # @param y [Numo::DFloat] (shape: [n_samples_y, n_features])
     # @return [Numo::DFloat] (shape: [n_samples_x, n_samples_x] or [n_samples_x, n_samples_y] if y is given)
     def squared_error(x, y = nil)
-      y = x if y.nil?
       sum_x_vec = (x**2).sum(axis: 1).expand_dims(1)
       sum_y_vec = y.nil? ? sum_x_vec.transpose : (y**2).sum(axis: 1).expand_dims(1).transpose
+      y = x if y.nil?
       err_mat = -2 * x.dot(y.transpose)
       err_mat += sum_x_vec
       err_mat += sum_y_vec
