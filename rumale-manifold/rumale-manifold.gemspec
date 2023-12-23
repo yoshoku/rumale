@@ -11,7 +11,8 @@ Gem::Specification.new do |spec|
   spec.summary = 'Rumale::Manifold provides data embedding algorithms with Rumale interface.'
   spec.description = <<~MSG
     Rumale::Manifold provides data embedding algorithms,
-    such as Multi-dimensional Scaling and t-distributed Stochastic Neighbor Embedding,
+    such as Multi-dimensional Scaling, Locally Linear Embedding, Laplacian Eigenmaps, Hessian Eigenmaps,
+    and t-distributed Stochastic Neighbor Embedding,
     with Rumale interface.
   MSG
   spec.homepage = 'https://github.com/yoshoku/rumale'
