@@ -1,5 +1,17 @@
+# [[0.28.1](https://github.com/yoshoku/rumale/compare/v0.28.0...v0.28.1)]
+## rumale-core
+- Fix nil checks for the y argument of euclidean_distance and squared_error methods: [#45](https://github.com/yoshoku/rumale/pull/45) and [4eb1727](https://github.com/yoshoku/rumale/commit/4eb1727fadb05eff8ba94bd067693b4b25f141d4)
+
+## rumale-manifold
+- Add transformer classes for Hessian Eigenmaps.
+  - HessianEigenmaps
+
+## others
+- No changes, or minor changes using RuboCop.
+
 # [[0.28.0](https://github.com/yoshoku/rumale/compare/v0.27.0...v0.28.0)]
 ## rumale-tree
+**Breaking change**
 - Rewrite native exntension codes with C++.
 - Reimplements stop_growing? private method in DecisionTreeRegressor with native extension.
 

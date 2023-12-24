@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that implement ensemble-based methods.
   module Ensemble
     # @!visibility private
-    VERSION = '0.28.0'
+    VERSION = '0.28.1'
   end
 end

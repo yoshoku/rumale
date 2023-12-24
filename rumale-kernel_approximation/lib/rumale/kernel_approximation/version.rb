@@ -5,6 +5,6 @@ module Rumale
   # Module for kernel approximation algorithms.
   module KernelApproximation
     # @!visibility private
-    VERSION = '0.28.0'
+    VERSION = '0.28.1'
   end
 end
