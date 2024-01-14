@@ -39,7 +39,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
-          bundler-cache: true
       - name: Install BLAS and LAPACK
         run: pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
       - name: Build and test with Rake
@@ -61,7 +60,6 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2
-        bundler-cache: true
     - name: Build and test with Rake
       run: |
         bundle config --local build.numo-tiny_linalg "--with-opt-dir=/usr/local/opt/openblas"
