@@ -1,0 +1,20 @@
+name: rubocop
+
+on:
+  push:
+    branches:
+      - main
+      - dev*
+  pull_request:
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby 3.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+      - name: Run RuboCop
+        run: bash rumale-rubocop.sh
