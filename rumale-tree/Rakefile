@@ -18,7 +18,7 @@ Rake::ExtensionTask.new('ext') do |ext|
   ext.lib_dir = 'lib/rumale/tree'
 end
 
-task default: %i[clobber compile rubocop spec]
+task default: %i[clobber compile spec]
 
 Rake::Task['release'].clear
 gemspec = Bundler.load_gemspec(Dir.glob('*.gemspec').first)
