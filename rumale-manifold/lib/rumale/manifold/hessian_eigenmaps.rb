@@ -41,9 +41,9 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @overload fit(x) -> LocallyLinearEmbedding
+      # @overload fit(x) -> HessianEigenmaps
       #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      #   @return [LocallyLinearEmbedding] The learned transformer itself.
+      #   @return [HessianEigenmaps] The learned transformer itself.
       def fit(x, _y = nil) # rubocop:disable Metrics/AbcSize
         raise 'HessianEigenmaps#fit requires Numo::Linalg but that is not loaded' unless enable_linalg?(warning: false)
 

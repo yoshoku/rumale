@@ -7,7 +7,7 @@ require 'rumale/validation'
 
 module Rumale
   module Manifold
-    # LocallyLinearEmbedding is a class that implements Loccaly Linear Embedding.
+    # LocallyLinearEmbedding is a class that implements Locally Linear Embedding.
     #
     # @example
     #   require 'numo/linalg/autoloader'
