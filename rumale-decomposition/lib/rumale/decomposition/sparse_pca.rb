@@ -20,8 +20,8 @@ module Rumale
     #   sparse_components = decomposer.components
     #
     # *Reference*
-    # Macky, L., "Deflation Methods for Sparse PCA," Advances in NIPS'08, pp. 1017--1024, 2008.
-    # Hein, M. and Bühler, T., "An Inverse Power Method for Nonlinear Eigenproblems with Applications in 1-Spectral Clustering and Sparse PCA," Advances in NIPS'10, pp. 847--855, 2010.
+    # - Macky, L., "Deflation Methods for Sparse PCA," Advances in NIPS'08, pp. 1017--1024, 2008.
+    # - Hein, M. and Bühler, T., "An Inverse Power Method for Nonlinear Eigenproblems with Applications in 1-Spectral Clustering and Sparse PCA," Advances in NIPS'10, pp. 847--855, 2010.
     class SparsePCA < ::Rumale::Base::Estimator
       include ::Rumale::Base::Transformer
 
@@ -40,12 +40,15 @@ module Rumale
       # Create a new transformer with Sparse PCA.
       #
       # @param n_components [Integer] The number of principal components.
-      # @param reg_param [Float] The regularization parameter.
+      # @param reg_param [Float] The regularization parameter (interval: [0, 1]).
       # @param max_iter [Integer] The maximum number of iterations.
       # @param tol [Float] The tolerance of termination criterion.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_components: 2, reg_param: 0.001, max_iter: 1000, tol: 1e-6, random_seed: nil)
         super()
+
+        warn('reg_param should be in the interval [0, 1].') unless (0..1).cover?(reg_param)
+
         @params = {
           n_components: n_components,
           reg_param: reg_param,
