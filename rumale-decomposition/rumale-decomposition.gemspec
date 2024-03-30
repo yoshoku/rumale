@@ -34,5 +34,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'numo-narray', '>= 0.9.1'
-  spec.add_dependency 'rumale-core', '~> 0.28.1'
+  spec.add_dependency 'rumale-core', '~> 0.29.0'
 end

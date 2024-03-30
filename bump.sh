@@ -1,7 +1,7 @@
 #!/bin/zsh
 
-FROM='0.28.0'
-TO='0.28.1'
+FROM='0.28.1'
+TO='0.29.0'
 
 for FILENAME in `find . -name 'version.rb'`; do
   gsed -i -e "s/VERSION\s*=\s*'${FROM}'/VERSION = '${TO}'/" ${FILENAME}

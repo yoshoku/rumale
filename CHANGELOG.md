@@ -1,3 +1,18 @@
+# [[0.29.0](https://github.com/yoshoku/rumale/compare/v0.28.1...v0.29.0)]
+## rumale-decomposition
+- Add transformer class for Sparse Principal Component Analysis.
+  - SparsePCA
+
+## rumale-manifold
+- Add transformer class for Local Tangent Space Alignment.
+  - LocalTangentSpaceAlignment
+
+## others
+- No changes, or minor changes in configuration files.
+
+## others
+- No changes, or minor changes using RuboCop.
+
 # [[0.28.1](https://github.com/yoshoku/rumale/compare/v0.28.0...v0.28.1)]
 ## rumale-core
 - Fix nil checks for the y argument of euclidean_distance and squared_error methods: [#45](https://github.com/yoshoku/rumale/pull/45) and [4eb1727](https://github.com/yoshoku/rumale/commit/4eb1727fadb05eff8ba94bd067693b4b25f141d4)
