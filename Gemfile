@@ -2,4 +2,4 @@
 
 source 'https://rubygems.org'
 
-gem 'yard', github: '/yoshoku/yard', branch: 'jquery-3.6.x'
+gem 'yard', github: '/yoshoku/yard', branch: 'vanilla-js'
