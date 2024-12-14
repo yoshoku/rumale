@@ -43,7 +43,7 @@ jobs:
         run: pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
       - name: Build and test with Rake
         run: |
-          bundle config --local build.numo-tiny_linalg "--with-opt-lib=C:\msys64\ucrt64\lib --with-opt-include=C:\msys64\ucrt64\include\openblas"
+          bundle config --global build.numo-tiny_linalg "--with-opt-lib=C:\msys64\ucrt64\lib --with-opt-include=C:\msys64\ucrt64\include\openblas"
           bash rumale-test.sh
 
   build-mac:
