@@ -22,7 +22,7 @@ module Rumale
 
       # Create a new normalizer for normaliing to max-norm.
       def initialize # rubocop:disable Lint/UselessMethodDefinition
-        super()
+        super
       end
 
       # Calculate the maximum norms of each sample.

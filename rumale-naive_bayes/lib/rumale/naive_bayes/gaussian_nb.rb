@@ -31,7 +31,7 @@ module Rumale
 
       # Create a new classifier with Gaussian Naive Bayes.
       def initialize
-        super()
+        super
         @params = {}
       end
 

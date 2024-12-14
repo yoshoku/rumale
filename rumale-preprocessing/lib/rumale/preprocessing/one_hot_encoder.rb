@@ -38,7 +38,7 @@ module Rumale
 
       # Create a new encoder for encoding categorical integer features to one-hot-vectors
       def initialize # rubocop:disable Lint/UselessMethodDefinition
-        super()
+        super
       end
 
       # Fit one-hot-encoder to samples.

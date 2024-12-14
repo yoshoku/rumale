@@ -28,7 +28,7 @@ module Rumale
 
       # Create a new encoder for encoding labels to values between 0 and n_classes - 1.
       def initialize # rubocop:disable Lint/UselessMethodDefinition
-        super()
+        super
       end
 
       # Fit label-encoder to labels.

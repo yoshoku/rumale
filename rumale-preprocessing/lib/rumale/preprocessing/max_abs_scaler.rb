@@ -23,7 +23,7 @@ module Rumale
 
       # Creates a new normalizer for scaling each feature with its maximum absolute value.
       def initialize # rubocop:disable Lint/UselessMethodDefinition
-        super()
+        super
       end
 
       # Calculate the minimum and maximum value of each feature for scaling.

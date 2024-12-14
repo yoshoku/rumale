@@ -23,7 +23,7 @@ module Rumale
 
       # Create a new normalizer for normaliing to unit L2-norm.
       def initialize # rubocop:disable Lint/UselessMethodDefinition
-        super()
+        super
       end
 
       # Calculate L2-norms of each sample.

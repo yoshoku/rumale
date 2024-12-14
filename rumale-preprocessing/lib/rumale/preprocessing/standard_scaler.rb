@@ -28,7 +28,7 @@ module Rumale
 
       # Create a new normalizer for centering and scaling to unit variance.
       def initialize # rubocop:disable Lint/UselessMethodDefinition
-        super()
+        super
       end
 
       # Calculate the mean value and standard deviation of each feature for scaling.

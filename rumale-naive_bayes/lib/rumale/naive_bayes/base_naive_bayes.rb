@@ -12,7 +12,7 @@ module Rumale
       include ::Rumale::Base::Classifier
 
       def initialize # rubocop:disable Lint/UselessMethodDefinition
-        super()
+        super
       end
 
       # Predict class labels for samples.

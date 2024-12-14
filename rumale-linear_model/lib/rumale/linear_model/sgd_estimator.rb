@@ -191,7 +191,7 @@ module Rumale
     class SGDEstimator < Rumale::LinearModel::BaseEstimator
       # Create an initial linear model with SGD.
       def initialize
-        super()
+        super
         @params = {
           learning_rate: 0.01,
           decay: nil,
