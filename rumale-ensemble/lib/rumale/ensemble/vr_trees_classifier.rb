@@ -47,7 +47,7 @@ module Rumale
       #   If nil is given, number of leaves is not limited.
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
       # @param max_features [Integer] The number of features to consider when searching optimal split point.
-      #   If nil is given, split process considers 'Math.sqrt(n_features)' features.
+      #   If nil is given, split process considers 'n_features' features.
       # @param n_jobs [Integer] The number of jobs for running the fit method in parallel.
       #   If nil is given, the method does not execute in parallel.
       #   If zero or less is given, it becomes equal to the number of processors.
@@ -72,7 +72,7 @@ module Rumale
 
         # Initialize some variables.
         n_features = x.shape[1]
-        @params[:max_features] = Math.sqrt(n_features).to_i if @params[:max_features].nil?
+        @params[:max_features] = n_features if @params[:max_features].nil?
         @params[:max_features] = @params[:max_features].clamp(1, n_features)
         @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
         sub_rng = @rng.dup
