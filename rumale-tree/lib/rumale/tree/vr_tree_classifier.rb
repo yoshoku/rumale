@@ -82,6 +82,7 @@ module Rumale
         return super if r <= @params[:alpha]
 
         fa, fb = features.to_a.uniq.sample(2, random: @sub_rng)
+        fb = fa if fb.nil?
         threshold = 0.5 * (fa + fb)
         l_ids = features.le(threshold).where
         r_ids = features.gt(threshold).where
