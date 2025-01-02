@@ -10,7 +10,7 @@ module Rumale
     # VRTreesRegressor is a class that implements variable-random (VR) trees for regression
     #
     # @example
-    #   @require 'rumale/ensemble/vr_trees_regressor'
+    #   require 'rumale/ensemble/vr_trees_regressor'
     #
     #   estimator =
     #     Rumale::Ensemble::VRTreesRegressor.new(
