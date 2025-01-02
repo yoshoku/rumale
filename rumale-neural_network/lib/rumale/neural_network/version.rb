@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the modules and classes for implementation multi-layer perceptron estimator.
   module NeuralNetwork
     # @!visibility private
-    VERSION = '0.29.0'
+    VERSION = '1.0.0'
   end
 end

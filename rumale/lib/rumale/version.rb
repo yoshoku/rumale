@@ -3,5 +3,5 @@
 # Rumale is a machine learning library in Ruby.
 module Rumale
   # The version of Rumale you are using.
-  VERSION = '0.29.0'
+  VERSION = '1.0.0'
 end

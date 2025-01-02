@@ -1,3 +1,19 @@
+# [[1.0.0](https://github.com/yoshoku/rumale/compare/v0.29.0...v1.0.0)]
+## rumale-core
+- Add csv gem to runtime dependencies for Ruby 3.4.
+
+## rumale-ensemble
+- Add classifier and regressor classes based on Variable-Random Trees.
+  - VRTreesClassifier
+  - VRTreesRegressor
+
+## others
+- No changes, or minor changes using RuboCop.
+
+The above changes in this update would normally be version 0.30.0.
+However, considering the extensive development period of over five years,
+this release has been designated as version 1.0.0.
+
 # [[0.29.0](https://github.com/yoshoku/rumale/compare/v0.28.1...v0.29.0)]
 ## rumale-decomposition
 - Add transformer class for Sparse Principal Component Analysis.
@@ -8,10 +24,7 @@
   - LocalTangentSpaceAlignment
 
 ## others
-- No changes, or minor changes in configuration files.
-
-## others
-- No changes, or minor changes using RuboCop.
+- No changes, minor changes in configuration files.
 
 # [[0.28.1](https://github.com/yoshoku/rumale/compare/v0.28.0...v0.28.1)]
 ## rumale-core

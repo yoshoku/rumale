@@ -35,6 +35,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'lbfgsb', '>=0.3.0'
   spec.add_dependency 'numo-narray', '>= 0.9.1'
-  spec.add_dependency 'rumale-core', '~> 0.29.0'
-  spec.add_dependency 'rumale-decomposition', '~> 0.29.0'
+  spec.add_dependency 'rumale-core', '~> 1.0.0'
+  spec.add_dependency 'rumale-decomposition', '~> 1.0.0'
 end

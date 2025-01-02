@@ -5,6 +5,6 @@ module Rumale
   # @!visibility private
   module Core
     # @!visibility private
-    VERSION = '0.29.0'
+    VERSION = '1.0.0'
   end
 end
