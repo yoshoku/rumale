@@ -24,7 +24,7 @@ module Rumale
     # @!visibility private
     def check_convert_target_value_array(y)
       y = Numo::DFloat.cast(y) unless y.is_a?(Numo::DFloat)
-      raise ArgumentError, 'the target value array is expected to be 1-D or 2-D arrray' unless y.ndim == 1 || y.ndim == 2
+      raise ArgumentError, 'the target value array is expected to be 1-D or 2-D arrray' unless [1, 2].include?(y.ndim)
 
       y
     end
