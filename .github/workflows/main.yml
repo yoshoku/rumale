@@ -32,13 +32,13 @@ jobs:
 
   build-win:
     runs-on: windows-latest
-    name: Ruby 3.2 (Windows)
+    name: Ruby 3.4 (Windows)
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Ruby 3.2
+      - name: Set up Ruby 3.4
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2
+          ruby-version: 3.4
       - name: Install BLAS and LAPACK
         run: pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
       - name: Build and test with Rake
@@ -48,7 +48,7 @@ jobs:
 
   build-mac:
     runs-on: macos-latest
-    name: Ruby 3.2 (macOS)
+    name: Ruby 3.4 (macOS)
     steps:
     - uses: actions/checkout@v4
     - name: Install OpenBLAS
@@ -59,7 +59,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: 3.4
     - name: Build and test with Rake
       run: |
         bundle config --local build.numo-tiny_linalg "--with-opt-dir=/usr/local/opt/openblas"
