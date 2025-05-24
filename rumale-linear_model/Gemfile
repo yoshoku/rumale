@@ -11,8 +11,6 @@ gem 'numo-tiny_linalg', '~> 0.3.1'
 gem 'parallel', '~> 1.22'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.0'
-gem 'rubocop', '~> 1.21'
-gem 'rubocop-performance', '~> 1.8'
-gem 'rubocop-rake', '~> 0.5'
-gem 'rubocop-rspec', '~> 2.27.0'
 gem 'simplecov', '~> 0.21'
+
+eval_gemfile(File.expand_path('../Gemfile.rubocop', __dir__))
