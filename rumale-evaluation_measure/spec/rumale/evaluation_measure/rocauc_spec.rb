@@ -7,33 +7,29 @@ RSpec.describe Rumale::EvaluationMeasure::ROCAUC do
   let(:y_bin) { Numo::Int32[1, 1, 2, 2] }
   let(:y_bin_score) { Numo::DFloat[0.1, 0.4, 0.35, 0.8] }
   let(:y_mult) do
-    Numo::Int32[[1, 0, 0],
-                [0, 1, 0],
-                [0, 1, 0],
-                [0, 0, 1],
-                [1, 0, 0],
-                [1, 0, 0],
-                [0, 0, 1],
-                [0, 0, 1],
-                [0, 0, 1],
-                [1, 0, 0]]
+    Numo::Int32[[1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 0, 1],
+                [0, 0, 0, 1],
+                [0, 0, 1, 0],
+                [0, 0, 1, 0],
+                [1, 0, 0, 0]]
   end
   let(:y_mult_score) do
-    Numo::DFloat[[0.5, 0.4, 0.1],
-                 [0.1, 0.8, 0.1],
-                 [0.3, 0.5, 0.2],
-                 [0.5, 0.2, 0.3],
-                 [0.8, 0.1, 0.1],
-                 [0.1, 0.7, 0.2],
-                 [0.2, 0.7, 0.1],
-                 [0.3, 0.2, 0.5],
-                 [0.3, 0.5, 0.2],
-                 [0.7, 0.1, 0.2]]
+    Numo::DFloat[[0.6, 0.2, 0.1, 0.1],
+                 [0.1, 0.6, 0.2, 0.1],
+                 [0.1, 0.6, 0.2, 0.1],
+                 [0.1, 0.2, 0.1, 0.6],
+                 [0.1, 0.2, 0.1, 0.6],
+                 [0.1, 0.1, 0.6, 0.2],
+                 [0.1, 0.1, 0.6, 0.2],
+                 [0.6, 0.2, 0.1, 0.1]]
   end
 
   it 'caclulates ROC-AUC', :aggregate_failures do
     expect(roc_auc.score(y_bin, y_bin_score)).to be_within(1e-4).of(0.75)
-    expect(roc_auc.score(y_mult, y_mult_score)).to be_within(1e-4).of(0.7812)
+    expect(roc_auc.score(y_mult, y_mult_score)).to be_within(1e-4).of(1.0)
   end
 
   it 'calculates receiver operating characteristic curve', :aggregate_failures do
