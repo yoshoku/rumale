@@ -48,7 +48,8 @@ module Rumale
       def hidden_output(x)
         sub_rng = @rng.dup
         n_features = x.shape[1]
-        @random_weight_vec = (2.0 * Rumale::Utils.rand_uniform([n_features, @params[:hidden_units]], sub_rng) - 1.0) * @params[:scale] # rubocop:disbale Layout/LineLength
+        @random_weight_vec = (2.0 * Rumale::Utils.rand_uniform([n_features, @params[:hidden_units]],
+                                                               sub_rng) - 1.0) * @params[:scale]
         @random_bias = Rumale::Utils.rand_uniform(@params[:hidden_units], sub_rng) * @params[:scale]
         h = 0.5 * (Numo::NMath.tanh(0.5 * (x.dot(@random_weight_vec) + @random_bias)) + 1.0)
         Numo::DFloat.hstack([x, h])
