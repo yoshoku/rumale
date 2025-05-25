@@ -22,8 +22,9 @@ jobs:
         with:
           ruby-version: 3.4
       - name: Install numo-narray
-        shell: bash
-        run: gem install numo-narray -- --with-cflags="-Wno-incompatible-pointer-types -Wno-compare-distinct-pointer-types"
+        env:
+          CFLAGS_VAL: -Wno-incompatible-pointer-types -Wno-compare-distinct-pointer-types -std=c90
+        run: gem install numo-narray -- --with-cflags="%CFLAGS_VAL%"
       - name: Install BLAS and LAPACK
         run: pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
       - name: Build and test with Rake
