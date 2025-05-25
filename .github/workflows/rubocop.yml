@@ -1,11 +1,6 @@
 name: lint
 
-on:
-  push:
-    branches:
-      - main
-      - dev*
-  pull_request:
+on: [pull_request]
 
 jobs:
   rubocop:
