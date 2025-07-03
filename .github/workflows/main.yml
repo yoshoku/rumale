@@ -49,7 +49,7 @@ jobs:
           gem specific_install -l "https://github.com/ruby-numo/numo-narray.git"
       - name: Build and test with Rake
         run: |
-          bundle config --global build.numo-tiny_linalg "--with-opt-lib=C:\msys64\ucrt64\lib --with-opt-include=C:\msys64\ucrt64\include\openblas"
+          bundle config set --global build.numo-tiny_linalg "--with-opt-lib=C:\hostedtoolcache\windows\Ruby\3.4.4\x64\msys64\ucrt64\lib --with-opt-include=C:\hostedtoolcache\windows\Ruby\3.4.4\x64\msys64\ucrt64\include\openblas"
           bash rumale-test.sh
 
   build-mac:
