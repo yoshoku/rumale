@@ -54,3 +54,6 @@ RSpec/NestedGroups:
 
 Style/YodaExpression:
   Enabled: false
+
+Style/CollectionQuerying:
+  Enabled: false
