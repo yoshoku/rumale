@@ -43,6 +43,10 @@ jobs:
         run: |
           pacman -Syu
           pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
+      - name: Install numo-narray
+        run: |
+          gem install specific_install
+          gem specific_install -l "https://github.com/ruby-numo/numo-narray.git"
       - name: Build and test with Rake
         run: |
           bundle config --global build.numo-tiny_linalg "--with-opt-lib=C:\msys64\ucrt64\lib --with-opt-include=C:\msys64\ucrt64\include\openblas"
