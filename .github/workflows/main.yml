@@ -39,8 +39,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.4
-      - name: Install BLAS and LAPACK
-        run: pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
+      - name: Install OpenBLAS and LAPACK
+        run: |
+          pacman -Syu
+          pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
       - name: Build and test with Rake
         run: |
           bundle config --global build.numo-tiny_linalg "--with-opt-lib=C:\msys64\ucrt64\lib --with-opt-include=C:\msys64\ucrt64\include\openblas"
