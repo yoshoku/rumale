@@ -67,7 +67,7 @@ module Rumale
       #   @return [PowerIteration] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape?(x)
 
         fit_predict(x)
         self
@@ -80,7 +80,7 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape?(x)
 
         affinity_mat = @params[:affinity] == 'precomputed' ? x : ::Rumale::PairwiseMetric.rbf_kernel(x, nil, @params[:gamma])
         @embedding, @n_iter = embedded_space(affinity_mat, @params[:max_iter], @params[:tol].fdiv(affinity_mat.shape[0]))
@@ -89,7 +89,7 @@ module Rumale
 
       private
 
-      def check_invalid_array_shape(x)
+      def check_invalid_array_shape?(x)
         @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
       end
 

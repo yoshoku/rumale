@@ -58,7 +58,7 @@ module Rumale
       #   @return [KMedoids] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape?(x)
 
         # initialize some varibales.
         distance_mat = @params[:metric] == 'precomputed' ? x : ::Rumale::PairwiseMetric.euclidean_distance(x)
@@ -102,7 +102,7 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape?(x)
 
         fit(x)
         if @params[:metric] == 'precomputed'
@@ -114,7 +114,7 @@ module Rumale
 
       private
 
-      def check_invalid_array_shape(x)
+      def check_invalid_array_shape?(x)
         @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
       end
 

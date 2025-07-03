@@ -52,7 +52,7 @@ module Rumale
       #   @return [DBSCAN] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape?(x)
 
         partial_fit(x)
         self
@@ -65,7 +65,7 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input distance matrix should be square' if check_invalid_array_shape?(x)
 
         partial_fit(x)
         labels
@@ -73,7 +73,7 @@ module Rumale
 
       private
 
-      def check_invalid_array_shape(x)
+      def check_invalid_array_shape?(x)
         @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
       end
 
@@ -86,7 +86,7 @@ module Rumale
         n_samples.times do |query_id|
           next if @labels[query_id] >= -1
 
-          cluster_id += 1 if expand_cluster(metric_mat, query_id, cluster_id)
+          cluster_id += 1 if expand_cluster?(metric_mat, query_id, cluster_id)
         end
         @core_sample_ids = Numo::Int32[*@core_sample_ids.flatten]
         nil
@@ -96,7 +96,7 @@ module Rumale
         @params[:metric] == 'precomputed' ? x : ::Rumale::PairwiseMetric.euclidean_distance(x)
       end
 
-      def expand_cluster(metric_mat, query_id, cluster_id)
+      def expand_cluster?(metric_mat, query_id, cluster_id)
         target_ids = region_query(metric_mat[query_id, true])
         if target_ids.size < @params[:min_samples]
           @labels[query_id] = -1

@@ -65,7 +65,7 @@ module Rumale
       #   @return [SpectralClustering] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape?(x)
 
         raise 'SpectralClustering#fit requires Numo::Linalg but that is not loaded' unless enable_linalg?(warning: false)
 
@@ -81,7 +81,7 @@ module Rumale
       # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
-        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape(x)
+        raise ArgumentError, 'the input affinity matrix should be square' if check_invalid_array_shape?(x)
 
         unless enable_linalg?(warning: false)
           raise 'SpectralClustering#fit_predict requires Numo::Linalg but that is not loaded'
@@ -95,7 +95,7 @@ module Rumale
 
       private
 
-      def check_invalid_array_shape(x)
+      def check_invalid_array_shape?(x)
         @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
       end
 
