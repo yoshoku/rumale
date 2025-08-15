@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: RuboCop
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Ruby 3.2
         uses: ruby/setup-ruby@v1
         with:
