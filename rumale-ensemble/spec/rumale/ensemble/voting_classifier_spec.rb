@@ -19,7 +19,7 @@ RSpec.describe Rumale::Ensemble::VotingClassifier do
   let(:func_vals) { estimator.decision_function(x) }
   let(:probs) { estimator.predict_proba(x) }
   let(:predicted) { estimator.predict(x) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
   let(:score) { estimator.score(x, y) }
 
   context 'when binary classification problem' do

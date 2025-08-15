@@ -47,8 +47,8 @@ RSpec.describe Rumale::Pipeline::Pipeline do
       let(:pipe) { described_class.new(steps: { rbf: rbf, pca: pca, nbs: nbs }).fit(x, y) }
       let(:probs) { pipe.predict_proba(x) }
       let(:log_probs) { pipe.predict_log_proba(x) }
-      let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
-      let(:predicted_by_log_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[log_probs[n, true].max_index] })] }
+      let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
+      let(:predicted_by_log_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[log_probs[n, true].max_index] }] }
 
       it 'estimates class probabilities with Kernel approximation, PCA, and Naive bayes.', :aggregate_failures do
         expect(probs.shape).to match([n_samples, 2])

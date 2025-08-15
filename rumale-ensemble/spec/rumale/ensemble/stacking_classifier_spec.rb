@@ -67,7 +67,7 @@ RSpec.describe Rumale::Ensemble::StackingClassifier do
   context 'when multiclass classification problem' do
     let(:dataset) { three_clusters_dataset }
     let(:meta_estimator) { Rumale::LinearModel::SVC.new(probability: true) }
-    let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+    let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
 
     before { estimator.fit(x, y) }
 

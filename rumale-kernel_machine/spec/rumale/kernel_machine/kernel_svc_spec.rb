@@ -19,7 +19,7 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
   let(:predicted) { estimator.predict(kernel_mat) }
   let(:probs) { estimator.predict_proba(kernel_mat) }
   let(:score) { estimator.score(kernel_mat, y) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
 
   context 'when binary classification problem' do
     let(:dataset) { xor_dataset }

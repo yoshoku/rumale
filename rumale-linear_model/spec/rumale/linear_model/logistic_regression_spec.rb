@@ -16,7 +16,7 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
   let(:predicted) { estimator.predict(x) }
   let(:probs) { estimator.predict_proba(x) }
   let(:score) { estimator.score(x, y) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
   context 'when binary classification problem' do

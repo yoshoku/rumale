@@ -29,7 +29,7 @@ module Rumale
         ::Rumale::Validation.check_sample_size(x, y)
 
         predicted = predict(x)
-        (y.to_a.map.with_index { |label, n| label == predicted[n] ? 1 : 0 }).sum.fdiv(y.size)
+        y.to_a.map.with_index { |label, n| label == predicted[n] ? 1 : 0 }.sum.fdiv(y.size)
       end
     end
   end

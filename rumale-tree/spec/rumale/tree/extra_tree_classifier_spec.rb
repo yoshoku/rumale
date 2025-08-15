@@ -19,7 +19,7 @@ RSpec.describe Rumale::Tree::ExtraTreeClassifier do
                         min_samples_leaf: min_samples_leaf, max_features: max_features, random_seed: 1).fit(x, y)
   end
   let(:probs) { estimator.predict_proba(x) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
   let(:score) { estimator.score(x, y) }
 
   context 'when binary classification problem' do

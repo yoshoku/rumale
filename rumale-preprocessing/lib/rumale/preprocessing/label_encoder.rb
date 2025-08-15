@@ -60,7 +60,7 @@ module Rumale
       # @return [Numo::Int32] The encoded labels.
       def transform(x)
         x = x.to_a if x.is_a?(Numo::NArray)
-        Numo::Int32[*(x.map { |v| @classes.index(v) })]
+        Numo::Int32[*x.map { |v| @classes.index(v) }]
       end
 
       # Decode encoded labels.

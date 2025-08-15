@@ -20,7 +20,7 @@ module Rumale
       # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted labels.
       # @return [Float] Mean accuracy
       def score(y_true, y_pred)
-        (y_true.to_a.map.with_index { |label, n| label == y_pred[n] ? 1 : 0 }).sum / y_true.size.to_f
+        y_true.to_a.map.with_index { |label, n| label == y_pred[n] ? 1 : 0 }.sum / y_true.size.to_f
       end
     end
   end

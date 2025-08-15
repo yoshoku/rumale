@@ -14,7 +14,7 @@ RSpec.describe Rumale::NaiveBayes::ComplementNB do
   let(:score) { estimator.score(x, y) }
   let(:func_vals) { estimator.decision_function(x) }
   let(:predicted) { estimator.predict(x) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
 
   shared_examples 'classification' do
     it 'classifies two clusters data.', :aggregate_failures do

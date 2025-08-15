@@ -12,7 +12,7 @@ RSpec.describe Rumale::NeuralNetwork::MLPClassifier do
   let(:predicted) { estimator.predict(x) }
   let(:probs) { estimator.predict_proba(x) }
   let(:score) { estimator.score(x, y) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
 
   shared_examples 'classification' do
     it 'classifies given dataset.', :aggregate_failures do

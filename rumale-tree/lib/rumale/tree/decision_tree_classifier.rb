@@ -100,7 +100,7 @@ module Rumale
       def predict_proba(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
 
-        Numo::DFloat[*(Array.new(x.shape[0]) { |n| partial_predict_proba(@tree, x[n, true]) })]
+        Numo::DFloat[*Array.new(x.shape[0]) { |n| partial_predict_proba(@tree, x[n, true]) }]
       end
 
       private

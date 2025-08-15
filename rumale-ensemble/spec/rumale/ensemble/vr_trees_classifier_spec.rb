@@ -42,7 +42,7 @@ RSpec.describe Rumale::Ensemble::VRTreesClassifier do
   context 'when multiclass classification problem' do
     let(:dataset) { three_clusters_dataset }
     let(:probs) { estimator.predict_proba(x) }
-    let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+    let(:predicted_by_probs) { Numo::Int32[*Array.new(n_samples) { |n| classes[probs[n, true].max_index] }] }
     let(:index_mat) { estimator.apply(x) }
 
     it 'classifies three clusters data', :aggregate_failures do

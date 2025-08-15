@@ -106,7 +106,7 @@ module Rumale
       def apply(x)
         x = ::Rumale::Validation.check_convert_sample_array(x)
 
-        Numo::Int32[*(Array.new(x.shape[0]) { |n| partial_apply(@tree, x[n, true]) })]
+        Numo::Int32[*Array.new(x.shape[0]) { |n| partial_apply(@tree, x[n, true]) }]
       end
 
       private
