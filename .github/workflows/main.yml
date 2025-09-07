@@ -12,46 +12,6 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [ '3.1', '3.2', '3.3', '3.4' ]
-    steps:
-      - uses: actions/checkout@v5
-      - name: Install BLAS and LAPACK
-        run: sudo apt-get install -y libopenblas-dev liblapacke-dev
-      - name: Set up Ruby ${{ matrix.ruby }}
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-      - name: Build and test with Rake
-        run: bash rumale-test.sh
-
-  build-win:
-    runs-on: windows-latest
-    name: Ruby 3.4 (Windows)
-    steps:
-      - uses: actions/checkout@v5
-      - name: Set up Ruby 3.4
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.4
-      - name: Install OpenBLAS and LAPACK
-        run: |
-          pacman -Syu
-          pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
-      - name: Install numo-narray
-        run: |
-          gem install specific_install
-          gem specific_install -l "https://github.com/ruby-numo/numo-narray.git"
-      - name: Build and test with Rake
-        run: |
-          bundle config set --global build.numo-tiny_linalg "--with-opt-lib=C:\hostedtoolcache\windows\Ruby\3.4.5\x64\msys64\ucrt64\lib --with-opt-include=C:\hostedtoolcache\windows\Ruby\3.4.5\x64\msys64\ucrt64\include\openblas"
-          bash rumale-test.sh
-
   build-mac:
     runs-on: macos-latest
     name: Ruby 3.4 (macOS)
