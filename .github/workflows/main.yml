@@ -68,5 +68,5 @@ jobs:
         ruby-version: 3.4
     - name: Build and test with Rake
       run: |
-        bundle config --local build.numo-tiny_linalg "--with-opt-dir=/usr/local/opt/openblas"
+        bundle config --global build.numo-tiny_linalg "--with-opt-dir=/opt/homebrew/opt/openblas"
         bash rumale-test.sh
