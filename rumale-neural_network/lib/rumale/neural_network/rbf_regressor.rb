@@ -9,9 +9,7 @@ module Rumale
     # RBFRegressor is a class that implements regressor based on (k-means) radial basis function (RBF) networks.
     #
     # @example
-    #   require 'numo/tiny_linalg'
-    #   Numo::Linalg = Numo::TinyLinalg
-    #
+    #   require 'numo/linalg'
     #   require 'rumale/neural_network/rbf_regressor'
     #
     #   estimator = Rumale::NeuralNetwork::RBFRegressor.new(hidden_units: 128, reg_param: 100.0)

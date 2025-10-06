@@ -12,7 +12,7 @@ gem 'rumale-linear_model', path: '../rumale-linear_model'
 gem 'rumale-nearest_neighbors', path: '../rumale-nearest_neighbors'
 gem 'rumale-preprocessing', path: '../rumale-preprocessing'
 
-gem 'numo-tiny_linalg', '~> 0.3.1'
+gem 'numo-linalg-alt', '~> 0.2'
 gem 'parallel', '~> 1.22'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.0'

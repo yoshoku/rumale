@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-
-require 'numo/tiny_linalg'
-Numo::Linalg = Numo::TinyLinalg unless defined?(Numo::Linalg)
+require 'numo/linalg'
 
 RSpec.describe Rumale::NeuralNetwork::RVFLClassifier do
   let(:x) { dataset[0] }

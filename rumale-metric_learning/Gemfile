@@ -11,7 +11,7 @@ gem 'rumale-evaluation_measure', path: '../rumale-evaluation_measure'
 gem 'rumale-nearest_neighbors', path: '../rumale-nearest_neighbors'
 gem 'rumale-preprocessing', path: '../rumale-preprocessing'
 
-gem 'numo-tiny_linalg', '~> 0.3.1'
+gem 'numo-linalg-alt', '~> 0.2'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.0'
 gem 'simplecov', '~> 0.21'

@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require 'numo/tiny_linalg'
-Numo::Linalg = Numo::TinyLinalg
-
+require 'numo/linalg'
 require 'rumale/dataset'
 require 'rumale/utils'
 require 'rumale/nearest_neighbors/k_neighbors_classifier'
 require 'rumale/nearest_neighbors/k_neighbors_regressor'
-
 require 'simplecov'
 
 SimpleCov.start do

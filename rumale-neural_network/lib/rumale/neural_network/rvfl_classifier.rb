@@ -11,9 +11,7 @@ module Rumale
     # The current implementation uses sigmoid function as activation function.
     #
     # @example
-    #   require 'numo/tiny_linalg'
-    #   Numo::Linalg = Numo::TinyLinalg
-    #
+    #   require 'numo/linalg'
     #   require 'rumale/neural_network/rvfl_classifier'
     #
     #   estimator = Rumale::NeuralNetwork::RVFLClassifier.new(hidden_units: 128, reg_param: 100.0)

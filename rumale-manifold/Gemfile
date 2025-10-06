@@ -9,7 +9,7 @@ gem 'rumale-core', path: '../rumale-core'
 gem 'rumale-decomposition', path: '../rumale-decomposition'
 gem 'rumale-kernel_approximation', path: '../rumale-kernel_approximation'
 
-gem 'numo-tiny_linalg', '~> 0.3.1'
+gem 'numo-linalg-alt', '~> 0.2'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.0'
 gem 'simplecov', '~> 0.21'

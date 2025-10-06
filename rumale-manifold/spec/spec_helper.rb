@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require 'numo/tiny_linalg'
-Numo::Linalg = Numo::TinyLinalg
-
+require 'numo/linalg'
 require 'rumale/dataset'
 require 'rumale/kernel_approximation/rbf'
-
 require 'simplecov'
 
 SimpleCov.start do

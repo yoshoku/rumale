@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require 'numo/tiny_linalg'
-Numo::Linalg = Numo::TinyLinalg
-
+require 'numo/linalg'
 require 'parallel'
 require 'rumale/utils'
 require 'rumale/dataset'

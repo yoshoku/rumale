@@ -10,9 +10,7 @@ module Rumale
     # SparsePCA is a class that implements Sparse Principal Component Analysis.
     #
     # @example
-    #   require 'numo/tiny_linalg'
-    #   Numo::Linalg = Numo::TinyLinalg
-    #
+    #   require 'numo/linalg'
     #   require 'rumale/decomposition/sparse_pca'
     #
     #   decomposer = Rumale::Decomposition::SparsePCA.new(n_components: 2, reg_param: 0.1)
