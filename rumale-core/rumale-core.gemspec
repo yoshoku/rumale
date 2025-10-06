@@ -35,5 +35,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'csv', '>= 3.1.9'
-  spec.add_dependency 'numo-narray', '>= 0.9.1'
+  spec.add_dependency 'numo-narray-alt', '~> 0.9.4'
 end

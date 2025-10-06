@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'lbfgsb', '>=0.3.0'
-  spec.add_dependency 'numo-narray', '>= 0.9.1'
+  spec.add_dependency 'numo-narray-alt', '~> 0.9.4'
   spec.add_dependency 'rumale-core', '~> 1.0.0'
   spec.add_dependency 'rumale-decomposition', '~> 1.0.0'
 end
