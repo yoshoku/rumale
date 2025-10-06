@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'lbfgsb'
+require 'numo/optimize'
 
 require 'rumale/base/regressor'
 require 'rumale/validation'
@@ -67,9 +67,10 @@ module Rumale
         bounds = Numo::DFloat.zeros(n_outputs * n_features, 2)
         bounds.shape[0].times { |n| bounds[n, 1] = Float::INFINITY }
 
-        res = Lbfgsb.minimize(
+        res = Numo::Optimize.minimize(
           fnc: method(:nnls_fnc), jcb: true, x_init: w_init, args: [x, y, @params[:reg_param]], bounds: bounds,
-          maxiter: @params[:max_iter], factr: @params[:tol] / Lbfgsb::DBL_EPSILON, verbose: @params[:verbose] ? 1 : -1
+          maxiter: @params[:max_iter], factr: @params[:tol] / Numo::Optimize::Lbfgsb::DBL_EPSILON,
+          verbose: @params[:verbose] ? 1 : -1
         )
 
         @n_iter = res[:n_iter]

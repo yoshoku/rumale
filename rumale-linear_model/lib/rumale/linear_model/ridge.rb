@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'lbfgsb'
+require 'numo/optimize'
 
 require 'rumale/base/regressor'
 require 'rumale/validation'
@@ -119,9 +119,9 @@ module Rumale
         n_outputs = single_target?(base_y) ? 1 : base_y.shape[1]
         w_init = Numo::DFloat.zeros(n_outputs * n_features)
 
-        res = Lbfgsb.minimize(
+        res = Numo::Optimize.minimize(
           fnc: fnc, jcb: true, x_init: w_init, args: [base_x, base_y, @params[:reg_param]],
-          maxiter: @params[:max_iter], factr: @params[:tol] / Lbfgsb::DBL_EPSILON,
+          maxiter: @params[:max_iter], factr: @params[:tol] / Numo::Optimize::Lbfgsb::DBL_EPSILON,
           verbose: @params[:verbose] ? 1 : -1
         )
 
