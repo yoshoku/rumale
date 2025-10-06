@@ -139,47 +139,23 @@ $ ruby cross_validation.rb
 
 ## Speedup
 
-### Numo::Linalg
-Rumale uses [Numo::NArray](https://github.com/ruby-numo/numo-narray) for typed arrays.
-Loading the [Numo::Linalg](https://github.com/ruby-numo/numo-linalg) allows to perform matrix and vector product of Numo::NArray
-using BLAS libraries.
+### Numo::Linalg Alternative
+Rumale uses [Numo::NArray Alternative](https://github.com/ruby-numo/numo-narray-alt) for typed arrays.
+Loading the [Numo::Linalg Alterntaive](https://github.com/ruby-numo/numo-linalg-alt) allows to perform
+matrix and vector product of Numo::NArray Alternative using OpenBLAS libraries.
 Some machine learning algorithms frequently compute matrix and vector products,
 the execution speed of such algorithms can be expected to be accelerated.
 
-Install Numo::Linalg gem.
+Install Numo::Linalg Alternative gem.
 
 ```bash
-$ gem install numo-linalg
+$ gem install numo-linalg-alt
 ```
 
 In ruby script, just load Numo::Linalg along with Rumale.
 
 ```ruby
-require 'numo/linalg/autoloader'
-require 'rumale'
-```
-
-Numo::Linalg allows [user selection of background libraries for BLAS/LAPACK](https://github.com/ruby-numo/numo-linalg/blob/master/doc/select-backend.md).
-Instead of fixing the background library,
-[Numo::OpenBLAS](https://github.com/yoshoku/numo-openblas) and [Numo::BLIS](https://github.com/yoshoku/numo-blis)
-are available to simplify installation.
-
-### Numo::TinyLinalg
-[Numo::TinyLinalg](https://github.com/yoshoku/numo-tiny_linalg) is a subset library from Numo::Linalg consisting only of methods used in machine learning algorithms.
-Numo::TinyLinalg only supports OpenBLAS as a backend library for BLAS and LAPACK.
-If the OpenBLAS library is not found during installation, Numo::TinyLinalg downloads and builds that.
-
-```bash
-$ gem install numo-tiny_linalg
-```
-
-Load Numo::TinyLinalg instead of Numo::Linalg.
-
-```ruby
-require 'numo/tiny_linalg'
-
-Numo::Linalg = Numo::TinyLinalg
-
+require 'numo/linalg'
 require 'rumale'
 ```
 
