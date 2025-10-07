@@ -4,15 +4,15 @@
 
 ## all
 
-- Change the runtime depedency from numo-narray to [numo-narray-alt](https://github.com/yoshoku/numo-narray-alt).
+- Change the runtime dependency from numo-narray to [numo-narray-alt](https://github.com/yoshoku/numo-narray-alt).
 
 ## rumale-linear_model
 
-- Change the runtime depedency from lbfgsb.rb to [numo-optimize](https://github.com/yoshoku/numo-optimize).
+- Change the runtime dependency from lbfgsb.rb to [numo-optimize](https://github.com/yoshoku/numo-optimize).
 
 ## rumale-metric_learning
 
-- Change the runtime depedency from lbfgsb.rb to [numo-optimize](https://github.com/yoshoku/numo-optimize).
+- Change the runtime dependency from lbfgsb.rb to [numo-optimize](https://github.com/yoshoku/numo-optimize).
 
 [Numo::NArray](https://rubygems.org/gems/numo-narray), a runtime dependency of Rumale, has not had a new release in three years.
 For the future development of Rumale, I have decided to fork Numo::NArray to continue its development, including applying bug fixes.
