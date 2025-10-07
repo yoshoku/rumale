@@ -5,6 +5,6 @@ module Rumale
   # This module consists of classes that implement cluster analysis methods.
   module Clustering
     # @!visibility private
-    VERSION = '1.0.0'
+    VERSION = '2.0.0'
   end
 end

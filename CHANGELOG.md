@@ -1,3 +1,24 @@
+# [[2.0.0](https://github.com/yoshoku/rumale/compare/v1.0.0...v2.0.0)]
+
+**Breaking changes**
+
+## all
+
+- Change the runtime depedency from numo-narray to [numo-narray-alt](https://github.com/yoshoku/numo-narray-alt).
+
+## rumale-linear_model
+
+- Change the runtime depedency from lbfgsb.rb to [numo-optimize](https://github.com/yoshoku/numo-optimize).
+
+## rumale-metric_learning
+
+- Change the runtime depedency from lbfgsb.rb to [numo-optimize](https://github.com/yoshoku/numo-optimize).
+
+[Numo::NArray](https://rubygems.org/gems/numo-narray), a runtime dependency of Rumale, has not had a new release in three years.
+For the future development of Rumale, I have decided to fork Numo::NArray to continue its development, including applying bug fixes.
+There are no other major changes besides this update to the runtime dependency.
+In addition, it is recommended to use [numo-linalg-alt](https://github.com/yoshoku/numo-linalg-alt) if you are using Numo::Linalg with Rumale.
+
 # [[1.0.0](https://github.com/yoshoku/rumale/compare/v0.29.0...v1.0.0)]
 ## rumale-core
 - Add csv gem to runtime dependencies for Ruby 3.4.

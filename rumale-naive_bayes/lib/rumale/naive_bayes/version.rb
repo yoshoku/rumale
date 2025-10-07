@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that implement naive bayes models.
   module NaiveBayes
     # @!visibility private
-    VERSION = '1.0.0'
+    VERSION = '2.0.0'
   end
 end

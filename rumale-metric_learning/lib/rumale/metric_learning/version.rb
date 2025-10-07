@@ -5,6 +5,6 @@ module Rumale
   # Module for metric learning algorithms.
   module MetricLearning
     # @!visibility private
-    VERSION = '1.0.0'
+    VERSION = '2.0.0'
   end
 end

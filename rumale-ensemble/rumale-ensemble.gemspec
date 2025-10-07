@@ -34,9 +34,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'numo-narray-alt', '~> 0.9.4'
-  spec.add_dependency 'rumale-core', '~> 1.0.0'
-  spec.add_dependency 'rumale-linear_model', '~> 1.0.0'
-  spec.add_dependency 'rumale-model_selection', '~> 1.0.0'
-  spec.add_dependency 'rumale-preprocessing', '~> 1.0.0'
-  spec.add_dependency 'rumale-tree', '~> 1.0.0'
+  spec.add_dependency 'rumale-core', '~> 2.0.0'
+  spec.add_dependency 'rumale-linear_model', '~> 2.0.0'
+  spec.add_dependency 'rumale-model_selection', '~> 2.0.0'
+  spec.add_dependency 'rumale-preprocessing', '~> 2.0.0'
+  spec.add_dependency 'rumale-tree', '~> 2.0.0'
 end
