@@ -20,6 +20,9 @@ Fisher Discriminant Analysis, Neighbourhood Component Analysis,
 Principal Component Analysis, Non-negative Matrix Factorization,
 and many other algorithms.
 
+**Note**: Since v2.0.0, Rumale uses [Numo::NArray Alternative](https://github.com/yoshoku/numo-narray-alt)
+instead of Numo::NArray as a dependency.
+
 ## Installation
 
 Add this line to your application's Gemfile:
