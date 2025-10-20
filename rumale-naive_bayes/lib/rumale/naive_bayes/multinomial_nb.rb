@@ -65,9 +65,9 @@ module Rumale
         x = ::Rumale::Validation.check_convert_sample_array(x)
 
         n_classes = @classes.size
-        bin_x = x.gt(0)
+        bin_x = Numo::DFloat.cast(x.gt(0))
         log_likelihoods = Array.new(n_classes) do |l|
-          Math.log(@class_priors[l]) + (Numo::DFloat[*bin_x] * Numo::NMath.log(@feature_probs[l, true])).sum(axis: 1)
+          Math.log(@class_priors[l]) + (bin_x * Numo::NMath.log(@feature_probs[l, true])).sum(axis: 1)
         end
         Numo::DFloat[*log_likelihoods].transpose.dup
       end
