@@ -43,13 +43,17 @@ jobs:
         run: |
           pacman -Syu
           pacman -S --noconfirm mingw-w64-ucrt-x86_64-openblas mingw-w64-ucrt-x86_64-lapack
-      - name: Install numo-narray
+      - name: Install numo-narray for red-datasets-numo-narray
         run: |
           gem install specific_install
           gem specific_install -l "https://github.com/ruby-numo/numo-narray.git"
+      - name: Setting Ruby version to envrionment variable
+        run: |
+          $value = ruby -e 'puts RUBY_VERSION'
+          echo "RUBY_VER=$value" >> $env:GITHUB_ENV
       - name: Build and test with Rake
         run: |
-          bundle config set --global build.numo-linalg-alt "--with-opt-lib=C:\hostedtoolcache\windows\Ruby\3.4.6\x64\msys64\ucrt64\lib --with-opt-include=C:\hostedtoolcache\windows\Ruby\3.4.6\x64\msys64\ucrt64\include\openblas"
+          bundle config set --global build.numo-linalg-alt "--with-opt-lib=C:\hostedtoolcache\windows\Ruby\${{ env.RUBY_VER }}\x64\msys64\ucrt64\lib --with-opt-include=C:\hostedtoolcache\windows\Ruby\${{ env.RUBY_VER }}\x64\msys64\ucrt64\include\openblas"
           bash rumale-test.sh
 
   build-mac:
