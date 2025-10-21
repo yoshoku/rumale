@@ -51,4 +51,16 @@ RSpec.describe Rumale::NaiveBayes::MultinomialNB do
     expect(probs.shape[1]).to eq(n_classes)
     expect(predicted_by_probs).to eq(y)
   end
+
+  context 'with large sample sizes' do
+    let(:x) { Numo::DFloat.new(1_000_000, 4).rand }
+    let(:y) { Numo::Int32.new(1_000_000).rand(-1, 1) }
+
+    it 'does not raise SystemStackError', :aggregate_failures do
+      expect do
+        estimator
+        score
+      end.not_to raise_error
+    end
+  end
 end
