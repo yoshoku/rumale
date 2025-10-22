@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that extract features from raw data.
   module FeatureExtraction
     # @!visibility private
-    VERSION = '2.0.0'
+    VERSION = '2.0.1'
   end
 end

@@ -1,3 +1,10 @@
+# [[2.0.1](https://github.com/yoshoku/rumale/compare/v2.0.0...v2.0.1)]
+## rumale-naive_bayes
+- Fix SystemStackError that occurred in MultinomialNB when given large sample sizes: [#51](https://github.com/yoshoku/rumale/pull/51)
+
+## others
+- Refactor GitHub Actions workflow to reduce execution time.
+
 # [[2.0.0](https://github.com/yoshoku/rumale/compare/v1.0.0...v2.0.0)]
 
 **Breaking changes**
