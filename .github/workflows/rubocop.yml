@@ -17,5 +17,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
+      - name: Install BLAS and LAPACK for numo-linalg-alt
+        run: sudo apt-get install -y libopenblas-dev liblapacke-dev
       - name: Run RuboCop
         run: bash rumale-rubocop.sh
