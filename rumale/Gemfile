@@ -25,7 +25,6 @@ gem 'rumale-preprocessing', path: '../rumale-preprocessing'
 gem 'rumale-tree', path: '../rumale-tree'
 
 gem 'rake', '~> 13.0'
-gem 'red-datasets-numo-narray', '~> 0.0.1'
 gem 'rspec', '~> 3.0'
 gem 'simplecov', '~> 0.21'
 
