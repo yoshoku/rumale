@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that implement generalized linear models.
   module LinearModel
     # @!visibility private
-    VERSION = '2.0.1'
+    VERSION = '2.0.2'
   end
 end

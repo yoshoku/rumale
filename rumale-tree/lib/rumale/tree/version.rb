@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that implement tree models.
   module Tree
     # @!visibility private
-    VERSION = '2.0.1'
+    VERSION = '2.0.2'
   end
 end

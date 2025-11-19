@@ -31,5 +31,5 @@ Gem::Specification.new do |spec|
   spec.extensions = ['ext/rumale/tree/extconf.rb']
 
   spec.add_dependency 'numo-narray-alt', '~> 0.9.10'
-  spec.add_dependency 'rumale-core', '~> 2.0.1'
+  spec.add_dependency 'rumale-core', '~> 2.0.2'
 end

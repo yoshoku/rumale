@@ -1,3 +1,13 @@
+# [[2.0.2](https://github.com/yoshoku/rumale/compare/v2.0.1...v2.0.2)]
+## all
+
+- Set the required version of numo-narray-alt to 0.9.10 or higher.
+- Change require statement to explicitly load numo/narray/alt.
+
+## rumale-clustering and rumale-metric_learning
+
+- Set the required version of numo-optimize to 0.2.2 or higher.
+
 # [[2.0.1](https://github.com/yoshoku/rumale/compare/v2.0.0...v2.0.1)]
 ## rumale-naive_bayes
 - Fix SystemStackError that occurred in MultinomialNB when given large sample sizes: [#51](https://github.com/yoshoku/rumale/pull/51)
