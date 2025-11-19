@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'csv'
-require 'numo/narray'
+require 'numo/narray/alt'
 require 'rumale/utils'
 
 module Rumale

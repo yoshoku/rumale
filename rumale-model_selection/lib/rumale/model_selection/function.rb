@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'numo/narray'
+require 'numo/narray/alt'
 
 require 'rumale/model_selection/shuffle_split'
 require 'rumale/model_selection/stratified_shuffle_split'

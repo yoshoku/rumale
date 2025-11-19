@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'numo/narray'
+require 'numo/narray/alt'
 
 module Rumale
   # Module for calculating pairwise distances, similarities, and kernels.

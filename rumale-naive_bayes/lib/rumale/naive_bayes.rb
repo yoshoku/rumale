@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'numo/narray'
+require 'numo/narray/alt'
 
 require_relative 'naive_bayes/base_naive_bayes'
 require_relative 'naive_bayes/bernoulli_nb'

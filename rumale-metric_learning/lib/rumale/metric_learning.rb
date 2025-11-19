@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'numo/narray'
+require 'numo/narray/alt'
 
 require_relative 'metric_learning/fisher_discriminant_analysis'
 require_relative 'metric_learning/local_fisher_discriminant_analysis'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'numo/narray'
+require 'numo/narray/alt'
 
 require_relative 'manifold/laplacian_eigenmaps'
 require_relative 'manifold/locally_linear_embedding'

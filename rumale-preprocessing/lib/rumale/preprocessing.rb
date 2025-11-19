@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'numo/narray'
+require 'numo/narray/alt'
 
 require_relative 'preprocessing/bin_discretizer'
 require_relative 'preprocessing/binarizer'
