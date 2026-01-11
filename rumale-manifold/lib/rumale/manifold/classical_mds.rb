@@ -61,6 +61,8 @@ module Rumale
         eig_vecs = eig_vecs.reverse(1)
         @embedding = eig_vecs.dot(Numo::NMath.sqrt(eig_vals.abs).diag)
 
+        @embedding = @embedding.flatten.dup if @params[:n_components] == 1
+
         self
       end
 
