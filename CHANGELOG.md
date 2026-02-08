@@ -1,3 +1,21 @@
+# [[2.1.0](https://github.com/yoshoku/rumale/compare/v2.0.2...v2.1.0)]
+## all
+
+- Relax numo-narray-alt version constraint to >= 0.9.10, < 0.11.0.
+
+## rumale-clustering and rumale-metric_learning
+
+- Relax numo-optimize version constraint to >= 0.2.2, < 1.0.0.
+
+## rumale-tree
+
+- Remove libstdc++ loading check from native extensions build step.
+
+## rumale-manifold
+
+- Add transformer class for classical multi-dimensional scaling.
+  - ClassicalMDS
+
 # [[2.0.2](https://github.com/yoshoku/rumale/compare/v2.0.1...v2.0.2)]
 ## all
 

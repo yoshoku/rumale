@@ -35,5 +35,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'mmh3', '~> 1.0'
   spec.add_dependency 'numo-narray-alt', '>= 0.9.10', '< 0.11.0'
-  spec.add_dependency 'rumale-core', '~> 2.0.2'
+  spec.add_dependency 'rumale-core', '~> 2.1.0'
 end

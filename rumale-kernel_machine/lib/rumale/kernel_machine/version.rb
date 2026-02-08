@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that implement kernel method-based estimator.
   module KernelMachine
     # @!visibility private
-    VERSION = '2.0.2'
+    VERSION = '2.1.0'
   end
 end

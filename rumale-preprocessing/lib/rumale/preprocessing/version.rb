@@ -5,6 +5,6 @@ module Rumale
   # This module consists of the classes that perform preprocessings.
   module Preprocessing
     # @!visibility private
-    VERSION = '2.0.2'
+    VERSION = '2.1.0'
   end
 end
