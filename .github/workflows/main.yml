@@ -27,7 +27,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Build and test with Rake
+      - name: Build and test
         run: bash rumale-test.sh
 
   build-win:
@@ -51,7 +51,7 @@ jobs:
         run: |
           $value = ruby -e 'puts RUBY_VERSION'
           echo "RUBY_VER=$value" >> $env:GITHUB_ENV
-      - name: Build and test with Rake
+      - name: Build and test
         run: |
           bundle config set --global build.numo-linalg-alt "--with-opt-lib=C:\hostedtoolcache\windows\Ruby\${{ env.RUBY_VER }}\x64\msys64\ucrt64\lib --with-opt-include=C:\hostedtoolcache\windows\Ruby\${{ env.RUBY_VER }}\x64\msys64\ucrt64\include\openblas"
           bash rumale-test.sh
@@ -60,17 +60,36 @@ jobs:
     runs-on: macos-latest
     name: Ruby 3.4 (macOS)
     steps:
-    - uses: actions/checkout@v6
-    - name: Install OpenBLAS
-      run: |
-        brew update
-        brew install openblas
-        brew info openblas
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.4
-    - name: Build and test with Rake
-      run: |
-        bundle config --global build.numo-linalg-alt "--with-opt-dir=/opt/homebrew/opt/openblas"
-        bash rumale-test.sh
+      - uses: actions/checkout@v6
+      - name: Install OpenBLAS
+        run: |
+          brew update
+          brew install openblas
+          brew info openblas
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4
+      - name: Build and test
+        run: |
+          bundle config --global build.numo-linalg-alt "--with-opt-dir=/opt/homebrew/opt/openblas"
+          bash rumale-test.sh
+
+  build-rhel:
+    runs-on: ubuntu-latest
+    name: Ruby 3.3 (Rocky)
+    container: rockylinux/rockylinux:9
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Ruby
+        run: |
+          dnf update -y
+          dnf install -y dnf-plugins-core
+          dnf config-manager --set-enabled crb
+          dnf module -y enable ruby:3.3
+          dnf install -y gcc make git libyaml-devel ruby-devel ruby openblas-devel
+          bundle config silence_root_warning true
+      - name: Build and test
+        run: |
+          bundle config --global build.numo-linalg-alt "--with-opt-include=/usr/include/openblas"
+          bash rumale-test.sh
