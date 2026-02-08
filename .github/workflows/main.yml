@@ -87,7 +87,7 @@ jobs:
           dnf install -y dnf-plugins-core
           dnf config-manager --set-enabled crb
           dnf module -y enable ruby:3.3
-          dnf install -y gcc make git libyaml-devel ruby-devel ruby openblas-devel
+          dnf install -y gcc make git libstdc++ libyaml-devel ruby-devel ruby openblas-devel
           bundle config silence_root_warning true
       - name: Build and test
         run: |
