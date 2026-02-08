@@ -3,8 +3,6 @@
 require 'mkmf'
 require 'numo/narray/alt'
 
-abort 'libstdc++ is not found.' unless have_library('stdc++')
-
 $LOAD_PATH.each do |lp|
   if File.exist?(File.join(lp, 'numo/numo/narray.h'))
     $INCFLAGS = "-I#{lp}/numo #{$INCFLAGS}"
