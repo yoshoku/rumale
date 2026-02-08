@@ -9,5 +9,5 @@ GEMS=("rumale-core" "rumale-evaluation_measure" "rumale-preprocessing" "rumale-m
 
 for GEM in "${GEMS[@]}"; do
   cd "${BASE_DIR}/${GEM}"
-  bundle update
+  bundle update --all
 done
