@@ -3,5 +3,5 @@
 source 'https://rubygems.org'
 
 gem 'irb', '~> 1.16'
-gem 'rdoc', '~> 6.15'
-gem 'yard', github: '/yoshoku/yard', branch: 'vanilla-js'
+gem 'rdoc', '~> 7.2'
+gem 'yard', '~> 0.9.38'
