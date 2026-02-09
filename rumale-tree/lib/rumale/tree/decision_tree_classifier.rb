@@ -120,6 +120,7 @@ module Rumale
       end
 
       def build_tree(x, y)
+        @xklass = x.class
         @tree = grow_node(0, x, y, impurity(y))
         nil
       end
@@ -141,7 +142,7 @@ module Rumale
 
       def impurity(y)
         n_classes = @classes.size
-        node_impurity(@params[:criterion], y, n_classes)
+        node_impurity(@params[:criterion], y, n_classes, @xklass)
       end
     end
   end
