@@ -13,3 +13,7 @@ gem 'rspec', '~> 3.0'
 gem 'simplecov', '~> 0.21'
 
 eval_gemfile(File.expand_path('../Gemfile.rubocop', __dir__))
+
+group :memcheck, optional: true do
+  gem 'ruby_memcheck', '~> 3.0'
+end
