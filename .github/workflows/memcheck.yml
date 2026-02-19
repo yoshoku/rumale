@@ -21,8 +21,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.4
-          bundler-cache: true
       - name: Run test
         run: |
           cd rumale-tree
+          bundle install --quiet --retry 3
           bundle exec rake spec:valgrind
