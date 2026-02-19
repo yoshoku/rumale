@@ -1,0 +1,28 @@
+name: memcheck
+
+on:
+  push:
+    branches:
+      - main
+      - dev*
+  pull_request:
+
+jobs:
+  ruby-memcheck:
+    runs-on: ubuntu-latest
+    name: ruby-memcheck
+    env:
+      BUNDLE_WITH: memcheck
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install valgrind
+        run: sudo apt-get update && sudo apt-get install valgrind
+      - name: Set up Ruby 3.4
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4
+          bundler-cache: true
+      - name: Run test
+        run: |
+          cd rumale-tree
+          bundle exec rake spec:valgrind
