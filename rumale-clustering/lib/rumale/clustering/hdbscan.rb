@@ -253,7 +253,7 @@ module Rumale
         node_ids = stabilities.keys.sort.reverse.slice(0, stabilities.size - 1)
 
         cluster_tree = tree.select { |edge| edge.n_elements > 1 }
-        is_cluster = node_ids.each_with_object({}) { |n_id, h| h[n_id] = true }
+        is_cluster = node_ids.to_h { |n_id| [n_id, true] }
 
         node_ids.each do |n_id|
           children = cluster_tree.select { |node| node.x == n_id }.map(&:y)
