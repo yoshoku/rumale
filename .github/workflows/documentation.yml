@@ -29,7 +29,7 @@ jobs:
       - name: Build API documentation
         run: bundle exec yard doc -o output/doc
       - name: Upload API documentation
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: output
       - name: Setup Pages
