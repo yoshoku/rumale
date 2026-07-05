@@ -1,3 +1,8 @@
+# [[2.2.0](https://github.com/yoshoku/rumale/compare/v2.1.0...v2.2.0)]
+## all
+
+- Relax numo-narray-alt upper bound to < 0.12.0.
+
 # [[2.1.0](https://github.com/yoshoku/rumale/compare/v2.0.2...v2.1.0)]
 ## all
 
