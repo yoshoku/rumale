@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'numo-narray-alt', '>= 0.9.10', '< 0.11.0'
+  spec.add_dependency 'numo-narray-alt', '>= 0.9.10', '< 0.12.0'
   spec.add_dependency 'numo-optimize', '>= 0.2.2', '< 1.0.0'
   spec.add_dependency 'rumale-core', '~> 2.1.0'
   spec.add_dependency 'rumale-decomposition', '~> 2.1.0'
