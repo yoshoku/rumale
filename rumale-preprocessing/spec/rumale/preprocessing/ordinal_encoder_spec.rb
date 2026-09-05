@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-# rubocop:disable Style/WordArray, Style/SymbolArray
+# rubocop:disable-next Style/WordArray, Style/SymbolArray
 RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
   let(:training) do
     x = [['left', 10, :a],
@@ -78,4 +78,3 @@ RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
     expect(encoded).to eq(encoded_training_b)
   end
 end
-# rubocop:enable Style/WordArray, Style/SymbolArray
