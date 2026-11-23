@@ -46,7 +46,7 @@ module Rumale
 
       # @!visibility private
       def micro_average_precision(y_true, y_pred)
-        evaluated_values = y_true.sort.to_a.uniq.map do |label|
+        evaluated_values = (y_true.to_a | y_pred.to_a).map do |label|
           target_positions = y_pred.eq(label)
           next [0.0, 0.0] if y_pred[target_positions].empty?
 
@@ -76,6 +76,8 @@ module Rumale
       def micro_average_f_score(y_true, y_pred)
         prec = micro_average_precision(y_true, y_pred)
         recl = micro_average_recall(y_true, y_pred)
+        return 0.0 if prec.zero? && recl.zero?
+
         (2.0 * prec * recl) / (prec + recl)
       end
 

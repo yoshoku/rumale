@@ -29,6 +29,14 @@ RSpec.describe Rumale::EvaluationMeasure::Precision do
     expect(precision).to be_within(1e-4).of(0.6)
   end
 
+  it 'counts predicted labels missing from the ground truth for micro-average precision', :aggregate_failures do
+    evaluator = described_class.new(average: 'micro')
+    precision = evaluator.score(Numo::Int32[0, 0, 1], Numo::Int32[0, 2, 1])
+    expect(precision).to be_a(Float)
+    expect(precision).to be_within(1e-4).of(0.6667)
+    expect(evaluator.score(Numo::Int32[0, 1], Numo::Int32[2, 2])).to be_zero
+  end
+
   it 'returns nil given an invalid average parameter' do
     evaluator = described_class.new(average: 'foo')
     precision = evaluator.score(mult_ground_truth, mult_predicted)
