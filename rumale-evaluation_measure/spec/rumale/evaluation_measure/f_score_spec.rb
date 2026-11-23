@@ -29,6 +29,18 @@ RSpec.describe Rumale::EvaluationMeasure::FScore do
     expect(f_score).to be_within(1e-4).of(0.6)
   end
 
+  it 'calculates micro-average F1-score when the prediction has labels missing from the ground truth', :aggregate_failures do
+    evaluator = described_class.new(average: 'micro')
+    f_score = evaluator.score(Numo::Int32[0, 0, 1], Numo::Int32[0, 2, 1])
+    expect(f_score).to be_a(Float)
+    expect(f_score).to be_within(1e-4).of(0.6667)
+  end
+
+  it 'returns zero for micro-average F1-score when no prediction is correct' do
+    evaluator = described_class.new(average: 'micro')
+    expect(evaluator.score(Numo::Int32[0, 1], Numo::Int32[1, 0])).to be_zero
+  end
+
   it 'returns nil given an invalid average parameter' do
     evaluator = described_class.new(average: 'foo')
     f_score = evaluator.score(mult_ground_truth, mult_predicted)
